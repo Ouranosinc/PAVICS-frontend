@@ -40,3 +40,20 @@
 .ol-popup-closer:after {
   content: "✖";
 }
+.ol-mouse-position {
+  top: auto;
+  bottom: 2em;
+}
+.ol-overviewmap {
+  bottom: 2em;
+}
+.ol-zoomslider {
+  top: 7em;
+}
+.ol-rotate {
+  top: 2.5em;
+}
+.draw-point {
+  right: 3em;
+  top: .5em;
+}

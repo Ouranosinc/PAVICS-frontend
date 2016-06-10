@@ -1,6 +1,6 @@
 import React from 'react'
 import classes from './OLExternalComponent.scss'
-import {Map, View, Feature, source, layer, geom} from 'ol-react-renaud009';
+import {Map, View, Feature, source, layer, geom} from 'ol-react';
 require("openlayers/css/ol.css");
 
 
