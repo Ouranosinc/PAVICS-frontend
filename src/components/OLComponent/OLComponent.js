@@ -58,7 +58,7 @@ class OLComponent extends React.Component {
   }
 
   setWFSVector(){
-    this.vectorSource = new ol.source.Vector({
+    /*this.vectorSource = new ol.source.Vector({
       loader: function(extent, resolution, projection) {
         var url = 'http://demo.boundlessgeo.com/geoserver/wfs?service=WFS&' +
           'version=1.1.0&request=GetFeature&typename=osm:water_areas&' +
@@ -81,7 +81,7 @@ class OLComponent extends React.Component {
           width: 2
         })
       })
-    });
+    });*/
   }
 
   initMap(){
@@ -100,8 +100,8 @@ class OLComponent extends React.Component {
 
     this.layers = [
       this.BackgroundLayer,
-      this.WMSLayer,
-      this.WFSLayer
+      this.WMSLayer/*,
+      this.WFSLayer*/
     ];
     this.map = new ol.Map({
       layers: this.layers,
@@ -111,7 +111,7 @@ class OLComponent extends React.Component {
         zoom: 4
       }),
       controls: ol.control.defaults().extend([
-        new ol.control.ZoomSlider(),
+        /*new ol.control.ZoomSlider(),*/
         new ol.control.Rotate(),
         new ol.control.OverviewMap(),
         new ol.control.ScaleLine(),
