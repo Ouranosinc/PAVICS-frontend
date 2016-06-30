@@ -1,4 +1,5 @@
 import Koa from 'koa'
+import route from 'koa-route'
 import convert from 'koa-convert'
 import webpack from 'webpack'
 import webpackConfig from '../build/webpack.config'
@@ -13,6 +14,12 @@ import webpackHMRMiddleware from './middleware/webpack-hmr'
 const debug = _debug('app:server')
 const paths = config.utils_paths
 const app = new Koa()
+
+//Controllers
+var birdhouse = require('./controllers/birdhouse');
+
+//Routes
+app.use(route.get('/api/wms/capabilities', birdhouse.getCapabilities));
 
 // Enable koa-proxy if it has been enabled in the config.
 if (config.proxy && config.proxy.enabled) {

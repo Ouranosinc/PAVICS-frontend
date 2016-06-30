@@ -1,6 +1,7 @@
 import React from 'react'
 //import classes from './CesiumComponent.scss'
 import ol from 'openlayers';
+import WMS from './'
 import $ from 'jquery';
 
 require("openlayers/css/ol.css");
@@ -58,7 +59,7 @@ class OLComponent extends React.Component {
   }
 
   setWFSVector(){
-    this.vectorSource = new ol.source.Vector({
+    /*this.vectorSource = new ol.source.Vector({
       loader: function(extent, resolution, projection) {
         var url = 'http://demo.boundlessgeo.com/geoserver/wfs?service=WFS&' +
           'version=1.1.0&request=GetFeature&typename=osm:water_areas&' +
@@ -81,7 +82,7 @@ class OLComponent extends React.Component {
           width: 2
         })
       })
-    });
+    });*/
   }
 
   initMap(){
@@ -100,8 +101,8 @@ class OLComponent extends React.Component {
 
     this.layers = [
       this.BackgroundLayer,
-      this.WMSLayer,
-      this.WFSLayer
+      this.WMSLayer/*,
+      this.WFSLayer*/
     ];
     this.map = new ol.Map({
       layers: this.layers,
@@ -111,7 +112,7 @@ class OLComponent extends React.Component {
         zoom: 4
       }),
       controls: ol.control.defaults().extend([
-        new ol.control.ZoomSlider(),
+        /*new ol.control.ZoomSlider(),*/
         new ol.control.Rotate(),
         new ol.control.OverviewMap(),
         new ol.control.ScaleLine(),
@@ -164,23 +165,8 @@ class OLComponent extends React.Component {
 
   render () {
     return(
-      <div className="row">
-        <div className="col-md-2 col-lg-2">
-          <div className="panel panel-default">
-            <div className="panel-body">
-              ...
-            </div>
-          </div>
-        </div>
-        <div className="col-md-10 col-lg-10">
-          <div className="panel panel-default">
-            <div className="panel-body">
-              <div id="map" className="map">
-                <div id="popup" className="ol-popup"></div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div id="map" className="map">
+        <div id="popup" className="ol-popup"></div>
       </div>
     )
   }

@@ -107,8 +107,9 @@
     "koa-connect-history-api-fallback": "^0.3.0",
     "koa-convert": "^1.2.0",
     "koa-proxy": "^0.6.0",
+    "koa-request": "^1.0.0",
+    "koa-route": "^2.4.2",
     "koa-static": "^2.0.0",
-    "node-sass": "^3.7.0",
     "normalize.css": "^4.1.1",
     "ol-react": "0.0.4",
     "openlayers": "^3.15.1",
@@ -125,6 +126,7 @@
     "style-loader": "^0.13.0",
     "url-loader": "^0.5.6",
     "webpack": "^1.12.14",
+    "xml2js": "0.4.16",
     "yargs": "^4.0.0"
   },
   "devDependencies": {
