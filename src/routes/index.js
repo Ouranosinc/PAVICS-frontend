@@ -4,6 +4,7 @@ import Home from './Home'
 import CounterRoute from './Counter'
 import OpenLayersRoute from './OpenLayers'
 import CesiumRoute from './Cesium'
+import WmsRoute from './WMS'
 
 /*  Note: Instead of using JSX, we recommend using react-router
     PlainRoute objects to build route definitions.   */
@@ -15,7 +16,8 @@ export const createRoutes = (store) => ({
   childRoutes: [
     CounterRoute(store),
     OpenLayersRoute(store),
-    CesiumRoute(store)
+    CesiumRoute(store),
+    WmsRoute(store)
   ]
 });
 

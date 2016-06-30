@@ -11,13 +11,15 @@ import config from '../config'
 import webpackDevMiddleware from './middleware/webpack-dev'
 import webpackHMRMiddleware from './middleware/webpack-hmr'
 
-var birdhouse = require('./controllers/birdhouse');
-
 const debug = _debug('app:server')
 const paths = config.utils_paths
 const app = new Koa()
 
-app.use(route.get('/api/birdhouse', birdhouse.list));
+//Controllers
+var birdhouse = require('./controllers/birdhouse');
+
+//Routes
+app.use(route.get('/api/wms/capabilities', birdhouse.getCapabilities));
 
 // Enable koa-proxy if it has been enabled in the config.
 if (config.proxy && config.proxy.enabled) {

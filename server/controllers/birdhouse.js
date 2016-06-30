@@ -17,7 +17,7 @@ function parseXMLAsync(response, callback){
   });
 }
 
-module.exports.list = function * list(next) {
+module.exports.getCapabilities = function * list(next) {
   if ('GET' != this.method) return yield next;
   var options = {
     url: 'http://132.217.140.31:8080/ncWMS2/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0'
