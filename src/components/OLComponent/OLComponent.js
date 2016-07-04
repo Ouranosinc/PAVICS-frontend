@@ -11,7 +11,8 @@ var me; //Do never trust this in javascript.
 
 class OLComponent extends React.Component {
   static propTypes = {
-
+    capabilities: React.PropTypes.object,
+    dataset: React.PropTypes.object
   }
 
   constructor(props) {
@@ -36,20 +37,86 @@ class OLComponent extends React.Component {
   }
 
   setWMSLayer(){
-    this.WMSLayer = new ol.layer.Tile({
+    //http://132.217.140.31:8080/ncWMS2/wms?
+    // FORMAT=image%2Fpng&
+    // TRANSPARENT=TRUE&
+    // STYLES=default-scalar%2Fdefault&
+    // LAYERS=pavics_dummy_file_simplest%2Fpr&
+    // TIME=1961-12-06T00%253A00%253A00.000Z&
+    // COLORSCALERANGE=0%2C1&
+    // NUMCOLORBANDS=250&
+    // ABOVEMAXCOLOR=0x000000&
+    // BELOWMINCOLOR=0x000000&
+    // BGCOLOR=transparent&
+    // LOGSCALE=false&
+    // SERVICE=WMS&
+    // VERSION=1.1.1&
+    // REQUEST=GetMap&
+    // SRS=EPSG%3A4326&
+    // BBOX=-78.88,45.68,-77.6,46.96&
+    // WIDTH=256&
+    // HEIGHT=256
+
+    /*this.WMSLayer = new ol.layer.Tile({
       extent: [-13884991, 2870341, -7455066, 6338219],
       source: new ol.source.TileWMS({
-        url: 'http://demo.boundlessgeo.com/geoserver/wms',
-        params: {'LAYERS': 'topp:states', 'TILED': true},
-        serverType: 'geoserver'
+        url: 'http://132.217.140.31:8080/ncWMS2/wms',
+        params: {
+          //'FORMAT': 'image/png',
+          'TRANSPARENT': 'TRUE',
+          //'STYLES': 'default-scalar/default',
+          'LAYERS' : 'pavics_dummy_file_simplest/pr',
+          //'COLORSCALERANGE' : '0,1',
+          //'NUMCOLORBANDS' : '250',
+          //'ABOVEMAXCOLOR' : '0x000000',
+          //'BELOWMINCOLOR' : '0x000000',
+          'BGCOLOR' : 'transparent',
+          //'LOGSCALE' : 'false',
+          //'SERVICE' : 'WMS',
+          //'VERSION' : '1.1.1',
+          //'REQUEST' : 'GetMap',
+          'SRS' : 'PSG:4326'//,
+          //'BBOX' : '-78.88,45.68,-77.6,46.96',
+          //'WIDTH': '256',
+          //'HEIGHT': '256'
+        }
       })
-    });
+    });*/
+
+    /*if(this.props.dataset){
+      this.WMSLayer = new ol.layer.Tile({
+        extent: [-13884991, 2870341, -7455066, 6338219],
+        visible: true,
+        source: new ol.source.TileWMS({
+          url: 'http://132.217.140.31:8080/ncWMS2/wms',
+          params: {
+            'TRANSPARENT': 'TRUE',
+            'LAYERS' : 'pavics_dummy_file_simplest/pr',
+            'BGCOLOR' : 'transparent',
+            'SRS' : 'PSG:4326'
+
+          }
+        })
+      });
+    }else{*/
+      //Default
+      this.WMSLayer = new ol.layer.Tile({
+        //extent: [-91.00001018206,87.99997963588,-46.50001527309,132.49997454485],
+        //extent: [-13884991, 2870341, -7455066, 6338219],
+        visible: false,
+        source: new ol.source.TileWMS({
+          url: 'http://demo.boundlessgeo.com/geoserver/wms',
+          params: {'LAYERS': 'topp:states', 'TILED': true},
+          serverType: 'geoserver'
+        })
+      });
+    /*}*/
   }
 
   setWCSLayer(){
     //http://gis.stackexchange.com/questions/166868/does-openlayers-3-support-wcs
     this.WCSLayer = new ol.layer.Image({
-      extent: [-13884991, 2870341, -7455066, 6338219],
+      //extent: [-13884991, 2870341, -7455066, 6338219],
       source: new ol.source.ImageWMS({
         url: 'http://demo.boundlessgeo.com/geoserver/wms',
         params: {'LAYERS': 'topp:states'},
@@ -101,15 +168,16 @@ class OLComponent extends React.Component {
 
     this.layers = [
       this.BackgroundLayer,
-      this.WMSLayer/*,
-      this.WFSLayer*/
+      this.WMSLayer
     ];
     this.map = new ol.Map({
       layers: this.layers,
       target: 'map',
       view: new ol.View({
-        center: [-10997148, 4569099],
+        center: [-10997148, 9569099],
         zoom: 4
+        /*center: [-10997148, 4569099],
+        zoom: 4*/
       }),
       controls: ol.control.defaults().extend([
         /*new ol.control.ZoomSlider(),*/
@@ -162,6 +230,29 @@ class OLComponent extends React.Component {
     this.initMap();
   }
 
+  componentWillUnmount(){
+    //TODO: Verify if usefull
+    //this.map.setTarget(null);
+    //this.map = null;
+  }
+
+  componentDidUpdate(prevProps, prevState){
+    if(this.props.dataset && this.props.capabilities){
+      var wmsUrl = this.props.capabilities.value["WMS_Capabilities"]["Service"][0]["OnlineResource"][0]["$"]["xlink:href"];
+      this.WMSLayer.setSource(new ol.source.TileWMS({
+        url: wmsUrl,
+        params: {
+          'TRANSPARENT': 'TRUE',
+          'LAYERS' : this.props.dataset["Name"][0],
+          'BGCOLOR' : 'transparent',
+          'SRS' : 'PSG:4326'
+        }
+      }));
+      this.WMSLayer.set("visible", true);
+    }else{
+      this.WMSLayer.set("visible", false);
+    }
+  }
 
   render () {
     return(
