@@ -20,7 +20,7 @@ function parseXMLAsync(response, callback){
 module.exports.getCapabilities = function * list(next) {
   if ('GET' != this.method) return yield next;
   var options = {
-    url: 'http://132.217.140.31:8080/ncWMS2/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0'
+    url: 'http://132.217.140.45:8080/ncWMS2/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0'
   };
   var response = yield request(options); //Yay, HTTP requests with no callbacks!
   this.body = yield parseXMLThunk(response.body);
