@@ -9,3 +9,19 @@
   }
 }
 
+/*.mapPanel{
+  margin: 5px;
+}*/
+
+.overlappingComponent{
+  position: fixed;
+  margin: 20px 0 0 60px;
+  z-index: 1000;
+}
+
+.overlappingBackground{
+  word-break:break-all;
+  opacity: 0.9;
+  background: rgba(255,255,255,0.5);
+}
+

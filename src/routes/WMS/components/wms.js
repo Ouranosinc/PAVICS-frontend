@@ -37,8 +37,8 @@ class wms extends React.Component {
   render () {
     return(
       <div className="row">
-        <div className="col-md-2 col-lg-2">
-          <div className="panel panel-default">
+        <div className={classes.overlappingComponent + " col-md-3 col-lg-3"}>
+          <div className={classes.overlappingBackground + " panel panel-default"}>
             <div className="panel-body">
               <div>
                 <div>
@@ -80,10 +80,10 @@ class wms extends React.Component {
             </div>
           </div>
         </div>
-        <div className="col-md-10 col-lg-10">
-          <div className="panel panel-default">
+        <div className="col-md-12 col-lg-12">
+          <div className={classes.mapPanel + "panel panel-default"}>
             <div className="panel-body">
-              <OLComponent />
+              <OLComponent/>
             </div>
           </div>
         </div>
