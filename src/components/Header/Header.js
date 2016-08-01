@@ -24,6 +24,10 @@ export const Header = () => (
     <Link to='/wms' activeClassName={classes.activeRoute}>
       WMS
     </Link>
+    {' · '}
+    <Link to='/Visualize' activeClassName={classes.activeRoute}>
+      Visualize
+    </Link>
   </div>
 )
 
