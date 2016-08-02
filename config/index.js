@@ -15,6 +15,12 @@ const config = {
   env : process.env.NODE_ENV || 'development',
 
   // ----------------------------------
+  // PAVICS Configs
+  // ----------------------------------
+  pavics_birdhouse_path: "http://132.217.140.45:8080/ncWMS2/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0",
+  pavics_esg_search_path: process.env.PAVICS_FACETS_PATH || "http://pcmdi.llnl.gov/esg-search/search",
+
+  // ----------------------------------
   // Project Structure
   // ----------------------------------
   path_base  : path.resolve(__dirname, '..'),

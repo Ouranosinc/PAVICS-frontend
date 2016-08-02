@@ -17,9 +17,11 @@ const app = new Koa()
 
 //Controllers
 var birdhouse = require('./controllers/birdhouse');
+var facets = require('./controllers/facets');
 
 //Routes
 app.use(route.get('/api/wms/capabilities', birdhouse.getCapabilities));
+app.use(route.get('/api/facets', facets.getFacets));
 
 // Enable koa-proxy if it has been enabled in the config.
 if (config.proxy && config.proxy.enabled) {

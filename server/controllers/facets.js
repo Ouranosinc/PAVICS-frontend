@@ -13,15 +13,31 @@ function parseXMLThunk(response){
 
 function parseXMLAsync(response, callback){
   parseString(response, function (err, result) {
-    //console.log(result);
-    callback(null, result);
+    let response = [];
+    result.response.lst[0].lst[0].arr[0].str.forEach(function(key){
+      response.push({
+        key: key,
+        values: []
+      })
+    });
+    result.response.lst[1].lst[1].lst.forEach(function(object){
+      let values = [];
+      let index = response.findIndex( x => x.key === object.$.name );
+      if(object.int){
+        object.int.forEach(function(value){
+          values.push(value.$.name);
+        });
+      }
+      response[index].values = values
+    });
+    callback(null, response);
   });
 }
 
-module.exports.getCapabilities = function * list(next) {
+module.exports.getFacets = function * list(next) {
   if ('GET' != this.method) return yield next;
   var options = {
-    url: config.pavics_birdhouse_path
+    url: config.pavics_esg_search_path + "?facets=*&limit=0&distrib=false"
   };
   var response = yield request(options); //Yay, HTTP requests with no callbacks!
   this.body = yield parseXMLThunk(response.body);
