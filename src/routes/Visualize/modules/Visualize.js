@@ -12,9 +12,9 @@ export const REMOVE_FACET_KEY_VALUE_PAIR = 'Visualize.REMOVE_FACET_KEY_VALUE_PAI
 export const FETCH_FACETS_REQUEST = 'Visualize.FETCH_FACETS_REQUEST';
 export const FETCH_FACETS_FAILURE = 'Visualize.FETCH_FACETS_FAILURE';
 export const FETCH_FACETS_SUCCESS = 'Visualize.FETCH_FACETS_SUCCESS';
-export const FETCH_CATALOGS_REQUEST = 'Visualize.FETCH_CATALOGS_REQUEST';
-export const FETCH_CATALOGS_FAILURE = 'Visualize.FETCH_CATALOGS_FAILURE';
-export const FETCH_CATALOGS_SUCCESS = 'Visualize.FETCH_CATALOGS_SUCCESS';
+export const FETCH_DATASETS_REQUEST = 'Visualize.FETCH_DATASETS_REQUEST';
+export const FETCH_DATASETS_FAILURE = 'Visualize.FETCH_DATASETS_FAILURE';
+export const FETCH_DATASETS_SUCCESS = 'Visualize.FETCH_DATASETS_SUCCESS';
 
 // ------------------------------------
 // Actions
@@ -85,10 +85,10 @@ export function receiveFacets (facets) {
   }
 }
 
-export function requestCatalogs () {
+export function requestDatasets () {
   return {
-    type: FETCH_CATALOGS_REQUEST,
-    catalogs: {
+    type: FETCH_DATASETS_REQUEST,
+    datasets: {
       requestedAt: Date.now(),
       isFetching: true,
       items: []
@@ -96,10 +96,10 @@ export function requestCatalogs () {
   }
 }
 
-export function receiveCatalogsFailure (error) {
+export function receiveDatasetsFailure (error) {
   return {
-    type: FETCH_CATALOGS_FAILURE,
-    catalogs: {
+    type: FETCH_DATASETS_FAILURE,
+    datasets: {
       receivedAt: Date.now(),
       isFetching: false,
       items: [],
@@ -108,13 +108,13 @@ export function receiveCatalogsFailure (error) {
   }
 }
 
-export function receiveCatalogs (catalogs) {
+export function receiveDatasets (datasets) {
   return {
-    type: FETCH_CATALOGS_SUCCESS,
-    catalogs: {
+    type: FETCH_DATASETS_SUCCESS,
+    datasets: {
       receivedAt: Date.now(),
       isFetching: false,
-      items: catalogs,
+      items: datasets,
       error: null
     }
   }
@@ -129,7 +129,7 @@ export function fetchFacets() {
     return fetch("/api/facets")
       .then(response => response.json())
       .then(json =>
-        /*dispatch(receiveCatalogs(json.data.catalogs))*/
+        /*dispatch(receivedatasets(json.data.datasets))*/
         dispatch(receiveFacets(json))
       )
       .catch(error =>
@@ -138,19 +138,26 @@ export function fetchFacets() {
   }
 }
 
-export function fetchCatalogs(fields) {
-  return function (dispatch) {
-    dispatch(requestCatalogs());
+export function fetchDatasets() {
+  return function (dispatch, getState) {
+    dispatch(requestDatasets());
+    //Get current added facets by querying store
+    let facets = getState().visualize.selectedFacets;
+    let constraints = "";
+    facets.forEach(function(facet,i){
+      constraints += `${(i > 0)?",":""}${facet.key}:${facet.value}`;
+    });
+    console.log(getState().visualize);
 
     //TODO Add fields to query
-    return fetch(`http://www.reddit.com/r/AskReddit.json`)
+    return fetch(`/api/datasets?constraints=${constraints}`)
       .then(response => response.json())
       .then(json =>
-        /*dispatch(receiveCatalogs(json.data.catalogs))*/
-        dispatch(receiveCatalogs(json))
+        /*dispatch(receivedatasets(json.data.datasets))*/
+        dispatch(receiveDatasets(json))
       )
       .catch(error =>
-        dispatch(receiveCatalogsFailure(error))
+        dispatch(receiveDatasetsFailure(error))
       )
   }
 }
@@ -190,13 +197,13 @@ export const actions = {
   requestFacets,
   receiveFacetsFailure,
   receiveFacets,
-  //Sync Catalogs
-  requestCatalogs,
-  receiveCatalogsFailure,
-  receiveCatalogs,
+  //Sync Datasets
+  requestDatasets,
+  receiveDatasetsFailure,
+  receiveDatasets,
   //Async
   fetchFacets,
-  fetchCatalogs
+  fetchDatasets
 };
 
 // ------------------------------------
@@ -227,16 +234,16 @@ const ACTION_HANDLERS = {
   [FETCH_FACETS_SUCCESS]: (state, action) => {
     return ({ ...state, facets: action.facets });
   },
-  [FETCH_CATALOGS_REQUEST]: (state, action) => {
-    return ({ ...state, catalogs: action.catalogs });
+  [FETCH_DATASETS_REQUEST]: (state, action) => {
+    return ({ ...state, datasets: action.datasets });
   },
-  [FETCH_CATALOGS_FAILURE]: (state, action) => {
-    return ({ ...state, catalogs: action.catalogs });
+  [FETCH_DATASETS_FAILURE]: (state, action) => {
+    return ({ ...state, datasets: action.datasets });
   },
-  [FETCH_CATALOGS_SUCCESS]: (state, action) => {
-    return ({ ...state, catalogs: action.catalogs });
+  [FETCH_DATASETS_SUCCESS]: (state, action) => {
+    return ({ ...state, datasets: action.datasets });
   }
-  //[FETCH_CATALOGS_FAILURE]: (state, action) => {
+  //[FETCH_DATASETS_FAILURE]: (state, action) => {
   //  return ({ ...state, wmss: state.wmss.concat(action.payload), current: action.payload.id, fetching: false })
   //},
 };
@@ -248,7 +255,6 @@ const initialState = {
   currentSelectedKey: "",
   currentSelectedValue: "",
   selectedFacets: [],
-  selectedCatalogs: [],
   selectedDatasets: [],
   facets: {
     requestedAt: null,
@@ -257,7 +263,7 @@ const initialState = {
     items: [],
     error: null
   },
-  catalogs: {
+  datasets: {
     requestedAt: null,
     receivedAt: null,
     isFetching: false,

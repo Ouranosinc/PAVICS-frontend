@@ -12,16 +12,18 @@ import webpackDevMiddleware from './middleware/webpack-dev'
 import webpackHMRMiddleware from './middleware/webpack-hmr'
 
 const debug = _debug('app:server')
-const paths = config.utils_paths
-const app = new Koa()
+const paths = config.utils_paths;
+const app = new Koa();
 
 //Controllers
 var birdhouse = require('./controllers/birdhouse');
 var facets = require('./controllers/facets');
+var datasets = require('./controllers/datasets');
 
 //Routes
 app.use(route.get('/api/wms/capabilities', birdhouse.getCapabilities));
 app.use(route.get('/api/facets', facets.getFacets));
+app.use(route.get('/api/datasets', datasets.getDatasets));
 
 // Enable koa-proxy if it has been enabled in the config.
 if (config.proxy && config.proxy.enabled) {

@@ -12,13 +12,13 @@ import {
   requestFacets,
   receiveFacetsFailure,
   receiveFacets,
-  //Catalogs
-  requestCatalogs,
-  receiveCatalogsFailure,
-  receiveCatalogs,
+  //datasets
+  requestDatasets,
+  receiveDatasetsFailure,
+  receiveDatasets,
   //Async
   fetchFacets,
-  fetchCatalogs
+  fetchDatasets
 } from '../modules/Visualize'
 
 var me;
@@ -70,14 +70,14 @@ const mapActionCreators = {
   requestFacets,
   receiveFacetsFailure,
   receiveFacets,
-  //Catalogs
-  fetchCatalogs,
-  requestCatalogs,
-  receiveCatalogsFailure,
-  receiveCatalogs,
+  //Datasets
+  fetchDatasets,
+  requestDatasets,
+  receiveDatasetsFailure,
+  receiveDatasets,
   //Async
   fetchFacets,
-  fetchCatalogs
+  fetchDatasets
 };
 
 const mapStateToProps = (state) => ({
@@ -85,7 +85,7 @@ const mapStateToProps = (state) => ({
   currentSelectedValue: state.visualize.currentSelectedValue,
   selectedFacets: state.visualize.selectedFacets,
   selectedDatasets: state.visualize.selectedDatasets,
-  catalogs: state.visualize.catalogs,
+  datasets: state.visualize.datasets,
   facets: state.visualize.facets
 });
 
