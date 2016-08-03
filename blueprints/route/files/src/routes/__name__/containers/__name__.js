@@ -30,7 +30,7 @@ const mapActionCreators = {
 }
 
 const mapStateToProps = (state) => ({
-  variable: state.variable
+  variable: state.<%= pascalEntityName %>.variable
 })
 
 export default connect(mapStateToProps, mapActionCreators)(<%= pascalEntityName %>)

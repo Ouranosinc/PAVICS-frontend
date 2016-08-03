@@ -9,16 +9,16 @@ export default (store) => ({
     require.ensure([], (require) => {
       /*  Webpack - use require callback to define
           dependencies for bundling   */
-      const Visualize = require('./containers/VisualizeContainer').default
+      const Visualize = require('./containers/Visualize').default
       const reducer = require('./modules/Visualize').default
 
       /*  Add the reducer to the store on key 'Visualize'  */
-      injectReducer(store, { key: 'Visualize', reducer })
+      injectReducer(store, { key: 'visualize', reducer })
 
       /*  Return getComponent   */
       cb(null, Visualize)
 
     /* Webpack named bundle   */
-    }, 'Visualize')
+    }, 'visualize')
   }
 })

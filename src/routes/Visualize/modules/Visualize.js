@@ -3,12 +3,15 @@
 // ------------------------------------
 export const COUNTER_INCREMENT = 'Visualize.COUNTER_INCREMENT';
 //SYNC
-export const SELECT_CATALOG_KEY = 'Visualize.SELECT_CATALOG_KEY';
-export const SELECT_CATALOG_VALUE = 'Visualize.SELECT_CATALOG_VALUE';
-export const ADD_CATALOG_KEY_VALUE_PAIR = 'Visualize.ADD_CATALOG_KEY_VALUE_PAIR';
-export const REMOVE_CATALOG_KEY_VALUE_PAIR = 'Visualize.REMOVE_CATALOG_KEY_VALUE_PAIR';
+export const SELECT_FACET_KEY = 'Visualize.SELECT_FACET_KEY';
+export const SELECT_FACET_VALUE = 'Visualize.SELECT_FACET_VALUE';
+export const ADD_FACET_KEY_VALUE_PAIR = 'Visualize.ADD_FACET_KEY_VALUE_PAIR';
+export const REMOVE_FACET_KEY_VALUE_PAIR = 'Visualize.REMOVE_FACET_KEY_VALUE_PAIR';
 
 //ASYNC
+export const FETCH_FACETS_REQUEST = 'Visualize.FETCH_FACETS_REQUEST';
+export const FETCH_FACETS_FAILURE = 'Visualize.FETCH_FACETS_FAILURE';
+export const FETCH_FACETS_SUCCESS = 'Visualize.FETCH_FACETS_SUCCESS';
 export const FETCH_CATALOGS_REQUEST = 'Visualize.FETCH_CATALOGS_REQUEST';
 export const FETCH_CATALOGS_FAILURE = 'Visualize.FETCH_CATALOGS_FAILURE';
 export const FETCH_CATALOGS_SUCCESS = 'Visualize.FETCH_CATALOGS_SUCCESS';
@@ -16,35 +19,69 @@ export const FETCH_CATALOGS_SUCCESS = 'Visualize.FETCH_CATALOGS_SUCCESS';
 // ------------------------------------
 // Actions
 // ------------------------------------
-export function selectCatalogKey (key) {
+export function selectFacetKey (key) {
   return {
-    type: SELECT_CATALOG_KEY,
-    key: key
+    type: SELECT_FACET_KEY,
+    key: key,
+    value: ""
   }
 }
 
-export function selectCatalogValue (key, value) {
+export function selectFacetValue (value) {
   return {
-    type: SELECT_CATALOG_VALUE,
+    type: SELECT_FACET_VALUE,
+    value: value
+  }
+}
+
+export function addFacetKeyValue (key, value) {
+  return {
+    type: ADD_FACET_KEY_VALUE_PAIR,
     key: key,
     value: value
   }
 }
 
-export function addCatalogKeyValue (key, value) {
-  console.log("addCatalogKeyValue: " + key + " " + value);
+export function removeFacetKeyValue (key, value) {
   return {
-    type: ADD_CATALOG_KEY_VALUE_PAIR,
+    type: REMOVE_FACET_KEY_VALUE_PAIR,
     key: key,
     value: value
   }
 }
 
-export function removeCatalogKeyValue (key, value) {
+export function requestFacets () {
   return {
-    type: REMOVE_CATALOG_KEY_VALUE_PAIR,
-    key: key,
-    value: value
+    type: FETCH_FACETS_REQUEST,
+    facets: {
+      requestedAt: Date.now(),
+      isFetching: true,
+      items: []
+    }
+  }
+}
+
+export function receiveFacetsFailure (error) {
+  return {
+    type: FETCH_FACETS_FAILURE,
+    facets: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      items: [],
+      error: error
+    }
+  }
+}
+
+export function receiveFacets (facets) {
+  return {
+    type: FETCH_FACETS_SUCCESS,
+    facets: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      items: facets,
+      error: null
+    }
   }
 }
 
@@ -84,6 +121,23 @@ export function receiveCatalogs (catalogs) {
 }
 
 //ASYNC
+export function fetchFacets() {
+  return function (dispatch) {
+    dispatch(requestFacets());
+
+    //TODO Add fields to query
+    return fetch("/api/facets")
+      .then(response => response.json())
+      .then(json =>
+        /*dispatch(receiveCatalogs(json.data.catalogs))*/
+        dispatch(receiveFacets(json))
+      )
+      .catch(error =>
+        dispatch(receiveFacetsFailure(error))
+      )
+  }
+}
+
 export function fetchCatalogs(fields) {
   return function (dispatch) {
     dispatch(requestCatalogs());
@@ -93,7 +147,7 @@ export function fetchCatalogs(fields) {
       .then(response => response.json())
       .then(json =>
         /*dispatch(receiveCatalogs(json.data.catalogs))*/
-        dispatch(receiveCatalogs(json.data.children.map(child => child.data)))
+        dispatch(receiveCatalogs(json))
       )
       .catch(error =>
         dispatch(receiveCatalogsFailure(error))
@@ -128,31 +182,50 @@ export function fetchCatalogs(fields) {
 }*/
 
 export const actions = {
-  selectCatalogKey,
-  selectCatalogValue,
-  addCatalogKeyValue,
-  removeCatalogKeyValue,
-  fetchCatalogs,
+  //Sync Facets
+  selectFacetKey,
+  selectFacetValue,
+  addFacetKeyValue,
+  removeFacetKeyValue,
+  requestFacets,
+  receiveFacetsFailure,
+  receiveFacets,
+  //Sync Catalogs
   requestCatalogs,
   receiveCatalogsFailure,
-  receiveCatalogs
+  receiveCatalogs,
+  //Async
+  fetchFacets,
+  fetchCatalogs
 };
 
 // ------------------------------------
 // Action Handlers
 // ------------------------------------
 const ACTION_HANDLERS = {
-  [SELECT_CATALOG_KEY]: (state, action) => {
-    return ({ ...state, currentSelectedKey: action.key  });
-  },
-  [SELECT_CATALOG_VALUE]: (state, action) => {
+  [SELECT_FACET_KEY]: (state, action) => {
     return ({ ...state, currentSelectedKey: action.key, currentSelectedValue: action.value });
   },
-  [ADD_CATALOG_KEY_VALUE_PAIR]: (state, action) => {
-    return ({ ...state, selectedFields: state.selectedFields.concat({ key: action.key, value: action.value })/*.push({ key: action.key, value: action.value })*/ });
+  [SELECT_FACET_VALUE]: (state, action) => {
+    return ({ ...state, currentSelectedValue: action.value });
   },
-  [REMOVE_CATALOG_KEY_VALUE_PAIR]: (state, action) => {
-    return ({ ...state, selectedFields: state.selectedFields }); //TODO: Remove field with both key and value
+  [ADD_FACET_KEY_VALUE_PAIR]: (state, action) => {
+    return ({ ...state, selectedFacets: state.selectedFacets.concat({ key: action.key, value: action.value }) });
+  },
+  [REMOVE_FACET_KEY_VALUE_PAIR]: (state, action) => {
+    let selectedFacets = state.selectedFacets.slice();
+    let index = selectedFacets.findIndex( x => x.key === action.key && x.value === action.value);
+    if( index > -1 ) selectedFacets.splice(index, 1);
+    return ({ ...state, selectedFacets: selectedFacets });
+  },
+  [FETCH_FACETS_REQUEST]: (state, action) => {
+    return ({ ...state, facets: action.facets });
+  },
+  [FETCH_FACETS_FAILURE]: (state, action) => {
+    return ({ ...state, facets: action.facets });
+  },
+  [FETCH_FACETS_SUCCESS]: (state, action) => {
+    return ({ ...state, facets: action.facets });
   },
   [FETCH_CATALOGS_REQUEST]: (state, action) => {
     return ({ ...state, catalogs: action.catalogs });
@@ -174,8 +247,16 @@ const ACTION_HANDLERS = {
 const initialState = {
   currentSelectedKey: "",
   currentSelectedValue: "",
-  selectedFields: [],
+  selectedFacets: [],
+  selectedCatalogs: [],
   selectedDatasets: [],
+  facets: {
+    requestedAt: null,
+    receivedAt: null,
+    isFetching: false,
+    items: [],
+    error: null
+  },
   catalogs: {
     requestedAt: null,
     receivedAt: null,

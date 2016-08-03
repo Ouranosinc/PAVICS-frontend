@@ -1,55 +1,92 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import classes from './Visualize.scss'
+import SearchCatalog from '../../../containers/SearchCatalog'
+
+import {
+  //Facets
+  selectFacetKey,
+  selectFacetValue,
+  addFacetKeyValue,
+  removeFacetKeyValue,
+  requestFacets,
+  receiveFacetsFailure,
+  receiveFacets,
+  //Catalogs
+  requestCatalogs,
+  receiveCatalogsFailure,
+  receiveCatalogs,
+  //Async
+  fetchFacets,
+  fetchCatalogs
+} from '../modules/Visualize'
 
 var me;
 
-//This is actually a smart component...
-
 class Visualize extends React.Component {
   static propTypes = {
-    /*wms: React.PropTypes.object,
-    saved: React.PropTypes.array.isRequired,
-    fetchWms: React.PropTypes.func.isRequired,
-    saveCurrentwms: React.PropTypes.func.isRequired,
-    onSelectedDataset: React.PropTypes.func.isRequired*/
-  }
+
+  };
 
   constructor(props) {
     super(props);
     console.log(props);
-    this.props.fetchCatalogs();
+    this.props.fetchFacets();
     this.lastKey = 0;
     this.lastValue = 0;
     me = this;
   }
 
-  onFetchClick(){
-    me.props.fetchCatalogs();
-  }
-
-  onAddSelectedField(){
-    me.lastKey++;
-    me.lastValue++;
-    me.props.addCatalogKeyValue(me.lastKey, me.lastValue);
-  }
-
-  onRemoveSelectedField(){
-    me.props.removeCatalogKeyValue(1, 1);
-  }
-
   render () {
     return (
-      <div className={classes['VisualizeContainer']}>
-        <h1>Test props</h1>
-        <div>{ this.props.catalogs }</div>
-        <button onClick={this.onFetchClick}>Refetch</button>
-        <button onClick={this.onAddSelectedField}>Add Field</button>
-        <button onClick={this.onRemoveSelectedField}>Remove Field</button>
-        <div></div>
-        <div></div>
+      <div className={classes['Visualize']}>
+        <div className="row">
+          <div className={classes.overlappingComponent + " col-sm-4 col-md-4 col-lg-4"}>
+            <div className={classes.overlappingBackground + " panel panel-default"}>
+              <div className="panel-body">
+                <SearchCatalog {...this.props }></SearchCatalog>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-12 col-lg-12">
+            <div className="panel panel-default">
+              <div className="panel-body">
+                <h1>The Map Background is coming soon...</h1>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     )
   }
 }
 
-export default Visualize
+const mapActionCreators = {
+  //Facets
+  selectFacetKey,
+  selectFacetValue,
+  addFacetKeyValue,
+  removeFacetKeyValue,
+  requestFacets,
+  receiveFacetsFailure,
+  receiveFacets,
+  //Catalogs
+  fetchCatalogs,
+  requestCatalogs,
+  receiveCatalogsFailure,
+  receiveCatalogs,
+  //Async
+  fetchFacets,
+  fetchCatalogs
+};
+
+const mapStateToProps = (state) => ({
+  currentSelectedKey: state.visualize.currentSelectedKey,
+  currentSelectedValue: state.visualize.currentSelectedValue,
+  selectedFacets: state.visualize.selectedFacets,
+  selectedDatasets: state.visualize.selectedDatasets,
+  catalogs: state.visualize.catalogs,
+  facets: state.visualize.facets
+});
+
+export default connect(mapStateToProps, mapActionCreators)(Visualize)
