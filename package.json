@@ -110,11 +110,13 @@
     "koa-request": "^1.0.0",
     "koa-route": "^2.4.2",
     "koa-static": "^2.0.0",
+    "node-sass": "3.8.0 ",
     "normalize.css": "^4.1.1",
     "ol-react": "0.0.4",
     "openlayers": "^3.17.1",
     "postcss-loader": "^0.9.0",
     "react": "^15.0.0",
+    "react-data-grid": "^1.0.23",
     "react-dom": "^15.0.0",
     "react-redux": "^4.0.0",
     "react-router": "^2.2.0",
@@ -127,8 +129,7 @@
     "url-loader": "^0.5.6",
     "webpack": "^1.12.14",
     "xml2js": "0.4.16",
-    "yargs": "^4.0.0",
-    "node-sass": "3.8.0 "
+    "yargs": "^4.0.0"
   },
   "devDependencies": {
     "babel-eslint": "^6.0.0-beta.6",

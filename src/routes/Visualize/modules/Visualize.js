@@ -7,6 +7,8 @@ export const SELECT_FACET_KEY = 'Visualize.SELECT_FACET_KEY';
 export const SELECT_FACET_VALUE = 'Visualize.SELECT_FACET_VALUE';
 export const ADD_FACET_KEY_VALUE_PAIR = 'Visualize.ADD_FACET_KEY_VALUE_PAIR';
 export const REMOVE_FACET_KEY_VALUE_PAIR = 'Visualize.REMOVE_FACET_KEY_VALUE_PAIR';
+export const OPEN_DATASET_DETAILS = 'Visualize.OPEN_DATASET_DETAILS';
+export const CLOSE_DATASET_DETAILS = 'Visualize.CLOSE_DATASET_DETAILS';
 
 //ASYNC
 export const FETCH_FACETS_REQUEST = 'Visualize.FETCH_FACETS_REQUEST';
@@ -47,6 +49,19 @@ export function removeFacetKeyValue (key, value) {
     type: REMOVE_FACET_KEY_VALUE_PAIR,
     key: key,
     value: value
+  }
+}
+
+export function openDatasetDetails (id) {
+  return {
+    type: OPEN_DATASET_DETAILS,
+    id: id
+  }
+}
+
+export function closeDatasetDetails () {
+  return {
+    type: OPEN_DATASET_DETAILS
   }
 }
 
@@ -198,6 +213,8 @@ export const actions = {
   receiveFacetsFailure,
   receiveFacets,
   //Sync Datasets
+  openDatasetDetails,
+  closeDatasetDetails,
   requestDatasets,
   receiveDatasetsFailure,
   receiveDatasets,
@@ -224,6 +241,12 @@ const ACTION_HANDLERS = {
     let index = selectedFacets.findIndex( x => x.key === action.key && x.value === action.value);
     if( index > -1 ) selectedFacets.splice(index, 1);
     return ({ ...state, selectedFacets: selectedFacets });
+  },
+  [OPEN_DATASET_DETAILS]: (state, action) => {
+    return ({ ...state, currentOpenedDataset: action.id });
+  },
+  [CLOSE_DATASET_DETAILS]: (state) => {
+    return ({ ...state, currentOpenedDataset: "" });
   },
   [FETCH_FACETS_REQUEST]: (state, action) => {
     return ({ ...state, facets: action.facets });
@@ -254,6 +277,7 @@ const ACTION_HANDLERS = {
 const initialState = {
   currentSelectedKey: "",
   currentSelectedValue: "",
+  currentOpenedDataset: "",
   selectedFacets: [],
   selectedDatasets: [],
   facets: {
