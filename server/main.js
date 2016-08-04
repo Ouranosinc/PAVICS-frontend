@@ -24,6 +24,7 @@ var datasets = require('./controllers/datasets');
 app.use(route.get('/api/wms/capabilities', birdhouse.getCapabilities));
 app.use(route.get('/api/facets', facets.getFacets));
 app.use(route.get('/api/datasets', datasets.getDatasets));
+app.use(route.get('/api/dataset', datasets.getDataset));
 
 // Enable koa-proxy if it has been enabled in the config.
 if (config.proxy && config.proxy.enabled) {

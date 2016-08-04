@@ -1,13 +1,23 @@
 .SearchCatalogResults {
   .DatasetTable{
-    max-height: 400px;
+    max-height: 200px;
     overflow-y: scroll;
+    overflow-x: hidden;
   }
 
   .DatasetRow{
     border: 1px solid #DDD;
     width: 100%;
     text-align: left;
+  }
+
+  .DatasetRowNotSelected{
+    padding: 5px;
+  }
+
+  .DatasetRowSelected{
+    padding: 5px;
+    background: #DDD;
   }
 
   .DatasetRowExpandButton{
@@ -19,7 +29,8 @@
   }
 
   .DatasetRowTitle{
-    font-weight: bold;
+    //font-weight: bold;
+    color: #000;
     margin-left: 10px;
   }
 

@@ -1,8 +1,10 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import classes from './Visualize.scss'
+import OLComponent from '../../../components/OLComponent'
 import SearchCatalog from '../../../containers/SearchCatalog'
 import SearchCatalogResults from '../../../containers/SearchCatalogResults'
+import DatasetDetails from '../../../components/DatasetDetails'
 
 import {
   //Facets
@@ -14,14 +16,18 @@ import {
   receiveFacetsFailure,
   receiveFacets,
   //datasets
-  requestDatasets,
-  receiveDatasetsFailure,
-  receiveDatasets,
+  requestDataset,
+  receiveDatasetFailure,
+  receiveDataset,
+  requestCatalogDatasets,
+  receiveCatalogDatasetsFailure,
+  receiveCatalogDatasets,
   openDatasetDetails,
   closeDatasetDetails,
   //Async
   fetchFacets,
-  fetchDatasets
+  fetchDataset,
+  fetchCatalogDatasets
 } from '../modules/Visualize'
 
 var me;
@@ -44,7 +50,7 @@ class Visualize extends React.Component {
     return (
       <div className={classes['Visualize']}>
         <div className="row">
-          <div className={classes.searchCatalogComponent + " col-sm-5 col-md-4 col-lg-4"}>
+          <div className={classes.searchCatalogComponent + " col-sm-6 col-md-5 col-lg-4"}>
             <div className={classes.overlappingBackground + " panel panel-default"}>
               <div className="panel-body">
                 <SearchCatalog {...this.props }></SearchCatalog>
@@ -52,6 +58,17 @@ class Visualize extends React.Component {
               </div>
             </div>
           </div>
+          {
+            (this.props.selectedDatasets.receivedAt) ?
+              <div className={classes.datasetDetailsComponent + " col-sm-5 col-md-6 col-lg-6"}>
+                <div className={classes.overlappingBackground + " panel panel-default"}>
+                  <div className="panel-body">
+                    <DatasetDetails {...this.props }></DatasetDetails>
+                  </div>
+                </div>
+              </div> :
+              null
+          }
           {/*<div className={classes.searchCatalogResultsComponent + " col-sm-5 col-md-5 col-lg-5"}>
             <div className={classes.overlappingBackground + " panel panel-default"}>
               <div className="panel-body">
@@ -64,7 +81,7 @@ class Visualize extends React.Component {
           <div className={classes.backgroundComponent + " col-md-12 col-lg-12"}>
             <div className="panel panel-default">
               <div className="panel-body">
-                <h1>The Map Background is coming soon...</h1>
+                <OLComponent />
               </div>
             </div>
           </div>
@@ -84,15 +101,18 @@ const mapActionCreators = {
   receiveFacetsFailure,
   receiveFacets,
   //Datasets
-  fetchDatasets,
-  requestDatasets,
-  receiveDatasetsFailure,
-  receiveDatasets,
+  requestDataset,
+  receiveDatasetFailure,
+  receiveDataset,
+  requestCatalogDatasets,
+  receiveCatalogDatasetsFailure,
+  receiveCatalogDatasets,
   openDatasetDetails,
   closeDatasetDetails,
   //Async
   fetchFacets,
-  fetchDatasets
+  fetchDataset,
+  fetchCatalogDatasets
 };
 
 const mapStateToProps = (state) => ({

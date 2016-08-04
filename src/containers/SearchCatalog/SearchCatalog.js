@@ -15,12 +15,12 @@ export class SearchCatalog extends React.Component {
     requestFacets: React.PropTypes.func.isRequired,
     receiveFacetsFailure: React.PropTypes.func.isRequired,
     receiveFacets: React.PropTypes.func.isRequired,
-    fetchDatasets: React.PropTypes.func.isRequired,
-    requestDatasets: React.PropTypes.func.isRequired,
-    receiveDatasetsFailure: React.PropTypes.func.isRequired,
-    receiveDatasets: React.PropTypes.func.isRequired,
+    requestCatalogDatasets: React.PropTypes.func.isRequired,
+    receiveCatalogDatasetsFailure: React.PropTypes.func.isRequired,
+    receiveCatalogDatasets: React.PropTypes.func.isRequired,
     fetchFacets: React.PropTypes.func.isRequired,
-    fetchDatasets: React.PropTypes.func.isRequired,
+    fetchDataset: React.PropTypes.func.isRequired,
+    fetchCatalogDatasets: React.PropTypes.func.isRequired,
     datasets: React.PropTypes.object.isRequired,
     facets: React.PropTypes.object.isRequired
   };
@@ -44,14 +44,14 @@ export class SearchCatalog extends React.Component {
       this.props.addFacetKeyValue(this.props.currentSelectedKey, this.props.currentSelectedValue);
       this.props.selectFacetKey("");
       //TODO: Auto-fetch on onAddFacet() ?
-      this.props.fetchDatasets();
+      this.props.fetchCatalogDatasets();
     }
   }
 
   _onRemoveFacet(key, value){
     this.props.removeFacetKeyValue(key, value);
     //TODO: Auto-fetch on onRemoveFacet() ?
-    this.props.fetchDatasets();
+    this.props.fetchCatalogDatasets();
   }
 
   _onSelectedKey(event){
@@ -69,11 +69,11 @@ export class SearchCatalog extends React.Component {
   }
 
   _onSearchCatalog(event){
-    this.props.fetchDatasets();
+    this.props.fetchCatalogDatasets();
   }
 
   render () {
-    console.log("render SearchCatalog");
+    //console.log("render SearchCatalog");
     let mainComponent;
     if(this.props.facets.isFetching){
       mainComponent = <Loader name="facets" />
@@ -109,14 +109,18 @@ export class SearchCatalog extends React.Component {
               </a>
             </div>
           </div>
-          <div className="form-group">
-            <label className="col-sm-4 col-md-3 col-lg-3 control-label">Facets:</label>
-            <div className="col-sm-8 col-md-9 col-lg-9">
-              {this.props.selectedFacets.map((x, i) =>
-                <FacetLabel key={i + 1} facet={ x } onRemoveFacet={ this._onRemoveFacet }/>
-              )}
-            </div>
-          </div>
+          {
+            (this.props.selectedFacets.length)
+              ? <div className="form-group">
+                  <label className="col-sm-4 col-md-3 col-lg-3 control-label">Facets:</label>
+                  <div className="col-sm-8 col-md-9 col-lg-9">
+                    {this.props.selectedFacets.map((x, i) =>
+                      <FacetLabel key={i + 1} facet={ x } onRemoveFacet={ this._onRemoveFacet }/>
+                    )}
+                  </div>
+                </div>
+              : null
+          }
           {/*<div className="form-group">
            <div className="col-sm-offset-4 col-md-offset-3 col-lg-offset-3 col-sm-3 col-md-3 col-lg-3">
            <a type="button" className="btn btn-sm btn-default" title="Search" onClick={ this._onSearchCatalog }>

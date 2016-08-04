@@ -2,6 +2,7 @@
 import config from '../../config'
 import { parseString } from 'xml2js'
 import request from 'koa-request'
+import url from 'url'
 
 function parseXMLThunk(response){
   return function(callback) {
@@ -58,5 +59,124 @@ module.exports.getDatasets = function * list(next) {
     this.body = responseJson.body;
   }else{
     this.body = [];
+  }
+};
+
+function getServicesFromXmlCatalog(catalogJson, query){
+  let services = [];
+  var parsedUrl  = url.parse(query);
+  catalogJson.catalog.service.forEach(function(service){
+    if(service.$.serviceType === "Compound"){
+      service.service.forEach(function(service){
+        services.push({
+          type: service.$.serviceType,
+          baseUrl: `${ (service.$.base.includes('//') || service.$.base.includes('globus:')) ? "" : `${parsedUrl.protocol}//${parsedUrl.host}` }${service.$.base}`
+        })
+      });
+    }else{
+      services.push({
+        type: service.$.serviceType,
+        baseUrl: `${ (service.$.base.includes('//') || service.$.base.includes('globus:')) ? "" : `${parsedUrl.protocol}//${parsedUrl.host}` }${service.$.base}`
+      })
+    }
+  });
+  //TODO: WMS SERVICE IS HARDCODED AT THIS POINT
+  services.push({
+    type: "WMS",
+    baseUrl: "http://132.217.140.31:8080"
+  });
+  return services;
+}
+
+function getMetadataFromXmlCatalog(catalogJson){
+  let metadatas = [];
+  catalogJson.catalog.dataset[0].property.forEach(function(metadata){
+    metadatas.push({
+      key: metadata.$.name,
+      value: metadata.$.value
+    })
+  });
+  return metadatas;
+}
+
+function getDatasetsFromXmlCatalog(catalogJson, baseServices){
+  let datasets = [];
+  catalogJson.catalog.dataset[0].dataset.forEach(function(dataset){
+    //TODO We should loop recursively in dataset, that's actually why dataSize and serviceName do not exists!
+    //TODO: We now completely ignore those third level datasets
+    if(!dataset.dataset) {
+      let metadatas = [];
+      let size = (dataset.dataSize)?`${ dataset.dataSize[0]._ }${ dataset.dataSize[0].$.units }`:""; //TOFIX
+      let name = dataset.$.name;
+      let id = dataset.$.id;
+      let services = [];
+      let mainServiceType = (dataset.serviceName)?dataset.serviceName[0]:""; //TOFIX
+      let mainService = baseServices.find(x => x.type === mainServiceType);
+      if(mainService){ //TOFIX
+        services.push({
+          type: dataset.serviceName[0],
+          url: mainService.baseUrl + dataset.$.urlPath
+        });
+      }
+      //TODO: WMS SERVICE IS HARDCODED AT THIS POINT
+      services.push({
+        type: "WMS",
+        url: baseServices.find(x => x.type === "WMS").baseUrl + "/ncWMS2/wms?REQUEST=GetLegendGraphic&PALETTE=default&COLORBARONLY=true&WIDTH=110&HEIGHT=264"
+      });
+      if(dataset.access){
+        dataset.access.forEach(function (access) {
+          let base = baseServices.find(x => access.$.serviceName.includes(x.type)); //Alternatives to get OpenDAPServer === OpenDAP
+          if (base) {
+            services.push({
+              type: base.type,
+              url: base.baseUrl + access.$.urlPath
+            });
+          }
+        });
+      }
+      if(dataset.property){
+        dataset.property.forEach(function (metadata) {
+          metadatas.push({
+            key: metadata.$.name,
+            value: metadata.$.value
+          })
+        });
+      }
+      datasets.push({
+        metadatas: metadatas,
+        size: size,
+        name: name,
+        id: id,
+        services: services
+      })
+    }
+  });
+  return datasets;
+}
+
+function extractDatasetFromXmlCatalog(catalogJson, query){
+  let services = getServicesFromXmlCatalog(catalogJson, query);
+  let metadatas = getMetadataFromXmlCatalog(catalogJson);
+  let datasets = getDatasetsFromXmlCatalog(catalogJson, services);
+  return {
+    name: catalogJson.catalog.dataset[0].$.name,
+    id: catalogJson.catalog.dataset[0].$.ID,
+    service: services,
+    metadatas: metadatas,
+    datasets: datasets
+  };
+}
+
+module.exports.getDataset = function * list(next) {
+  if ('GET' != this.method) return yield next;
+  let query = this.request.query.url;
+  if (query.length){
+    console.log("Found url: " + query);
+    let responseWPS = yield request(query);
+    let xmlToJson = yield parseXMLThunk(responseWPS.body);
+    let dataset = extractDatasetFromXmlCatalog(xmlToJson, query);
+    this.body = dataset;
+  }else{
+    this.body = {};
   }
 };

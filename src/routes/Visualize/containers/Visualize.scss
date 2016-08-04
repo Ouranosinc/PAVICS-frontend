@@ -12,6 +12,13 @@
     z-index: 1000;
   }
 
+  .datasetDetailsComponent{
+    position: fixed;
+    right: 0;
+    margin: 20px 20px 0 60px;
+    z-index: 1000;
+  }
+
   .overlappingBackground{
     word-break:break-all;
     opacity: 0.9;

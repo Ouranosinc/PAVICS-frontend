@@ -18,12 +18,13 @@ export class SearchCatalogResults extends React.Component {
     me = this;
   }
 
-  _onOpenDataset(id){
+  _onOpenDataset(id, url){
     if(id === this.props.currentOpenedDataset){
       this.props.closeDatasetDetails();
     }else{
       this.props.openDatasetDetails(id);
     }
+    this.props.fetchDataset(url);
     //TODO: Fetch Dataset Detail following thredds url
     //TODO: Show Resource list (sub-datasets)
   }
@@ -33,7 +34,7 @@ export class SearchCatalogResults extends React.Component {
   }
 
   render() {
-    console.log("render SearchCatalogResults");
+    //console.log("render SearchCatalogResults");
     let mainComponent;
     if(this.props.datasets.isFetching){
       mainComponent = <Loader name="datasets" />
@@ -42,17 +43,18 @@ export class SearchCatalogResults extends React.Component {
         mainComponent = <div className={classes['DatasetTable']}>
           {this.props.datasets.items.map((x, i) =>
             <div className={classes['DatasetRow']} key={i + 1}>
-              <a href="#" onClick={() => this._onOpenDataset(x.id)} className={classes['DatasetRowExpandButton']}>
-                <i className="glyphicon glyphicon-folder-open"></i>
-              </a>
-              <span className={classes['DatasetRowTitle']}> { x.id }</span>
-              <a href="#" onClick={() => this._onSelectDataset(x.id)} className={classes['DatasetRowSelectButton']}>
-                <i className="glyphicon glyphicon-ok"></i>
-              </a>
-              { x.id === this.props.currentOpenedDataset ? <div className={classes['DatasetRowDetails']}>
-                <div>URL: <a href={ x.url[0] }>{ x.url[0] }</a></div>
-                <div>META-DATAS: </div>
-              </div> : null }
+              <div className={(x.id === this.props.currentOpenedDataset)?classes['DatasetRowSelected']:classes['DatasetRowNotSelected']}>
+                <a href="#" onClick={() => this._onOpenDataset(x.id, x.url[0])} className={classes['DatasetRowExpandButton']}>
+                  <i className="glyphicon glyphicon-folder-open"></i>
+                </a>
+                <a href="#" onClick={() => this._onOpenDataset(x.id, x.url[0])} className={classes['DatasetRowTitle']}> { x.id }</a>
+                {/*<a href="#" onClick={() => this._onSelectDataset(x.id)} className={classes['DatasetRowSelectButton']}>
+                  <i className="glyphicon glyphicon-ok"></i>
+                </a>*/}
+                { x.id === this.props.currentOpenedDataset ? <div className={classes['DatasetRowDetails']}>
+                  <div>TODO: Any pertinent data</div>
+                </div> : null }
+              </div>
             </div>
           )}
         </div>

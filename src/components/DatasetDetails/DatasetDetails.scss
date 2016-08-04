@@ -1,0 +1,24 @@
+.DatasetDetails {
+  text-align: left;
+
+  .DatasetTable{
+    max-height: 200px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+
+  table{
+    width: 100%;
+  }
+
+  table tr th{
+    background: #337ab7;
+  }
+
+  table tr td, table tr th{
+    border: #ddd solid 1px;
+    padding: 5px;
+    border: #ddd solid 1px;
+  }
+
+}
