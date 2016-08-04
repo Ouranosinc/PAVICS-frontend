@@ -11,7 +11,7 @@ class wms extends React.Component {
   static propTypes = {
     wms: React.PropTypes.object,
     saved: React.PropTypes.array.isRequired,
-    fetchwms: React.PropTypes.func.isRequired,
+    fetchWms: React.PropTypes.func.isRequired,
     saveCurrentwms: React.PropTypes.func.isRequired
   }
 

@@ -1,11 +1,11 @@
 import { connect } from 'react-redux'
-import { fetchwms, saveCurrentwms } from '../modules/wms'
+import { fetchWms, saveCurrentWms } from '../modules/wms'
 
 import wms from '../components/wms'
 
 const mapActionCreators = {
-  fetchwms,
-  saveCurrentwms
+  fetchWms,
+  saveCurrentWms
 }
 
 const mapStateToProps = (state) => ({

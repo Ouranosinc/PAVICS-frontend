@@ -8,14 +8,14 @@ class DatasetsComponent extends React.Component {
   static propTypes = {
     wms: React.PropTypes.object,
     saved: React.PropTypes.array.isRequired,
-    fetchwms: React.PropTypes.func.isRequired,
+    fetchWms: React.PropTypes.func.isRequired,
     saveCurrentwms: React.PropTypes.func.isRequired,
     onSelectedDataset: React.PropTypes.func.isRequired
   }
 
   constructor(props) {
     super(props);
-    this.props.fetchwms();
+    this.props.fetchWms();
     this.state = {};
     this.state.selectedIndex;
     me = this;

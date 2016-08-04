@@ -5,6 +5,7 @@ import CounterRoute from './Counter'
 import OpenLayersRoute from './OpenLayers'
 import CesiumRoute from './Cesium'
 import WmsRoute from './WMS'
+import VisualizeRoute from './Visualize'
 
 /*  Note: Instead of using JSX, we recommend using react-router
     PlainRoute objects to build route definitions.   */
@@ -17,7 +18,8 @@ export const createRoutes = (store) => ({
     CounterRoute(store),
     OpenLayersRoute(store),
     CesiumRoute(store),
-    WmsRoute(store)
+    WmsRoute(store),
+    VisualizeRoute(store)
   ]
 });
 

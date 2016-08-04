@@ -1,17 +1,26 @@
 import React from 'react'
+import classes from './<%= pascalEntityName %>.scss'
 
-type Props = {
+var me;
 
-};
 export class <%= pascalEntityName %> extends React.Component {
-  props: Props;
+  static propTypes = {
+
+  }
+
+  constructor(props) {
+    super(props);
+    me = this;
+  }
+
 
   render () {
     return (
-      <div></div>
+      <div className={classes['<%= pascalEntityName %>']}>
+        <h1><%= pascalEntityName %></h1>
+      </div>
     )
   }
 }
 
 export default <%= pascalEntityName %>
-
