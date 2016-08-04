@@ -1,0 +1,29 @@
+.SearchCatalogResults {
+  .DatasetTable{
+    max-height: 400px;
+    overflow-y: scroll;
+  }
+
+  .DatasetRow{
+    border: 1px solid #DDD;
+    width: 100%;
+    text-align: left;
+  }
+
+  .DatasetRowExpandButton{
+    float: left;
+  }
+
+  .DatasetRowSelectButton{
+    margin-left: 5px;
+  }
+
+  .DatasetRowTitle{
+    font-weight: bold;
+    margin-left: 10px;
+  }
+
+  .DatasetRowDetails{
+    margin-left: 25px;
+  }
+}

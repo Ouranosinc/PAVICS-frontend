@@ -44,20 +44,21 @@ class Visualize extends React.Component {
     return (
       <div className={classes['Visualize']}>
         <div className="row">
-          <div className={classes.searchCatalogComponent + " col-sm-4 col-md-4 col-lg-3"}>
+          <div className={classes.searchCatalogComponent + " col-sm-5 col-md-4 col-lg-4"}>
             <div className={classes.overlappingBackground + " panel panel-default"}>
               <div className="panel-body">
                 <SearchCatalog {...this.props }></SearchCatalog>
-              </div>
-            </div>
-          </div>
-          <div className={classes.searchCatalogResultsComponent + " col-sm-5 col-md-5 col-lg-5"}>
-            <div className={classes.overlappingBackground + " panel panel-default"}>
-              <div className="panel-body">
                 <SearchCatalogResults {...this.props }></SearchCatalogResults>
               </div>
             </div>
           </div>
+          {/*<div className={classes.searchCatalogResultsComponent + " col-sm-5 col-md-5 col-lg-5"}>
+            <div className={classes.overlappingBackground + " panel panel-default"}>
+              <div className="panel-body">
+
+              </div>
+            </div>
+          </div>*/}
         </div>
         <div className="row">
           <div className={classes.backgroundComponent + " col-md-12 col-lg-12"}>
