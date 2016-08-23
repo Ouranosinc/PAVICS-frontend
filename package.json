@@ -113,6 +113,7 @@
     "node-sass": "3.8.0 ",
     "normalize.css": "^4.1.1",
     "ol-react": "0.0.4",
+    "ol3-layerswitcher": "^1.1.2",
     "openlayers": "^3.17.1",
     "postcss-loader": "^0.9.0",
     "react": "^15.0.0",

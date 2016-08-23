@@ -133,7 +133,7 @@ export class SearchCatalog extends React.Component {
     }
     return (
       <div className={classes['SearchCatalog']}>
-        <h3>Filter Catalog by facets</h3>
+        <h3>Filter Catalogs by facets</h3>
         { mainComponent }
       </div>
     )

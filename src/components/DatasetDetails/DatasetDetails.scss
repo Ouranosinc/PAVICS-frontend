@@ -7,6 +7,28 @@
     overflow-x: hidden;
   }
 
+  .DatasetMetadatas{
+    /*max-height: 50px;
+    overflow-y: scroll;
+    overflow-x: hidden;*/
+  }
+
+  .DatasetTableResourceTitleColumn{
+    min-width:150px;
+  }
+
+  .DatasetTableOpenDAPColumn{
+    min-width:80px;
+  }
+
+  .DatasetTableHTTPColumn{
+    min-width:80px;
+  }
+
+  .DatasetTableWMSColumn{
+    min-width:80px;
+  }
+
   table{
     width: 100%;
   }

@@ -9,10 +9,10 @@ const LAYER_VALUES = ["$", "Name", "Title", "Abstract", "EX_GeographicBoundingBo
 
 class wms extends React.Component {
   static propTypes = {
-    wms: React.PropTypes.object,
+    /*wms: React.PropTypes.object,
     saved: React.PropTypes.array.isRequired,
     fetchWms: React.PropTypes.func.isRequired,
-    saveCurrentwms: React.PropTypes.func.isRequired
+    saveCurrentwms: React.PropTypes.func.isRequired*/
   }
 
   constructor(props) {

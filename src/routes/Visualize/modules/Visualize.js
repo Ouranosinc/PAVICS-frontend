@@ -9,6 +9,7 @@ export const ADD_FACET_KEY_VALUE_PAIR = 'Visualize.ADD_FACET_KEY_VALUE_PAIR';
 export const REMOVE_FACET_KEY_VALUE_PAIR = 'Visualize.REMOVE_FACET_KEY_VALUE_PAIR';
 export const OPEN_DATASET_DETAILS = 'Visualize.OPEN_DATASET_DETAILS';
 export const CLOSE_DATASET_DETAILS = 'Visualize.CLOSE_DATASET_DETAILS';
+export const SELECT_LOAD_WMS = 'Visualize.SELECT_LOAD_WMS';
 
 //ASYNC
 export const FETCH_FACETS_REQUEST = 'Visualize.FETCH_FACETS_REQUEST';
@@ -65,6 +66,15 @@ export function openDatasetDetails (id) {
 export function closeDatasetDetails () {
   return {
     type: OPEN_DATASET_DETAILS
+  }
+}
+
+export function selectLoadWms (url, id, name) {
+  return {
+    type: SELECT_LOAD_WMS,
+    url: url,
+    id: id,
+    name: name
   }
 }
 
@@ -304,6 +314,9 @@ const ACTION_HANDLERS = {
   [CLOSE_DATASET_DETAILS]: (state) => {
     return ({ ...state, currentOpenedDataset: "" });
   },
+  [SELECT_LOAD_WMS]: (state, action) => {
+  return ({ ...state, loadedWmsDatasets: state.loadedWmsDatasets.concat({ url: action.url, id: action.id, name: action.name }) });
+  },
   [FETCH_DATASET_REQUEST]: (state, action) => {
     return ({ ...state, selectedDatasets: action.selectedDatasets });
   },
@@ -343,8 +356,9 @@ const initialState = {
   currentSelectedKey: "",
   currentSelectedValue: "",
   currentOpenedDataset: "",
+  loadedWmsDatasets: [],
   selectedFacets: [],
-  selectedDatasets: {
+  selectedDatasets: { //One only ==> Details
     requestedAt: null,
     receivedAt: null,
     isFetching: false,
