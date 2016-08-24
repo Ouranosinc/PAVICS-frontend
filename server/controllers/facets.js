@@ -20,6 +20,13 @@ function parseXMLAsync(response, callback){
         values: []
       })
     });
+    response.sort(function(a, b){
+      if (a.key < b.key)
+        return -1;
+      if (a.key > b.key)
+        return 1;
+      return 0;
+    });
     result.response.lst[1].lst[1].lst.forEach(function(object){
       let values = [];
       let index = response.findIndex( x => x.key === object.$.name );
@@ -27,6 +34,7 @@ function parseXMLAsync(response, callback){
         object.int.forEach(function(value){
           values.push(value.$.name);
         });
+        values.sort();
       }
       response[index].values = values
     });

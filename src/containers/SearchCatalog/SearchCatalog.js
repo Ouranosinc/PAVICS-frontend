@@ -25,8 +25,18 @@ export class SearchCatalog extends React.Component {
     facets: React.PropTypes.object.isRequired
   };
 
+
   constructor(props) {
     super(props);
+    this.recommendedKeys = [
+      "ensemble",
+      "experiment",
+      "institute",
+      "model",
+      "project",
+      "time_frequency",
+      "variable"
+    ];
     this.currentSelectedKey = "";
     this.currentSelectedValue = "";
     this.currentFacetValues = [];
@@ -85,9 +95,17 @@ export class SearchCatalog extends React.Component {
             <div className="col-sm-8 col-md-9 col-lg-9">
               <select id="facetKey" className="form-control" value={ this.props.currentSelectedKey } onChange={ this._onSelectedKey }>
                 <option value="">-- Select a key --</option>
-                {this.props.facets.items.map((x, i) =>
-                  <option key={i + 1} value={ x.key }>{ x.key }</option>
-                )}
+                <optgroup label="Recommended">
+                  {this.recommendedKeys.map((x, i) =>
+                    <option key={i + 1} value={ x }>{ x }</option>
+                  )}
+                </optgroup>
+                <optgroup label="Others">
+                  {this.props.facets.items.map((x, i) =>
+                  (this.recommendedKeys.includes(x.key))? null :
+                    <option key={i + 1} value={ x.key }>{ x.key }</option>
+                  )}
+                </optgroup>
               </select>
             </div>
           </div>

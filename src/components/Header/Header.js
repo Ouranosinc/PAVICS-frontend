@@ -9,20 +9,8 @@ export const Header = () => (
       Home
     </IndexLink>
     {' · '}
-    <Link to='/counter' activeClassName={classes.activeRoute}>
-      Counter
-    </Link>
-    {' · '}
-    <Link to='/openlayers' activeClassName={classes.activeRoute}>
-      OpenLayers
-    </Link>
-    {' · '}
     <Link to='/cesium' activeClassName={classes.activeRoute}>
       Cesium
-    </Link>
-    {' · '}
-    <Link to='/wms' activeClassName={classes.activeRoute}>
-      WMS
     </Link>
     {' · '}
     <Link to='/Visualize' activeClassName={classes.activeRoute}>

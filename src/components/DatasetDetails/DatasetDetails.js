@@ -28,7 +28,7 @@ export class DatasetDetails extends React.Component {
             <div className={classes['DatasetMetadatas']}>
               {
                 this.props.selectedDatasets.items[0].metadatas.map((x) =>
-                  <span key={x.key + x.value}><strong>{ x.key }: </strong>{ x.value } </span>,
+                  <div key={x.key + x.value}><strong>{ x.key }: </strong>{ x.value } </div>,
                 )
               }
             </div>
@@ -37,6 +37,7 @@ export class DatasetDetails extends React.Component {
                 <thead>
                 <tr>
                   <th className={classes['DatasetTableResourceTitleColumn']}>Resource title</th>
+                  <th className={classes['DatasetTableSizeColumn']}>Size</th>
                   <th className={classes['DatasetTableOpenDAPColumn']}>OpenDAP</th>
                   <th className={classes['DatasetTableHTTPColumn']}>HTTP</th>
                   <th className={classes['DatasetTableWMSColumn']}>WMS</th>
@@ -47,6 +48,7 @@ export class DatasetDetails extends React.Component {
                   this.props.selectedDatasets.items[0].datasets.map((x) =>
                   <tr key={x.name}>
                     <td>{ x.name }</td>
+                    <td>{ x.size.replace("bytes", "") }</td>
                     { this.renderLink(x.services.find( x=> x.type === "OpenDAP"), "View") }
                     { this.renderLink(x.services.find( x=> x.type === "HTTPServer"), "Download") }
                     { (x.services.find( x=> x.type === "WMS")) ?

@@ -61,7 +61,7 @@ class Visualize extends React.Component {
           </div>
           {
             (this.props.selectedDatasets.receivedAt) ?
-              <div className={classes.datasetDetailsComponent + " col-sm-5 col-md-6 col-lg-6"}>
+              <div className={classes.datasetDetailsComponent + " col-sm-5 col-md-6 col-lg-7"}>
                 <div className={classes.overlappingBackground + " panel panel-default"}>
                   <div className="panel-body">
                     <DatasetDetails {...this.props }></DatasetDetails>

@@ -300,7 +300,15 @@ const ACTION_HANDLERS = {
     return ({ ...state, currentSelectedValue: action.value });
   },
   [ADD_FACET_KEY_VALUE_PAIR]: (state, action) => {
-    return ({ ...state, selectedFacets: state.selectedFacets.concat({ key: action.key, value: action.value }) });
+    let facets = state.selectedFacets.concat({ key: action.key, value: action.value });
+    facets.sort(function(a, b){
+      if (a.key + a.value < b.key + b.value)
+      return -1;
+      if (a.key + a.value >  b.key + b.value)
+        return 1;
+      return 0;
+    });
+    return ({ ...state, selectedFacets: facets });
   },
   [REMOVE_FACET_KEY_VALUE_PAIR]: (state, action) => {
     let selectedFacets = state.selectedFacets.slice();

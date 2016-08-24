@@ -54,4 +54,10 @@
     list-style-type: none;
   }
 
+  /* Openlayers overwrite, TODO: Shouldn't be here */
+  .ol-zoom {
+    top: auto !important;
+    bottom: .5em !important;
+  }
+
 }
