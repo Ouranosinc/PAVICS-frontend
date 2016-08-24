@@ -1,7 +1,7 @@
 import React from 'react'
 import classes from './OLComponent.scss'
 import ol from 'openlayers';
-window.ol = ol; //ol3-layerswitcher.js needs ol as global (...)
+window.ol = ol; //_ol3-layerswitcher.js needs ol as global (...)
 require('ol3-layerswitcher/src/ol3-layerswitcher.js');
 require("openlayers/css/ol.css");
 require("ol3-layerswitcher/src/ol3-layerswitcher.css");

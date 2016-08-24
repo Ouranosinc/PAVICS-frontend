@@ -8,7 +8,7 @@
   }
 
   .DatasetRow{
-    border: 1px solid #DDD;
+    border: 1px solid #6B6B6B;
     width: 100%;
     text-align: left;
   }
@@ -19,7 +19,7 @@
 
   .DatasetRowSelected{
     padding: 5px;
-    background: #DDD;
+    background: rgba(0,0,0,0.2);
   }
 
   .DatasetRowExpandButton{

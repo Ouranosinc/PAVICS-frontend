@@ -42,7 +42,7 @@ export class SearchCatalogResults extends React.Component {
       if(this.props.datasets.items.length){
         mainComponent =
           <div>
-            <div>{ this.props.datasets.items.length } results</div>
+            <div>Found <strong>{ this.props.datasets.items.length }</strong> results</div>
             <div className={classes['DatasetTable']}>
               {this.props.datasets.items.map((x, i) =>
                 <div className={classes['DatasetRow']} key={i + 1}>
