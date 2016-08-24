@@ -32,6 +32,22 @@ If everything works, you should see the following:
 
 <img src="http://i.imgur.com/zR7VRG6.png?2" />
 
+## Docker
+
+```bash
+$ git clone https://github.com/Ouranosinc/PAVICS-frontend.git
+$ cd PAVICS-frontend
+$ docker-machine ip default #If on Windows uses VM IP (note that ip for next step) else localhost is fine
+$ vi config/index.js
+# Change line 37 with previous vm ip
+# server_host : '<docker-machine ip>', // use string 'localhost' to prevent exposure on local network
+# Save & Quit: Ctrl-C -> :wq!
+$ docker build -t "pavics-geoweb" .
+$ docker run -p 3000:3000 -it "pavics-geoweb" #Browse application at address <docker-machine ip>:3000
+```
+
+## NPM Scripts
+
 While developing, you will probably rely mostly on `npm start`; however, there are additional scripts at your disposal:
 
 |`npm run <script>`|Description|
