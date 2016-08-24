@@ -37,9 +37,13 @@ If everything works, you should see the following:
 ```bash
 $ git clone https://github.com/Ouranosinc/PAVICS-frontend.git
 $ cd PAVICS-frontend
+$ docker-machine ip default #If on Windows uses VM IP (note that ip for next step) else localhost is fine
+$ vi config/index.js
+# Change line 37 with previous vm ip
+# server_host : '<docker-machine ip>', // use string 'localhost' to prevent exposure on local network
+# Save & Quit: Ctrl-C -> :wq!
 $ docker build -t "pavics-geoweb" .
-$ docker run -p 80:3000 -it "pavics-geoweb" #Container port 3000 is fowarded to 80 on the host
-$ docker-machine ip default #If on Windows uses VM IP else localhost is fine
+$ docker run -p 3000:3000 -it "pavics-geoweb" #Browse application at address <docker-machine ip>:3000
 ```
 
 ## NPM Scripts
