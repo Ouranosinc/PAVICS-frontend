@@ -24,6 +24,7 @@ import {
   receiveCatalogDatasets,
   openDatasetDetails,
   closeDatasetDetails,
+  selectLoadWms,
   //Async
   fetchFacets,
   fetchDataset,
@@ -60,7 +61,7 @@ class Visualize extends React.Component {
           </div>
           {
             (this.props.selectedDatasets.receivedAt) ?
-              <div className={classes.datasetDetailsComponent + " col-sm-5 col-md-6 col-lg-6"}>
+              <div className={classes.datasetDetailsComponent + " col-sm-5 col-md-6 col-lg-7"}>
                 <div className={classes.overlappingBackground + " panel panel-default"}>
                   <div className="panel-body">
                     <DatasetDetails {...this.props }></DatasetDetails>
@@ -81,7 +82,7 @@ class Visualize extends React.Component {
           <div className={classes.backgroundComponent + " col-md-12 col-lg-12"}>
             <div className="panel panel-default">
               <div className="panel-body">
-                <OLComponent />
+                <OLComponent {...this.props }/>
               </div>
             </div>
           </div>
@@ -109,6 +110,7 @@ const mapActionCreators = {
   receiveCatalogDatasets,
   openDatasetDetails,
   closeDatasetDetails,
+  selectLoadWms,
   //Async
   fetchFacets,
   fetchDataset,
@@ -119,6 +121,7 @@ const mapStateToProps = (state) => ({
   currentSelectedKey: state.visualize.currentSelectedKey,
   currentSelectedValue: state.visualize.currentSelectedValue,
   currentOpenedDataset: state.visualize.currentOpenedDataset,
+  loadedWmsDatasets: state.visualize.loadedWmsDatasets,
   selectedFacets: state.visualize.selectedFacets,
   selectedDatasets: state.visualize.selectedDatasets,
   datasets: state.visualize.datasets,

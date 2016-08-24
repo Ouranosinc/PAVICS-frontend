@@ -7,7 +7,7 @@
  *                              **`tipLabel`** `String` - the button tooltip.
  */
 import ol from 'openlayers';
-require("openlayers/css/ol.css");
+//require("openlayers/css/ol.css");
 
 ol.control.LayerSwitcher = function(opt_options) {
 

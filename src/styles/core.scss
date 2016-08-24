@@ -54,4 +54,17 @@
     list-style-type: none;
   }
 
+  /* Openlayers overwrite, TODO: Shouldn't be here */
+  .ol-zoom {
+    top: auto !important;
+    bottom: .5em !important;
+  }
+
+  .ol-control {
+    /*padding: 0 !important;
+    background-color: #FFF !important;
+    border: 1px solid #ddd !important;
+    border-radius: 4px !important;*/
+  }
+
 }

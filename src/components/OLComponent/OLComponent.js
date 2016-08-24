@@ -1,31 +1,29 @@
 import React from 'react'
-//import classes from './CesiumComponent.scss'
+import classes from './OLComponent.scss'
 import ol from 'openlayers';
-require('./ol3-layerswitcher.js')
-import WMS from './'
-import $ from 'jquery';
-
+window.ol = ol; //_ol3-layerswitcher.js needs ol as global (...)
+require('ol3-layerswitcher/src/ol3-layerswitcher.js');
 require("openlayers/css/ol.css");
-require("./OLComponent.css");
-import classes from './ol3-layerswitcher.scss'
+require("ol3-layerswitcher/src/ol3-layerswitcher.css");
+//Couldn't figure out the bug when importing inner component css file but it works from node_modules
 
-
-var g_BING_API_KEY = 'AtXX65CBBfZXBxm6oMyf_5idMAMI7W6a5GuZ5acVcrYi6lCQayiiBz7_aMHB7JR7'
+var g_BING_API_KEY = 'AtXX65CBBfZXBxm6oMyf_5idMAMI7W6a5GuZ5acVcrYi6lCQayiiBz7_aMHB7JR7';
 
 
 class OLComponent extends React.Component {
   static propTypes = {
     capabilities: React.PropTypes.object,
     dataset: React.PropTypes.object
-  }
+  };
 
   constructor(props) {
     super(props);
+    this.layersCount = 0;
     this.map = null;
-    this.baseLayers = new ol.layer.Group({'title': 'Base maps', 'opacity':1.0, 'visible':true,'zIndex':0})
-    this.overlayLayers = new ol.layer.Group({'title': 'Overlays','opacity':1.0, 'visible':true,'zIndex':1})
-    this.view = null
-    this.tmpLayer=null
+    this.baseLayers = new ol.layer.Group({'title': 'Base maps', 'opacity':1.0, 'visible':true,'zIndex':0});
+    this.overlayLayers = new ol.layer.Group({'title': 'Overlays','opacity':1.0, 'visible':true,'zIndex':1});
+    this.view = null;
+    this.tmpLayer=null;
 
     this.popup = null;
 
@@ -49,6 +47,7 @@ class OLComponent extends React.Component {
 
   // Add backgrounnd layer (use once)
   initBackgroundLayer() {
+    var yolo = this.getMapBaseLayersList();
     this.addBingLayer('Aerial', this.getMapBaseLayersList(),'Aerial')
     //var wmsUrl = "http://demo.boundlessgeo.com/geoserver/wms";
     //var wmsParams = {'LAYERS': 'topp:states', 'TILED': true};
@@ -227,30 +226,34 @@ class OLComponent extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState){
-    if(this.props.dataset && this.props.capabilities){
-      var wmsUrl = this.props.capabilities.value["WMS_Capabilities"]["Service"][0]["OnlineResource"][0]["$"]["xlink:href"];
+    if(this.props.loadedWmsDatasets.length &&  this.layersCount != this.props.loadedWmsDatasets.length){
+      var wmsUrl = this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].url;
+      var wmsName = this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].name;
       var wmsParams = {
         'TRANSPARENT': 'TRUE',
-        'LAYERS' : this.props.dataset["Name"][0],
+        'LAYERS' : wmsName,
         'BGCOLOR' : 'transparent',
         'SRS' : 'PSG:4326'
-      }
-      //this.addTileWMSLayer(this.props.dataset["Name"][0],this.getMapOverlayList(), wmsUrl, wmsParams);
+      };
       if(this.tmpLayer)
       {
-        this.tmpLayer.setVisible(false);
+        //this.tmpLayer.setVisible(false);
         this.map.removeLayer(this.tmpLayer);
       }
 
-      this.tmpLayer = this.addTileWMSLayer("ncWMS2 test",this.getMapOverlayList(), wmsUrl, wmsParams);
+      this.tmpLayer = this.addTileWMSLayer(wmsName,this.getMapOverlayList(), wmsUrl, wmsParams);
+      this.layersCount = this.props.loadedWmsDatasets.length;
     }else{
+
     }
   }
 
   render () {
     return(
-      <div id="map" className="map">
-        <div id="popup" className="ol-popup"></div>
+      <div className={classes['OLComponent']}>
+        <div id="map" className="map">
+          <div id="popup" className="ol-popup"></div>
+        </div>
       </div>
     )
   }

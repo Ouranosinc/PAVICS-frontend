@@ -6,11 +6,11 @@ const LAYER_VALUES = ["$", "Name", "Title", "Abstract", "EX_GeographicBoundingBo
 
 class DatasetsComponent extends React.Component {
   static propTypes = {
-    wms: React.PropTypes.object,
+    /*wms: React.PropTypes.object,
     saved: React.PropTypes.array.isRequired,
     fetchWms: React.PropTypes.func.isRequired,
     saveCurrentwms: React.PropTypes.func.isRequired,
-    onSelectedDataset: React.PropTypes.func.isRequired
+    onSelectedDataset: React.PropTypes.func.isRequired*/
   }
 
   constructor(props) {
@@ -53,13 +53,13 @@ class DatasetsComponent extends React.Component {
             { wmsTitle }
           </h3>
           <div className="form-group">
-            <label for="datasets">Datasets: </label>
+            <label htmlFor="datasets">Datasets: </label>
             <select className="form-control" id="datasets" onChange={this.onDatasetSelected}>
               <option value="" defaultValue>
                 -- Pick a dataset --
               </option>
               {
-                this.props.wms ?
+                /*this.props.wms ?
                   layersArray.map(function(layer, index) {
                     return (
                       <option value={index} key={layer["Title"]}>
@@ -67,7 +67,7 @@ class DatasetsComponent extends React.Component {
                       </option>
                     );
                   }, this)
-                  : null
+                  : null*/
               }
             </select>
           </div>

@@ -56,7 +56,14 @@ module.exports.getDatasets = function * list(next) {
       url: wpsOutput
     };
     let responseJson = yield request(optionsJson);
-    this.body = responseJson.body;
+    let datasets = JSON.parse(responseJson.body);
+    this.body = datasets.sort(function(a, b){
+      if (a.id < b.id)
+        return -1;
+      if (a.id >  b.id)
+        return 1;
+      return 0;
+    });
   }else{
     this.body = [];
   }
@@ -156,8 +163,32 @@ function getDatasetsFromXmlCatalog(catalogJson, baseServices){
 
 function extractDatasetFromXmlCatalog(catalogJson, query){
   let services = getServicesFromXmlCatalog(catalogJson, query);
+  //Sort by type
+  services = services.sort(function(a, b){
+    if (a.type < b.type)
+      return -1;
+    if (a.type >  b.type)
+      return 1;
+    return 0;
+  });
   let metadatas = getMetadataFromXmlCatalog(catalogJson);
+  //Sort by key
+  metadatas = metadatas.sort(function(a, b){
+    if (a.key < b.key)
+      return -1;
+    if (a.key >  b.key)
+      return 1;
+    return 0;
+  });
   let datasets = getDatasetsFromXmlCatalog(catalogJson, services);
+  //Sort by name
+  datasets = datasets.sort(function(a, b){
+    if (a.name < b.name)
+      return -1;
+    if (a.name >  b.name)
+      return 1;
+    return 0;
+  });
   return {
     name: catalogJson.catalog.dataset[0].$.name,
     id: catalogJson.catalog.dataset[0].$.ID,

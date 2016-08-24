@@ -1,7 +1,7 @@
 .Visualize {
   .searchCatalogComponent{
     position: fixed;
-    margin: 20px 0 0 60px;
+    margin: 20px 0 0 20px;
     z-index: 1000;
   }
 
@@ -21,8 +21,7 @@
 
   .overlappingBackground{
     word-break:break-all;
-    opacity: 0.9;
-    background: rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.8);
   }
 
   .backgroundComponent{
