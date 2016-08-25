@@ -33,17 +33,33 @@ If everything works, you should see the following:
 <img src="http://i.imgur.com/zR7VRG6.png?2" />
 
 ## Docker
+Install Docker, I followed CentOS guide: https://docs.docker.com/engine/installation/linux/centos/
 
+Build & Run on Linux
 ```bash
 $ git clone https://github.com/Ouranosinc/PAVICS-frontend.git
 $ cd PAVICS-frontend
-$ docker-machine ip default #If on Windows uses VM IP (note that ip for next step) else localhost is fine
+$ docker build -t pavics/geoweb .
+$ docker run -p 3000:3000 -it pavics/geoweb #Browse application at localhost:3000
+```
+
+Build & Run on Windows:
+```bash
+$ git clone https://github.com/Ouranosinc/PAVICS-frontend.git
+$ cd PAVICS-frontend
+$ docker-machine ip default #If on Windows uses VM IP (note that ip for next step)
 $ vi config/index.js
 # Change line 37 with previous vm ip
 # server_host : '<docker-machine ip>', // use string 'localhost' to prevent exposure on local network
-# Save & Quit: Ctrl-C -> :wq!
-$ docker build -t "pavics-geoweb" .
-$ docker run -p 3000:3000 -it "pavics-geoweb" #Browse application at address <docker-machine ip>:3000
+# Save & Quit
+$ docker build -t "pavics/geoweb" .
+$ docker run -p 3000:3000 -it "pavics/geoweb" #Browse application at address <docker-machine ip>:3000
+```
+
+Pull from CRIM private registry (some config is needed for http insecure-registries):
+```bash
+$ docker pull crim-registry1:5000/pavics/geoweb
+$ docker run -p 3000:3000 -it crim-registry1:5000/pavics/geoweb #Browse application at localhost:3000
 ```
 
 ## NPM Scripts
