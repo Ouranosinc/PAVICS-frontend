@@ -167,7 +167,7 @@ export class SearchCatalog extends React.Component {
       }
       SearchCatalogPanel = <div className={classes.searchCatalogComponent + " col-sm-6 col-md-5 col-lg-4"}>
         <div className={classes.overlappingBackground + " panel panel-default"}>
-          <h3><ToggleButton onClick={this._onCloseSearchCatalogPanel} icon="glyphicon-list-alt"/> Filter Catalogs by facets</h3>
+          <h3><ToggleButton onClick={this._onCloseSearchCatalogPanel} icon="glyphicon-search"/> Filter Catalogs by facets</h3>
           <div className="panel-body">
             { mainComponent }
             <SearchCatalogResults {...this.props }></SearchCatalogResults>
@@ -177,7 +177,7 @@ export class SearchCatalog extends React.Component {
     }else{
       SearchCatalogPanel = <div className={classes.searchCatalogComponent}>
         <div className={classes.overlappingBackground + " " + classes.togglePanel + " panel panel-default"}>
-          <ToggleButton onClick={this._onOpenSearchCatalogPanel} icon="glyphicon-list-alt"/>
+          <ToggleButton onClick={this._onOpenSearchCatalogPanel} icon="glyphicon-search"/>
         </div>
       </div>;
     }

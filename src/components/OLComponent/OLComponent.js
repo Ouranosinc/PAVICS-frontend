@@ -273,7 +273,7 @@ class OLComponent extends React.Component {
       var wmsName = this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].name;
       var wmsParams = {
         'TRANSPARENT': 'TRUE',
-        'STYLES': 'default-scalar/div-RdYlBu', //TODO: Do we need to dynamically set style?
+        'STYLES': 'default-scalar/div-RdYlBu', //TODO: Do we need to dynamically set style + palette
         'LAYERS' : "aet_pcp_1970/PCP",
         'COLORSCALERANGE': [-0.00004458,0.0009362],
         'NUMCOLORBANDS': 250,

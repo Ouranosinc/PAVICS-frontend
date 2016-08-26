@@ -19,9 +19,11 @@ const app = new Koa();
 var birdhouse = require('./controllers/birdhouse');
 var facets = require('./controllers/facets');
 var datasets = require('./controllers/datasets');
+var wms = require('./controllers/wms');
 
 //Routes
 app.use(route.get('/api/wms/capabilities', birdhouse.getCapabilities));
+app.use(route.get('/api/wms/dataset/layers', wms.getLayers));
 app.use(route.get('/api/facets', facets.getFacets));
 app.use(route.get('/api/datasets', datasets.getDatasets));
 app.use(route.get('/api/dataset', datasets.getDataset));

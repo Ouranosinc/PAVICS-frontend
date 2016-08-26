@@ -31,7 +31,8 @@ import {
   //Async
   fetchFacets,
   fetchDataset,
-  fetchCatalogDatasets
+  fetchCatalogDatasets,
+  fetchDatasetWMSLayers
 } from '../modules/Visualize'
 
 var me;
@@ -102,7 +103,8 @@ const mapActionCreators = {
   //Async
   fetchFacets,
   fetchDataset,
-  fetchCatalogDatasets
+  fetchCatalogDatasets,
+  fetchDatasetWMSLayers
 };
 
 const mapStateToProps = (state) => ({

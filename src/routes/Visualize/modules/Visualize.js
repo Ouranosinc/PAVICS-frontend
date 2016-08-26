@@ -22,6 +22,9 @@ export const FETCH_DATASET_SUCCESS = 'Visualize.FETCH_DATASET_SUCCESS';
 export const FETCH_CATALOG_DATASETS_REQUEST = 'Visualize.FETCH_CATALOG_DATASETS_REQUEST';
 export const FETCH_CATALOG_DATASETS_FAILURE = 'Visualize.FETCH_CATALOG_DATASETS_FAILURE';
 export const FETCH_CATALOG_DATASETS_SUCCESS = 'Visualize.FETCH_CATALOG_DATASETS_SUCCESS';
+export const FETCH_DATASET_WMS_LAYERS_REQUEST = 'Visualize.FETCH_DATASET_WMS_LAYERS_REQUEST';
+export const FETCH_DATASET_WMS_LAYERS_FAILURE = 'Visualize.FETCH_DATASET_WMS_LAYERS_FAILURE';
+export const FETCH_DATASET_WMS_LAYERS_SUCCESS = 'Visualize.FETCH_DATASET_WMS_LAYERS_SUCCESS';
 
 // ------------------------------------
 // Actions
@@ -194,6 +197,41 @@ export function receiveCatalogDatasets (datasets) {
   }
 }
 
+export function requestDatasetWMSLayers () {
+  return {
+    type: FETCH_DATASET_WMS_LAYERS_REQUEST,
+    selectedWMSLayers: {
+      requestedAt: Date.now(),
+      isFetching: true,
+      items: []
+    }
+  }
+}
+
+export function receiveDatasetWMSLayersFailure (error) {
+  return {
+    type: FETCH_DATASET_WMS_LAYERS_FAILURE,
+    selectedWMSLayers: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      items: [],
+      error: error
+    }
+  }
+}
+
+export function receiveDatasetWMSLayers (layers) {
+  return {
+    type: FETCH_DATASET_WMS_LAYERS_SUCCESS,
+    selectedWMSLayers: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      items: layers,
+      error: null
+    }
+  }
+}
+
 //ASYNC
 export function fetchFacets() {
   return function (dispatch) {
@@ -248,6 +286,22 @@ export function fetchCatalogDatasets() {
   }
 }
 
+export function fetchDatasetWMSLayers(url, dataset) {
+  return function (dispatch) {
+    dispatch(requestDatasetWMSLayers());
+    dataset = "outputs/ouranos/subdaily/aet/pcp/aet_pcp_1970.nc"; //TODO, Dynamically use datasetid
+
+    return fetch(`/api/wms/dataset/layers?url=${url}&dataset=${dataset}`)
+      .then(response => response.json())
+      .then(json =>
+        dispatch(receiveDatasetWMSLayers(json))
+      )
+      .catch(error =>
+         dispatch(receiveDatasetWMSLayersFailure(error))
+      )
+  }
+}
+
 //MERGE
 /* The implementation for this will merge an update into the old state,
 *  where the first two entries are put in one List, and the rest in the new version of entries:
@@ -297,7 +351,8 @@ export const actions = {
   //Async
   fetchFacets,
   fetchDataset,
-  fetchCatalogDatasets
+  fetchCatalogDatasets,
+  fetchDatasetWMSLayers
 };
 
 // ------------------------------------
@@ -336,6 +391,11 @@ const ACTION_HANDLERS = {
   [SELECT_LOAD_WMS]: (state, action) => {
     return ({ ...state, loadedWmsDatasets: state.loadedWmsDatasets.concat({ url: action.url, id: action.id, name: action.name }) });
   },
+  [CLICK_TOGGLE_PANEL]: (state, action) => {
+    let panelControls = JSON.parse(JSON.stringify(state.panelControls)); //TODO: deepcopy With Immutable.js or something like that
+    panelControls[action.panel].show = action.show;
+    return ({ ...state, panelControls: panelControls });
+  },
   [FETCH_DATASET_REQUEST]: (state, action) => {
     return ({ ...state, selectedDatasets: action.selectedDatasets });
   },
@@ -363,14 +423,15 @@ const ACTION_HANDLERS = {
   [FETCH_CATALOG_DATASETS_SUCCESS]: (state, action) => {
     return ({ ...state, datasets: action.datasets });
   },
-  [CLICK_TOGGLE_PANEL]: (state, action) => {
-    let panelControls = JSON.parse(JSON.stringify(state.panelControls)); //TODO: deepcopy With Immutable.js or something like that
-    panelControls[action.panel].show = action.show;
-    return ({ ...state, panelControls: panelControls });
+  [FETCH_DATASET_WMS_LAYERS_REQUEST]: (state, action) => {
+    return ({ ...state, selectedWMSLayers: action.selectedWMSLayers });
+  },
+  [FETCH_DATASET_WMS_LAYERS_FAILURE]: (state, action) => {
+    return ({ ...state, selectedWMSLayers: action.selectedWMSLayers });
+  },
+  [FETCH_DATASET_WMS_LAYERS_SUCCESS]: (state, action) => {
+    return ({ ...state, selectedWMSLayers: action.selectedWMSLayers });
   }
-  //[FETCH_CATALOG_DATASETS_FAILURE]: (state, action) => {
-  //  return ({ ...state, wmss: state.wmss.concat(action.payload), current: action.payload.id, fetching: false })
-  //},
 };
 
 // ------------------------------------
@@ -380,6 +441,8 @@ const initialState = {
   currentSelectedKey: "",
   currentSelectedValue: "",
   currentOpenedDataset: "",
+  currentOpenedDatasetWMSFile: "",
+  currentOpenWMSLayer: "",
   loadedWmsDatasets: [],
   selectedFacets: [],
   selectedDatasets: { //One only ==> Details
@@ -388,6 +451,29 @@ const initialState = {
     isFetching: false,
     items: [],
     error: null
+  },
+  selectedWMSLayers:{
+    requestedAt: null,
+    receivedAt: null,
+    isFetching: false,
+    items: [],
+    error: null
+  },
+  selectedWMSLayer:{
+    layerDetails: {
+      requestedAt: null,
+      receivedAt: null,
+      isFetching: false,
+      data: {},
+      error: null
+    },
+    timesteps:{
+      requestedAt: null,
+      receivedAt: null,
+      isFetching: false,
+      data: {},
+      error: null
+    }
   },
   facets: {
     requestedAt: null,

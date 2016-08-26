@@ -19,6 +19,10 @@ export class DatasetDetails extends React.Component {
     this.props.selectLoadWms(url, this.props.selectedDatasets.items[0].id, name);
   }
 
+  _loadDatasetWMSLayers(url, dataset) {
+    this.props.fetchDatasetWMSLayers(url, dataset);
+  }
+
   _onCloseDatasetDetailsPanel(){
     this.props.clickTogglePanel("datasetDetailsPanel", false);
   }
@@ -64,7 +68,7 @@ export class DatasetDetails extends React.Component {
                         { this.renderLink(x.services.find( x=> x.type === "OpenDAP"), "View") }
                         { this.renderLink(x.services.find( x=> x.type === "HTTPServer"), "Download") }
                         { (x.services.find( x=> x.type === "WMS")) ?
-                          <td><a href="#" onClick={() => this._loadWmsDataset(x.services.find( x=> x.type === "WMS").url, x.name)}>Load</a></td>:
+                          <td><a href="#" onClick={() => this._loadDatasetWMSLayers(x.services.find( x=> x.type === "WMS").url, x.name)}>Load</a></td>:
                           <td>N/A</td>
                         }
                       </tr>
