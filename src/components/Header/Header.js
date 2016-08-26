@@ -13,6 +13,10 @@ export const Header = () => (
       Cesium
     </Link>
     {' · '}
+    <Link to='/WMS' activeClassName={classes.activeRoute}>
+    WMS
+    </Link>
+    {' · '}
     <Link to='/Visualize' activeClassName={classes.activeRoute}>
       Visualize
     </Link>

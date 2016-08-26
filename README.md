@@ -13,6 +13,9 @@
 * [openlayers](http://openlayers.org/)
 * [cesium](https://cesiumjs.org/)
 
+## React-Redux tutorial
+[React Redux Confluence Blog](https://www.crim.ca/confluence/display/VEILLE/2016/08/01/React+Redux)
+
 ## Requirements
 * node `^4.2.0` but developped with Node v5.11.1
 * npm `^3.0.0` but developped with Node v3.8.6

@@ -19,6 +19,7 @@ export class SearchCatalogResults extends React.Component {
   }
 
   _onOpenDataset(id, url){
+    this.props.clickTogglePanel("datasetDetailsPanel", true);
     if(id === this.props.currentOpenedDataset){
       this.props.closeDatasetDetails();
     }else{

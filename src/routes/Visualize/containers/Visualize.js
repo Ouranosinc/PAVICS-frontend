@@ -5,8 +5,11 @@ import OLComponent from '../../../components/OLComponent'
 import SearchCatalog from '../../../containers/SearchCatalog'
 import SearchCatalogResults from '../../../containers/SearchCatalogResults'
 import DatasetDetails from '../../../components/DatasetDetails'
+import ToggleButton from '../../../components/ToggleButton'
 
 import {
+  //Panels
+  clickTogglePanel,
   //Facets
   selectFacetKey,
   selectFacetValue,
@@ -51,25 +54,8 @@ class Visualize extends React.Component {
     return (
       <div className={classes['Visualize']}>
         <div className="row">
-          <div className={classes.searchCatalogComponent + " col-sm-6 col-md-5 col-lg-4"}>
-            <div className={classes.overlappingBackground + " panel panel-default"}>
-              <div className="panel-body">
-                <SearchCatalog {...this.props }></SearchCatalog>
-                <SearchCatalogResults {...this.props }></SearchCatalogResults>
-              </div>
-            </div>
-          </div>
-          {
-            (this.props.selectedDatasets.receivedAt) ?
-              <div className={classes.datasetDetailsComponent + " col-sm-5 col-md-6 col-lg-7"}>
-                <div className={classes.overlappingBackground + " panel panel-default"}>
-                  <div className="panel-body">
-                    <DatasetDetails {...this.props }></DatasetDetails>
-                  </div>
-                </div>
-              </div> :
-              null
-          }
+          <SearchCatalog {...this.props } />
+          <DatasetDetails {...this.props } />
           {/*<div className={classes.searchCatalogResultsComponent + " col-sm-5 col-md-5 col-lg-5"}>
             <div className={classes.overlappingBackground + " panel panel-default"}>
               <div className="panel-body">
@@ -93,6 +79,8 @@ class Visualize extends React.Component {
 }
 
 const mapActionCreators = {
+  //Panels
+  clickTogglePanel,
   //Facets
   selectFacetKey,
   selectFacetValue,
@@ -125,7 +113,8 @@ const mapStateToProps = (state) => ({
   selectedFacets: state.visualize.selectedFacets,
   selectedDatasets: state.visualize.selectedDatasets,
   datasets: state.visualize.datasets,
-  facets: state.visualize.facets
+  facets: state.visualize.facets,
+  panelControls: state.visualize.panelControls
 });
 
 export default connect(mapStateToProps, mapActionCreators)(Visualize)

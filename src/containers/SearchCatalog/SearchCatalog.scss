@@ -1,3 +1,19 @@
 .SearchCatalog{
   text-align: left;
+
+  .searchCatalogComponent{
+    position: fixed;
+    margin: 20px 0 0 20px;
+    z-index: 1000;
+  }
+
+  .overlappingBackground{
+    word-break:break-all;
+    background: rgba(255,255,255,0.8);
+  }
+
+  .togglePanel{
+    margin-left: 15px;
+    font-size: 1.5em;
+  }
 }

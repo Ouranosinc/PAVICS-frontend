@@ -10,6 +10,7 @@ export const REMOVE_FACET_KEY_VALUE_PAIR = 'Visualize.REMOVE_FACET_KEY_VALUE_PAI
 export const OPEN_DATASET_DETAILS = 'Visualize.OPEN_DATASET_DETAILS';
 export const CLOSE_DATASET_DETAILS = 'Visualize.CLOSE_DATASET_DETAILS';
 export const SELECT_LOAD_WMS = 'Visualize.SELECT_LOAD_WMS';
+export const CLICK_TOGGLE_PANEL = 'Visualize.CLICK_TOGGLE_PANEL';
 
 //ASYNC
 export const FETCH_FACETS_REQUEST = 'Visualize.FETCH_FACETS_REQUEST';
@@ -75,6 +76,14 @@ export function selectLoadWms (url, id, name) {
     url: url,
     id: id,
     name: name
+  }
+}
+
+export function clickTogglePanel (panel, show) {
+  return {
+    type: CLICK_TOGGLE_PANEL,
+    panel: panel,
+    show: show
   }
 }
 
@@ -266,6 +275,8 @@ export function fetchCatalogDatasets() {
 }*/
 
 export const actions = {
+  //Sync Panels
+  clickTogglePanel,
   //Sync Facets
   selectFacetKey,
   selectFacetValue,
@@ -323,7 +334,7 @@ const ACTION_HANDLERS = {
     return ({ ...state, currentOpenedDataset: "" });
   },
   [SELECT_LOAD_WMS]: (state, action) => {
-  return ({ ...state, loadedWmsDatasets: state.loadedWmsDatasets.concat({ url: action.url, id: action.id, name: action.name }) });
+    return ({ ...state, loadedWmsDatasets: state.loadedWmsDatasets.concat({ url: action.url, id: action.id, name: action.name }) });
   },
   [FETCH_DATASET_REQUEST]: (state, action) => {
     return ({ ...state, selectedDatasets: action.selectedDatasets });
@@ -351,6 +362,11 @@ const ACTION_HANDLERS = {
   },
   [FETCH_CATALOG_DATASETS_SUCCESS]: (state, action) => {
     return ({ ...state, datasets: action.datasets });
+  },
+  [CLICK_TOGGLE_PANEL]: (state, action) => {
+    let panelControls = JSON.parse(JSON.stringify(state.panelControls)); //TODO: deepcopy With Immutable.js or something like that
+    panelControls[action.panel].show = action.show;
+    return ({ ...state, panelControls: panelControls });
   }
   //[FETCH_CATALOG_DATASETS_FAILURE]: (state, action) => {
   //  return ({ ...state, wmss: state.wmss.concat(action.payload), current: action.payload.id, fetching: false })
@@ -386,6 +402,14 @@ const initialState = {
     isFetching: false,
     items: [],
     error: null
+  },
+  panelControls: {
+    searchCatalogPanel: {
+      show: true
+    },
+    datasetDetailsPanel: {
+      show: false
+    }
   }
 };
 export default function visualizeReducer (state = initialState, action) {

@@ -128,7 +128,7 @@ function getDatasetsFromXmlCatalog(catalogJson, baseServices){
       //TODO: WMS SERVICE IS HARDCODED AT THIS POINT
       services.push({
         type: "WMS",
-        url: baseServices.find(x => x.type === "WMS").baseUrl + "/ncWMS2/wms?REQUEST=GetLegendGraphic&PALETTE=default&COLORBARONLY=true&WIDTH=110&HEIGHT=264"
+        url: baseServices.find(x => x.type === "WMS").baseUrl + "/ncWMS2/wms"
       });
       if(dataset.access){
         dataset.access.forEach(function (access) {

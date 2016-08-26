@@ -1,6 +1,23 @@
 .DatasetDetails {
   text-align: left;
 
+  .datasetDetailsComponent{
+    position: fixed;
+    right: 0;
+    margin: 20px 20px 0 60px;
+    z-index: 1000;
+  }
+
+  .overlappingBackground{
+    word-break:break-all;
+    background: rgba(255,255,255,0.8);
+  }
+
+  .togglePanel{
+    margin-right: 15px;
+    font-size: 1.5em;
+  }
+
   .DatasetTable{
     max-height: 200px;
     overflow-y: scroll;
