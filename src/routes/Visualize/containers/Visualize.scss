@@ -1,32 +1,22 @@
 .Visualize {
-  .searchCatalogComponent{
-    position: fixed;
-    margin: 20px 0 0 20px;
-    z-index: 1000;
-  }
 
-  .searchCatalogResultsComponent{
-    position: fixed;
-    right: 0;
-    margin: 20px 20px 0 60px;
-    z-index: 1000;
-  }
-
-  .datasetDetailsComponent{
-    position: fixed;
-    right: 0;
-    margin: 20px 20px 0 60px;
-    z-index: 1000;
-  }
-
-  .overlappingBackground{
+  .frontComponents{
     word-break:break-all;
     background: rgba(255,255,255,0.8);
-  }
 
-  .togglePanel{
-    margin-left: 15px;
-    font-size: 1.5em;
+    .topLeftComponents{
+      position: fixed;
+      z-index: 1000;
+      top: 110px;
+      left: 0;
+    }
+    .topRightComponents{
+      position: fixed;
+      z-index: 1000;
+      top: 110px;
+      right: 0;
+      float: right;
+    }
   }
 
   .backgroundComponent{

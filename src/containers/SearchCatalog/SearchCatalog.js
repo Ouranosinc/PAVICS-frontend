@@ -165,7 +165,7 @@ export class SearchCatalog extends React.Component {
           </form>
         </div>
       }
-      SearchCatalogPanel = <div className={classes.searchCatalogComponent + " col-sm-6 col-md-5 col-lg-4"}>
+      SearchCatalogPanel = <div className={classes.searchCatalogComponent}>
         <div className={classes.overlappingBackground + " panel panel-default"}>
           <h3><ToggleButton onClick={this._onCloseSearchCatalogPanel} icon="glyphicon-search"/> Filter Catalogs by facets</h3>
           <div className="panel-body">

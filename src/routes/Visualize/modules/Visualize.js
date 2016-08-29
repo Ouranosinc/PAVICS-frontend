@@ -9,6 +9,7 @@ export const ADD_FACET_KEY_VALUE_PAIR = 'Visualize.ADD_FACET_KEY_VALUE_PAIR';
 export const REMOVE_FACET_KEY_VALUE_PAIR = 'Visualize.REMOVE_FACET_KEY_VALUE_PAIR';
 export const OPEN_DATASET_DETAILS = 'Visualize.OPEN_DATASET_DETAILS';
 export const CLOSE_DATASET_DETAILS = 'Visualize.CLOSE_DATASET_DETAILS';
+export const OPEN_DATASET_WMS_LAYERS = 'Visualize.OPEN_DATASET_WMS_LAYERS';
 export const SELECT_LOAD_WMS = 'Visualize.SELECT_LOAD_WMS';
 export const CLICK_TOGGLE_PANEL = 'Visualize.CLICK_TOGGLE_PANEL';
 
@@ -70,6 +71,13 @@ export function openDatasetDetails (id) {
 export function closeDatasetDetails () {
   return {
     type: OPEN_DATASET_DETAILS
+  }
+}
+
+export function openDatasetWmsLayers (dataset) {
+  return {
+    type: OPEN_DATASET_WMS_LAYERS,
+    dataset: dataset
   }
 }
 
@@ -348,6 +356,8 @@ export const actions = {
   requestCatalogDatasets,
   receiveCatalogDatasetsFailure,
   receiveCatalogDatasets,
+  openDatasetWmsLayers,
+  selectLoadWms,
   //Async
   fetchFacets,
   fetchDataset,
@@ -387,6 +397,9 @@ const ACTION_HANDLERS = {
   },
   [CLOSE_DATASET_DETAILS]: (state) => {
     return ({ ...state, currentOpenedDataset: "" });
+  },
+  [OPEN_DATASET_WMS_LAYERS]: (state, action) => {
+    return ({ ...state, currentOpenedDatasetWMSFile: action.dataset });
   },
   [SELECT_LOAD_WMS]: (state, action) => {
     return ({ ...state, loadedWmsDatasets: state.loadedWmsDatasets.concat({ url: action.url, id: action.id, name: action.name }) });
@@ -494,6 +507,9 @@ const initialState = {
       show: true
     },
     datasetDetailsPanel: {
+      show: false
+    },
+    datasetWMSLayersPanel: {
       show: false
     }
   }

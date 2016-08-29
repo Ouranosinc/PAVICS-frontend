@@ -10,17 +10,21 @@ export class DatasetDetails extends React.Component {
 
   constructor(props) {
     super(props);
-    this._loadWmsDataset = this._loadWmsDataset.bind(this);
+    this._onOpenDatasetWmsLayers = this._onOpenDatasetWmsLayers.bind(this);
     this._onCloseDatasetDetailsPanel = this._onCloseDatasetDetailsPanel.bind(this);
     this._onOpenDatasetDetailsPanel = this._onOpenDatasetDetailsPanel.bind(this);
   }
 
-  _loadWmsDataset(url, name) {
+  /*_loadWmsDataset(url, name) {
     this.props.selectLoadWms(url, this.props.selectedDatasets.items[0].id, name);
-  }
+  }*/
 
-  _loadDatasetWMSLayers(url, dataset) {
+  _onOpenDatasetWmsLayers(url, dataset){
+    this.props.openDatasetWmsLayers(dataset);
     this.props.fetchDatasetWMSLayers(url, dataset);
+    this.props.clickTogglePanel("datasetDetailsPanel", false);
+    this.props.clickTogglePanel("datasetWMSLayersPanel", false);
+
   }
 
   _onCloseDatasetDetailsPanel(){
@@ -62,13 +66,13 @@ export class DatasetDetails extends React.Component {
                   <tbody>
                   {
                     this.props.selectedDatasets.items[0].datasets.map((x) =>
-                      <tr key={x.name}>
+                      <tr key={x.name} className={ (x.name === this.props.currentOpenedDatasetWMSFile)? "selected": ""}>
                         <td>{ x.name }</td>
                         <td>{ x.size.replace("bytes", "") }</td>
                         { this.renderLink(x.services.find( x=> x.type === "OpenDAP"), "View") }
                         { this.renderLink(x.services.find( x=> x.type === "HTTPServer"), "Download") }
                         { (x.services.find( x=> x.type === "WMS")) ?
-                          <td><a href="#" onClick={() => this._loadDatasetWMSLayers(x.services.find( x=> x.type === "WMS").url, x.name)}>Load</a></td>:
+                          <td><a href="#" onClick={() => this._onOpenDatasetWmsLayers(x.services.find( x=> x.type === "WMS").url, x.name)}>Load</a></td>:
                           <td>N/A</td>
                         }
                       </tr>
@@ -81,7 +85,7 @@ export class DatasetDetails extends React.Component {
         }else{
           MainComponent = null;
         }
-        DatasetDetailsPanel =  <div className={classes.datasetDetailsComponent + " col-sm-5 col-md-6 col-lg-7"}>
+        DatasetDetailsPanel =  <div className={classes.datasetDetailsComponent}>
           <div className={classes.overlappingBackground + " panel panel-default"}>
             <h3><ToggleButton onClick={this._onCloseDatasetDetailsPanel} icon="glyphicon-list-alt"/> Dataset details</h3>
             <div className="panel-body">

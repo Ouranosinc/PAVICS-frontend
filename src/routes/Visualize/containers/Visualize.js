@@ -1,11 +1,14 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import classes from './Visualize.scss'
+
+//TODO: Fix, we should only import containers here
 import OLComponent from '../../../components/OLComponent'
-import SearchCatalog from '../../../containers/SearchCatalog'
-import SearchCatalogResults from '../../../containers/SearchCatalogResults'
 import DatasetDetails from '../../../components/DatasetDetails'
-import ToggleButton from '../../../components/ToggleButton'
+
+//Containers
+import DatasetWMSLayers from '../../../containers/DatasetWMSLayers'
+import SearchCatalog from '../../../containers/SearchCatalog'
 
 import {
   //Panels
@@ -27,6 +30,7 @@ import {
   receiveCatalogDatasets,
   openDatasetDetails,
   closeDatasetDetails,
+  openDatasetWmsLayers,
   selectLoadWms,
   //Async
   fetchFacets,
@@ -54,16 +58,18 @@ class Visualize extends React.Component {
   render () {
     return (
       <div className={classes['Visualize']}>
-        <div className="row">
-          <SearchCatalog {...this.props } />
-          <DatasetDetails {...this.props } />
-          {/*<div className={classes.searchCatalogResultsComponent + " col-sm-5 col-md-5 col-lg-5"}>
-            <div className={classes.overlappingBackground + " panel panel-default"}>
-              <div className="panel-body">
-
-              </div>
+        <div className={classes.frontComponents + " row"}>
+          <div className={classes.topLeftComponents + " col-sm-6 col-md-5 col-lg-4"}>
+            <SearchCatalog {...this.props } />
+          </div>
+          <div className={classes.topRightComponents + " col-sm-5 col-md-6 col-lg-6"}>
+            <div className="row">
+                <DatasetDetails {...this.props } />
             </div>
-          </div>*/}
+            <div className="row">
+                <DatasetWMSLayers {...this.props } />
+            </div>
+          </div>
         </div>
         <div className="row">
           <div className={classes.backgroundComponent + " col-md-12 col-lg-12"}>
@@ -99,6 +105,7 @@ const mapActionCreators = {
   receiveCatalogDatasets,
   openDatasetDetails,
   closeDatasetDetails,
+  openDatasetWmsLayers,
   selectLoadWms,
   //Async
   fetchFacets,
@@ -111,6 +118,8 @@ const mapStateToProps = (state) => ({
   currentSelectedKey: state.visualize.currentSelectedKey,
   currentSelectedValue: state.visualize.currentSelectedValue,
   currentOpenedDataset: state.visualize.currentOpenedDataset,
+  currentOpenedDatasetWMSFile: state.visualize.currentOpenedDatasetWMSFile,
+  currentOpenWMSLayer: state.visualize.currentOpenWMSLayer,
   loadedWmsDatasets: state.visualize.loadedWmsDatasets,
   selectedFacets: state.visualize.selectedFacets,
   selectedDatasets: state.visualize.selectedDatasets,

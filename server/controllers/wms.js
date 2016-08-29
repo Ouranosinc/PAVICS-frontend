@@ -4,21 +4,22 @@ import { parseString } from 'xml2js'
 import request from 'koa-request'
 
 //Explanation here http://blog.stevensanderson.com/2013/12/21/experiments-with-koa-and-javascript-generators/
-function parseXMLThunk(response, url){
+function parseXMLThunk(response, url, dataset){
   //console.log(response);
   return function(callback) {
-    parseXMLAsync(response, url, callback);
+    parseXMLAsync(response, url, dataset, callback);
   };
 }
 
-function parseXMLAsync(response, url, callback){
+function parseXMLAsync(response, url, dataset, callback){
   parseString(response, function (err, result) {
     let response = [];
     result["WMS_Capabilities"]["Capability"][0]["Layer"][0]["Layer"][0]["Layer"].forEach(function(layer){
       response.push({
-        url: url,
+        wmsUrl: url,
         name: layer["Name"][0],
-        title: layer["Title"][0],
+        layer: layer["Title"][0],
+        dataset: dataset,
         boundingBox: layer["BoundingBox"][0].$
       })
     });
@@ -56,6 +57,6 @@ module.exports.getLayers = function * list(next) {
     url: `${url}?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&DATASET=${dataset}`
   };
   var response = yield request(options);
-  this.body = yield parseXMLThunk(response.body, url);
+  this.body = yield parseXMLThunk(response.body, url, dataset);
 };
 
