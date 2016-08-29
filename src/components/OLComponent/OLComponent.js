@@ -273,14 +273,14 @@ class OLComponent extends React.Component {
       var wmsName = this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].name;
       var wmsParams = {
         'TRANSPARENT': 'TRUE',
-        'STYLES': 'default-scalar/div-RdYlBu', //TODO: Do we need to dynamically set style + palette
-        'LAYERS' : "aet_pcp_1970/PCP",
+        'STYLES': this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].style, //TODO: Do we need to dynamically set style + palette
+        'LAYERS' : this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].name,
         'COLORSCALERANGE': [-0.00004458,0.0009362],
         'NUMCOLORBANDS': 250,
         //'ABOVEMAXCOLOR': '0x000000',
         //'BELOWMINCOLOR': '0x000000',
         'BGCOLOR' : 'transparent',
-         'TIME':'1970-12-31T11:00:00.000Z/1970-12-31T18:00:00.000Z', //TODO DYNAMICALLY SET TIME
+         'TIME':this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].start,// -> /1970-12-31T18:00:00.000Z', //TODO DYNAMICALLY SET TIME
         'SRS' : 'EPSG:4326',
         //'ANIMATION': 'TRUE' //TODO: Must be supported by ncWMS server?
       };

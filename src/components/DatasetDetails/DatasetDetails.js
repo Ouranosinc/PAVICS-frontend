@@ -23,8 +23,8 @@ export class DatasetDetails extends React.Component {
     this.props.openDatasetWmsLayers(dataset);
     this.props.fetchDatasetWMSLayers(url, dataset);
     this.props.clickTogglePanel("datasetDetailsPanel", false);
-    this.props.clickTogglePanel("datasetWMSLayersPanel", false);
-
+    this.props.clickTogglePanel("datasetWMSLayersPanel", true);
+    /*this.props.selectLoadWms(url, this.props.selectedDatasets.items[0].id, dataset);*/
   }
 
   _onCloseDatasetDetailsPanel(){
@@ -72,7 +72,7 @@ export class DatasetDetails extends React.Component {
                         { this.renderLink(x.services.find( x=> x.type === "OpenDAP"), "View") }
                         { this.renderLink(x.services.find( x=> x.type === "HTTPServer"), "Download") }
                         { (x.services.find( x=> x.type === "WMS")) ?
-                          <td><a href="#" onClick={() => this._onOpenDatasetWmsLayers(x.services.find( x=> x.type === "WMS").url, x.name)}>Load</a></td>:
+                          <td><a href="#" onClick={() => this._onOpenDatasetWmsLayers(x.services.find( x=> x.type === "WMS").url, x.name)}>Open</a></td>:
                           <td>N/A</td>
                         }
                       </tr>
@@ -83,17 +83,17 @@ export class DatasetDetails extends React.Component {
               </div>
             </div>
         }else{
-          MainComponent = null;
+          MainComponent = <span>You must first search catalogs then select a dataset.</span>;
         }
-        DatasetDetailsPanel =  <div className={classes.datasetDetailsComponent}>
-          <div className={classes.overlappingBackground + " panel panel-default"}>
-            <h3><ToggleButton onClick={this._onCloseDatasetDetailsPanel} icon="glyphicon-list-alt"/> Dataset details</h3>
-            <div className="panel-body">
-              { MainComponent }
-            </div>
+      }
+      DatasetDetailsPanel =  <div className={classes.datasetDetailsComponent}>
+        <div className={classes.overlappingBackground + " panel panel-default"}>
+          <h3><ToggleButton onClick={this._onCloseDatasetDetailsPanel} icon="glyphicon-list-alt"/> Dataset details</h3>
+          <div className="panel-body">
+            { MainComponent }
           </div>
         </div>
-      }
+      </div>
     }else{
       DatasetDetailsPanel = <div className={classes.datasetDetailsComponent}>
         <div className={classes.overlappingBackground + " " + classes.togglePanel + " panel panel-default"}>

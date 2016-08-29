@@ -10,6 +10,7 @@ export const REMOVE_FACET_KEY_VALUE_PAIR = 'Visualize.REMOVE_FACET_KEY_VALUE_PAI
 export const OPEN_DATASET_DETAILS = 'Visualize.OPEN_DATASET_DETAILS';
 export const CLOSE_DATASET_DETAILS = 'Visualize.CLOSE_DATASET_DETAILS';
 export const OPEN_DATASET_WMS_LAYERS = 'Visualize.OPEN_DATASET_WMS_LAYERS';
+export const OPEN_WMS_LAYER = 'Visualize.OPEN_WMS_LAYER';
 export const SELECT_LOAD_WMS = 'Visualize.SELECT_LOAD_WMS';
 export const CLICK_TOGGLE_PANEL = 'Visualize.CLICK_TOGGLE_PANEL';
 
@@ -26,6 +27,10 @@ export const FETCH_CATALOG_DATASETS_SUCCESS = 'Visualize.FETCH_CATALOG_DATASETS_
 export const FETCH_DATASET_WMS_LAYERS_REQUEST = 'Visualize.FETCH_DATASET_WMS_LAYERS_REQUEST';
 export const FETCH_DATASET_WMS_LAYERS_FAILURE = 'Visualize.FETCH_DATASET_WMS_LAYERS_FAILURE';
 export const FETCH_DATASET_WMS_LAYERS_SUCCESS = 'Visualize.FETCH_DATASET_WMS_LAYERS_SUCCESS';
+export const FETCH_WMS_LAYER_DETAILS_REQUEST = 'Visualize.FETCH_WMS_LAYER_DETAILS_REQUEST';
+export const FETCH_WMS_LAYER_DETAILS_FAILURE = 'Visualize.FETCH_WMS_LAYER_DETAILS_FAILURE';
+export const FETCH_WMS_LAYER_DETAILS_SUCCESS = 'Visualize.FETCH_WMS_LAYER_DETAILS_SUCCESS';
+
 
 // ------------------------------------
 // Actions
@@ -81,12 +86,22 @@ export function openDatasetWmsLayers (dataset) {
   }
 }
 
-export function selectLoadWms (url, id, name) {
+export function openWmsLayer (layer) {
+  return {
+    type: OPEN_WMS_LAYER,
+    layer: layer
+  }
+}
+
+export function selectLoadWms (url, name, start, end, style, opacity) {
   return {
     type: SELECT_LOAD_WMS,
     url: url,
-    id: id,
-    name: name
+    name: name,
+    start: start,
+    end: end,
+    style: style,
+    opacity: opacity
   }
 }
 
@@ -240,6 +255,43 @@ export function receiveDatasetWMSLayers (layers) {
   }
 }
 
+export function requestWMSLayerDetails (layer, url) {
+  return {
+    type: FETCH_WMS_LAYER_DETAILS_REQUEST,
+    selectedWMSLayer: {
+      requestedAt: Date.now(),
+      layer: layer,
+      wmsUrl: url,
+      isFetching: true,
+      data: {}
+    }
+  }
+}
+
+export function receiveWMSLayerDetailsFailure (error) {
+  return {
+    type: FETCH_WMS_LAYER_DETAILS_FAILURE,
+    selectedWMSLayer: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      data: {},
+      error: error
+    }
+  }
+}
+
+export function receiveWMSLayerDetails (data) {
+  return {
+    type: FETCH_WMS_LAYER_DETAILS_SUCCESS,
+    selectedWMSLayer: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      data: data,
+      error: null
+    }
+  }
+}
+
 //ASYNC
 export function fetchFacets() {
   return function (dispatch) {
@@ -310,6 +362,21 @@ export function fetchDatasetWMSLayers(url, dataset) {
   }
 }
 
+export function fetchWMSLayerDetails(url, layer) {
+  return function (dispatch) {
+    dispatch(requestWMSLayerDetails());
+
+    return fetch(`${url}?request=GetMetadata&item=layerDetails&layerName=${layer}`)
+      .then(response => response.json())
+      .then(json =>
+        dispatch(receiveWMSLayerDetails(json))
+      )
+      .catch(error =>
+        dispatch(receiveWMSLayerDetailsFailure(error))
+      )
+  }
+}
+
 //MERGE
 /* The implementation for this will merge an update into the old state,
 *  where the first two entries are put in one List, and the rest in the new version of entries:
@@ -357,12 +424,14 @@ export const actions = {
   receiveCatalogDatasetsFailure,
   receiveCatalogDatasets,
   openDatasetWmsLayers,
+  openWmsLayer,
   selectLoadWms,
   //Async
   fetchFacets,
   fetchDataset,
   fetchCatalogDatasets,
-  fetchDatasetWMSLayers
+  fetchDatasetWMSLayers,
+  fetchWMSLayerDetails
 };
 
 // ------------------------------------
@@ -401,8 +470,18 @@ const ACTION_HANDLERS = {
   [OPEN_DATASET_WMS_LAYERS]: (state, action) => {
     return ({ ...state, currentOpenedDatasetWMSFile: action.dataset });
   },
+  [OPEN_WMS_LAYER]: (state, action) => {
+    return ({ ...state, currentOpenedWMSLayer: action.layer });
+  },
   [SELECT_LOAD_WMS]: (state, action) => {
-    return ({ ...state, loadedWmsDatasets: state.loadedWmsDatasets.concat({ url: action.url, id: action.id, name: action.name }) });
+    return ({ ...state, loadedWmsDatasets: state.loadedWmsDatasets.concat({
+      url: action.url,
+      name: action.name,
+      start: action.start,
+      end: action.end,
+      style: action.style,
+      opacity: action.opacity
+    }) });
   },
   [CLICK_TOGGLE_PANEL]: (state, action) => {
     let panelControls = JSON.parse(JSON.stringify(state.panelControls)); //TODO: deepcopy With Immutable.js or something like that
@@ -444,6 +523,15 @@ const ACTION_HANDLERS = {
   },
   [FETCH_DATASET_WMS_LAYERS_SUCCESS]: (state, action) => {
     return ({ ...state, selectedWMSLayers: action.selectedWMSLayers });
+  },
+  [FETCH_WMS_LAYER_DETAILS_REQUEST]: (state, action) => {
+    return ({ ...state, selectedWMSLayer: action.selectedWMSLayer });
+  },
+  [FETCH_WMS_LAYER_DETAILS_FAILURE]: (state, action) => {
+    return ({ ...state, selectedWMSLayer: action.selectedWMSLayer });
+  },
+  [FETCH_WMS_LAYER_DETAILS_SUCCESS]: (state, action) => {
+    return ({ ...state, selectedWMSLayer: action.selectedWMSLayer });
   }
 };
 
@@ -455,7 +543,7 @@ const initialState = {
   currentSelectedValue: "",
   currentOpenedDataset: "",
   currentOpenedDatasetWMSFile: "",
-  currentOpenWMSLayer: "",
+  currentOpenedWMSLayer: "",
   loadedWmsDatasets: [],
   selectedFacets: [],
   selectedDatasets: { //One only ==> Details

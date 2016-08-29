@@ -31,12 +31,14 @@ import {
   openDatasetDetails,
   closeDatasetDetails,
   openDatasetWmsLayers,
+  openWmsLayer,
   selectLoadWms,
   //Async
   fetchFacets,
   fetchDataset,
   fetchCatalogDatasets,
-  fetchDatasetWMSLayers
+  fetchDatasetWMSLayers,
+  fetchWMSLayerDetails
 } from '../modules/Visualize'
 
 var me;
@@ -106,12 +108,14 @@ const mapActionCreators = {
   openDatasetDetails,
   closeDatasetDetails,
   openDatasetWmsLayers,
+  openWmsLayer,
   selectLoadWms,
   //Async
   fetchFacets,
   fetchDataset,
   fetchCatalogDatasets,
-  fetchDatasetWMSLayers
+  fetchDatasetWMSLayers,
+  fetchWMSLayerDetails
 };
 
 const mapStateToProps = (state) => ({
@@ -119,10 +123,11 @@ const mapStateToProps = (state) => ({
   currentSelectedValue: state.visualize.currentSelectedValue,
   currentOpenedDataset: state.visualize.currentOpenedDataset,
   currentOpenedDatasetWMSFile: state.visualize.currentOpenedDatasetWMSFile,
-  currentOpenWMSLayer: state.visualize.currentOpenWMSLayer,
+  currentOpenedWMSLayer: state.visualize.currentOpenedWMSLayer,
   loadedWmsDatasets: state.visualize.loadedWmsDatasets,
   selectedFacets: state.visualize.selectedFacets,
   selectedDatasets: state.visualize.selectedDatasets,
+  selectedWMSLayers: state.visualize.selectedWMSLayers,
   datasets: state.visualize.datasets,
   facets: state.visualize.facets,
   panelControls: state.visualize.panelControls
