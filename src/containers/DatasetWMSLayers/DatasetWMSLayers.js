@@ -46,28 +46,31 @@ export class DatasetWMSLayers extends React.Component {
     if(this.props.panelControls.datasetWMSLayersPanel.show){
       let MainComponent = null;
       if(this.props.currentOpenedDatasetWMSFile.length){
-        MainComponent = <div className="panel-body">
-          <DatasetWMSLayersList
-            isFetching={ this.props.selectedWMSLayers.isFetching }
-            layers={ this.props.selectedWMSLayers.items }
-            onSelectLayer={this._onSelectDatasetWMSLayer }
-            currentLayer={this.props.currentOpenedWMSLayer} />
-          {
-            (this.props.currentOpenedWMSLayer.length) ?
-              <DatasetWMSLayer
-                onLoadWMSLayer={this._onLoadWMSLayer}
-              /> : null
-          }
-        </div>
+        MainComponent =
+          <div>
+            <DatasetWMSLayersList
+              isFetching={ this.props.selectedWMSLayers.isFetching }
+              layers={ this.props.selectedWMSLayers.items }
+              onSelectLayer={this._onSelectDatasetWMSLayer }
+              currentLayer={this.props.currentOpenedWMSLayer} />
+            {
+              (this.props.currentOpenedWMSLayer.length) ?
+                <DatasetWMSLayer
+                  onLoadWMSLayer={this._onLoadWMSLayer}
+                /> : null
+            }
+          </div>
       }else{
-        MainComponent = <span>You must first select a dataset then "Open" chosen WMS file.</span>;
+        MainComponent = <span className="NotAvailable">You must first select a dataset then "Open" chosen WMS file.</span>;
       }
       return (
         <div className={classes['DatasetWMSLayers']}>
           <div className={classes.datasetWMSLayersComponent}>
             <div className={classes.overlappingBackground + " panel panel-default"}>
               <h3><ToggleButton onClick={this._onCloseDatasetWMSLayersPanel} icon="glyphicon-globe"/> WMS Layers</h3>
-              { MainComponent }
+              <div className="panel-body">
+                { MainComponent }
+              </div>
             </div>
           </div>
         </div>

@@ -83,7 +83,7 @@ export class DatasetDetails extends React.Component {
               </div>
             </div>
         }else{
-          MainComponent = <span>You must first search catalogs then select a dataset.</span>;
+          MainComponent = <span className="NotAvailable">You must first search catalogs then select a dataset.</span>;
         }
       }
       DatasetDetailsPanel =  <div className={classes.datasetDetailsComponent}>
