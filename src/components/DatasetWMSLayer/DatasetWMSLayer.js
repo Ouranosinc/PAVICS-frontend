@@ -1,5 +1,9 @@
 import React, {Component, PropTypes} from 'react'
+import moment from 'moment'
+import DateRangePicker from 'react-bootstrap-daterangepicker'
+require("react-bootstrap-daterangepicker/css/daterangepicker.css");
 import classes from './DatasetWMSLayer.scss'
+
 
 export class DatasetWMSLayer extends Component {
   static propTypes = {
@@ -10,6 +14,13 @@ export class DatasetWMSLayer extends Component {
     super(props);
     this.formData = {};
     this._loadWmsLayer = this._loadWmsLayer.bind(this);
+    this._handleDateTimeRangeEvents = this._handleDateTimeRangeEvents.bind(this);
+    this._handleDateTimeSingleEvents = this._handleDateTimeSingleEvents.bind(this);
+    this.state = {
+      dateTimeRangeString: "",
+      dateTimeRangeValues: [moment(), moment().add(-3, 'day')],
+      dateTimeStringValue: ""
+    }
   }
 
   _loadWmsLayer(){
@@ -17,27 +28,51 @@ export class DatasetWMSLayer extends Component {
     this.props.onLoadWMSLayer("1970-12-31T18:00:00.000Z", "", 0.4, 'default-scalar/div-RdYlBu');
   }
 
+  _handleDateTimeRangeEvents(event, picker){
+    let newDateTimeRangeValues = [
+      picker.startDate , picker.endDate
+    ];
+    let newDateTimeRangeString = `${picker.startDate.format('YYYY-MM-DD HH:mm')}/${picker.endDate.format('YYYY-MM-DD HH:mm')}`;
+    if(newDateTimeRangeString !== this.state.dateTimeRangeString && event.type === "apply"){
+      this.setState({
+        dateTimeRangeString: newDateTimeRangeString,
+        dateTimeRangeValues: newDateTimeRangeValues
+      });
+    }
+  }
+
+  _handleDateTimeSingleEvents(event, picker){
+    let newdateTimeStringValue = `${picker.startDate.format('YYYY-MM-DD HH:mm')}`;
+    //For some reasons, the datetime picker returns a second event on apply with wrong dates
+    if(newdateTimeStringValue !== this.state.dateTimeStringValue && event.type === "apply"){
+      this.setState({ dateTimeStringValue: newdateTimeStringValue});
+    }
+  }
 
   render () {
     return (
       <div className={classes['DatasetWMSLayer']}>
         <form className="form-horizontal" role="form">
           <div className="form-group">
-            <label className="col-sm-5 col-md-3 col-lg-3 control-label" htmlFor="startDate">Start:</label>
-            <div className="col-sm-4 col-md-5 col-lg-5">
-              <input type="date" id="startDate" className="form-control"></input>
-            </div>
-            <div className="col-sm-3 col-md-4 col-lg-4">
-              <input type="time" id="startTime" className="form-control"></input>
-            </div>
-          </div>
-          <div className="form-group">
-            <label className="col-sm-5 col-md-3 col-lg-3 control-label" htmlFor="endDate">End:</label>
-            <div className="col-sm-4 col-md-5 col-lg-5">
-              <input type="date" id="endDate" className="form-control"></input>
-            </div>
-            <div className="col-sm-3 col-md-4 col-lg-4">
-              <input type="time" id="endTime" className="form-control"></input>
+            <label className="col-sm-5 col-md-3 col-lg-3 control-label" htmlFor="startDate">Date range:</label>
+            <div className="col-sm-7 col-md-9 col-lg-9">
+              <DateRangePicker
+                startDate={this.state.dateTimeRangeValues[0]}
+                endDate={this.state.dateTimeRangeValues[1]}
+                /*minDate={moment('1/1/2014')}
+                maxDate={moment('3/1/2014')}*/
+                timePicker={true}
+                timePickerIncrement={30}
+                timePicker24Hour={true}
+                opens="left"
+                locale={{
+                    format: 'YYYY-MM-DD HH:mm'
+                  }}
+                onEvent={this._handleDateTimeRangeEvents}
+              >
+                <input id="dateTimeRange" className="form-control" value={this.state.dateTimeRangeString}></input>
+                <i className={"glyphicon glyphicon-calendar " + classes.InputIcon}></i>
+              </DateRangePicker>
             </div>
           </div>
           <div className="form-group">

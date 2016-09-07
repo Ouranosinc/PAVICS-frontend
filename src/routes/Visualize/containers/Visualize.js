@@ -65,12 +65,12 @@ class Visualize extends React.Component {
             <SearchCatalog {...this.props } />
           </div>
           { /* TODO: Fix this, col-sm-5 col-md-5 col-lg-5 BLOCKS MAP CONTROLS EVEN WHEN PANELS ARE CLOSED */ }
-          <div className={classes.topRightComponents + " col-sm-5 col-md-5 col-lg-5"}>
+          <div className={classes.topRightComponents + " col-sm-5 col-md-5 col-lg-6"}>
             <div className="row">
                 <DatasetDetails {...this.props } />
             </div>
             <div className="row">
-                <DatasetWMSLayers {...this.props } />
+              <DatasetWMSLayers {...this.props } />
             </div>
           </div>
         </div>
