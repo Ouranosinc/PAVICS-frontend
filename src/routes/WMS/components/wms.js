@@ -42,7 +42,7 @@ class wms extends React.Component {
         <div className="col-md-12 col-lg-12">
           <div className={classes.mapPanel + "panel panel-default"}>
             <div className="panel-body">
-              <OLComponent capabilities={this.props.wms} dataset={this.state.dataset}/>
+              
             </div>
           </div>
         </div>

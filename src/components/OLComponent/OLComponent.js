@@ -109,6 +109,7 @@ class OLComponent extends React.Component {
           {
             visible:visible,
             title: title,
+            opacity: 0.4, //TODO: Set opacity dynamically
             source: new ol.source.TileWMS(
               {
                 url: wmsUrl,
@@ -228,12 +229,60 @@ class OLComponent extends React.Component {
   componentDidUpdate(prevProps, prevState){
     if(this.props.loadedWmsDatasets.length &&  this.layersCount != this.props.loadedWmsDatasets.length){
       var wmsUrl = this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].url;
+      //var wmsUrl = "http://132.217.140.31:8080/ncWMS2/wms";
+      /*http://132.217.140.31:8080/ncWMS2/wms?
+      FORMAT=image%2Fpng&
+      TRANSPARENT=TRUE&
+      STYLES=default-scalar%2Fdefault&
+      LAYERS=aet_pcp_1970%2FPCP&
+      TIME=1970-12-31T18%253A00%253A00.000Z&
+      COLORSCALERANGE=-0.00004458%2C0.0009362&
+      NUMCOLORBANDS=250&
+      ABOVEMAXCOLOR=0x000000&
+      BELOWMINCOLOR=0x000000&
+      BGCOLOR=transparent&
+      LOGSCALE=false&
+      SERVICE=WMS&
+      VERSION=1.1.1&
+      REQUEST=GetMap&
+      SRS=EPSG%3A4326&
+      BBOX=-74.40659123765,68.390113143525,-21.609886856475,121.18681752
+       */
+
+      /*
+       http://132.217.140.31:8080/ncWMS2/wms?
+       REQUEST=GetLegendGraphic&
+       PALETTE=default&
+       COLORBARONLY=true&
+       WIDTH=110&
+       HEIGHT=264&
+       SERVICE=WMS&
+       VERSION=1.3.0&
+       REQUEST=GetMap&
+       FORMAT=image%2Fpng&
+       TRANSPARENT=TRUE&
+       LAYERS=aet_pcp_1970&
+       BGCOLOR=transparent&
+       SRS=EPSG%3A4326&
+       WIDTH=256&
+       HEIGHT=256&
+       CRS=EPSG%3A3857&
+       STYLES=&
+       BBOX=-7514065.628545966%2C7514065.628545966%2C-5009377.08569731%2C10018754.171394622
+       */
       var wmsName = this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].name;
       var wmsParams = {
         'TRANSPARENT': 'TRUE',
-        'LAYERS' : wmsName,
+        'STYLES': this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].style, //TODO: Do we need to dynamically set style + palette
+        'LAYERS' : this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].name,
+        'COLORSCALERANGE': [-0.00004458,0.0009362],
+        'NUMCOLORBANDS': 250,
+        //'ABOVEMAXCOLOR': '0x000000',
+        //'BELOWMINCOLOR': '0x000000',
         'BGCOLOR' : 'transparent',
-        'SRS' : 'PSG:4326'
+         'TIME':this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].start,// -> /1970-12-31T18:00:00.000Z', //TODO DYNAMICALLY SET TIME
+        'SRS' : 'EPSG:4326',
+        //'ANIMATION': 'TRUE' //TODO: Must be supported by ncWMS server?
       };
       if(this.tmpLayer)
       {

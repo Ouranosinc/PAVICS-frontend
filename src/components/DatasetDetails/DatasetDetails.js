@@ -1,7 +1,7 @@
 import React from 'react'
 import classes from './DatasetDetails.scss'
-
 import Loader from '../../components/Loader'
+import ToggleButton from '../../components/ToggleButton'
 
 export class DatasetDetails extends React.Component {
   static propTypes = {
@@ -10,67 +10,100 @@ export class DatasetDetails extends React.Component {
 
   constructor(props) {
     super(props);
-    this._loadWmsDataset = this._loadWmsDataset.bind(this);
+    this._onOpenDatasetWmsLayers = this._onOpenDatasetWmsLayers.bind(this);
+    this._onCloseDatasetDetailsPanel = this._onCloseDatasetDetailsPanel.bind(this);
+    this._onOpenDatasetDetailsPanel = this._onOpenDatasetDetailsPanel.bind(this);
   }
 
-  _loadWmsDataset(url, name) {
+  /*_loadWmsDataset(url, name) {
     this.props.selectLoadWms(url, this.props.selectedDatasets.items[0].id, name);
+  }*/
+
+  _onOpenDatasetWmsLayers(url, dataset){
+    this.props.openDatasetWmsLayers(dataset);
+    this.props.fetchDatasetWMSLayers(url, dataset);
+    this.props.clickTogglePanel("datasetDetailsPanel", false);
+    this.props.clickTogglePanel("datasetWMSLayersPanel", true);
+    /*this.props.selectLoadWms(url, this.props.selectedDatasets.items[0].id, dataset);*/
+  }
+
+  _onCloseDatasetDetailsPanel(){
+    this.props.clickTogglePanel("datasetDetailsPanel", false);
+  }
+
+  _onOpenDatasetDetailsPanel(){
+    this.props.clickTogglePanel("datasetDetailsPanel", true);
   }
 
   render () {
-    let MainComponent;
-    if(this.props.selectedDatasets.isFetching){
-      MainComponent = <Loader name="dataset" />
-    }else{
-      if(this.props.selectedDatasets.items.length){
-        MainComponent =
-          <div>
-            <div className={classes['DatasetMetadatas']}>
-              {
-                this.props.selectedDatasets.items[0].metadatas.map((x) =>
-                  <div key={x.key + x.value}><strong>{ x.key }: </strong>{ x.value } </div>,
-                )
-              }
-            </div>
-            <div className={classes['DatasetTable']}>
-              <table>
-                <thead>
-                <tr>
-                  <th className={classes['DatasetTableResourceTitleColumn']}>Resource title</th>
-                  <th className={classes['DatasetTableSizeColumn']}>Size</th>
-                  <th className={classes['DatasetTableOpenDAPColumn']}>OpenDAP</th>
-                  <th className={classes['DatasetTableHTTPColumn']}>HTTP</th>
-                  <th className={classes['DatasetTableWMSColumn']}>WMS</th>
-                </tr>
-                </thead>
-                <tbody>
+    let DatasetDetailsPanel;
+    if(this.props.panelControls.datasetDetailsPanel.show){
+      let MainComponent;
+      if(this.props.selectedDatasets.isFetching){
+        MainComponent = <Loader name="dataset" />
+      }else{
+        if(this.props.selectedDatasets.items.length){
+          MainComponent =
+            <div>
+              <div className={classes['DatasetMetadatas']}>
                 {
-                  this.props.selectedDatasets.items[0].datasets.map((x) =>
-                  <tr key={x.name}>
-                    <td>{ x.name }</td>
-                    <td>{ x.size.replace("bytes", "") }</td>
-                    { this.renderLink(x.services.find( x=> x.type === "OpenDAP"), "View") }
-                    { this.renderLink(x.services.find( x=> x.type === "HTTPServer"), "Download") }
-                    { (x.services.find( x=> x.type === "WMS")) ?
-                      <td><a href="#" onClick={() => this._loadWmsDataset(x.services.find( x=> x.type === "WMS").url, x.name)}>Load</a></td>:
-                      <td>N/A</td>
-                    }
-                  </tr>
+                  this.props.selectedDatasets.items[0].metadatas.map((x) =>
+                    <div key={x.key + x.value}><strong>{ x.key }: </strong>{ x.value } </div>,
                   )
                 }
-                </tbody>
-              </table>
+              </div>
+              <div className={classes['DatasetTable']}>
+                <table>
+                  <thead>
+                  <tr>
+                    <th className={classes['DatasetTableResourceTitleColumn']}>Resource title</th>
+                    <th className={classes['DatasetTableSizeColumn']}>Size</th>
+                    <th className={classes['DatasetTableOpenDAPColumn']}>OpenDAP</th>
+                    <th className={classes['DatasetTableHTTPColumn']}>HTTP</th>
+                    <th className={classes['DatasetTableWMSColumn']}>WMS</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {
+                    this.props.selectedDatasets.items[0].datasets.map((x) =>
+                      <tr key={x.name} className={ (x.name === this.props.currentOpenedDatasetWMSFile)? "selected": ""}>
+                        <td>{ x.name }</td>
+                        <td>{ x.size.replace("bytes", "") }</td>
+                        { this.renderLink(x.services.find( x=> x.type === "OpenDAP"), "View") }
+                        { this.renderLink(x.services.find( x=> x.type === "HTTPServer"), "Download") }
+                        { (x.services.find( x=> x.type === "WMS")) ?
+                          <td><a href="#" onClick={() => this._onOpenDatasetWmsLayers(x.services.find( x=> x.type === "WMS").url, x.name)}>Open</a></td>:
+                          <td>N/A</td>
+                        }
+                      </tr>
+                    )
+                  }
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
-      }else{
-        MainComponent = null;
+        }else{
+          MainComponent = <span className="NotAvailable">You must first search catalogs then select a dataset.</span>;
+        }
       }
-
+      DatasetDetailsPanel =  <div className={classes.datasetDetailsComponent}>
+        <div className={classes.overlappingBackground + " panel panel-default"}>
+          <h3><ToggleButton onClick={this._onCloseDatasetDetailsPanel} icon="glyphicon-list-alt"/> Dataset details</h3>
+          <div className="panel-body">
+            { MainComponent }
+          </div>
+        </div>
+      </div>
+    }else{
+      DatasetDetailsPanel = <div className={classes.datasetDetailsComponent}>
+        <div className={classes.overlappingBackground + " " + classes.togglePanel + " panel panel-default"}>
+          <ToggleButton onClick={this._onOpenDatasetDetailsPanel} icon="glyphicon-list-alt"/>
+        </div>
+      </div>;
     }
     return (
       <div className={classes['DatasetDetails']}>
-        <h3>Dataset details</h3>
-        { MainComponent }
+        { DatasetDetailsPanel }
       </div>
     )
   }

@@ -1,12 +1,18 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import classes from './Visualize.scss'
+
+//TODO: Fix, we should only import containers here
 import OLComponent from '../../../components/OLComponent'
-import SearchCatalog from '../../../containers/SearchCatalog'
-import SearchCatalogResults from '../../../containers/SearchCatalogResults'
 import DatasetDetails from '../../../components/DatasetDetails'
 
+//Containers
+import DatasetWMSLayers from '../../../containers/DatasetWMSLayers'
+import SearchCatalog from '../../../containers/SearchCatalog'
+
 import {
+  //Panels
+  clickTogglePanel,
   //Facets
   selectFacetKey,
   selectFacetValue,
@@ -24,11 +30,15 @@ import {
   receiveCatalogDatasets,
   openDatasetDetails,
   closeDatasetDetails,
+  openDatasetWmsLayers,
+  openWmsLayer,
   selectLoadWms,
   //Async
   fetchFacets,
   fetchDataset,
-  fetchCatalogDatasets
+  fetchCatalogDatasets,
+  fetchDatasetWMSLayers,
+  fetchWMSLayerDetails
 } from '../modules/Visualize'
 
 var me;
@@ -50,33 +60,19 @@ class Visualize extends React.Component {
   render () {
     return (
       <div className={classes['Visualize']}>
-        <div className="row">
-          <div className={classes.searchCatalogComponent + " col-sm-6 col-md-5 col-lg-4"}>
-            <div className={classes.overlappingBackground + " panel panel-default"}>
-              <div className="panel-body">
-                <SearchCatalog {...this.props }></SearchCatalog>
-                <SearchCatalogResults {...this.props }></SearchCatalogResults>
-              </div>
+        <div className={classes.frontComponents + " row"}>
+          <div className={classes.topLeftComponents + " col-sm-6 col-md-5 col-lg-4"}>
+            <SearchCatalog {...this.props } />
+          </div>
+          { /* TODO: Fix this, col-sm-5 col-md-5 col-lg-5 BLOCKS MAP CONTROLS EVEN WHEN PANELS ARE CLOSED */ }
+          <div className={classes.topRightComponents + " col-sm-5 col-md-5 col-lg-6"}>
+            <div className="row">
+                <DatasetDetails {...this.props } />
+            </div>
+            <div className="row">
+              <DatasetWMSLayers {...this.props } />
             </div>
           </div>
-          {
-            (this.props.selectedDatasets.receivedAt) ?
-              <div className={classes.datasetDetailsComponent + " col-sm-5 col-md-6 col-lg-7"}>
-                <div className={classes.overlappingBackground + " panel panel-default"}>
-                  <div className="panel-body">
-                    <DatasetDetails {...this.props }></DatasetDetails>
-                  </div>
-                </div>
-              </div> :
-              null
-          }
-          {/*<div className={classes.searchCatalogResultsComponent + " col-sm-5 col-md-5 col-lg-5"}>
-            <div className={classes.overlappingBackground + " panel panel-default"}>
-              <div className="panel-body">
-
-              </div>
-            </div>
-          </div>*/}
         </div>
         <div className="row">
           <div className={classes.backgroundComponent + " col-md-12 col-lg-12"}>
@@ -93,6 +89,8 @@ class Visualize extends React.Component {
 }
 
 const mapActionCreators = {
+  //Panels
+  clickTogglePanel,
   //Facets
   selectFacetKey,
   selectFacetValue,
@@ -110,22 +108,30 @@ const mapActionCreators = {
   receiveCatalogDatasets,
   openDatasetDetails,
   closeDatasetDetails,
+  openDatasetWmsLayers,
+  openWmsLayer,
   selectLoadWms,
   //Async
   fetchFacets,
   fetchDataset,
-  fetchCatalogDatasets
+  fetchCatalogDatasets,
+  fetchDatasetWMSLayers,
+  fetchWMSLayerDetails
 };
 
 const mapStateToProps = (state) => ({
   currentSelectedKey: state.visualize.currentSelectedKey,
   currentSelectedValue: state.visualize.currentSelectedValue,
   currentOpenedDataset: state.visualize.currentOpenedDataset,
+  currentOpenedDatasetWMSFile: state.visualize.currentOpenedDatasetWMSFile,
+  currentOpenedWMSLayer: state.visualize.currentOpenedWMSLayer,
   loadedWmsDatasets: state.visualize.loadedWmsDatasets,
   selectedFacets: state.visualize.selectedFacets,
   selectedDatasets: state.visualize.selectedDatasets,
+  selectedWMSLayers: state.visualize.selectedWMSLayers,
   datasets: state.visualize.datasets,
-  facets: state.visualize.facets
+  facets: state.visualize.facets,
+  panelControls: state.visualize.panelControls
 });
 
 export default connect(mapStateToProps, mapActionCreators)(Visualize)

@@ -9,7 +9,10 @@ export const ADD_FACET_KEY_VALUE_PAIR = 'Visualize.ADD_FACET_KEY_VALUE_PAIR';
 export const REMOVE_FACET_KEY_VALUE_PAIR = 'Visualize.REMOVE_FACET_KEY_VALUE_PAIR';
 export const OPEN_DATASET_DETAILS = 'Visualize.OPEN_DATASET_DETAILS';
 export const CLOSE_DATASET_DETAILS = 'Visualize.CLOSE_DATASET_DETAILS';
+export const OPEN_DATASET_WMS_LAYERS = 'Visualize.OPEN_DATASET_WMS_LAYERS';
+export const OPEN_WMS_LAYER = 'Visualize.OPEN_WMS_LAYER';
 export const SELECT_LOAD_WMS = 'Visualize.SELECT_LOAD_WMS';
+export const CLICK_TOGGLE_PANEL = 'Visualize.CLICK_TOGGLE_PANEL';
 
 //ASYNC
 export const FETCH_FACETS_REQUEST = 'Visualize.FETCH_FACETS_REQUEST';
@@ -21,6 +24,13 @@ export const FETCH_DATASET_SUCCESS = 'Visualize.FETCH_DATASET_SUCCESS';
 export const FETCH_CATALOG_DATASETS_REQUEST = 'Visualize.FETCH_CATALOG_DATASETS_REQUEST';
 export const FETCH_CATALOG_DATASETS_FAILURE = 'Visualize.FETCH_CATALOG_DATASETS_FAILURE';
 export const FETCH_CATALOG_DATASETS_SUCCESS = 'Visualize.FETCH_CATALOG_DATASETS_SUCCESS';
+export const FETCH_DATASET_WMS_LAYERS_REQUEST = 'Visualize.FETCH_DATASET_WMS_LAYERS_REQUEST';
+export const FETCH_DATASET_WMS_LAYERS_FAILURE = 'Visualize.FETCH_DATASET_WMS_LAYERS_FAILURE';
+export const FETCH_DATASET_WMS_LAYERS_SUCCESS = 'Visualize.FETCH_DATASET_WMS_LAYERS_SUCCESS';
+export const FETCH_WMS_LAYER_DETAILS_REQUEST = 'Visualize.FETCH_WMS_LAYER_DETAILS_REQUEST';
+export const FETCH_WMS_LAYER_DETAILS_FAILURE = 'Visualize.FETCH_WMS_LAYER_DETAILS_FAILURE';
+export const FETCH_WMS_LAYER_DETAILS_SUCCESS = 'Visualize.FETCH_WMS_LAYER_DETAILS_SUCCESS';
+
 
 // ------------------------------------
 // Actions
@@ -69,12 +79,37 @@ export function closeDatasetDetails () {
   }
 }
 
-export function selectLoadWms (url, id, name) {
+export function openDatasetWmsLayers (dataset) {
+  return {
+    type: OPEN_DATASET_WMS_LAYERS,
+    dataset: dataset
+  }
+}
+
+export function openWmsLayer (layer) {
+  return {
+    type: OPEN_WMS_LAYER,
+    layer: layer
+  }
+}
+
+export function selectLoadWms (url, name, start, end, style, opacity) {
   return {
     type: SELECT_LOAD_WMS,
     url: url,
-    id: id,
-    name: name
+    name: name,
+    start: start,
+    end: end,
+    style: style,
+    opacity: opacity
+  }
+}
+
+export function clickTogglePanel (panel, show) {
+  return {
+    type: CLICK_TOGGLE_PANEL,
+    panel: panel,
+    show: show
   }
 }
 
@@ -185,6 +220,78 @@ export function receiveCatalogDatasets (datasets) {
   }
 }
 
+export function requestDatasetWMSLayers () {
+  return {
+    type: FETCH_DATASET_WMS_LAYERS_REQUEST,
+    selectedWMSLayers: {
+      requestedAt: Date.now(),
+      isFetching: true,
+      items: []
+    }
+  }
+}
+
+export function receiveDatasetWMSLayersFailure (error) {
+  return {
+    type: FETCH_DATASET_WMS_LAYERS_FAILURE,
+    selectedWMSLayers: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      items: [],
+      error: error
+    }
+  }
+}
+
+export function receiveDatasetWMSLayers (layers) {
+  return {
+    type: FETCH_DATASET_WMS_LAYERS_SUCCESS,
+    selectedWMSLayers: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      items: layers,
+      error: null
+    }
+  }
+}
+
+export function requestWMSLayerDetails (layer, url) {
+  return {
+    type: FETCH_WMS_LAYER_DETAILS_REQUEST,
+    selectedWMSLayer: {
+      requestedAt: Date.now(),
+      layer: layer,
+      wmsUrl: url,
+      isFetching: true,
+      data: {}
+    }
+  }
+}
+
+export function receiveWMSLayerDetailsFailure (error) {
+  return {
+    type: FETCH_WMS_LAYER_DETAILS_FAILURE,
+    selectedWMSLayer: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      data: {},
+      error: error
+    }
+  }
+}
+
+export function receiveWMSLayerDetails (data) {
+  return {
+    type: FETCH_WMS_LAYER_DETAILS_SUCCESS,
+    selectedWMSLayer: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      data: data,
+      error: null
+    }
+  }
+}
+
 //ASYNC
 export function fetchFacets() {
   return function (dispatch) {
@@ -239,6 +346,37 @@ export function fetchCatalogDatasets() {
   }
 }
 
+export function fetchDatasetWMSLayers(url, dataset) {
+  return function (dispatch) {
+    dispatch(requestDatasetWMSLayers());
+    dataset = "outputs/ouranos/subdaily/aet/pcp/aet_pcp_1970.nc"; //TODO, Dynamically use datasetid
+
+    return fetch(`/api/wms/dataset/layers?url=${url}&dataset=${dataset}`)
+      .then(response => response.json())
+      .then(json =>
+        dispatch(receiveDatasetWMSLayers(json))
+      )
+      .catch(error =>
+         dispatch(receiveDatasetWMSLayersFailure(error))
+      )
+  }
+}
+
+export function fetchWMSLayerDetails(url, layer) {
+  return function (dispatch) {
+    dispatch(requestWMSLayerDetails());
+
+    return fetch(`${url}?request=GetMetadata&item=layerDetails&layerName=${layer}`)
+      .then(response => response.json())
+      .then(json =>
+        dispatch(receiveWMSLayerDetails(json))
+      )
+      .catch(error =>
+        dispatch(receiveWMSLayerDetailsFailure(error))
+      )
+  }
+}
+
 //MERGE
 /* The implementation for this will merge an update into the old state,
 *  where the first two entries are put in one List, and the rest in the new version of entries:
@@ -266,6 +404,8 @@ export function fetchCatalogDatasets() {
 }*/
 
 export const actions = {
+  //Sync Panels
+  clickTogglePanel,
   //Sync Facets
   selectFacetKey,
   selectFacetValue,
@@ -283,10 +423,15 @@ export const actions = {
   requestCatalogDatasets,
   receiveCatalogDatasetsFailure,
   receiveCatalogDatasets,
+  openDatasetWmsLayers,
+  openWmsLayer,
+  selectLoadWms,
   //Async
   fetchFacets,
   fetchDataset,
-  fetchCatalogDatasets
+  fetchCatalogDatasets,
+  fetchDatasetWMSLayers,
+  fetchWMSLayerDetails
 };
 
 // ------------------------------------
@@ -322,8 +467,26 @@ const ACTION_HANDLERS = {
   [CLOSE_DATASET_DETAILS]: (state) => {
     return ({ ...state, currentOpenedDataset: "" });
   },
+  [OPEN_DATASET_WMS_LAYERS]: (state, action) => {
+    return ({ ...state, currentOpenedDatasetWMSFile: action.dataset });
+  },
+  [OPEN_WMS_LAYER]: (state, action) => {
+    return ({ ...state, currentOpenedWMSLayer: action.layer });
+  },
   [SELECT_LOAD_WMS]: (state, action) => {
-  return ({ ...state, loadedWmsDatasets: state.loadedWmsDatasets.concat({ url: action.url, id: action.id, name: action.name }) });
+    return ({ ...state, loadedWmsDatasets: state.loadedWmsDatasets.concat({
+      url: action.url,
+      name: action.name,
+      start: action.start,
+      end: action.end,
+      style: action.style,
+      opacity: action.opacity
+    }) });
+  },
+  [CLICK_TOGGLE_PANEL]: (state, action) => {
+    let panelControls = JSON.parse(JSON.stringify(state.panelControls)); //TODO: deepcopy With Immutable.js or something like that
+    panelControls[action.panel].show = action.show;
+    return ({ ...state, panelControls: panelControls });
   },
   [FETCH_DATASET_REQUEST]: (state, action) => {
     return ({ ...state, selectedDatasets: action.selectedDatasets });
@@ -351,10 +514,25 @@ const ACTION_HANDLERS = {
   },
   [FETCH_CATALOG_DATASETS_SUCCESS]: (state, action) => {
     return ({ ...state, datasets: action.datasets });
+  },
+  [FETCH_DATASET_WMS_LAYERS_REQUEST]: (state, action) => {
+    return ({ ...state, selectedWMSLayers: action.selectedWMSLayers });
+  },
+  [FETCH_DATASET_WMS_LAYERS_FAILURE]: (state, action) => {
+    return ({ ...state, selectedWMSLayers: action.selectedWMSLayers });
+  },
+  [FETCH_DATASET_WMS_LAYERS_SUCCESS]: (state, action) => {
+    return ({ ...state, selectedWMSLayers: action.selectedWMSLayers });
+  },
+  [FETCH_WMS_LAYER_DETAILS_REQUEST]: (state, action) => {
+    return ({ ...state, selectedWMSLayer: action.selectedWMSLayer });
+  },
+  [FETCH_WMS_LAYER_DETAILS_FAILURE]: (state, action) => {
+    return ({ ...state, selectedWMSLayer: action.selectedWMSLayer });
+  },
+  [FETCH_WMS_LAYER_DETAILS_SUCCESS]: (state, action) => {
+    return ({ ...state, selectedWMSLayer: action.selectedWMSLayer });
   }
-  //[FETCH_CATALOG_DATASETS_FAILURE]: (state, action) => {
-  //  return ({ ...state, wmss: state.wmss.concat(action.payload), current: action.payload.id, fetching: false })
-  //},
 };
 
 // ------------------------------------
@@ -364,6 +542,8 @@ const initialState = {
   currentSelectedKey: "",
   currentSelectedValue: "",
   currentOpenedDataset: "",
+  currentOpenedDatasetWMSFile: "",
+  currentOpenedWMSLayer: "",
   loadedWmsDatasets: [],
   selectedFacets: [],
   selectedDatasets: { //One only ==> Details
@@ -372,6 +552,29 @@ const initialState = {
     isFetching: false,
     items: [],
     error: null
+  },
+  selectedWMSLayers:{
+    requestedAt: null,
+    receivedAt: null,
+    isFetching: false,
+    items: [],
+    error: null
+  },
+  selectedWMSLayer:{
+    layerDetails: {
+      requestedAt: null,
+      receivedAt: null,
+      isFetching: false,
+      data: {},
+      error: null
+    },
+    timesteps:{
+      requestedAt: null,
+      receivedAt: null,
+      isFetching: false,
+      data: {},
+      error: null
+    }
   },
   facets: {
     requestedAt: null,
@@ -386,6 +589,17 @@ const initialState = {
     isFetching: false,
     items: [],
     error: null
+  },
+  panelControls: {
+    searchCatalogPanel: {
+      show: true
+    },
+    datasetDetailsPanel: {
+      show: false
+    },
+    datasetWMSLayersPanel: {
+      show: false
+    }
   }
 };
 export default function visualizeReducer (state = initialState, action) {

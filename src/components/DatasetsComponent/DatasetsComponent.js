@@ -59,7 +59,7 @@ class DatasetsComponent extends React.Component {
                 -- Pick a dataset --
               </option>
               {
-                /*this.props.wms ?
+                this.props.wms ?
                   layersArray.map(function(layer, index) {
                     return (
                       <option value={index} key={layer["Title"]}>
@@ -67,7 +67,7 @@ class DatasetsComponent extends React.Component {
                       </option>
                     );
                   }, this)
-                  : null*/
+                  : null
               }
             </select>
           </div>
