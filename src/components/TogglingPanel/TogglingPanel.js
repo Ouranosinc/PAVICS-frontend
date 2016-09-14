@@ -1,14 +1,14 @@
 import React from 'react'
 import ToggleButton from './ToggleButton'
 
-class ToggledPanel extends React.Component {
+class TogglingPanel extends React.Component {
 
   static propTypes = {
     clickTogglePanel: React.PropTypes.func.isRequired,
     icon: React.PropTypes.string.isRequired,
     widgetName: React.PropTypes.string.isRequired,
     classes: React.PropTypes.object.isRequired,
-    opened: React.PropTypes.object.isRequired,
+    openedView: React.PropTypes.object.isRequired,
     active: React.PropTypes.bool.isRequired,
   };
 
@@ -33,7 +33,7 @@ class ToggledPanel extends React.Component {
   render() {
     let content;
     if (this.props.active) {
-      content = this.props.opened;
+      content = this.props.openedView;
     }
     else {
       content = this._closed();
@@ -48,4 +48,4 @@ class ToggledPanel extends React.Component {
   }
 }
 
-export default ToggledPanel
+export default TogglingPanel

@@ -1,7 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import classes from './SearchCatalog.scss'
-import ToggledPanel, {ToggleButton} from '../../components/ToggledPanel'
+import TogglingPanel, {ToggleButton} from '../../components/TogglingPanel'
 
 import FacetLabel from '../../components/FacetLabel'
 import Loader from '../../components/Loader'
@@ -170,12 +170,12 @@ export class SearchCatalog extends React.Component {
 
   render() {
     return (
-      <ToggledPanel
+      <TogglingPanel
         icon='glyphicon-search'
         clickTogglePanel={this.props.clickTogglePanel}
         classes={ classes }
         active={ this.props.panelControls.SearchCatalog.show }
-        opened={ this._opened() }
+        openedView={ this._opened() }
         widgetName='SearchCatalog'
       />
     );

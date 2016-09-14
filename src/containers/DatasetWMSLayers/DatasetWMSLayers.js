@@ -1,7 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import classes from './DatasetWMSLayers.scss'
-import ToggledPanel, {ToggleButton} from '../../components/ToggledPanel'
+import TogglingPanel, {ToggleButton} from '../../components/TogglingPanel'
 
 import DatasetWMSLayersList from '../../components/DatasetWMSLayersList'
 import DatasetWMSLayer from '../../components/DatasetWMSLayer'
@@ -74,12 +74,12 @@ export class DatasetWMSLayers extends React.Component {
   render() {
 
     return (
-      <ToggledPanel
+      <TogglingPanel
         icon='glyphicon-globe'
         clickTogglePanel={ this.props.clickTogglePanel }
         classes={ classes }
         active={ this.props.panelControls.DatasetWMSLayers.show }
-        opened={ this._opened() }
+        openedView={ this._opened() }
         widgetName='DatasetWMSLayers'
       />
     );
