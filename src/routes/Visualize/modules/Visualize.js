@@ -591,13 +591,13 @@ const initialState = {
     error: null
   },
   panelControls: {
-    searchCatalogPanel: {
+    SearchCatalog: {
       show: true
     },
-    datasetDetailsPanel: {
+    DatasetDetails: {
       show: false
     },
-    datasetWMSLayersPanel: {
+    DatasetWMSLayers: {
       show: false
     }
   }

@@ -1,11 +1,11 @@
 import React from 'react'
-import { connect } from 'react-redux'
+import {connect} from 'react-redux'
 import classes from './SearchCatalog.scss'
+import ToggledPanel, {ToggleButton} from '../../components/ToggledPanel'
 
 import FacetLabel from '../../components/FacetLabel'
 import Loader from '../../components/Loader'
 import SearchCatalogResults from '../../containers/SearchCatalogResults'
-import ToggleButton from '../../components/ToggleButton'
 
 export class SearchCatalog extends React.Component {
   static propTypes = {
@@ -51,11 +51,10 @@ export class SearchCatalog extends React.Component {
     this._onSelectedValue = this._onSelectedValue.bind(this);
     this._onSearchCatalog = this._onSearchCatalog.bind(this);
     this._onCloseSearchCatalogPanel = this._onCloseSearchCatalogPanel.bind(this);
-    this._onOpenSearchCatalogPanel = this._onOpenSearchCatalogPanel.bind(this);
   }
 
-  _onAddFacet(event){
-    if(this.props.currentSelectedKey.length && this.props.currentSelectedValue.length){
+  _onAddFacet(event) {
+    if (this.props.currentSelectedKey.length && this.props.currentSelectedValue.length) {
       this.props.addFacetKeyValue(this.props.currentSelectedKey, this.props.currentSelectedValue);
       this.props.selectFacetKey("");
       //TODO: Auto-fetch on onAddFacet() ?
@@ -63,129 +62,123 @@ export class SearchCatalog extends React.Component {
     }
   }
 
-  _onRemoveFacet(key, value){
+  _onRemoveFacet(key, value) {
     this.props.removeFacetKeyValue(key, value);
     //TODO: Auto-fetch on onRemoveFacet() ?
     this.props.fetchCatalogDatasets();
   }
 
-  _onSelectedKey(event){
+  _onSelectedKey(event) {
     this.props.selectFacetKey(event.target.value);
-    let facet = this.props.facets.items.find( x => x.key === event.target.value);
-    if(facet){
+    let facet = this.props.facets.items.find(x => x.key === event.target.value);
+    if (facet) {
       this.currentFacetValues = facet.values;
-    }else{
+    } else {
       this.currentFacetValues = [];
     }
   }
 
-  _onSelectedValue(event){
+  _onSelectedValue(event) {
     this.props.selectFacetValue(event.target.value);
   }
 
-  _onSearchCatalog(event){
+  _onSearchCatalog(event) {
     this.props.fetchCatalogDatasets();
   }
 
-  _onCloseSearchCatalogPanel(){
-    this.props.clickTogglePanel("searchCatalogPanel", false);
+  _onCloseSearchCatalogPanel() {
+    this.props.clickTogglePanel("SearchCatalog", false);
   }
 
-  _onOpenSearchCatalogPanel(){
-    this.props.clickTogglePanel("searchCatalogPanel", true);
-  }
-
-
-  render () {
-    //console.log("render SearchCatalog");
-    let SearchCatalogPanel;
-    if(this.props.panelControls.searchCatalogPanel.show){
-      let mainComponent;
-      if(this.props.facets.isFetching){
-        mainComponent = <Loader name="facets" />
-      }else{
-        mainComponent = <div className="form-group">
-          <form className="form-horizontal" role="form">
-            <div className="form-group">
-              <label className="col-sm-4 col-md-3 col-lg-3 control-label" htmlFor="facetKey">Key:</label>
-              <div className="col-sm-8 col-md-9 col-lg-9">
-                <select id="facetKey" className="form-control" value={ this.props.currentSelectedKey } onChange={ this._onSelectedKey }>
-                  <option value="">-- Select a key --</option>
-                  <optgroup label="Recommended">
-                    {this.recommendedKeys.map((x, i) =>
-                      <option key={i + 1} value={ x }>{ x }</option>
-                    )}
-                  </optgroup>
-                  <optgroup label="Others">
-                    {this.props.facets.items.map((x, i) =>
-                      (this.recommendedKeys.includes(x.key))? null :
-                        <option key={i + 1} value={ x.key }>{ x.key }</option>
-                    )}
-                  </optgroup>
-                </select>
-              </div>
-            </div>
-            <div className="form-group">
-              <label className="col-sm-4 col-md-3 col-lg-3 control-label" htmlFor="facetValue">Value:</label>
-              <div className="col-sm-8 col-md-9 col-lg-9">
-                <select id="facetValue" className="form-control" value={ this.props.currentSelectedValue } onChange={ this._onSelectedValue } disabled={!this.props.currentSelectedKey.length}>
-                  <option value="">-- Select a value --</option>
-                  {this.currentFacetValues.map((x, i) =>
+  _mainComponent() {
+    let mainComponent;
+    if (this.props.facets.isFetching) {
+      mainComponent = <Loader name="facets"/>
+    } else {
+      mainComponent = <div className="form-group">
+        <form className="form-horizontal" role="form">
+          <div className="form-group">
+            <label className="col-sm-4 col-md-3 col-lg-3 control-label" htmlFor="facetKey">Key:</label>
+            <div className="col-sm-8 col-md-9 col-lg-9">
+              <select id="facetKey" className="form-control" value={ this.props.currentSelectedKey }
+                      onChange={ this._onSelectedKey }>
+                <option value="">-- Select a key --</option>
+                <optgroup label="Recommended">
+                  {this.recommendedKeys.map((x, i) =>
                     <option key={i + 1} value={ x }>{ x }</option>
                   )}
-                </select>
-              </div>
-            </div>
-            <div className="form-group">
-              <div className="col-sm-offset-4 col-md-offset-3 col-lg-offset-3 col-sm-2 col-md-2 col-lg-2">
-                <a type="button" className="btn btn-sm btn-default" title="Add" onClick={ this._onAddFacet } disabled={!this.props.currentSelectedKey.length || !this.props.currentSelectedValue.length}>
-                  <i className="glyphicon glyphicon-plus"></i> Facets
-                </a>
-              </div>
-            </div>
-            {
-              (this.props.selectedFacets.length)
-                ? <div className="form-group">
-                <label className="col-sm-4 col-md-3 col-lg-3 control-label">Facets:</label>
-                <div className="col-sm-8 col-md-9 col-lg-9">
-                  {this.props.selectedFacets.map((x, i) =>
-                    <FacetLabel key={i + 1} facet={ x } onRemoveFacet={ this._onRemoveFacet }/>
+                </optgroup>
+                <optgroup label="Others">
+                  {this.props.facets.items.map((x, i) =>
+                    (this.recommendedKeys.includes(x.key)) ? null :
+                      <option key={i + 1} value={ x.key }>{ x.key }</option>
                   )}
-                </div>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+          <div className="form-group">
+            <label className="col-sm-4 col-md-3 col-lg-3 control-label" htmlFor="facetValue">Value:</label>
+            <div className="col-sm-8 col-md-9 col-lg-9">
+              <select id="facetValue" className="form-control" value={ this.props.currentSelectedValue }
+                      onChange={ this._onSelectedValue } disabled={!this.props.currentSelectedKey.length}>
+                <option value="">-- Select a value --</option>
+                {this.currentFacetValues.map((x, i) =>
+                  <option key={i + 1} value={ x }>{ x }</option>
+                )}
+              </select>
+            </div>
+          </div>
+          <div className="form-group">
+            <div className="col-sm-offset-4 col-md-offset-3 col-lg-offset-3 col-sm-2 col-md-2 col-lg-2">
+              <a type="button" className="btn btn-sm btn-default" title="Add" onClick={ this._onAddFacet }
+                 disabled={!this.props.currentSelectedKey.length || !this.props.currentSelectedValue.length}>
+                <i className="glyphicon glyphicon-plus" /> Facets
+              </a>
+            </div>
+          </div>
+          {
+            (this.props.selectedFacets.length)
+              ? <div className="form-group">
+              <label className="col-sm-4 col-md-3 col-lg-3 control-label">Facets:</label>
+              <div className="col-sm-8 col-md-9 col-lg-9">
+                {this.props.selectedFacets.map((x, i) =>
+                  <FacetLabel key={i + 1} facet={ x } onRemoveFacet={ this._onRemoveFacet }/>
+                )}
               </div>
-                : null
-            }
-            {/*<div className="form-group">
-             <div className="col-sm-offset-4 col-md-offset-3 col-lg-offset-3 col-sm-3 col-md-3 col-lg-3">
-             <a type="button" className="btn btn-sm btn-default" title="Search" onClick={ this._onSearchCatalog }>
-             <i className="glyphicon glyphicon-search"></i> Search datasets
-             </a>
-             </div>
-             </div>*/}
-          </form>
-        </div>
-      }
-      SearchCatalogPanel = <div className={classes.searchCatalogComponent}>
+            </div>
+              : null
+          }
+        </form>
+      </div>
+    }
+    return mainComponent;
+  }
+
+  _opened() {
+    return (
         <div className={classes.overlappingBackground + " panel panel-default"}>
-          <h3><ToggleButton onClick={this._onCloseSearchCatalogPanel} icon="glyphicon-search"/> Filter Catalogs by facets</h3>
+          <h3><ToggleButton onClick={this._onCloseSearchCatalogPanel} icon="glyphicon-search"/> Filter Catalogs by
+            facets</h3>
           <div className="panel-body">
-            { mainComponent }
-            <SearchCatalogResults {...this.props }></SearchCatalogResults>
+            { this._mainComponent() }
+            <SearchCatalogResults {...this.props } />
           </div>
         </div>
-      </div>;
-    }else{
-      SearchCatalogPanel = <div className={classes.searchCatalogComponent}>
-        <div className={classes.overlappingBackground + " " + classes.togglePanel + " panel panel-default"}>
-          <ToggleButton onClick={this._onOpenSearchCatalogPanel} icon="glyphicon-search"/>
-        </div>
-      </div>;
-    }
+    );
+  }
+
+  render() {
     return (
-      <div className={classes['SearchCatalog']}>
-        { SearchCatalogPanel }
-      </div>
-    )
+      <ToggledPanel
+        icon='glyphicon-search'
+        clickTogglePanel={this.props.clickTogglePanel}
+        classes={ classes }
+        active={ this.props.panelControls.SearchCatalog.show }
+        opened={ this._opened() }
+        widgetName='SearchCatalog'
+      />
+    );
   }
 }
 

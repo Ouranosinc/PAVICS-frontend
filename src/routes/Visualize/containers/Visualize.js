@@ -1,5 +1,5 @@
 import React from 'react'
-import { connect } from 'react-redux'
+import {connect} from 'react-redux'
 import classes from './Visualize.scss'
 
 //TODO: Fix, we should only import containers here
@@ -44,9 +44,7 @@ import {
 var me;
 
 class Visualize extends React.Component {
-  static propTypes = {
-
-  };
+  static propTypes = {};
 
   constructor(props) {
     super(props);
@@ -57,31 +55,19 @@ class Visualize extends React.Component {
     me = this;
   }
 
-  render () {
+
+  render() {
     return (
       <div className={classes['Visualize']}>
-        <div className={classes.frontComponents + " row"}>
-          <div className={classes.topLeftComponents + " col-sm-6 col-md-5 col-lg-4"}>
-            <SearchCatalog {...this.props } />
-          </div>
-          { /* TODO: Fix this, col-sm-5 col-md-5 col-lg-5 BLOCKS MAP CONTROLS EVEN WHEN PANELS ARE CLOSED */ }
-          <div className={classes.topRightComponents + " col-sm-5 col-md-5 col-lg-6"}>
-            <div className="row">
-                <DatasetDetails {...this.props } />
-            </div>
-            <div className="row">
-              <DatasetWMSLayers {...this.props } />
-            </div>
-          </div>
+        <div className={classes.mapContainer}>
+          <OLComponent {...this.props }/>
         </div>
-        <div className="row">
-          <div className={classes.backgroundComponent + " col-md-12 col-lg-12"}>
-            <div className="panel panel-default">
-              <div className="panel-body">
-                <OLComponent {...this.props }/>
-              </div>
-            </div>
-          </div>
+        <div className={classes.left}>
+          <SearchCatalog {...this.props } />
+        </div>
+        <div className={classes.right}>
+          <DatasetDetails {...this.props } />
+          <DatasetWMSLayers {...this.props } />
         </div>
       </div>
     )
