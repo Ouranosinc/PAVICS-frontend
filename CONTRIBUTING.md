@@ -8,13 +8,13 @@ Please make sure that there aren't existing pull requests attempting to address 
 
 * Non-trivial changes should be discussed in an issue first
 * Develop in a topic branch, not master
-* Squash your commits
+* Make more atomic commits instead of one all-encompassing one
 
 ### Linting
 
 Please check your code using `npm run lint` before submitting your pull requests, as the CI build will fail if `eslint` fails.
 
-### Commit Message Format
+### Commit Message Format (non-normative)
 
 Each commit message should include a **type**, a **scope** and a **subject**:
 
@@ -26,10 +26,10 @@ Lines should not exceed 100 characters. This allows the message to be easier to 
 
 ```
  #271 feat(standard): add style config and refactor to match
- #270 fix(config): only override publicPath when served by webpack 
- #269 feat(eslint-config-defaults): replace eslint-config-airbnb 
- #268 feat(config): allow user to configure webpack stats output 
-``` 
+ #270 fix(config): only override publicPath when served by webpack
+ #269 feat(eslint-config-defaults): replace eslint-config-airbnb
+ #268 feat(config): allow user to configure webpack stats output
+```
 
 #### Type
 
