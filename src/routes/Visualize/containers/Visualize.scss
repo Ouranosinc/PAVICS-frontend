@@ -1,8 +1,31 @@
 .Visualize {
+  position: relative;
+
+  .mapContainer
+  {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .left
+  {
+    max-width: 38%;
+    float: left;
+    margin: 15px;
+  }
+
+  .right
+  {
+    max-width: 56%;
+    float: right;
+    margin: 15px;
+  }
 
   .frontComponents{
-    word-break:break-all;
-    background: rgba(255,255,255,0.8);
+    word-break: normal;
+    opacity: (0.8);
 
     .topLeftComponents{
       position: fixed;
@@ -17,9 +40,5 @@
       right: 0;
       float: right;
     }
-  }
-
-  .backgroundComponent{
-
   }
 }

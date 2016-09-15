@@ -8,7 +8,7 @@ Please make sure that there aren't existing pull requests attempting to address 
 
 * Non-trivial changes should be discussed in an issue first
 * Develop in a topic branch, not master
-* Squash your commits
+* Make more atomic commits instead of one all-encompassing one, group all the related activity in one commit (follow the types mentioned below as one activity)
 
 ### Linting
 
@@ -16,20 +16,14 @@ Please check your code using `npm run lint` before submitting your pull requests
 
 ### Commit Message Format
 
-Each commit message should include a **type**, a **scope** and a **subject**:
+Each commit message must include a Jira issue#, a type and a description. Lines should not exceed 100 characters. This allows the message to be easier to read on github as well as in various git tools and produces a nice, neat commit log.
 
 ```
- <type>(<scope>): <subject>
-```
+ <issue#> - <type> - <description>
 
-Lines should not exceed 100 characters. This allows the message to be easier to read on github as well as in various git tools and produces a nice, neat commit log ie:
-
+ PAV-184 - refactor - introduce OpenedPanel
+ PAV-184 - fix - click and drag
 ```
- #271 feat(standard): add style config and refactor to match
- #270 fix(config): only override publicPath when served by webpack 
- #269 feat(eslint-config-defaults): replace eslint-config-airbnb 
- #268 feat(config): allow user to configure webpack stats output 
-``` 
 
 #### Type
 
@@ -45,14 +39,9 @@ Must be one of the following:
 * **chore**: Changes to the build process or auxiliary tools and libraries such as documentation
   generation
 
-#### Scope
+#### Description
 
-The scope could be anything specifying place of the commit change. For example `webpack`,
-`babel`, `redux` etc...
-
-#### Subject
-
-The subject contains succinct description of the change:
+A succinct description of the change:
 
 * use the imperative, present tense: "change" not "changed" nor "changes"
 * don't capitalize first letter

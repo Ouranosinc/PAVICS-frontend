@@ -19,7 +19,7 @@ export class ToggleButton extends React.Component {
   render () {
     return (
       <a onClick={ this._toggleClicked } className={classes['ToggleButton']} href="#">
-        <i className={classes.toggleIcon + " glyphicon " + this.props.icon}></i>
+        <i className={classes.toggleIcon + " glyphicon " + this.props.icon} />
       </a>
     )
   }

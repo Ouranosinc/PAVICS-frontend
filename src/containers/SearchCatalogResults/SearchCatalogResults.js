@@ -19,7 +19,7 @@ export class SearchCatalogResults extends React.Component {
   }
 
   _onOpenDataset(id, url){
-    this.props.clickTogglePanel("datasetDetailsPanel", true);
+    this.props.clickTogglePanel("DatasetDetails", true);
     if(id === this.props.currentOpenedDataset){
       this.props.closeDatasetDetails();
     }else{
@@ -49,7 +49,7 @@ export class SearchCatalogResults extends React.Component {
                 <div className={classes['DatasetRow']} key={i + 1}>
                   <div className={(x.id === this.props.currentOpenedDataset)?classes['DatasetRowSelected']:classes['DatasetRowNotSelected']}>
                     <a href="#" onClick={() => this._onOpenDataset(x.id, x.url[0])} className={classes['DatasetRowExpandButton']}>
-                      <i className="glyphicon glyphicon-folder-open"></i>
+                      <i className="glyphicon glyphicon-folder-open" />
                     </a>
                     <a href="#" onClick={() => this._onOpenDataset(x.id, x.url[0])} className={classes['DatasetRowTitle']}> { x.id }</a>
                     {/*<a href="#" onClick={() => this._onSelectDataset(x.id)} className={classes['DatasetRowSelectButton']}>
