@@ -1,9 +1,8 @@
 import React from 'react'
 import classes from './DatasetDetails.scss'
 import Loader from '../../components/Loader'
-import TogglingPanel, {ToggleButton} from '../TogglingPanel'
+import TogglingPanel, {OpenedPanel} from '../TogglingPanel'
 import Table from '../Table'
-
 export class DatasetDetails extends React.Component {
   static propTypes = {};
 
@@ -13,12 +12,12 @@ export class DatasetDetails extends React.Component {
     this._onCloseDatasetDetailsPanel = this._onCloseDatasetDetailsPanel.bind(this);
     this._onOpenPanel = this._onOpenPanel.bind(this);
     this._opened = this._opened.bind(this);
+    this._mainComponent = this._mainComponent.bind(this);
   }
 
   /*_loadWmsDataset(url, name) {
    this.props.selectLoadWms(url, this.props.selectedDatasets.items[0].id, name);
    }*/
-
   _onOpenDatasetWmsLayers(url, dataset) {
     this.props.openDatasetWmsLayers(dataset);
     this.props.fetchDatasetWMSLayers(url, dataset);
@@ -36,7 +35,7 @@ export class DatasetDetails extends React.Component {
   }
 
   _mainComponent() {
-        let MainComponent;
+    let MainComponent;
     if (this.props.selectedDatasets.isFetching) {
       MainComponent = <Loader name="dataset"/>
     } else {
@@ -51,8 +50,7 @@ export class DatasetDetails extends React.Component {
         ];
         let selectedIndex = -1;
         this.props.selectedDatasets.items[0].datasets.map((row, i) => {
-          if (row.name === this.props.currentOpenedDatasetWMSFile)
-          {
+          if (row.name === this.props.currentOpenedDatasetWMSFile) {
             selectedIndex = i;
           }
           rows[i] = [
@@ -61,12 +59,11 @@ export class DatasetDetails extends React.Component {
             this.renderLink(row.services.find(row => row.type === "OpenDAP"), "View"),
             this.renderLink(row.services.find(row => row.type === "HTTPServer"), "Download"),
             (row.services.find(row => row.type === "WMS"))
-              ? <a href="#" onClick={() => this._onOpenDatasetWmsLayers(row.services.find(row => row.type === "WMS").url, row.name)}>Open</a>
+              ? <a href="#"
+                   onClick={() => this._onOpenDatasetWmsLayers(row.services.find(row => row.type === "WMS").url, row.name)}>Open</a>
               : 'N/A'
           ];
         });
-
-
         MainComponent =
           <div>
             <div className={classes['DatasetMetadatas']}>
@@ -76,7 +73,7 @@ export class DatasetDetails extends React.Component {
                 )
               }
             </div>
-            <Table cellHeaders={headers} rows={rows} selectedIndex={selectedIndex} />
+            <Table cellHeaders={headers} rows={rows} selectedIndex={selectedIndex}/>
           </div>
       } else {
         MainComponent = <span className="NotAvailable">You must first search catalogs then select a dataset.</span>;
@@ -87,13 +84,11 @@ export class DatasetDetails extends React.Component {
 
   _opened() {
     return (
-      <div className={classes.overlappingBackground + " panel panel-default"}>
-        <h3><ToggleButton onClick={this._onCloseDatasetDetailsPanel} icon="glyphicon-list-alt"/> Dataset details
-        </h3>
-        <div className="panel-body">
-          { this._mainComponent() }
-        </div>
-      </div>
+      <OpenedPanel
+        onClosePanelCb={this._onCloseDatasetDetailsPanel}
+        icon="glyphicon-list-alt"
+        panelTitle="Dataset details"
+        panelContentCb={this._mainComponent}/>
     );
   }
 
@@ -119,5 +114,4 @@ export class DatasetDetails extends React.Component {
     }
   }
 }
-
 export default DatasetDetails

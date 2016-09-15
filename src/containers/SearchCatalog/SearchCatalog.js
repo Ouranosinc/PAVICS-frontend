@@ -1,12 +1,10 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import classes from './SearchCatalog.scss'
-import TogglingPanel, {ToggleButton} from '../../components/TogglingPanel'
-
+import TogglingPanel, {OpenedPanel} from '../../components/TogglingPanel'
 import FacetLabel from '../../components/FacetLabel'
 import Loader from '../../components/Loader'
 import SearchCatalogResults from '../../containers/SearchCatalogResults'
-
 export class SearchCatalog extends React.Component {
   static propTypes = {
     /* Helps Webstorm to auto-complete function calls and enforce React Props Validation*/
@@ -27,7 +25,6 @@ export class SearchCatalog extends React.Component {
     datasets: React.PropTypes.object.isRequired,
     facets: React.PropTypes.object.isRequired
   };
-
 
   constructor(props) {
     super(props);
@@ -53,6 +50,7 @@ export class SearchCatalog extends React.Component {
     this._onCloseSearchCatalogPanel = this._onCloseSearchCatalogPanel.bind(this);
     this._onOpenPanel = this._onOpenPanel.bind(this);
     this._opened = this._opened.bind(this);
+    this._makePanelContent = this._makePanelContent.bind(this);
   }
 
   _onAddFacet(event) {
@@ -139,7 +137,7 @@ export class SearchCatalog extends React.Component {
             <div className="col-sm-offset-4 col-md-offset-3 col-lg-offset-3 col-sm-2 col-md-2 col-lg-2">
               <a type="button" className="btn btn-sm btn-default" title="Add" onClick={ this._onAddFacet }
                  disabled={!this.props.currentSelectedKey.length || !this.props.currentSelectedValue.length}>
-                <i className="glyphicon glyphicon-plus" /> Facets
+                <i className="glyphicon glyphicon-plus"/> Facets
               </a>
             </div>
           </div>
@@ -161,42 +159,44 @@ export class SearchCatalog extends React.Component {
     return mainComponent;
   }
 
-  _opened() {
+  _makePanelContent() {
     return (
-        <div className={classes.overlappingBackground + " panel panel-default"}>
-          <h3><ToggleButton onClick={this._onCloseSearchCatalogPanel} icon="glyphicon-search"/> Filter Catalogs by
-            facets</h3>
-          <div className="panel-body">
-            { this._mainComponent() }
-            <SearchCatalogResults {...this.props } />
-          </div>
-        </div>
+      <div>
+        {this._mainComponent()}
+        <SearchCatalogResults {...this.props } />
+      </div>
     );
   }
 
-
+  _opened() {
+    return (
+      <OpenedPanel
+        onClosePanelCb={this._onCloseSearchCatalogPanel}
+        icon='glyphicon-search'
+        panelTitle='Filter Catalogs by Facets'
+        panelContentCb={this._makePanelContent}/>
+    );
+  }
 
   render() {
     return (
       <TogglingPanel
         onOpenPanelCb={this._onOpenPanel}
         icon='glyphicon-search'
-        classes={ classes }
-        active={ this.props.panelControls.SearchCatalog.show }
-        makeOpenedViewCb={ this._opened }
+        classes={classes}
+        active={this.props.panelControls.SearchCatalog.show}
+        makeOpenedViewCb={this._opened}
         widgetName='SearchCatalog'
       />
     );
   }
 }
-
 const mapStateToProps = (state) => {
   return {}
 }
 const mapDispatchToProps = (dispatch) => {
   return {}
 }
-
 export default connect(
   mapStateToProps,
   mapDispatchToProps
