@@ -52,7 +52,7 @@ class ClimateVariablesList extends React.Component {
       <TogglingPanel
         onOpenPanelCb={this._onOpenPanel}
         icon="glyphicon-list"
-        widgetName="ClimateVariableList"
+        widgetName="ClimateVariablesList"
         classes={classes}
         makeOpenedViewCb={this._makeOpenedPanel}
         active={this.props.panelControls.ClimateVariablesList.show}/>

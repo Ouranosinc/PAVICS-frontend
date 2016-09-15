@@ -1,8 +1,7 @@
 import React from 'react'
 import ToggleButton from './ToggleButton'
-
+import classes from './TogglingPanel.scss'
 class TogglingPanel extends React.Component {
-
   static propTypes = {
     onOpenPanelCb: React.PropTypes.func.isRequired,
     icon: React.PropTypes.string.isRequired,
@@ -12,17 +11,15 @@ class TogglingPanel extends React.Component {
     active: React.PropTypes.bool.isRequired,
   };
 
-  constructor(props)
-  {
+  constructor(props) {
     super(props);
   }
 
-
   _closed() {
     return (
-        <div className={this.props.classes.overlappingBackground + " " + this.props.classes.togglePanel + " panel panel-default"}>
-          <ToggleButton onClick={ this.props.onOpenPanelCb } icon={ this.props.icon }/>
-        </div>
+      <div className={classes.overlappingBackground + " " + classes.togglePanel + " panel panel-default"}>
+        <ToggleButton onClick={ this.props.onOpenPanelCb } icon={ this.props.icon }/>
+      </div>
     );
   }
 
@@ -43,5 +40,4 @@ class TogglingPanel extends React.Component {
     );
   }
 }
-
 export default TogglingPanel
