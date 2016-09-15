@@ -19,10 +19,10 @@ Please check your code using `npm run lint` before submitting your pull requests
 Each commit message must include a Jira issue#, a type and a description. Lines should not exceed 100 characters. This allows the message to be easier to read on github as well as in various git tools and produces a nice, neat commit log.
 
 ```
- <issue#>:<type> - <description>
+ <issue#> - <type> - <description>
 
- PAV-184:refactor - introduce OpenedPanel
- PAV-184:fix - click and drag
+ PAV-184 - refactor - introduce OpenedPanel
+ PAV-184 - fix - click and drag
 ```
 
 #### Type
