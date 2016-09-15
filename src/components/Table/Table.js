@@ -4,12 +4,11 @@ class Table extends React.Component {
   static propTypes = {
     cellHeaders: React.PropTypes.array.isRequired,
     rows: React.PropTypes.array.isRequired,
-    selectedIndex: React.PropTypes.number.isRequired
+    selectedIndex: React.PropTypes.number.isRequired,
   };
 
   constructor(props) {
     super(props);
-    console.log(this.props.rows);
     if (this.props.cellHeaders.length !== this.props.rows[0].length) {
       throw new Error('There should be as much headers as cells in the table definition');
     }

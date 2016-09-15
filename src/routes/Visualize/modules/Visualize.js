@@ -599,6 +599,9 @@ const initialState = {
     },
     DatasetWMSLayers: {
       show: false
+    },
+    ClimateVariablesList: {
+      show: true
     }
   }
 };

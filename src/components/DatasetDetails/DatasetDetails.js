@@ -5,12 +5,14 @@ import TogglingPanel, {ToggleButton} from '../TogglingPanel'
 import Table from '../Table'
 
 export class DatasetDetails extends React.Component {
-  static propTypes = {}
+  static propTypes = {};
 
   constructor(props) {
     super(props);
     this._onOpenDatasetWmsLayers = this._onOpenDatasetWmsLayers.bind(this);
     this._onCloseDatasetDetailsPanel = this._onCloseDatasetDetailsPanel.bind(this);
+    this._onOpenPanel = this._onOpenPanel.bind(this);
+    this._opened = this._opened.bind(this);
   }
 
   /*_loadWmsDataset(url, name) {
@@ -27,6 +29,10 @@ export class DatasetDetails extends React.Component {
 
   _onCloseDatasetDetailsPanel() {
     this.props.clickTogglePanel("DatasetDetails", false);
+  }
+
+  _onOpenPanel() {
+    this.props.clickTogglePanel("DatasetDetails", true);
   }
 
   _mainComponent() {
@@ -94,10 +100,10 @@ export class DatasetDetails extends React.Component {
   render() {
     return (
       <TogglingPanel
-        clickTogglePanel={this.props.clickTogglePanel}
+        onOpenPanelCb={this._onOpenPanel}
         classes={ classes }
         active={ this.props.panelControls.DatasetDetails.show }
-        openedView={ this._opened() }
+        makeOpenedViewCb={ this._opened }
         widgetName='DatasetDetails'
         icon='glyphicon-list-alt'
       />

@@ -51,6 +51,8 @@ export class SearchCatalog extends React.Component {
     this._onSelectedValue = this._onSelectedValue.bind(this);
     this._onSearchCatalog = this._onSearchCatalog.bind(this);
     this._onCloseSearchCatalogPanel = this._onCloseSearchCatalogPanel.bind(this);
+    this._onOpenPanel = this._onOpenPanel.bind(this);
+    this._opened = this._opened.bind(this);
   }
 
   _onAddFacet(event) {
@@ -88,6 +90,10 @@ export class SearchCatalog extends React.Component {
 
   _onCloseSearchCatalogPanel() {
     this.props.clickTogglePanel("SearchCatalog", false);
+  }
+
+  _onOpenPanel() {
+    this.props.clickTogglePanel("SearchCatalog", true);
   }
 
   _mainComponent() {
@@ -168,14 +174,16 @@ export class SearchCatalog extends React.Component {
     );
   }
 
+
+
   render() {
     return (
       <TogglingPanel
+        onOpenPanelCb={this._onOpenPanel}
         icon='glyphicon-search'
-        clickTogglePanel={this.props.clickTogglePanel}
         classes={ classes }
         active={ this.props.panelControls.SearchCatalog.show }
-        openedView={ this._opened() }
+        makeOpenedViewCb={ this._opened }
         widgetName='SearchCatalog'
       />
     );

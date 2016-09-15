@@ -9,15 +9,11 @@ class OpenedPanel extends React.Component
     panelTitle: React.PropTypes.string.isRequired,
     panelContentCb: React.PropTypes.func.isRequired,
   };
-  _onClosePanel()
-  {
-    this.props.onClosePanelCb();
-  }
   render()
   {
     return (
       <div className={classes.overlappingBackground + ' panel panel-default'}>
-        <h3><ToggleButton onClick={this._onClosePanel()} icon={this.props.icon}/>{this.props.panelTitle}</h3>
+        <h3><ToggleButton onClick={this.props.onClosePanelCb} icon={this.props.icon}/>{this.props.panelTitle}</h3>
         <div className="panel-body">
           { this.props.panelContentCb() }
         </div>

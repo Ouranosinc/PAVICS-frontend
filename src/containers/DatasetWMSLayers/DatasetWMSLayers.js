@@ -18,10 +18,17 @@ export class DatasetWMSLayers extends React.Component {
     this._onCloseDatasetWMSLayersPanel = this._onCloseDatasetWMSLayersPanel.bind(this);
     this._onSelectDatasetWMSLayer = this._onSelectDatasetWMSLayer.bind(this);
     this._onLoadWMSLayer = this._onLoadWMSLayer.bind(this);
+    this._onOpenPanel = this._onOpenPanel.bind(this);
+    this._opened = this._opened.bind(this);
   }
 
   _onCloseDatasetWMSLayersPanel() {
     this.props.clickTogglePanel("DatasetWMSLayers", false);
+  }
+
+  _onOpenPanel()
+  {
+    this.props.clickTogglePanel("DatasetWMSLayers", true);
   }
 
   _onSelectDatasetWMSLayer(url, layer) {
@@ -75,11 +82,11 @@ export class DatasetWMSLayers extends React.Component {
 
     return (
       <TogglingPanel
+        onOpenPanelCb={this._onOpenPanel}
         icon='glyphicon-globe'
-        clickTogglePanel={ this.props.clickTogglePanel }
         classes={ classes }
         active={ this.props.panelControls.DatasetWMSLayers.show }
-        openedView={ this._opened() }
+        makeOpenedViewCb={ this._opened }
         widgetName='DatasetWMSLayers'
       />
     );
