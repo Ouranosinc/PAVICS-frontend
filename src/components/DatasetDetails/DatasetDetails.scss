@@ -1,67 +1,14 @@
 .DatasetDetails {
-  text-align: left;
+  float: right;
+  clear: right;
 
-  .overlappingBackground{
-    margin: 0 !important;
-    opacity: (0.8);
-  }
-
-  .togglePanel{
-    float: right;
-    width: 32px;
-    font-size: 1.5em;
-  }
-
-  .DatasetTable{
-    max-height: 200px;
-    overflow-y: scroll;
-    overflow-x: hidden;
-  }
-
-  .DatasetMetadatas{
+  .DatasetMetadatas {
     max-height: 100px;
     overflow-y: scroll;
     overflow-x: hidden;
   }
 
-  .DatasetTableResourceTitleColumn{
-    min-width:150px;
-  }
-
-  .DatasetTableSizeColumn{
-    min-width:80px;
-  }
-
-  .DatasetTableOpenDAPColumn{
-    min-width:80px;
-  }
-
-  .DatasetTableHTTPColumn{
-    min-width:80px;
-  }
-
-  .DatasetTableWMSColumn{
-    min-width:80px;
-  }
-
-  .NotAvailable{
-    padding: 5px;
-  }
-
-  table tr.selected{
-    background: rgba(0,0,0,.2);
-  }
-
-  table{
-    width: 100%;
-  }
-
-  table tr th{
-    background: #337ab7;
-  }
-
-  table tr td, table tr th{
-    border: 1px solid #6B6B6B;
+  .NotAvailable {
     padding: 5px;
   }
 
