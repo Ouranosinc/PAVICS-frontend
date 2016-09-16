@@ -64,12 +64,20 @@ class Visualize extends React.Component {
           <OLComponent {...this.props }/>
         </div>
         <div className={classes.left}>
-          <SearchCatalog {...this.props } />
-          <ClimateVariablesList {...this.props}/>
+          <div className={classes.panel}>
+            <SearchCatalog {...this.props } />
+          </div>
+          <div className={classes.panel}>
+            <ClimateVariablesList {...this.props}/>
+          </div>
         </div>
         <div className={classes.right}>
-          <DatasetDetails {...this.props } />
-          <DatasetWMSLayers {...this.props } />
+          <div className={classes.panel}>
+            <DatasetDetails {...this.props } />
+          </div>
+          <div className={classes.panel}>
+            <DatasetWMSLayers {...this.props } />
+          </div>
         </div>
       </div>
     )
