@@ -4,18 +4,14 @@ import classes from './style.scss'
 import Table from '../Table'
 class ClimateVariablesList extends React.Component {
   static propTypes = {
-    clickTogglePanel: React.PropTypes.func.isRequired,
+    onClosePanelCb: React.PropTypes.func.isRequired,
+    onOpenPanelCb: React.PropTypes.func.isRequired,
+    show: React.PropTypes.bool.isRequired,
   };
 
   constructor(props) {
     super(props);
-    this._onClosePanel = this._onClosePanel.bind(this);
-    this._onOpenPanel = this._onOpenPanel.bind(this);
     this._makeOpenedPanel = this._makeOpenedPanel.bind(this);
-  }
-
-  _onClosePanel() {
-    this.props.clickTogglePanel("ClimateVariablesList", false);
   }
 
   _makePanelContent() {
@@ -29,33 +25,29 @@ class ClimateVariablesList extends React.Component {
         ['row2value1', 'row2value2'],
       ];
     return (
-      <Table cellHeaders={headers} rows={rows} selectedIndex={-1}/>
+      <Table cellHeaders={headers} rows={rows} selectedIndex={1}/>
     );
   }
 
   _makeOpenedPanel() {
     return (
       <OpenedPanel
-        onClosePanelCb={this._onClosePanel}
+        onClosePanelCb={this.props.onClosePanelCb}
         icon="glyphicon-list"
         panelTitle="Climate Variables List"
         panelContentCb={this._makePanelContent}/>
     );
   }
 
-  _onOpenPanel() {
-    this.props.clickTogglePanel("ClimateVariablesList", true);
-  }
-
   render() {
     return (
       <TogglingPanel
-        onOpenPanelCb={this._onOpenPanel}
+        onOpenPanelCb={this.props.onOpenPanelCb}
         icon="glyphicon-list"
         widgetName="ClimateVariablesList"
         classes={classes}
         makeOpenedViewCb={this._makeOpenedPanel}
-        active={this.props.panelControls.ClimateVariablesList.show}/>
+        active={this.props.show}/>
     );
   }
 }

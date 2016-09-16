@@ -5,11 +5,9 @@ import classes from './Visualize.scss'
 //TODO: Fix, we should only import containers here
 import OLComponent from '../../../components/OLComponent'
 import DatasetDetails from '../../../components/DatasetDetails'
-import ClimateVariablesList from '../../../components/ClimateVariables'
 
 //Containers
-import DatasetWMSLayers from '../../../containers/DatasetWMSLayers'
-import SearchCatalog from '../../../containers/SearchCatalog'
+import {DatasetWMSLayers, SearchCatalog, ClimateVariables} from '../../../containers'
 
 import {
   //Panels
@@ -68,7 +66,7 @@ class Visualize extends React.Component {
             <SearchCatalog {...this.props } />
           </div>
           <div className={classes.panel}>
-            <ClimateVariablesList {...this.props}/>
+            <ClimateVariables {...this.props}/>
           </div>
         </div>
         <div className={classes.right}>

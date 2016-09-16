@@ -30,7 +30,7 @@ class Table extends React.Component {
           <tbody>
           {
             this.props.rows.map((row, i) =>
-              <tr key={i} className={i === this.props.selectedIndex ? 'selected' : ''}>{
+              <tr key={i} className={i === this.props.selectedIndex ? classes.selected : ''}>{
                 row.map((cell, j) =>
                   <td key={j}> {cell} </td>
                 )
