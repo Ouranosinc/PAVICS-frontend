@@ -40,7 +40,6 @@ export class SearchCatalog extends React.Component {
     this.currentSelectedKey = "";
     this.currentSelectedValue = "";
     this.currentFacetValues = [];
-    this.props.fetchFacets();
     //This way we can remove "me" from component and always use "this", but it must be done for all components methods with callbacks...
     this._onAddFacet = this._onAddFacet.bind(this);
     this._onRemoveFacet = this._onRemoveFacet.bind(this);
