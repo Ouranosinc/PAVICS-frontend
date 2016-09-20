@@ -1,7 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import classes from './DatasetWMSLayers.scss'
-import TogglingPanel, {OpenedPanel} from '../../components/TogglingPanel'
+import Panel, {ToggleButton, PanelHeader} from './../../components/Panel'
 import DatasetWMSLayersList from '../../components/DatasetWMSLayersList'
 import DatasetWMSLayer from '../../components/DatasetWMSLayer'
 export class DatasetWMSLayers extends React.Component {
@@ -11,15 +10,14 @@ export class DatasetWMSLayers extends React.Component {
 
   constructor(props) {
     super(props);
-    this._onCloseDatasetWMSLayersPanel = this._onCloseDatasetWMSLayersPanel.bind(this);
+    this._onClosePanel = this._onClosePanel.bind(this);
     this._onSelectDatasetWMSLayer = this._onSelectDatasetWMSLayer.bind(this);
     this._onLoadWMSLayer = this._onLoadWMSLayer.bind(this);
     this._onOpenPanel = this._onOpenPanel.bind(this);
-    this._opened = this._opened.bind(this);
     this._mainComponent = this._mainComponent.bind(this);
   }
 
-  _onCloseDatasetWMSLayersPanel() {
+  _onClosePanel() {
     this.props.clickTogglePanel("DatasetWMSLayers", false);
   }
 
@@ -62,26 +60,15 @@ export class DatasetWMSLayers extends React.Component {
     return MainComponent;
   }
 
-  _opened() {
-    return (
-      <OpenedPanel
-        onClosePanelCb={this._onCloseDatasetWMSLayersPanel}
-        icon='glyphicon-globe'
-        panelTitle='WMS Layers'
-        panelContentCb={this._mainComponent}/>
-    );
-  }
-
   render() {
     return (
-      <TogglingPanel
-        onOpenPanelCb={this._onOpenPanel}
-        icon='glyphicon-globe'
-        classes={ classes }
-        active={ this.props.panelControls.DatasetWMSLayers.show }
-        makeOpenedViewCb={ this._opened }
-        widgetName='DatasetWMSLayers'
-      />
+      this.props.panelControls.DatasetWMSLayers.show
+        ?
+        <Panel>
+          <PanelHeader onClick={this._onClosePanel} icon="glyphicon-globe">WMS Layers</PanelHeader>
+          {this._mainComponent()}
+        </Panel>
+        : <Panel><ToggleButton icon="glyphicon-globe" onClick={this._onOpenPanel}/></Panel>
     );
   }
 }

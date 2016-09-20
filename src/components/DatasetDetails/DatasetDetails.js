@@ -1,17 +1,16 @@
 import React from 'react'
 import classes from './DatasetDetails.scss'
 import Loader from '../../components/Loader'
-import TogglingPanel, {OpenedPanel} from '../TogglingPanel'
 import Table from '../Table'
+import Panel, {ToggleButton, PanelHeader} from '../Panel'
 export class DatasetDetails extends React.Component {
   static propTypes = {};
 
   constructor(props) {
     super(props);
     this._onOpenDatasetWmsLayers = this._onOpenDatasetWmsLayers.bind(this);
-    this._onCloseDatasetDetailsPanel = this._onCloseDatasetDetailsPanel.bind(this);
+    this._onClosePanel = this._onClosePanel.bind(this);
     this._onOpenPanel = this._onOpenPanel.bind(this);
-    this._opened = this._opened.bind(this);
     this._mainComponent = this._mainComponent.bind(this);
   }
 
@@ -26,7 +25,7 @@ export class DatasetDetails extends React.Component {
     /*this.props.selectLoadWms(url, this.props.selectedDatasets.items[0].id, dataset);*/
   }
 
-  _onCloseDatasetDetailsPanel() {
+  _onClosePanel() {
     this.props.clickTogglePanel("DatasetDetails", false);
   }
 
@@ -82,26 +81,15 @@ export class DatasetDetails extends React.Component {
     return MainComponent;
   }
 
-  _opened() {
-    return (
-      <OpenedPanel
-        onClosePanelCb={this._onCloseDatasetDetailsPanel}
-        icon="glyphicon-list-alt"
-        panelTitle="Dataset details"
-        panelContentCb={this._mainComponent}/>
-    );
-  }
-
   render() {
     return (
-      <TogglingPanel
-        onOpenPanelCb={this._onOpenPanel}
-        classes={ classes }
-        active={ this.props.panelControls.DatasetDetails.show }
-        makeOpenedViewCb={ this._opened }
-        widgetName='DatasetDetails'
-        icon='glyphicon-list-alt'
-      />
+      this.props.panelControls.DatasetDetails.show
+        ?
+        <Panel>
+          <PanelHeader onClick={this._onClosePanel} icon="glyphicon-list-alt">Dataset Details</PanelHeader>
+          {this._mainComponent()}
+        </Panel>
+        : <Panel><ToggleButton icon="glyphicon-list-alt" onClick={this._onOpenPanel}/></Panel>
     );
   }
 

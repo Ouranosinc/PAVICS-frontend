@@ -1,5 +1,7 @@
 import React from 'react'
-import ClimateVariablesList from '../../components/ClimateVariables'
+import Panel, {PanelHeader} from '../../components/Panel'
+import {ToggleButton} from '../../components/Panel'
+import Table from '../../components/Table'
 class ClimateVariables extends React.Component {
   static propTypes = {
     clickTogglePanel: React.PropTypes.func.isRequired,
@@ -20,12 +22,24 @@ class ClimateVariables extends React.Component {
   }
 
   render() {
+    var
+      headers = [
+        'header1',
+        'header2',
+      ],
+      rows = [
+        ['row1value1', 'row1value2'],
+        ['row2value1', 'row2value2'],
+      ];
     return (
-      <ClimateVariablesList
-        onClosePanelCb={this._onClosePanel}
-        onOpenPanelCb={this._onOpenPanel}
-        show={this.props.panelControls.ClimateVariablesList.show}
-      />);
+      this.props.panelControls.ClimateVariablesList.show
+        ?
+        <Panel>
+          <PanelHeader onClick={this._onClosePanel} icon="glyphicon-list">Climate Variables List</PanelHeader>
+          <Table cellHeaders={headers} rows={rows} selectedIndex={1}/>
+        </Panel>
+        : <Panel><ToggleButton onClick={this._onOpenPanel} icon="glyphicon-list"/></Panel>
+    );
   }
 }
 export default ClimateVariables

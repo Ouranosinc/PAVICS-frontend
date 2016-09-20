@@ -1,7 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import classes from './SearchCatalog.scss'
-import TogglingPanel, {OpenedPanel} from '../../components/TogglingPanel'
+import Panel, {ToggleButton, PanelHeader} from './../../components/Panel'
 import FacetLabel from '../../components/FacetLabel'
 import Loader from '../../components/Loader'
 import SearchCatalogResults from '../../containers/SearchCatalogResults'
@@ -46,10 +45,8 @@ export class SearchCatalog extends React.Component {
     this._onSelectedKey = this._onSelectedKey.bind(this);
     this._onSelectedValue = this._onSelectedValue.bind(this);
     this._onSearchCatalog = this._onSearchCatalog.bind(this);
-    this._onCloseSearchCatalogPanel = this._onCloseSearchCatalogPanel.bind(this);
+    this._onClosePanel = this._onClosePanel.bind(this);
     this._onOpenPanel = this._onOpenPanel.bind(this);
-    this._opened = this._opened.bind(this);
-    this._makePanelContent = this._makePanelContent.bind(this);
   }
 
   _onAddFacet(event) {
@@ -85,7 +82,7 @@ export class SearchCatalog extends React.Component {
     this.props.fetchCatalogDatasets();
   }
 
-  _onCloseSearchCatalogPanel() {
+  _onClosePanel() {
     this.props.clickTogglePanel("SearchCatalog", false);
   }
 
@@ -158,44 +155,25 @@ export class SearchCatalog extends React.Component {
     return mainComponent;
   }
 
-  _makePanelContent() {
-    return (
-      <div>
-        {this._mainComponent()}
-        <SearchCatalogResults {...this.props } />
-      </div>
-    );
-  }
-
-  _opened() {
-    return (
-      <OpenedPanel
-        onClosePanelCb={this._onCloseSearchCatalogPanel}
-        icon='glyphicon-search'
-        panelTitle='Filter Catalogs by Facets'
-        panelContentCb={this._makePanelContent}/>
-    );
-  }
-
   render() {
     return (
-      <TogglingPanel
-        onOpenPanelCb={this._onOpenPanel}
-        icon='glyphicon-search'
-        classes={classes}
-        active={this.props.panelControls.SearchCatalog.show}
-        makeOpenedViewCb={this._opened}
-        widgetName='SearchCatalog'
-      />
+      this.props.panelControls.SearchCatalog.show
+        ?
+        <Panel>
+          <PanelHeader onClick={this._onClosePanel} icon="glyphicon-search">Filter Catalogs by Facets</PanelHeader>
+          {this._mainComponent()}
+          <SearchCatalogResults {...this.props } />
+        </Panel>
+        : <Panel><ToggleButton icon="glyphicon-search" onClick={this._onOpenPanel}/></Panel>
     );
   }
 }
 const mapStateToProps = (state) => {
   return {}
-}
+};
 const mapDispatchToProps = (dispatch) => {
   return {}
-}
+};
 export default connect(
   mapStateToProps,
   mapDispatchToProps

@@ -1,11 +1,10 @@
+.DatasetMetadatas {
+  max-height: 100px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
 .DatasetDetails {
-
-  .DatasetMetadatas {
-    max-height: 100px;
-    overflow-y: scroll;
-    overflow-x: hidden;
-  }
-
   .NotAvailable {
     padding: 5px;
   }
