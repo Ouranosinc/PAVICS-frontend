@@ -2,21 +2,17 @@
   max-height: 200px;
   overflow-y: auto;
   overflow-x: hidden;
+  width: 100%;
 
-  table tr.selected {
+  tr.selected {
     background: rgba(0, 0, 0, .2);
   }
 
-  table {
-    width: 100%;
-  }
-
-
-  table tr th {
+  tr th {
     background: #337ab7;
   }
 
-  table tr td, table tr th {
+  tr td, tr th {
     border: 1px solid #6B6B6B;
     padding: 5px;
   }

@@ -1,8 +1,7 @@
 import React from 'react'
-import {connect} from 'react-redux'
 import Panel, {PanelHeader} from '../../components/Panel'
 import {ToggleButton} from '../../components/Panel'
-import Table from '../../components/Table'
+import Table, {TableHeader, TableRow} from '../../components/Table'
 import Loader from '../../components/Loader'
 class ClimateVariables extends React.Component {
   static propTypes = {
@@ -23,6 +22,15 @@ class ClimateVariables extends React.Component {
     this.props.clickTogglePanel("ClimateVariablesList", true);
   }
 
+  _formatRows()
+  {
+    return this.props.variables.items.map((value, i) => {
+      return [
+        value
+      ];
+    });
+  }
+
   render() {
     var
       headers = [
@@ -36,7 +44,16 @@ class ClimateVariables extends React.Component {
           {
             this.props.variables.items.length === 0
               ? <Loader name="Climates Variables"/>
-              : <Table cellHeaders={headers} rows={this.props.variables.items} selectedIndex={-1}/>
+              :
+              <Table rows={this._formatRows()} selectedIndex={-1}>
+                <TableHeader fields={headers}/>
+                <tbody>
+                {
+                  this._formatRows().map((row, i) =>
+                    <TableRow key={i} fields={row}/>)
+                }
+                </tbody>
+              </Table>
           }
         </Panel>
         : <Panel><ToggleButton onClick={this._onOpenPanel} icon="glyphicon-list"/></Panel>
