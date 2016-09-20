@@ -1,7 +1,7 @@
 import React from 'react'
 import Panel, {PanelHeader} from '../../components/Panel'
 import {ToggleButton} from '../../components/Panel'
-import Table, {TableHeader, TableRow} from '../../components/Table'
+import Table, {TableHeader, SelectableTableRow} from '../../components/Table'
 import Loader from '../../components/Loader'
 class ClimateVariables extends React.Component {
   static propTypes = {
@@ -24,17 +24,23 @@ class ClimateVariables extends React.Component {
 
   _formatRows()
   {
-    return this.props.variables.items.map((value, i) => {
+    return this.props.variables.items.map((value) => {
       return [
         value
       ];
     });
   }
 
+  _onSelectRow(event)
+  {
+    console.log(event.target.value);
+  }
+
   render() {
     var
       headers = [
-        'Variable Name',
+        "",
+        "Variable name",
       ];
     return (
       this.props.panelControls.ClimateVariablesList.show
@@ -50,7 +56,7 @@ class ClimateVariables extends React.Component {
                 <tbody>
                 {
                   this._formatRows().map((row, i) =>
-                    <TableRow key={i} fields={row}/>)
+                    <SelectableTableRow value={row[0]} onSelectCb={this._onSelectRow} key={i} fields={row}/>)
                 }
                 </tbody>
               </Table>

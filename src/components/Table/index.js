@@ -1,5 +1,6 @@
 import Table from './Table'
 import TableHeader from './TableHeader'
 import TableRow from './TableRow'
-export {TableHeader, TableRow}
+import SelectableTableRow from './SelectableTableRow'
+export {TableHeader, TableRow,SelectableTableRow}
 export default Table
