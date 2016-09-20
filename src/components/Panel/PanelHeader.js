@@ -1,5 +1,6 @@
 import React from 'react'
 import {ToggleButton} from '../Panel'
+import style from './Panel.scss'
 class PanelHeader extends React.Component {
   static propTypes = {
     onClick: React.PropTypes.func.isRequired,
@@ -9,7 +10,8 @@ class PanelHeader extends React.Component {
   {
     return (
       <div>
-        <h3><ToggleButton onClick={this.props.onClick} icon={this.props.icon}/>{this.props.children}</h3>
+        <ToggleButton onClick={this.props.onClick} icon={this.props.icon}/>
+        <span className={style['header']}>{this.props.children}</span>
       </div>
     );
   }
