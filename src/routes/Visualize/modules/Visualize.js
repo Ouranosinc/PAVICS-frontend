@@ -151,11 +151,13 @@ export function receiveFacetsFailure (error) {
 
 export function receiveFacets (facets) {
 
-  let variables = [];
+  var variables = [];
   facets.map(x => {
     if (x.key === 'variable')
     {
-      variables = x.values;
+      x.values.map((elem, i) => {
+        variables[i] = [elem];
+      });
     }
   });
   return {

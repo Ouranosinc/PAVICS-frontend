@@ -7,13 +7,6 @@ class Table extends React.Component {
     selectedIndex: React.PropTypes.number.isRequired,
   };
 
-  constructor(props) {
-    super(props);
-    if (this.props.cellHeaders.length !== this.props.rows[0].length) {
-      throw new Error('There should be as much headers as cells in the table definition');
-    }
-  }
-
   render() {
     return (
       <div className={classes['Table']}>
