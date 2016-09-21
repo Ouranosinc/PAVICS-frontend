@@ -9,6 +9,7 @@ class ClimateVariables extends React.Component {
     addFacetKeyValue: React.PropTypes.func.isRequired,
     removeFacetKeyValue: React.PropTypes.func.isRequired,
     fetchCatalogDatasets: React.PropTypes.func.isRequired,
+    selectedFacets: React.PropTypes.array.isRequired,
   };
 
   constructor(props) {
@@ -45,6 +46,7 @@ class ClimateVariables extends React.Component {
   }
 
   render() {
+    console.log(this.props.selectedFacets);
     var
       headers = [
         "",
@@ -63,8 +65,22 @@ class ClimateVariables extends React.Component {
                 <TableHeader fields={headers}/>
                 <tbody>
                 {
-                  this._formatRows().map((row, i) =>
-                    <SelectableTableRow value={row[0]} onSelectCb={this._onSelectRow} key={i} fields={row}/>)
+                  this._formatRows().map((row, i) => {
+                    let checked = false;
+                    this.props.selectedFacets.map(x => {
+                      if (x.value === row[0]) {
+                        checked = true;
+                      }
+                    });
+                    return (
+                      <SelectableTableRow
+                        key={i}
+                        checked={checked}
+                        value={row[0]}
+                        onChangeCb={this._onSelectRow}
+                        fields={row}/>
+                    );
+                  })
                 }
                 </tbody>
               </Table>
