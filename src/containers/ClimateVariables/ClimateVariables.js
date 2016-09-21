@@ -6,12 +6,16 @@ import Loader from '../../components/Loader'
 class ClimateVariables extends React.Component {
   static propTypes = {
     clickTogglePanel: React.PropTypes.func.isRequired,
+    addFacetKeyValue: React.PropTypes.func.isRequired,
+    removeFacetKeyValue: React.PropTypes.func.isRequired,
+    fetchCatalogDatasets: React.PropTypes.func.isRequired,
   };
 
   constructor(props) {
     super(props);
     this._onClosePanel = this._onClosePanel.bind(this);
     this._onOpenPanel = this._onOpenPanel.bind(this);
+    this._onSelectRow = this._onSelectRow.bind(this);
   }
 
   _onClosePanel() {
@@ -22,8 +26,7 @@ class ClimateVariables extends React.Component {
     this.props.clickTogglePanel("ClimateVariablesList", true);
   }
 
-  _formatRows()
-  {
+  _formatRows() {
     return this.props.variables.items.map((value) => {
       return [
         value
@@ -31,9 +34,14 @@ class ClimateVariables extends React.Component {
     });
   }
 
-  _onSelectRow(event)
-  {
-    console.log(event.target.value);
+  _onSelectRow(event) {
+    if (event.target.checked) {
+      this.props.addFacetKeyValue('variable', event.target.value);
+    }
+    else {
+      this.props.removeFacetKeyValue('variable', event.target.value);
+    }
+    this.props.fetchCatalogDatasets();
   }
 
   render() {
