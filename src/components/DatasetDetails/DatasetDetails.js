@@ -1,8 +1,8 @@
 import React from 'react'
 import classes from './DatasetDetails.scss'
 import Loader from '../../components/Loader'
-import Table from '../Table'
-import Panel, {ToggleButton, PanelHeader} from '../Panel'
+import Table, {TableHeader, TableBody} from '../Table'
+import Panel, {PanelHeader, ToggleButton} from '../Panel'
 export class DatasetDetails extends React.Component {
   static propTypes = {};
 
@@ -72,7 +72,10 @@ export class DatasetDetails extends React.Component {
                 )
               }
             </div>
-            <Table cellHeaders={headers} rows={rows} selectedIndex={selectedIndex}/>
+            <Table>
+              <TableHeader fields={headers}/>
+              <TableBody rows={rows} selectedIndex={selectedIndex}/>
+            </Table>
           </div>
       } else {
         MainComponent = <span className="NotAvailable">You must first search catalogs then select a dataset.</span>;
