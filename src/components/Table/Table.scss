@@ -1,0 +1,19 @@
+.Table {
+  max-height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+
+  tr.selected {
+    background: rgba(0, 0, 0, .2);
+  }
+
+  tr th {
+    background: #337ab7;
+  }
+
+  tr td, tr th {
+    border: 1px solid #6B6B6B;
+    padding: 5px;
+  }
+}

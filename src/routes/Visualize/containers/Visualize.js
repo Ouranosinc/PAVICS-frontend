@@ -7,8 +7,7 @@ import OLComponent from '../../../components/OLComponent'
 import DatasetDetails from '../../../components/DatasetDetails'
 
 //Containers
-import DatasetWMSLayers from '../../../containers/DatasetWMSLayers'
-import SearchCatalog from '../../../containers/SearchCatalog'
+import {DatasetWMSLayers, SearchCatalog, ClimateVariables} from '../../../containers'
 
 import {
   //Panels
@@ -63,11 +62,20 @@ class Visualize extends React.Component {
           <OLComponent {...this.props }/>
         </div>
         <div className={classes.left}>
-          <SearchCatalog {...this.props } />
+          <div className={classes.panel}>
+            <SearchCatalog {...this.props } />
+          </div>
+          <div className={classes.panel}>
+            <ClimateVariables {...this.props}/>
+          </div>
         </div>
         <div className={classes.right}>
-          <DatasetDetails {...this.props } />
-          <DatasetWMSLayers {...this.props } />
+          <div className={classes.panel}>
+            <DatasetDetails {...this.props } />
+          </div>
+          <div className={classes.panel}>
+            <DatasetWMSLayers {...this.props } />
+          </div>
         </div>
       </div>
     )
@@ -117,6 +125,7 @@ const mapStateToProps = (state) => ({
   selectedWMSLayers: state.visualize.selectedWMSLayers,
   datasets: state.visualize.datasets,
   facets: state.visualize.facets,
+  variables: state.visualize.variables,
   panelControls: state.visualize.panelControls
 });
 

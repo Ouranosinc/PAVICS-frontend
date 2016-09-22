@@ -9,11 +9,19 @@
     left: 0;
   }
 
+  .panel {
+    margin: 5px;
+  }
+
   .left
   {
     max-width: 38%;
     float: left;
     margin: 15px;
+    .panel {
+      float: left;
+      clear: left;
+    }
   }
 
   .right
@@ -21,6 +29,10 @@
     max-width: 56%;
     float: right;
     margin: 15px;
+    .panel {
+      float: right;
+      clear: right;
+    }
   }
 
   .frontComponents{

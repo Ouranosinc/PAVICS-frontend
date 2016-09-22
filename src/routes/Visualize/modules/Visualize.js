@@ -121,6 +121,12 @@ export function requestFacets () {
       requestedAt: Date.now(),
       isFetching: true,
       items: []
+    },
+    variables: {
+      receivedAt: 1, //TODO: Fix
+      requestedAt: Date.now(),
+      isFetching: true,
+      items: []
     }
   }
 }
@@ -133,17 +139,37 @@ export function receiveFacetsFailure (error) {
       isFetching: false,
       items: [],
       error: error
+    },
+    variables: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      items: [],
+      error: error
     }
   }
 }
 
 export function receiveFacets (facets) {
+
+  let variables = [];
+  facets.map(x => {
+    if (x.key === 'variable')
+    {
+      variables = x.values;
+    }
+  });
   return {
     type: FETCH_FACETS_SUCCESS,
     facets: {
       receivedAt: Date.now(),
       isFetching: false,
       items: facets,
+      error: null
+    },
+    variables: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      items: variables,
       error: null
     }
   }
@@ -498,13 +524,13 @@ const ACTION_HANDLERS = {
     return ({ ...state, selectedDatasets: action.selectedDatasets });
   },
   [FETCH_FACETS_REQUEST]: (state, action) => {
-    return ({ ...state, facets: action.facets });
+    return ({ ...state, facets: action.facets, variables: action.variables });
   },
   [FETCH_FACETS_FAILURE]: (state, action) => {
-    return ({ ...state, facets: action.facets });
+    return ({ ...state, facets: action.facets, variables: action.variables });
   },
   [FETCH_FACETS_SUCCESS]: (state, action) => {
-    return ({ ...state, facets: action.facets });
+    return ({ ...state, facets: action.facets, variables: action.variables });
   },
   [FETCH_CATALOG_DATASETS_REQUEST]: (state, action) => {
     return ({ ...state, datasets: action.datasets });
@@ -583,6 +609,13 @@ const initialState = {
     items: [],
     error: null
   },
+  variables: {
+    requestedAt: null,
+    receivedAt: null,
+    isFetching: false,
+    items: [],
+    error: null
+  },
   datasets: {
     requestedAt: null,
     receivedAt: null,
@@ -599,6 +632,9 @@ const initialState = {
     },
     DatasetWMSLayers: {
       show: false
+    },
+    ClimateVariablesList: {
+      show: true
     }
   }
 };

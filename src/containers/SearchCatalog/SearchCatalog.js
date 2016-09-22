@@ -1,12 +1,9 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import classes from './SearchCatalog.scss'
-import ToggledPanel, {ToggleButton} from '../../components/ToggledPanel'
-
+import Panel, {ToggleButton, PanelHeader} from './../../components/Panel'
 import FacetLabel from '../../components/FacetLabel'
 import Loader from '../../components/Loader'
 import SearchCatalogResults from '../../containers/SearchCatalogResults'
-
 export class SearchCatalog extends React.Component {
   static propTypes = {
     /* Helps Webstorm to auto-complete function calls and enforce React Props Validation*/
@@ -28,7 +25,6 @@ export class SearchCatalog extends React.Component {
     facets: React.PropTypes.object.isRequired
   };
 
-
   constructor(props) {
     super(props);
     this.recommendedKeys = [
@@ -43,14 +39,14 @@ export class SearchCatalog extends React.Component {
     this.currentSelectedKey = "";
     this.currentSelectedValue = "";
     this.currentFacetValues = [];
-    this.props.fetchFacets();
     //This way we can remove "me" from component and always use "this", but it must be done for all components methods with callbacks...
     this._onAddFacet = this._onAddFacet.bind(this);
     this._onRemoveFacet = this._onRemoveFacet.bind(this);
     this._onSelectedKey = this._onSelectedKey.bind(this);
     this._onSelectedValue = this._onSelectedValue.bind(this);
     this._onSearchCatalog = this._onSearchCatalog.bind(this);
-    this._onCloseSearchCatalogPanel = this._onCloseSearchCatalogPanel.bind(this);
+    this._onClosePanel = this._onClosePanel.bind(this);
+    this._onOpenPanel = this._onOpenPanel.bind(this);
   }
 
   _onAddFacet(event) {
@@ -86,8 +82,12 @@ export class SearchCatalog extends React.Component {
     this.props.fetchCatalogDatasets();
   }
 
-  _onCloseSearchCatalogPanel() {
+  _onClosePanel() {
     this.props.clickTogglePanel("SearchCatalog", false);
+  }
+
+  _onOpenPanel() {
+    this.props.clickTogglePanel("SearchCatalog", true);
   }
 
   _mainComponent() {
@@ -133,7 +133,7 @@ export class SearchCatalog extends React.Component {
             <div className="col-sm-offset-4 col-md-offset-3 col-lg-offset-3 col-sm-2 col-md-2 col-lg-2">
               <a type="button" className="btn btn-sm btn-default" title="Add" onClick={ this._onAddFacet }
                  disabled={!this.props.currentSelectedKey.length || !this.props.currentSelectedValue.length}>
-                <i className="glyphicon glyphicon-plus" /> Facets
+                <i className="glyphicon glyphicon-plus"/> Facets
               </a>
             </div>
           </div>
@@ -155,40 +155,25 @@ export class SearchCatalog extends React.Component {
     return mainComponent;
   }
 
-  _opened() {
-    return (
-        <div className={classes.overlappingBackground + " panel panel-default"}>
-          <h3><ToggleButton onClick={this._onCloseSearchCatalogPanel} icon="glyphicon-search"/> Filter Catalogs by
-            facets</h3>
-          <div className="panel-body">
-            { this._mainComponent() }
-            <SearchCatalogResults {...this.props } />
-          </div>
-        </div>
-    );
-  }
-
   render() {
     return (
-      <ToggledPanel
-        icon='glyphicon-search'
-        clickTogglePanel={this.props.clickTogglePanel}
-        classes={ classes }
-        active={ this.props.panelControls.SearchCatalog.show }
-        opened={ this._opened() }
-        widgetName='SearchCatalog'
-      />
+      this.props.panelControls.SearchCatalog.show
+        ?
+        <Panel>
+          <PanelHeader onClick={this._onClosePanel} icon="glyphicon-search">Filter Catalogs by Facets</PanelHeader>
+          {this._mainComponent()}
+          <SearchCatalogResults {...this.props } />
+        </Panel>
+        : <Panel><ToggleButton icon="glyphicon-search" onClick={this._onOpenPanel}/></Panel>
     );
   }
 }
-
 const mapStateToProps = (state) => {
   return {}
-}
+};
 const mapDispatchToProps = (dispatch) => {
   return {}
-}
-
+};
 export default connect(
   mapStateToProps,
   mapDispatchToProps

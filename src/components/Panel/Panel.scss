@@ -1,0 +1,23 @@
+.Panel {
+  text-align: left;
+  opacity: 0.8;
+  padding: 5px;
+  background-color: #ffffff;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+
+  span.header {
+    font-size: 1.5em;
+    padding: 5px 0;
+  }
+
+}
+
+.ToggleButton {
+  .toggleIcon {
+    width: 32px;
+    padding: 5px;
+    font-size: 1.5em;
+  }
+}

@@ -1,21 +1,22 @@
 import React from 'react'
 import classes from './DatasetDetails.scss'
 import Loader from '../../components/Loader'
-import ToggledPanel, {ToggleButton} from '../ToggledPanel'
-
+import Table, {TableHeader, TableBody} from '../Table'
+import Panel, {PanelHeader, ToggleButton} from '../Panel'
 export class DatasetDetails extends React.Component {
-  static propTypes = {}
+  static propTypes = {};
 
   constructor(props) {
     super(props);
     this._onOpenDatasetWmsLayers = this._onOpenDatasetWmsLayers.bind(this);
-    this._onCloseDatasetDetailsPanel = this._onCloseDatasetDetailsPanel.bind(this);
+    this._onClosePanel = this._onClosePanel.bind(this);
+    this._onOpenPanel = this._onOpenPanel.bind(this);
+    this._mainComponent = this._mainComponent.bind(this);
   }
 
   /*_loadWmsDataset(url, name) {
    this.props.selectLoadWms(url, this.props.selectedDatasets.items[0].id, name);
    }*/
-
   _onOpenDatasetWmsLayers(url, dataset) {
     this.props.openDatasetWmsLayers(dataset);
     this.props.fetchDatasetWMSLayers(url, dataset);
@@ -24,8 +25,12 @@ export class DatasetDetails extends React.Component {
     /*this.props.selectLoadWms(url, this.props.selectedDatasets.items[0].id, dataset);*/
   }
 
-  _onCloseDatasetDetailsPanel() {
+  _onClosePanel() {
     this.props.clickTogglePanel("DatasetDetails", false);
+  }
+
+  _onOpenPanel() {
+    this.props.clickTogglePanel("DatasetDetails", true);
   }
 
   _mainComponent() {
@@ -34,6 +39,30 @@ export class DatasetDetails extends React.Component {
       MainComponent = <Loader name="dataset"/>
     } else {
       if (this.props.selectedDatasets.items.length) {
+        let rows = [];
+        let headers = [
+          'Resource title',
+          'Size',
+          'OpenDAP',
+          'HTTP',
+          'WMS',
+        ];
+        let selectedIndex = -1;
+        this.props.selectedDatasets.items[0].datasets.map((row, i) => {
+          if (row.name === this.props.currentOpenedDatasetWMSFile) {
+            selectedIndex = i;
+          }
+          rows[i] = [
+            row.name,
+            row.size.replace("bytes", ""),
+            this.renderLink(row.services.find(row => row.type === "OpenDAP"), "View"),
+            this.renderLink(row.services.find(row => row.type === "HTTPServer"), "Download"),
+            (row.services.find(row => row.type === "WMS"))
+              ? <a href="#"
+                   onClick={() => this._onOpenDatasetWmsLayers(row.services.find(row => row.type === "WMS").url, row.name)}>Open</a>
+              : 'N/A'
+          ];
+        });
         MainComponent =
           <div>
             <div className={classes['DatasetMetadatas']}>
@@ -43,37 +72,10 @@ export class DatasetDetails extends React.Component {
                 )
               }
             </div>
-            <div className={classes['DatasetTable']}>
-              <table>
-                <thead>
-                <tr>
-                  <th className={classes['DatasetTableResourceTitleColumn']}>Resource title</th>
-                  <th className={classes['DatasetTableSizeColumn']}>Size</th>
-                  <th className={classes['DatasetTableOpenDAPColumn']}>OpenDAP</th>
-                  <th className={classes['DatasetTableHTTPColumn']}>HTTP</th>
-                  <th className={classes['DatasetTableWMSColumn']}>WMS</th>
-                </tr>
-                </thead>
-                <tbody>
-                {
-                  this.props.selectedDatasets.items[0].datasets.map((x) =>
-                    <tr key={x.name} className={ (x.name === this.props.currentOpenedDatasetWMSFile) ? "selected" : ""}>
-                      <td>{ x.name }</td>
-                      <td>{ x.size.replace("bytes", "") }</td>
-                      { this.renderLink(x.services.find(x=> x.type === "OpenDAP"), "View") }
-                      { this.renderLink(x.services.find(x=> x.type === "HTTPServer"), "Download") }
-                      { (x.services.find(x=> x.type === "WMS")) ?
-                        <td><a href="#"
-                               onClick={() => this._onOpenDatasetWmsLayers(x.services.find(x=> x.type === "WMS").url, x.name)}>Open</a>
-                        </td> :
-                        <td>N/A</td>
-                      }
-                    </tr>
-                  )
-                }
-                </tbody>
-              </table>
-            </div>
+            <Table>
+              <TableHeader fields={headers}/>
+              <TableBody rows={rows} selectedIndex={selectedIndex}/>
+            </Table>
           </div>
       } else {
         MainComponent = <span className="NotAvailable">You must first search catalogs then select a dataset.</span>;
@@ -82,49 +84,25 @@ export class DatasetDetails extends React.Component {
     return MainComponent;
   }
 
-  _closed() {
-    return (
-      <div className={classes.datasetDetailsComponent}>
-        <div className={classes.overlappingBackground + " " + classes.togglePanel + " panel panel-default"}>
-          <ToggleButton onClick={this._onOpenDatasetDetailsPanel} icon="glyphicon-list-alt"/>
-        </div>
-      </div>
-    );
-  }
-
-  _opened() {
-    return (
-          <div className={classes.overlappingBackground + " panel panel-default"}>
-            <h3><ToggleButton onClick={this._onCloseDatasetDetailsPanel} icon="glyphicon-list-alt"/> Dataset details
-            </h3>
-            <div className="panel-body">
-              { this._mainComponent() }
-            </div>
-          </div>
-    );
-  }
-
   render() {
     return (
-      <ToggledPanel
-        clickTogglePanel={this.props.clickTogglePanel}
-        classes={ classes }
-        active={ this.props.panelControls.DatasetDetails.show }
-        opened={ this._opened() }
-        widgetName='DatasetDetails'
-        icon='glyphicon-list-alt'
-      />
+      this.props.panelControls.DatasetDetails.show
+        ?
+        <Panel>
+          <PanelHeader onClick={this._onClosePanel} icon="glyphicon-list-alt">Dataset Details</PanelHeader>
+          {this._mainComponent()}
+        </Panel>
+        : <Panel><ToggleButton icon="glyphicon-list-alt" onClick={this._onOpenPanel}/></Panel>
     );
   }
 
   renderLink(service, label) {
     if (service) {
-      return <td><a target="_blank" href={ service.url }>{ label }</a></td>
+      return <a target="_blank" href={ service.url }>{ label }</a>
     }
     else {
-      return <td>N/A</td>;
+      return 'N/A';
     }
   }
 }
-
 export default DatasetDetails
