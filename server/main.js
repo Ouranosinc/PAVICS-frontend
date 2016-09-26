@@ -14,13 +14,14 @@ const debug = _debug('app:server');
 const paths = config.utils_paths;
 const app = new Koa();
 //Controllers
-import {birdhouse, datasets, facets, wms} from './controllers'
+import {birdhouse, datasets, facets, wms, consumer} from './controllers'
 //Routes
 app.use(route.get('/api/wms/capabilities', birdhouse.getCapabilities));
 app.use(route.get('/api/wms/dataset/layers', wms.getLayers));
 app.use(route.get('/api/facets', facets.getFacets));
 app.use(route.get('/api/datasets', datasets.getDatasets));
 app.use(route.get('/api/dataset', datasets.getDataset));
+app.use(route.get('/wps/:identifier', consumer.resolve));
 // Enable koa-proxy if it has been enabled in the config.
 // Because it's been enabled, so I guess we should enable it
 if (config.proxy && config.proxy.enabled) {
