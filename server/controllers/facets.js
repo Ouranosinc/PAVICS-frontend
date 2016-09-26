@@ -4,6 +4,7 @@ import { parseString } from 'xml2js'
 import request from 'koa-request'
 
 //Explanation here http://blog.stevensanderson.com/2013/12/21/experiments-with-koa-and-javascript-generators/
+// leaving this here for posterity
 function parseXMLThunk(response){
   //console.log(response);
   return function(callback) {
@@ -11,6 +12,7 @@ function parseXMLThunk(response){
   };
 }
 
+// leaving this here for posterity
 function parseXMLAsync(response, callback){
   parseString(response, function (err, result) {
     let response = [];
@@ -44,10 +46,34 @@ function parseXMLAsync(response, callback){
 
 module.exports.getFacets = function * list(next) {
   if ('GET' != this.method) return yield next;
-  var options = {
-    url: config.pavics_esg_search_path + "?facets=*&limit=0&distrib=false"
-  };
-  var response = yield request(options); //Yay, HTTP requests with no callbacks!
-  this.body = yield parseXMLThunk(response.body);
+  let url = config.pavics_wpsconsumer_search_path + "?facets=*&limit=0&distrib=false";
+  let response = yield request(url); //Yay, HTTP requests with no callbacks!
+  let json = JSON.parse(response.body);
+  response = [];
+  json["responseHeader"]["params"]["facet.field"].forEach(function(key){
+    response.push({
+      key: key,
+      values: []
+    })
+  });
+  var facetFields = json["facet_counts"]["facet_fields"];
+  for (var object in facetFields){
+    if (facetFields.hasOwnProperty(object)) {
+      let values = [];
+      let index = response.findIndex( x => x.key === object );
+      for (var value in facetFields[object]) {
+        if (facetFields[object].hasOwnProperty(value)) {
+          var thisValue = facetFields[object][value];
+          if (thisValue === 0 || thisValue === "0") {
+            continue;
+          }
+          values.push(thisValue);
+        }
+      }
+      values.sort();
+      response[index].values = values
+    }
+  }
+  this.body = response;
 };
 
