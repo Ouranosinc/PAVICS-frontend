@@ -24,7 +24,6 @@ export class SearchCatalog extends React.Component {
     fetchCatalogDatasets: React.PropTypes.func.isRequired,
     datasets: React.PropTypes.object.isRequired,
     facets: React.PropTypes.object.isRequired,
-    variables: React.PropTypes.object.isRequired,
     selectedFacets: React.PropTypes.array.isRequired,
   };
 
@@ -157,38 +156,19 @@ export class SearchCatalog extends React.Component {
     } else {
       mainComponent = (
         <div className="pure-g">
-          <div className="pure-u-6-24">
-            <CriteriaSelection
-              variables={this.props.variables}
-              selectedFacets={this.props.selectedFacets}
-              addFacetKeyValue={this.props.addFacetKeyValue}
-              removeFacetKeyValue={this.props.removeFacetKeyValue}
-              fetchCatalogDatasets={this.props.fetchCatalogDatasets}/>
-          </div>
-          <div className="pure-u-6-24">
-            <CriteriaSelection
-              variables={this.props.variables}
-              selectedFacets={this.props.selectedFacets}
-              addFacetKeyValue={this.props.addFacetKeyValue}
-              removeFacetKeyValue={this.props.removeFacetKeyValue}
-              fetchCatalogDatasets={this.props.fetchCatalogDatasets}/>
-          </div>
-          <div className="pure-u-6-24">
-            <CriteriaSelection
-              variables={this.props.variables}
-              selectedFacets={this.props.selectedFacets}
-              addFacetKeyValue={this.props.addFacetKeyValue}
-              removeFacetKeyValue={this.props.removeFacetKeyValue}
-              fetchCatalogDatasets={this.props.fetchCatalogDatasets}/>
-          </div>
-          <div className="pure-u-6-24">
-            <CriteriaSelection
-              variables={this.props.variables}
-              selectedFacets={this.props.selectedFacets}
-              addFacetKeyValue={this.props.addFacetKeyValue}
-              removeFacetKeyValue={this.props.removeFacetKeyValue}
-              fetchCatalogDatasets={this.props.fetchCatalogDatasets}/>
-          </div>
+          {
+            this.recommendedKeys.map((facetKey, i) => {
+              return <div className="pure-u-6-24" key={i}>
+                <CriteriaSelection
+                  variables={this.props.facets.items[facetKey]}
+                  selectedFacets={this.props.selectedFacets}
+                  addFacetKeyValue={this.props.addFacetKeyValue}
+                  removeFacetKeyValue={this.props.removeFacetKeyValue}
+                  fetchCatalogDatasets={this.props.fetchCatalogDatasets}/>
+              </div>
+            })
+          }
+
         </div>
       );
     }

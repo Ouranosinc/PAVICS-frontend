@@ -2,7 +2,7 @@ import React from 'react'
 import Table, {TableHeader, SelectableTableRow} from '../../components/Table'
 class CriteriaSelection extends React.Component {
   static propTypes = {
-    variables: React.PropTypes.object.isRequired,
+    variables: React.PropTypes.array.isRequired,
     selectedFacets: React.PropTypes.array.isRequired,
     addFacetKeyValue: React.PropTypes.func.isRequired,
     removeFacetKeyValue: React.PropTypes.func.isRequired,
@@ -25,7 +25,7 @@ class CriteriaSelection extends React.Component {
   }
 
   _formatRows() {
-    return this.props.variables.items.map((value) => {
+    return this.props.variables.map((value) => {
       return [
         value
       ];
