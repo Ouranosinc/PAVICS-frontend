@@ -1,37 +1,8 @@
 'use strict';
 import config from '../../config'
-import { parseString } from 'xml2js'
 import request from 'koa-request'
 import url from 'url'
-
-function parseXMLThunk(response){
-  return function(callback) {
-    parseXMLAsync(response, callback);
-  };
-}
-
-function parseXMLAsync(response, callback){
-  parseString(response, function (err, result) {
-    callback(null, result);
-  });
-}
-
-function extractWPSOutputPath(result){
-  //console.log(result);
-  let outputPath = "";
-  if(result["wps:ExecuteResponse"]["wps:Status"][0]["wps:ProcessSucceeded"].length){
-    let outputs = result["wps:ExecuteResponse"]["wps:ProcessOutputs"][0]["wps:Output"];
-    outputs.forEach(function(output){
-      if(output["ows:Identifier"][0] === "output"){
-        outputPath = output["wps:Reference"][0].$.href;
-      }
-    });
-    console.log("WPS Successfull Response with path: " + outputPath);
-    return outputPath;
-  }else{
-    return "WPS Failed Response";
-  }
-}
+import Utils from './../Utils'
 
 module.exports.getDatasets = function * list(next) {
   let constraints = "";
@@ -49,8 +20,8 @@ module.exports.getDatasets = function * list(next) {
     url: query
   };
   let responseWPS = yield request(optionsWPS);
-  let xmlToJson = yield parseXMLThunk(responseWPS.body)
-  let wpsOutput = extractWPSOutputPath(xmlToJson);
+  let xmlToJson = yield Utils.parseXMLThunk(responseWPS.body)
+  let wpsOutput = Utils.extractWPSOutputPath(xmlToJson);
   if(wpsOutput.length){
     var optionsJson = {
       url: wpsOutput
@@ -204,7 +175,7 @@ module.exports.getDataset = function * list(next) {
   if (query.length){
     console.log("Found url: " + query);
     let responseWPS = yield request(query);
-    let xmlToJson = yield parseXMLThunk(responseWPS.body);
+    let xmlToJson = yield Utils.parseXMLThunk(responseWPS.body);
     let dataset = extractDatasetFromXmlCatalog(xmlToJson, query);
     this.body = dataset;
   }else{
