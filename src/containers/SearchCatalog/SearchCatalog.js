@@ -188,7 +188,7 @@ export class SearchCatalog extends React.Component {
                 return <div className="pure-u-6-24" key={i}>
                   <CriteriaSelection
                     criteriaName={facetKey}
-                    variables={this.props.facets.items[facetKey]}
+                    variables={this.props.facets.items.find((x) => {return x.key === facetKey})}
                     selectedFacets={this.props.selectedFacets}
                     addFacetKeyValue={this.props.addFacetKeyValue}
                     removeFacetKeyValue={this.props.removeFacetKeyValue}

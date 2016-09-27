@@ -605,7 +605,7 @@ const initialState = {
   facets: {
     requestedAt: null,
     receivedAt: null,
-    isFetching: false,
+    isFetching: true,
     items: [],
     error: null
   },
