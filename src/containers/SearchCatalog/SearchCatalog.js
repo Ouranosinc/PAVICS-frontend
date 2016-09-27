@@ -5,6 +5,7 @@ import FacetLabel from './../../components/FacetLabel'
 import Loader from './../../components/Loader'
 import SearchCatalogResults from './../../containers/SearchCatalogResults'
 import CriteriaSelection from './../../components/CriteriaSelection'
+import classes from './SearchCatalog.scss'
 export class SearchCatalog extends React.Component {
   static propTypes = {
     /* Helps Webstorm to auto-complete function calls and enforce React Props Validation*/
@@ -160,6 +161,7 @@ export class SearchCatalog extends React.Component {
             this.recommendedKeys.map((facetKey, i) => {
               return <div className="pure-u-6-24" key={i}>
                 <CriteriaSelection
+                  criteriaName={facetKey}
                   variables={this.props.facets.items[facetKey]}
                   selectedFacets={this.props.selectedFacets}
                   addFacetKeyValue={this.props.addFacetKeyValue}

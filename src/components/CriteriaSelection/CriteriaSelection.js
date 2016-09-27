@@ -2,6 +2,7 @@ import React from 'react'
 import Table, {TableHeader, SelectableTableRow} from '../../components/Table'
 class CriteriaSelection extends React.Component {
   static propTypes = {
+    criteriaName: React.PropTypes.string.isRequired,
     variables: React.PropTypes.array.isRequired,
     selectedFacets: React.PropTypes.array.isRequired,
     addFacetKeyValue: React.PropTypes.func.isRequired,
@@ -35,10 +36,10 @@ class CriteriaSelection extends React.Component {
   render() {
     let headers = [
       "",
-      "Variable name",
+      this.props.criteriaName,
     ];
     return (
-      <Table rows={this._formatRows()} selectedIndex={-1}>
+      <Table>
         <TableHeader fields={headers}/>
         <tbody>
         {

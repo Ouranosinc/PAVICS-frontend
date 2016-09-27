@@ -4,11 +4,16 @@
   overflow-x: hidden;
   width: 100%;
 
+  table {
+    width: 100%;
+  }
+
   tr.selected {
     background: rgba(0, 0, 0, .2);
   }
 
   tr th {
+    text-transform: capitalize;
     background: #337ab7;
   }
 
