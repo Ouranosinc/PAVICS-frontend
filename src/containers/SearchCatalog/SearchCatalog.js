@@ -206,11 +206,52 @@ export class SearchCatalog extends React.Component {
                 <div className="pure-u-6-24">
                   <CriteriaSelection
                     criteriaName={this.props.currentSelectedKey}
-                    variables={this.props.facets.items.find((x) => {return x.key === this.props.currentSelectedKey})}
+                    variables={this.props.facets.items.find((x) => {
+                      return x.key === this.props.currentSelectedKey
+                    })}
                     selectedFacets={this.props.selectedFacets}
                     addFacetKeyValue={this.props.addFacetKeyValue}
                     removeFacetKeyValue={this.props.removeFacetKeyValue}
                     fetchCatalogDatasets={this.props.fetchCatalogDatasets}/>
+
+                </div>
+                : null
+            }
+          </div>
+          <div className="pure-g">
+            {
+              this.recommendedKeys.map((facetKey, i) => {
+                return (this.props.selectedFacets.length)
+                  ?
+                  <div className="pure-u-6-24" key={i}>
+                    <label>Facets:</label>
+                    <div>
+                      {
+                        this.props.selectedFacets.map((x, i) =>
+                          x.key === facetKey
+                            ? <FacetLabel key={i + 1} facet={ x } onRemoveFacet={ this._onRemoveFacet }/>
+                            : null
+                        )
+                      }
+                    </div>
+                  </div>
+                  : null
+              })
+            }
+            {
+              (this.props.selectedFacets.length)
+                ?
+                <div className="pure-u-6-24">
+                  <label>Facets:</label>
+                  <div>
+                    {
+                      this.props.selectedFacets.map((x, i) =>
+                        !this.recommendedKeys.includes(x.key)
+                          ? <FacetLabel key={i + 1} facet={ x } onRemoveFacet={ this._onRemoveFacet }/>
+                          : null
+                      )
+                    }
+                  </div>
                 </div>
                 : null
             }
