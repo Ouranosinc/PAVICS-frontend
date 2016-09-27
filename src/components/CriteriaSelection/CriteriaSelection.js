@@ -17,10 +17,10 @@ class CriteriaSelection extends React.Component {
 
   _onSelectRow(event) {
     if (event.target.checked) {
-      this.props.addFacetKeyValue('variable', event.target.value);
+      this.props.addFacetKeyValue(this.props.criteriaName, event.target.value);
     }
     else {
-      this.props.removeFacetKeyValue('variable', event.target.value);
+      this.props.removeFacetKeyValue(this.props.criteriaName, event.target.value);
     }
     this.props.fetchCatalogDatasets();
   }
