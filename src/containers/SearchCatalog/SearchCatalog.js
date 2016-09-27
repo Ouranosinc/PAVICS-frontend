@@ -1,9 +1,10 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import Panel, {ToggleButton, PanelHeader} from './../../components/Panel'
-import FacetLabel from '../../components/FacetLabel'
-import Loader from '../../components/Loader'
-import SearchCatalogResults from '../../containers/SearchCatalogResults'
+import FacetLabel from './../../components/FacetLabel'
+import Loader from './../../components/Loader'
+import SearchCatalogResults from './../../containers/SearchCatalogResults'
+import CriteriaSelection from './../../components/CriteriaSelection'
 export class SearchCatalog extends React.Component {
   static propTypes = {
     /* Helps Webstorm to auto-complete function calls and enforce React Props Validation*/
@@ -22,19 +23,17 @@ export class SearchCatalog extends React.Component {
     fetchDataset: React.PropTypes.func.isRequired,
     fetchCatalogDatasets: React.PropTypes.func.isRequired,
     datasets: React.PropTypes.object.isRequired,
-    facets: React.PropTypes.object.isRequired
+    facets: React.PropTypes.object.isRequired,
+    variables: React.PropTypes.object.isRequired,
+    selectedFacets: React.PropTypes.array.isRequired,
   };
 
   constructor(props) {
     super(props);
     this.recommendedKeys = [
-      "ensemble",
-      "experiment",
-      "institute",
-      "model",
       "project",
-      "time_frequency",
-      "variable"
+      "model",
+      "variable",
     ];
     this.currentSelectedKey = "";
     this.currentSelectedValue = "";
@@ -90,12 +89,9 @@ export class SearchCatalog extends React.Component {
     this.props.clickTogglePanel("SearchCatalog", true);
   }
 
-  _mainComponent() {
-    let mainComponent;
-    if (this.props.facets.isFetching) {
-      mainComponent = <Loader name="facets"/>
-    } else {
-      mainComponent = <div className="form-group">
+  _oldMainComponent() {
+    return (
+      <div className="form-group">
         <form className="form-horizontal" role="form">
           <div className="form-group">
             <label className="col-sm-4 col-md-3 col-lg-3 control-label" htmlFor="facetKey">Key:</label>
@@ -151,6 +147,50 @@ export class SearchCatalog extends React.Component {
           }
         </form>
       </div>
+    );
+  }
+
+  _mainComponent() {
+    let mainComponent;
+    if (this.props.facets.isFetching) {
+      mainComponent = <Loader name="facets"/>
+    } else {
+      mainComponent = (
+        <div className="pure-g">
+          <div className="pure-u-6-24">
+            <CriteriaSelection
+              variables={this.props.variables}
+              selectedFacets={this.props.selectedFacets}
+              addFacetKeyValue={this.props.addFacetKeyValue}
+              removeFacetKeyValue={this.props.removeFacetKeyValue}
+              fetchCatalogDatasets={this.props.fetchCatalogDatasets}/>
+          </div>
+          <div className="pure-u-6-24">
+            <CriteriaSelection
+              variables={this.props.variables}
+              selectedFacets={this.props.selectedFacets}
+              addFacetKeyValue={this.props.addFacetKeyValue}
+              removeFacetKeyValue={this.props.removeFacetKeyValue}
+              fetchCatalogDatasets={this.props.fetchCatalogDatasets}/>
+          </div>
+          <div className="pure-u-6-24">
+            <CriteriaSelection
+              variables={this.props.variables}
+              selectedFacets={this.props.selectedFacets}
+              addFacetKeyValue={this.props.addFacetKeyValue}
+              removeFacetKeyValue={this.props.removeFacetKeyValue}
+              fetchCatalogDatasets={this.props.fetchCatalogDatasets}/>
+          </div>
+          <div className="pure-u-6-24">
+            <CriteriaSelection
+              variables={this.props.variables}
+              selectedFacets={this.props.selectedFacets}
+              addFacetKeyValue={this.props.addFacetKeyValue}
+              removeFacetKeyValue={this.props.removeFacetKeyValue}
+              fetchCatalogDatasets={this.props.fetchCatalogDatasets}/>
+          </div>
+        </div>
+      );
     }
     return mainComponent;
   }
