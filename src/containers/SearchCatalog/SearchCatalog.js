@@ -172,8 +172,10 @@ export class SearchCatalog extends React.Component {
                             onChange={ this._onSelectedKey }>
                       <option value="">-- Select a key --</option>
                       {
-                        Object.keys(this.props.facets.items).map((facetKey, i) => {
-                          return <option key={i}>{facetKey}</option>
+                        this.props.facets.items.map((x, i) => {
+                          return (this.recommendedKeys.includes(x.key))
+                            ? null
+                            : <option key={i + 1} value={x.key}>{x.key}</option>
                         })
                       }
                     </select>
