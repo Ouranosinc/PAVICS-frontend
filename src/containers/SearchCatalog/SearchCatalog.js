@@ -5,7 +5,6 @@ import FacetLabel from './../../components/FacetLabel'
 import Loader from './../../components/Loader'
 import SearchCatalogResults from './../../containers/SearchCatalogResults'
 import CriteriaSelection from './../../components/CriteriaSelection'
-import classes from './SearchCatalog.scss'
 export class SearchCatalog extends React.Component {
   static propTypes = {
     /* Helps Webstorm to auto-complete function calls and enforce React Props Validation*/
@@ -63,6 +62,7 @@ export class SearchCatalog extends React.Component {
     this.props.fetchCatalogDatasets();
   }
 
+  // posterity
   _onSelectedKey(event) {
     this.props.selectFacetKey(event.target.value);
     let facet = this.props.facets.items.find(x => x.key === event.target.value);
@@ -87,67 +87,6 @@ export class SearchCatalog extends React.Component {
 
   _onOpenPanel() {
     this.props.clickTogglePanel("SearchCatalog", true);
-  }
-
-  _oldMainComponent() {
-    return (
-      <div className="form-group">
-        <form className="form-horizontal" role="form">
-          <div className="form-group">
-            <label className="col-sm-4 col-md-3 col-lg-3 control-label" htmlFor="facetKey">Key:</label>
-            <div className="col-sm-8 col-md-9 col-lg-9">
-              <select id="facetKey" className="form-control" value={ this.props.currentSelectedKey }
-                      onChange={ this._onSelectedKey }>
-                <option value="">-- Select a key --</option>
-                <optgroup label="Recommended">
-                  {this.recommendedKeys.map((x, i) =>
-                    <option key={i + 1} value={ x }>{ x }</option>
-                  )}
-                </optgroup>
-                <optgroup label="Others">
-                  {this.props.facets.items.map((x, i) =>
-                    (this.recommendedKeys.includes(x.key)) ? null :
-                      <option key={i + 1} value={ x.key }>{ x.key }</option>
-                  )}
-                </optgroup>
-              </select>
-            </div>
-          </div>
-          <div className="form-group">
-            <label className="col-sm-4 col-md-3 col-lg-3 control-label" htmlFor="facetValue">Value:</label>
-            <div className="col-sm-8 col-md-9 col-lg-9">
-              <select id="facetValue" className="form-control" value={ this.props.currentSelectedValue }
-                      onChange={ this._onSelectedValue } disabled={!this.props.currentSelectedKey.length}>
-                <option value="">-- Select a value --</option>
-                {this.currentFacetValues.map((x, i) =>
-                  <option key={i + 1} value={ x }>{ x }</option>
-                )}
-              </select>
-            </div>
-          </div>
-          <div className="form-group">
-            <div className="col-sm-offset-4 col-md-offset-3 col-lg-offset-3 col-sm-2 col-md-2 col-lg-2">
-              <a type="button" className="btn btn-sm btn-default" title="Add" onClick={ this._onAddFacet }
-                 disabled={!this.props.currentSelectedKey.length || !this.props.currentSelectedValue.length}>
-                <i className="glyphicon glyphicon-plus"/> Facets
-              </a>
-            </div>
-          </div>
-          {
-            (this.props.selectedFacets.length)
-              ? <div className="form-group">
-              <label className="col-sm-4 col-md-3 col-lg-3 control-label">Facets:</label>
-              <div className="col-sm-8 col-md-9 col-lg-9">
-                {this.props.selectedFacets.map((x, i) =>
-                  <FacetLabel key={i + 1} facet={ x } onRemoveFacet={ this._onRemoveFacet }/>
-                )}
-              </div>
-            </div>
-              : null
-          }
-        </form>
-      </div>
-    );
   }
 
   _mainComponent() {
