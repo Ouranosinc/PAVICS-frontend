@@ -16,27 +16,12 @@ var consumer = (function () {
     }
     return str.join(";");
   };
-  var getJsonUrl = function (response) {
-    return function (callback) {
-      sendJsonBack(response, callback);
-    }
-  };
-  var sendJsonBack = function (response, callback) {
-    // shamelessly copied from facets.js
-    parseString(response, function (err, result) {
-      // ugly hand carved path because wps.
-      // is slightly different than standard wwps ones for now
-      // technocally our wps response should come closer to the standard one in the  future
-      let jsonUrl = result["wps:ExecuteResponse"]["wps:ProcessOutputs"][0]["wps:Output"][0]["wps:Data"][0]["wps:LiteralData"][0]["_"];
-      callback(null, jsonUrl);
-    });
-  };
   return {
     resolve: function *(service) {
       switch (service) {
         case "pavicsearch":
           let url = config.pavics_pywps_path + urlEncode(this.request.query);
-          console.log(url);
+          console.log("consuming: " + url);
           let response = yield request(url);
           let xmlToJson = yield Utils.parseXMLThunk(response.body);
           let jsonTempUrl = Utils.extractWPSOutputPath(xmlToJson);
