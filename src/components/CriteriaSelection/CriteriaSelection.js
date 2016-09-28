@@ -1,6 +1,7 @@
 import React from 'react'
 import Table, {TableHeader, SelectableTableRow} from '../../components/Table'
 import classes from './../../components/Table/Table.scss'
+import SearchInput from './SearchInput'
 class CriteriaSelection extends React.Component {
   static propTypes = {
     criteriaName: React.PropTypes.string.isRequired,
@@ -14,6 +15,10 @@ class CriteriaSelection extends React.Component {
   constructor(props) {
     super(props);
     this._onSelectRow = this._onSelectRow.bind(this);
+    this._onInputChange = this._onInputChange.bind(this);
+    this.state = {
+      inputContent: ""
+    };
   }
 
   _onSelectRow(event) {
@@ -27,22 +32,42 @@ class CriteriaSelection extends React.Component {
   }
 
   _formatRows() {
-    return this.props.variables.values.map((value) => {
+    let vars = [];
+    if (this.state.inputContent.length > 0)
+    {
+      vars = this.props.variables.values.filter((value) => {
+        return value.toLowerCase().indexOf(this.state.inputContent.toLowerCase()) !== -1;
+      });
+    } else {
+      vars = this.props.variables.values;
+    }
+    return vars.map((value) => {
       return [
         value
       ];
     });
   }
 
+  _onInputChange(event) {
+    var value = event.target.value;
+    this.setState({inputContent: value});
+  }
+
   render() {
-    let headers = [
+    let
+      headers = [
       "",
       this.props.criteriaName,
-    ];
+    ],
+      inputs = [
+        "",
+        <SearchInput onChangeCb={this._onInputChange}/>
+      ];
     return (
       <div>
         <Table>
           <TableHeader fields={headers}/>
+          <TableHeader fields={inputs}/>
           <tbody className={classes['overflowable']}>
           {
             this._formatRows().map((row, i) => {
