@@ -91,82 +91,105 @@ export class SearchCatalog extends React.Component {
 
   _mainComponent() {
     let mainComponent;
-    if (this.props.facets.isFetching || this.props.facets.items.length === 0) {
+    if (this.props.facets.isFetching) {
       mainComponent = <Loader name="facets"/>
     } else {
       mainComponent = (
-        <div>
-          <div className="pure-g">
-            <div className="pure-u-18-24">
-              <PanelHeader onClick={this._onClosePanel} icon="glyphicon-search">Filter Catalogs by Facets</PanelHeader>
+        this.props.facets.items.length === 0
+          ?
+          <div>No Facets (yet)</div>
+          :
+          <div>
+            <div className="pure-g">
+              <div className="pure-u-18-24">
+                <PanelHeader onClick={this._onClosePanel} icon="glyphicon-search">Filter Catalogs by
+                  Facets</PanelHeader>
+              </div>
+              <div className="pure-u-6-24">
+                <form className="pure-form">
+                  <fieldset>
+                    <div className="pure-control-group">
+                      <label htmlFor="facetKey">Key:</label>
+                      <select id="facetKey"
+                              value={ this.props.currentSelectedKey }
+                              onChange={ this._onSelectedKey }>
+                        <option value="">-- Select a key --</option>
+                        {
+                          this.props.facets.items.map((x, i) => {
+                            return (this.recommendedKeys.includes(x.key))
+                              ? null
+                              : <option key={i + 1} value={x.key}>{x.key}</option>
+                          })
+                        }
+                      </select>
+                    </div>
+                  </fieldset>
+                </form>
+              </div>
             </div>
-            <div className="pure-u-6-24">
-              <form className="pure-form">
-                <fieldset>
-                  <div className="pure-control-group">
-                    <label htmlFor="facetKey">Key:</label>
-                    <select id="facetKey"
-                            value={ this.props.currentSelectedKey }
-                            onChange={ this._onSelectedKey }>
-                      <option value="">-- Select a key --</option>
-                      {
-                        this.props.facets.items.map((x, i) => {
-                          return (this.recommendedKeys.includes(x.key))
-                            ? null
-                            : <option key={i + 1} value={x.key}>{x.key}</option>
-                        })
-                      }
-                    </select>
+            <div className="pure-g">
+              {
+                this.recommendedKeys.map((facetKey, i) => {
+                  return <div className="pure-u-6-24" key={i}>
+                    <CriteriaSelection
+                      criteriaName={facetKey}
+                      variables={this.props.facets.items.find((x) => {
+                        return x.key === facetKey
+                      })}
+                      selectedFacets={this.props.selectedFacets}
+                      addFacetKeyValue={this.props.addFacetKeyValue}
+                      removeFacetKeyValue={this.props.removeFacetKeyValue}
+                      fetchCatalogDatasets={this.props.fetchCatalogDatasets}/>
                   </div>
-                </fieldset>
-              </form>
-            </div>
-          </div>
-          <div className="pure-g">
-            {
-              this.recommendedKeys.map((facetKey, i) => {
-                return <div className="pure-u-6-24" key={i}>
-                  <CriteriaSelection
-                    criteriaName={facetKey}
-                    variables={this.props.facets.items.find((x) => {
-                      return x.key === facetKey
-                    })}
-                    selectedFacets={this.props.selectedFacets}
-                    addFacetKeyValue={this.props.addFacetKeyValue}
-                    removeFacetKeyValue={this.props.removeFacetKeyValue}
-                    fetchCatalogDatasets={this.props.fetchCatalogDatasets}/>
-                </div>
-              })
-            }
-            {
-              (this.props.currentSelectedKey.length > 0)
-                ?
-                <div className="pure-u-6-24">
-                  <CriteriaSelection
-                    criteriaName={this.props.currentSelectedKey}
-                    variables={this.props.facets.items.find((x) => {
-                      return x.key === this.props.currentSelectedKey
-                    })}
-                    selectedFacets={this.props.selectedFacets}
-                    addFacetKeyValue={this.props.addFacetKeyValue}
-                    removeFacetKeyValue={this.props.removeFacetKeyValue}
-                    fetchCatalogDatasets={this.props.fetchCatalogDatasets}/>
-
-                </div>
-                : null
-            }
-          </div>
-          <div className="pure-g">
-            {
-              this.recommendedKeys.map((facetKey, i) => {
-                return (this.props.selectedFacets.length)
+                })
+              }
+              {
+                (this.props.currentSelectedKey.length > 0)
                   ?
-                  <div className="pure-u-6-24" key={i}>
+                  <div className="pure-u-6-24">
+                    <CriteriaSelection
+                      criteriaName={this.props.currentSelectedKey}
+                      variables={this.props.facets.items.find((x) => {
+                        return x.key === this.props.currentSelectedKey
+                      })}
+                      selectedFacets={this.props.selectedFacets}
+                      addFacetKeyValue={this.props.addFacetKeyValue}
+                      removeFacetKeyValue={this.props.removeFacetKeyValue}
+                      fetchCatalogDatasets={this.props.fetchCatalogDatasets}/>
+
+                  </div>
+                  : null
+              }
+            </div>
+            <div className="pure-g">
+              {
+                this.recommendedKeys.map((facetKey, i) => {
+                  return (this.props.selectedFacets.length)
+                    ?
+                    <div className="pure-u-6-24" key={i}>
+                      <label>Facets:</label>
+                      <div>
+                        {
+                          this.props.selectedFacets.map((x, i) =>
+                            x.key === facetKey
+                              ? <FacetLabel key={i + 1} facet={ x } onRemoveFacet={ this._onRemoveFacet }/>
+                              : null
+                          )
+                        }
+                      </div>
+                    </div>
+                    : null
+                })
+              }
+              {
+                (this.props.selectedFacets.length)
+                  ?
+                  <div className="pure-u-6-24">
                     <label>Facets:</label>
                     <div>
                       {
                         this.props.selectedFacets.map((x, i) =>
-                          x.key === facetKey
+                          !this.recommendedKeys.includes(x.key)
                             ? <FacetLabel key={i + 1} facet={ x } onRemoveFacet={ this._onRemoveFacet }/>
                             : null
                         )
@@ -174,27 +197,9 @@ export class SearchCatalog extends React.Component {
                     </div>
                   </div>
                   : null
-              })
-            }
-            {
-              (this.props.selectedFacets.length)
-                ?
-                <div className="pure-u-6-24">
-                  <label>Facets:</label>
-                  <div>
-                    {
-                      this.props.selectedFacets.map((x, i) =>
-                        !this.recommendedKeys.includes(x.key)
-                          ? <FacetLabel key={i + 1} facet={ x } onRemoveFacet={ this._onRemoveFacet }/>
-                          : null
-                      )
-                    }
-                  </div>
-                </div>
-                : null
-            }
+              }
+            </div>
           </div>
-        </div>
       );
     }
     return mainComponent;
