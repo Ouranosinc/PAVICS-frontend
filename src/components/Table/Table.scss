@@ -1,11 +1,74 @@
 .Table {
   max-height: 200px;
-  overflow-y: auto;
-  overflow-x: hidden;
   width: 100%;
+
+  input[type=text] {
+    width: 100px;
+  }
+
+  table {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+  }
+
+  tbody, thead, tfoot {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 0;
+    flex-shrink: 0;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+
+  tbody.overflowable, thead.overflowable, tfoot.overflowable {
+    flex-grow: 1;
+    flex-shrink: 1;
+  }
+
+  tr {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    flex-shrink: 0;
+  }
+
+  td, th {
+    display: block;
+    flex-direction: column;
+    flex-shrink: 1;
+    flex-grow: 1;
+  }
+
+  th[colspan="2"], td[colspan="2"] {
+    flex-shrink: 2;
+    flex-grow: 2;
+    flex-basis: 100px;
+  }
 
   table {
     width: 100%;
+    height: 200px;
+  }
+
+  :-webkit-any(tbody, thead, tfoot) + :-webkit-any(tbody, thead, tfoot) {
+    border-top: 0;
+  }
+
+  :-webkit-any(tbody, thead, tfoot):not(.overflowable)::-webkit-scrollbar {
+    background: transparent;
+  }
+
+  tr:nth-child(odd) {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  td, th {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    flex-basis: 50px;
+    padding: 6px 9px;
+    border: 0;
   }
 
   tr.selected {
@@ -17,8 +80,4 @@
     background: #337ab7;
   }
 
-  tr td, tr th {
-    border: 1px solid #6B6B6B;
-    padding: 5px;
-  }
 }

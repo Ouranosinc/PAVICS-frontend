@@ -1,5 +1,6 @@
 import React from 'react'
 import Table, {TableHeader, SelectableTableRow} from '../../components/Table'
+import classes from './../../components/Table/Table.scss'
 class CriteriaSelection extends React.Component {
   static propTypes = {
     criteriaName: React.PropTypes.string.isRequired,
@@ -39,29 +40,32 @@ class CriteriaSelection extends React.Component {
       this.props.criteriaName,
     ];
     return (
-      <Table>
-        <TableHeader fields={headers}/>
-        <tbody>
-        {
-          this._formatRows().map((row, i) => {
-            let checked = false;
-            this.props.selectedFacets.map(x => {
-              if (x.value === row[0]) {
-                checked = true;
-              }
-            });
-            return (
-              <SelectableTableRow
-                key={i}
-                checked={checked}
-                value={row[0]}
-                onChangeCb={this._onSelectRow}
-                fields={row}/>
-            );
-          })
-        }
-        </tbody>
-      </Table>
+      <div>
+        <Table>
+          <TableHeader fields={headers}/>
+          <tbody className={classes['overflowable']}>
+          {
+            this._formatRows().map((row, i) => {
+              let checked = false;
+              this.props.selectedFacets.map(x => {
+                if (x.value === row[0]) {
+                  checked = true;
+                }
+              });
+              return (
+                <SelectableTableRow
+                  key={i}
+                  checked={checked}
+                  value={row[0]}
+                  onChangeCb={this._onSelectRow}
+                  fields={row}/>
+              );
+            })
+          }
+          </tbody>
+        </Table>
+      </div>
+
     );
   }
 }
