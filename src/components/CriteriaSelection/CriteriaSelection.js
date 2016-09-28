@@ -1,6 +1,7 @@
 import React from 'react'
 import Table, {TableHeader, SelectableTableRow} from '../../components/Table'
-import classes from './../../components/Table/Table.scss'
+import tableClasses from './../../components/Table/Table.scss'
+import classes from './CriteriaSelection.scss'
 import SearchInput from './SearchInput'
 class CriteriaSelection extends React.Component {
   static propTypes = {
@@ -58,10 +59,10 @@ class CriteriaSelection extends React.Component {
       <SearchInput onChangeCb={this._onInputChange}/>,
     ];
     return (
-      <div>
+      <div className={classes['CriteriaSelection']}>
         <Table>
           <TableHeader fields={headers}/>
-          <tbody className={classes['overflowable']}>
+          <tbody className={tableClasses['overflowable']}>
           {
             this._formatRows().map((row, i) => {
               let checked = false;
