@@ -33,8 +33,7 @@ class CriteriaSelection extends React.Component {
 
   _formatRows() {
     let vars = [];
-    if (this.state.inputContent.length > 0)
-    {
+    if (this.state.inputContent.length > 0) {
       vars = this.props.variables.values.filter((value) => {
         return value.toLowerCase().indexOf(this.state.inputContent.toLowerCase()) !== -1;
       });
@@ -54,20 +53,14 @@ class CriteriaSelection extends React.Component {
   }
 
   render() {
-    let
-      headers = [
-      "",
+    let headers = [
       this.props.criteriaName,
-    ],
-      inputs = [
-        "",
-        <SearchInput onChangeCb={this._onInputChange}/>
-      ];
+      <SearchInput onChangeCb={this._onInputChange}/>,
+    ];
     return (
       <div>
         <Table>
           <TableHeader fields={headers}/>
-          <TableHeader fields={inputs}/>
           <tbody className={classes['overflowable']}>
           {
             this._formatRows().map((row, i) => {
