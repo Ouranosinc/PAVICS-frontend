@@ -122,7 +122,6 @@ const mapStateToProps = (state) => ({
   selectedWMSLayers: state.visualize.selectedWMSLayers,
   datasets: state.visualize.datasets,
   facets: state.visualize.facets,
-  variables: state.visualize.variables,
   panelControls: state.visualize.panelControls
 });
 
