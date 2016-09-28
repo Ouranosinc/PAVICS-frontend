@@ -152,10 +152,9 @@ export class SearchCatalog extends React.Component {
 
   _mainComponent() {
     let mainComponent;
-    if (this.props.facets.isFetching) {
+    if (this.props.facets.isFetching || this.props.facets.items.length === 0) {
       mainComponent = <Loader name="facets"/>
     } else {
-      console.log(this.props.facets.items);
       mainComponent = (
         <div>
           <div className="pure-g">
