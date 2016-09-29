@@ -9,8 +9,9 @@ var consumer = (function () {
   // eg DataInputs=url=www.url.com;constrainst=model:donald,experiment:h3dg
   var urlEncode = function (params) {
     let str = [];
+    console.log(params);
     for (var param in params) {
-      if (params.hasOwnProperty(param)) {
+      if(Object.prototype.hasOwnProperty.call(params, param)) {
         str.push(encodeURIComponent(param) + "=" + encodeURIComponent(params[param]));
       }
     }
