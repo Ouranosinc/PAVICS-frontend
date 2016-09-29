@@ -7,7 +7,7 @@ import OLComponent from '../../../components/OLComponent'
 import DatasetDetails from '../../../components/DatasetDetails'
 
 //Containers
-import {DatasetWMSLayers, SearchCatalog} from '../../../containers'
+import {DatasetWMSLayers, SearchCatalog, ClimateIndicators} from '../../../containers'
 
 import {
   //Panels
@@ -20,6 +20,9 @@ import {
   requestFacets,
   receiveFacetsFailure,
   receiveFacets,
+  requestClimateIndicators,
+  receiveClimateIndicatorsFailure,
+  receiveClimateIndicators,
   //datasets
   requestDataset,
   receiveDatasetFailure,
@@ -37,7 +40,8 @@ import {
   fetchDataset,
   fetchCatalogDatasets,
   fetchDatasetWMSLayers,
-  fetchWMSLayerDetails
+  fetchWMSLayerDetails,
+  fetchClimateIndicators,
 } from '../modules/Visualize'
 
 var me;
@@ -65,6 +69,9 @@ class Visualize extends React.Component {
           <div className={classes.panel}>
             <SearchCatalog {...this.props } />
           </div>
+          <div className={classes.panel}>
+            <ClimateIndicators {...this.props } />
+          </div>
         </div>
         <div className={classes.right}>
           <div className={classes.panel}>
@@ -90,6 +97,9 @@ const mapActionCreators = {
   requestFacets,
   receiveFacetsFailure,
   receiveFacets,
+  requestClimateIndicators,
+  receiveClimateIndicatorsFailure,
+  receiveClimateIndicators,
   //Datasets
   requestDataset,
   receiveDatasetFailure,
@@ -107,7 +117,8 @@ const mapActionCreators = {
   fetchDataset,
   fetchCatalogDatasets,
   fetchDatasetWMSLayers,
-  fetchWMSLayerDetails
+  fetchWMSLayerDetails,
+  fetchClimateIndicators,
 };
 
 const mapStateToProps = (state) => ({
@@ -122,6 +133,7 @@ const mapStateToProps = (state) => ({
   selectedWMSLayers: state.visualize.selectedWMSLayers,
   datasets: state.visualize.datasets,
   facets: state.visualize.facets,
+  climateIndicators: state.visualize.climateIndicators,
   panelControls: state.visualize.panelControls
 });
 
