@@ -20,7 +20,10 @@ class ClimateIndicators extends React.Component {
     if (this.props.climateIndicators.items.length === 0) {
       return []
     } else {
-      return this.props.climateIndicators.items.map(x => [x.value])
+      return this.props.climateIndicators.items.map((x, i) => [
+        <input type="radio" name="climate-indicator" key={i} />,
+        x.value
+      ])
     }
   }
 
@@ -42,7 +45,7 @@ class ClimateIndicators extends React.Component {
           this.props.panelControls[constants.PANEL_CLIMATE_INDICATORS].show
             ? (
             <Table>
-              <TableHeader fields={['Header']} />
+              <TableHeader fields={['', 'Indicator Name']} />
               <TableBody rows={this._formatRows()} selectedIndex={-1} />
             </Table>
           )
