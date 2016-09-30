@@ -1,7 +1,6 @@
 import React from 'react'
 import Table, {TableHeader, SelectableTableRow} from '../../components/Table'
 import tableClasses from './../../components/Table/Table.scss'
-import classes from './CriteriaSelection.scss'
 import SearchInput from './SearchInput'
 class CriteriaSelection extends React.Component {
   static propTypes = {
@@ -59,7 +58,7 @@ class CriteriaSelection extends React.Component {
       <SearchInput onChangeCb={this._onInputChange}/>,
     ];
     return (
-      <div className={classes['CriteriaSelection']}>
+      <div>
         <Table>
           <TableHeader fields={headers}/>
           <tbody className={tableClasses['overflowable']}>

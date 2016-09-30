@@ -100,35 +100,34 @@ export class SearchCatalog extends React.Component {
           ?
           <div>No Facets (yet)</div>
           :
-          <div>
-            <div className="pure-g">
-              <div className="pure-u-18-24">
-                <PanelHeader onClick={this._onClosePanel} icon="glyphicon-search">Filter Catalogs by Facets</PanelHeader>
+          <div className="container">
+            <div className="row">
+              <div className="col-md-9">
+                <PanelHeader onClick={this._onClosePanel} icon="glyphicon-search">Filter Catalogs by
+                  Facets</PanelHeader>
               </div>
-              <div className="pure-u-6-24">
-                <form className="pure-form">
-                  <fieldset>
-                    <label htmlFor="facetKey">Key:
-                      <select id="facetKey"
-                              value={ this.props.currentSelectedKey }
-                              onChange={ this._onSelectedKey }>
-                        {
-                          this.props.facets.items.map((x, i) => {
-                            return (this.recommendedKeys.includes(x.key))
-                              ? null
-                              : <option key={i + 1} value={x.key}>{x.key}</option>
-                          })
-                        }
-                      </select>
-                    </label>
-                  </fieldset>
+              <div className="col-md-3">
+                <form>
+                  <label htmlFor="facetKey">Key:</label>
+                  <select id="facetKey"
+                          value={ this.props.currentSelectedKey }
+                          onChange={ this._onSelectedKey }>
+                    <option value="">-- Select a key --</option>
+                    {
+                      this.props.facets.items.map((x, i) => {
+                        return (this.recommendedKeys.includes(x.key))
+                          ? null
+                          : <option key={i + 1} value={x.key}>{x.key}</option>
+                      })
+                    }
+                  </select>
                 </form>
               </div>
             </div>
-            <div className="pure-g">
+            <div className="row">
               {
                 this.recommendedKeys.map((facetKey, i) => {
-                  return <div className="pure-u-6-24" key={i}>
+                  return <div className="col-md-3" key={i}>
                     <CriteriaSelection
                       criteriaName={facetKey}
                       variables={this.props.facets.items.find((x) => {
@@ -144,7 +143,7 @@ export class SearchCatalog extends React.Component {
               {
                 (this.props.currentSelectedKey.length > 0)
                   ?
-                  <div className="pure-u-6-24">
+                  <div className="col-md-3">
                     <CriteriaSelection
                       criteriaName={this.props.currentSelectedKey}
                       variables={this.props.facets.items.find((x) => {
@@ -159,12 +158,12 @@ export class SearchCatalog extends React.Component {
                   : null
               }
             </div>
-            <div className="pure-g">
+            <div className="row">
               {
                 this.recommendedKeys.map((facetKey, i) => {
                   return (this.props.selectedFacets.length)
                     ?
-                    <div className="pure-u-6-24" key={i}>
+                    <div className="col-md-3" key={i}>
                       <label>Facets:</label>
                       <div>
                         {
@@ -182,7 +181,7 @@ export class SearchCatalog extends React.Component {
               {
                 (this.props.selectedFacets.length)
                   ?
-                  <div className="pure-u-6-24">
+                  <div className="col-md-3">
                     <label>Facets:</label>
                     <div>
                       {
