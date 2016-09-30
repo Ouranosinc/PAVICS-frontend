@@ -5,6 +5,7 @@ import FacetLabel from './../../components/FacetLabel'
 import Loader from './../../components/Loader'
 import SearchCatalogResults from './../../containers/SearchCatalogResults'
 import CriteriaSelection from './../../components/CriteriaSelection'
+import * as constants from './../../routes/Visualize/constants'
 export class SearchCatalog extends React.Component {
   static propTypes = {
     /* Helps Webstorm to auto-complete function calls and enforce React Props Validation*/
@@ -82,11 +83,11 @@ export class SearchCatalog extends React.Component {
   }
 
   _onClosePanel() {
-    this.props.clickTogglePanel("SearchCatalog", false);
+    this.props.clickTogglePanel(constants.PANEL_SEARCH_CATALOG, false);
   }
 
   _onOpenPanel() {
-    this.props.clickTogglePanel("SearchCatalog", true);
+    this.props.clickTogglePanel(constants.PANEL_SEARCH_CATALOG, true);
   }
 
   _mainComponent() {
@@ -204,7 +205,7 @@ export class SearchCatalog extends React.Component {
 
   render() {
     return (
-      this.props.panelControls.SearchCatalog.show
+      this.props.panelControls[constants.PANEL_SEARCH_CATALOG].show
         ?
         <Panel>
           {this._mainComponent()}

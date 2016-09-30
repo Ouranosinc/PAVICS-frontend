@@ -3,6 +3,7 @@ import classes from './DatasetDetails.scss'
 import Loader from '../../components/Loader'
 import Table, {TableHeader, TableBody} from '../Table'
 import Panel, {PanelHeader, ToggleButton} from '../Panel'
+import * as constants from './../../routes/Visualize/constants'
 export class DatasetDetails extends React.Component {
   static propTypes = {};
 
@@ -20,17 +21,17 @@ export class DatasetDetails extends React.Component {
   _onOpenDatasetWmsLayers(url, dataset) {
     this.props.openDatasetWmsLayers(dataset);
     this.props.fetchDatasetWMSLayers(url, dataset);
-    this.props.clickTogglePanel("DatasetDetails", false);
-    this.props.clickTogglePanel("DatasetWMSLayers", true);
+    this.props.clickTogglePanel(constants.PANEL_DATASET_DETAILS, false);
+    this.props.clickTogglePanel(constants.PANEL_DATASET_WMS_LAYERS, true);
     /*this.props.selectLoadWms(url, this.props.selectedDatasets.items[0].id, dataset);*/
   }
 
   _onClosePanel() {
-    this.props.clickTogglePanel("DatasetDetails", false);
+    this.props.clickTogglePanel(constants.PANEL_DATASET_DETAILS, false);
   }
 
   _onOpenPanel() {
-    this.props.clickTogglePanel("DatasetDetails", true);
+    this.props.clickTogglePanel(constants.PANEL_DATASET_DETAILS, true);
   }
 
   _mainComponent() {
@@ -86,7 +87,7 @@ export class DatasetDetails extends React.Component {
 
   render() {
     return (
-      this.props.panelControls.DatasetDetails.show
+      this.props.panelControls[constants.PANEL_DATASET_DETAILS].show
         ?
         <Panel>
           <PanelHeader onClick={this._onClosePanel} icon="glyphicon-list-alt">Dataset Details</PanelHeader>
