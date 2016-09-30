@@ -11,8 +11,18 @@ debug('Creating default configuration.')
 // ========================================================
 // Default Configuration
 // ========================================================
+var serverHost = process.env.PAVICS_FRONTEND_IP || localip;
+var serverPort = process.env.PORT || 3000;
+var serverURL = "http://" + serverHost + ":" + serverPort;
 const config = {
   env : process.env.NODE_ENV || 'development',
+
+
+  // ----------------------------------
+  // Server Configuration
+  // ----------------------------------
+  server_host : serverHost, // use string 'localhost' to prevent exposure on local network
+  server_port : serverPort,
 
   // ----------------------------------
   // PAVICS Configs
@@ -21,6 +31,8 @@ const config = {
   pavics_birdhouse_path: "http://132.217.140.31:8080/ncWMS2/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0",
   pavics_esg_search_path: process.env.PAVICS_ESG_SEARCH_PATH || "http://pcmdi.llnl.gov/esg-search/search",
   pavics_solr_path: process.env.PAVICS_SOLR_PATH || "http://132.217.140.31:8091",
+  pavics_pywps_path: "http://132.217.140.45:8009/pywps?service=WPS&request=execute&version=1.0.0&identifier=pavicsearch&DataInputs=",
+  pavics_wpsconsumer_search_path: serverURL + "/wps/pavicsearch",
 
   // ----------------------------------
   // Project Structure
@@ -30,12 +42,6 @@ const config = {
   dir_dist   : 'dist',
   dir_server : 'server',
   dir_test   : 'tests',
-
-  // ----------------------------------
-  // Server Configuration
-  // ----------------------------------
-  server_host : process.env.PAVICS_FRONTEND_IP || localip, // use string 'localhost' to prevent exposure on local network
-  server_port : process.env.PORT || 3000,
 
   // ----------------------------------
   // Compiler Configuration
