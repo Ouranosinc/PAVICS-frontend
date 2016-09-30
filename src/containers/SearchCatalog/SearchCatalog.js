@@ -26,93 +26,97 @@ export class SearchCatalog extends React.Component {
     datasets: React.PropTypes.object.isRequired,
     facets: React.PropTypes.object.isRequired,
     selectedFacets: React.PropTypes.array.isRequired,
+    currentSelectedKey: React.PropTypes.string.isRequired,
+    currentSelectedValue: React.PropTypes.string.isRequired,
+    panelControls: React.PropTypes.object.isRequired
   };
 
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super(props)
     this.recommendedKeys = [
-      "project",
-      "model",
-      "variable",
-    ];
-    this.currentSelectedKey = "";
-    this.currentSelectedValue = "";
-    this.currentFacetValues = [];
-    //This way we can remove "me" from component and always use "this", but it must be done for all components methods with callbacks...
-    this._onAddFacet = this._onAddFacet.bind(this);
-    this._onRemoveFacet = this._onRemoveFacet.bind(this);
-    this._onSelectedKey = this._onSelectedKey.bind(this);
-    this._onSelectedValue = this._onSelectedValue.bind(this);
-    this._onSearchCatalog = this._onSearchCatalog.bind(this);
-    this._onClosePanel = this._onClosePanel.bind(this);
-    this._onOpenPanel = this._onOpenPanel.bind(this);
+      'project',
+      'model',
+      'variable'
+    ]
+    this.currentSelectedKey = ''
+    this.currentSelectedValue = ''
+    this.currentFacetValues = []
+    // This way we can remove "me" from component and always use "this",
+    // but it must be done for all components methods with callbacks...
+    this._onAddFacet = this._onAddFacet.bind(this)
+    this._onRemoveFacet = this._onRemoveFacet.bind(this)
+    this._onSelectedKey = this._onSelectedKey.bind(this)
+    this._onSelectedValue = this._onSelectedValue.bind(this)
+    this._onSearchCatalog = this._onSearchCatalog.bind(this)
+    this._onClosePanel = this._onClosePanel.bind(this)
+    this._onOpenPanel = this._onOpenPanel.bind(this)
   }
 
-  _onAddFacet(event) {
+  _onAddFacet (event) {
     if (this.props.currentSelectedKey.length && this.props.currentSelectedValue.length) {
-      this.props.addFacetKeyValue(this.props.currentSelectedKey, this.props.currentSelectedValue);
-      this.props.selectFacetKey("");
-      //TODO: Auto-fetch on onAddFacet() ?
-      this.props.fetchCatalogDatasets();
+      this.props.addFacetKeyValue(this.props.currentSelectedKey, this.props.currentSelectedValue)
+      this.props.selectFacetKey('')
+      // TODO: Auto-fetch on onAddFacet() ?
+      this.props.fetchCatalogDatasets()
     }
   }
 
-  _onRemoveFacet(key, value) {
-    this.props.removeFacetKeyValue(key, value);
-    //TODO: Auto-fetch on onRemoveFacet() ?
-    this.props.fetchCatalogDatasets();
+  _onRemoveFacet (key, value) {
+    this.props.removeFacetKeyValue(key, value)
+    // TODO: Auto-fetch on onRemoveFacet() ?
+    this.props.fetchCatalogDatasets()
   }
 
   // posterity
-  _onSelectedKey(event) {
-    this.props.selectFacetKey(event.target.value);
-    let facet = this.props.facets.items.find(x => x.key === event.target.value);
+  _onSelectedKey (event) {
+    this.props.selectFacetKey(event.target.value)
+    let facet = this.props.facets.items.find(x => x.key === event.target.value)
     if (facet) {
-      this.currentFacetValues = facet.values;
+      this.currentFacetValues = facet.values
     } else {
-      this.currentFacetValues = [];
+      this.currentFacetValues = []
     }
   }
 
-  _onSelectedValue(event) {
-    this.props.selectFacetValue(event.target.value);
+  _onSelectedValue (event) {
+    this.props.selectFacetValue(event.target.value)
   }
 
-  _onSearchCatalog(event) {
-    this.props.fetchCatalogDatasets();
+  _onSearchCatalog (event) {
+    this.props.fetchCatalogDatasets()
   }
 
-  _onClosePanel() {
-    this.props.clickTogglePanel(constants.PANEL_SEARCH_CATALOG, false);
+  _onClosePanel () {
+    this.props.clickTogglePanel(constants.PANEL_SEARCH_CATALOG, false)
   }
 
-  _onOpenPanel() {
-    this.props.clickTogglePanel(constants.PANEL_SEARCH_CATALOG, true);
+  _onOpenPanel () {
+    this.props.clickTogglePanel(constants.PANEL_SEARCH_CATALOG, true)
   }
 
-  _mainComponent() {
-    let mainComponent;
+  _mainComponent () {
+    let mainComponent
     if (this.props.facets.isFetching) {
-      mainComponent = <Loader name="facets"/>
+      mainComponent = <Loader name="facets" />
     } else {
       mainComponent = (
         this.props.facets.items.length === 0
-          ?
-          <div>No Facets (yet)</div>
-          :
+          ? <div>No Facets (yet)</div>
+          : (
           <div className="container">
             <div className="row">
               <div className="col-md-9">
-                <PanelHeader onClick={this._onClosePanel} icon="glyphicon-search">Filter Catalogs by
-                  Facets</PanelHeader>
+                <PanelHeader onClick={this._onClosePanel} icon="glyphicon-search">Filter Catalogs by Facets
+                </PanelHeader>
               </div>
               <div className="col-md-3">
                 <form>
                   <label htmlFor="facetKey">Key:</label>
-                  <select id="facetKey"
-                          value={ this.props.currentSelectedKey }
-                          onChange={ this._onSelectedKey }>
-                    <option value="">-- Select a key --</option>
+                  <select
+                    id="facetKey"
+                    className="custom-select"
+                    value={this.props.currentSelectedKey}
+                    onChange={this._onSelectedKey}>
                     {
                       this.props.facets.items.map((x, i) => {
                         return (this.recommendedKeys.includes(x.key))
@@ -136,13 +140,13 @@ export class SearchCatalog extends React.Component {
                       selectedFacets={this.props.selectedFacets}
                       addFacetKeyValue={this.props.addFacetKeyValue}
                       removeFacetKeyValue={this.props.removeFacetKeyValue}
-                      fetchCatalogDatasets={this.props.fetchCatalogDatasets}/>
+                      fetchCatalogDatasets={this.props.fetchCatalogDatasets} />
                   </div>
                 })
               }
               {
                 (this.props.currentSelectedKey.length > 0)
-                  ?
+                  ? (
                   <div className="col-md-3">
                     <CriteriaSelection
                       criteriaName={this.props.currentSelectedKey}
@@ -152,9 +156,9 @@ export class SearchCatalog extends React.Component {
                       selectedFacets={this.props.selectedFacets}
                       addFacetKeyValue={this.props.addFacetKeyValue}
                       removeFacetKeyValue={this.props.removeFacetKeyValue}
-                      fetchCatalogDatasets={this.props.fetchCatalogDatasets}/>
-
+                      fetchCatalogDatasets={this.props.fetchCatalogDatasets} />
                   </div>
+                )
                   : null
               }
             </div>
@@ -162,64 +166,68 @@ export class SearchCatalog extends React.Component {
               {
                 this.recommendedKeys.map((facetKey, i) => {
                   return (this.props.selectedFacets.length)
-                    ?
+                    ? (
                     <div className="col-md-3" key={i}>
                       <label>Facets:</label>
                       <div>
                         {
                           this.props.selectedFacets.map((x, i) =>
                             x.key === facetKey
-                              ? <FacetLabel key={i + 1} facet={ x } onRemoveFacet={ this._onRemoveFacet }/>
+                              ? <FacetLabel key={i + 1} facet={x} onRemoveFacet={this._onRemoveFacet} />
                               : null
                           )
                         }
                       </div>
                     </div>
+                  )
                     : null
                 })
               }
               {
-                (this.props.selectedFacets.length)
-                  ?
+                this.props.selectedFacets.length
+                  ? (
                   <div className="col-md-3">
                     <label>Facets:</label>
                     <div>
                       {
                         this.props.selectedFacets.map((x, i) =>
                           !this.recommendedKeys.includes(x.key)
-                            ? <FacetLabel key={i + 1} facet={ x } onRemoveFacet={ this._onRemoveFacet }/>
+                            ? <FacetLabel key={i + 1} facet={x} onRemoveFacet={this._onRemoveFacet} />
                             : null
                         )
                       }
                     </div>
                   </div>
+                )
                   : null
               }
             </div>
           </div>
-      );
+        )
+      )
     }
-    return mainComponent;
+    return mainComponent
   }
 
-  render() {
+  render () {
     return (
       this.props.panelControls[constants.PANEL_SEARCH_CATALOG].show
-        ?
+        ? (
         <Panel>
           {this._mainComponent()}
-          <SearchCatalogResults {...this.props } />
+          <SearchCatalogResults {...this.props} />
         </Panel>
-        : <Panel><ToggleButton icon="glyphicon-search" onClick={this._onOpenPanel}/></Panel>
-    );
+      )
+        : <Panel><ToggleButton icon="glyphicon-search" onClick={this._onOpenPanel} /></Panel>
+    )
   }
 }
 const mapStateToProps = (state) => {
   return {}
-};
+}
 const mapDispatchToProps = (dispatch) => {
   return {}
-};
+}
 export default connect(
   mapStateToProps,
   mapDispatchToProps
