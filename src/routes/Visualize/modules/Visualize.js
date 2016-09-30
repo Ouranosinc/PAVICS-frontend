@@ -619,6 +619,9 @@ const initialState = {
     },
     [constants.PANEL_DATASET_WMS_LAYERS]: {
       show: false
+    },
+    [constants.PANEL_CLIMATE_INDICATORS]: {
+      show: false
     }
   }
 };
