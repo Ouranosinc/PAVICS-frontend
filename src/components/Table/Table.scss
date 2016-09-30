@@ -34,10 +34,16 @@
   }
 
   td, th {
+    white-space: nowrap;
     display: block;
+    padding: 6px 9px;
+    border: 0;
     flex-direction: column;
     flex-shrink: 1;
     flex-grow: 1;
+    flex-basis: 50px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
   }
 
   th[colspan="2"], td[colspan="2"] {
@@ -61,14 +67,6 @@
 
   tr:nth-child(odd) {
     background: rgba(0, 0, 0, 0.1);
-  }
-
-  td, th {
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    flex-basis: 50px;
-    padding: 6px 9px;
-    border: 0;
   }
 
   tr.selected {

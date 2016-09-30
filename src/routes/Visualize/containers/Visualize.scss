@@ -15,11 +15,10 @@
 
   .left
   {
-    width: 50%;
+    max-width: 50%;
     float: left;
     margin: 15px;
     .panel {
-      width: 100%;
       float: left;
       clear: left;
     }

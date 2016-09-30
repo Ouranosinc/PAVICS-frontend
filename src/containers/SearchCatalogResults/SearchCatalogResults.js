@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import classes from './SearchCatalogResults.scss'
+import * as constants from './../../routes/Visualize/constants'
 
 import Loader from '../../components/Loader'
 
@@ -19,7 +20,7 @@ export class SearchCatalogResults extends React.Component {
   }
 
   _onOpenDataset(id, url){
-    this.props.clickTogglePanel("DatasetDetails", true);
+    this.props.clickTogglePanel(constants.PANEL_DATASET_DETAILS, true);
     if(id === this.props.currentOpenedDataset){
       this.props.closeDatasetDetails();
     }else{

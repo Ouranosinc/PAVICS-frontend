@@ -1,2 +1,3 @@
 import consumer from './consumer'
-export default consumer
+import wps from './wps'
+export { consumer, wps }

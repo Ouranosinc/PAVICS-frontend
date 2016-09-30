@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import Panel, {ToggleButton, PanelHeader} from './../../components/Panel'
 import DatasetWMSLayersList from '../../components/DatasetWMSLayersList'
 import DatasetWMSLayer from '../../components/DatasetWMSLayer'
+import * as constants from './../../routes/Visualize/constants'
 export class DatasetWMSLayers extends React.Component {
   static propTypes = {
     clickTogglePanel: React.PropTypes.func.isRequired
@@ -18,11 +19,11 @@ export class DatasetWMSLayers extends React.Component {
   }
 
   _onClosePanel() {
-    this.props.clickTogglePanel("DatasetWMSLayers", false);
+    this.props.clickTogglePanel(constants.PANEL_DATASET_WMS_LAYERS, false);
   }
 
   _onOpenPanel() {
-    this.props.clickTogglePanel("DatasetWMSLayers", true);
+    this.props.clickTogglePanel(constants.PANEL_DATASET_WMS_LAYERS, true);
   }
 
   _onSelectDatasetWMSLayer(url, layer) {
@@ -62,7 +63,7 @@ export class DatasetWMSLayers extends React.Component {
 
   render() {
     return (
-      this.props.panelControls.DatasetWMSLayers.show
+      this.props.panelControls[constants.PANEL_DATASET_WMS_LAYERS].show
         ?
         <Panel>
           <PanelHeader onClick={this._onClosePanel} icon="glyphicon-globe">WMS Layers</PanelHeader>
