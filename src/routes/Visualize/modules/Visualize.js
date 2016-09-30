@@ -2,6 +2,7 @@
 // Constants
 // ------------------------------------
 export const COUNTER_INCREMENT = 'Visualize.COUNTER_INCREMENT';
+export const DEFAULT_SELECTED_KEY = 'frequency';
 //SYNC
 export const SELECT_FACET_KEY = 'Visualize.SELECT_FACET_KEY';
 export const SELECT_FACET_VALUE = 'Visualize.SELECT_FACET_VALUE';
@@ -550,7 +551,7 @@ const ACTION_HANDLERS = {
 // Reducer
 // ------------------------------------
 const initialState = {
-  currentSelectedKey: "",
+  currentSelectedKey: DEFAULT_SELECTED_KEY,
   currentSelectedValue: "",
   currentOpenedDataset: "",
   currentOpenedDatasetWMSFile: "",

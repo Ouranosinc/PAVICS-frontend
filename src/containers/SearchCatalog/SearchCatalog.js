@@ -102,18 +102,15 @@ export class SearchCatalog extends React.Component {
           <div>
             <div className="pure-g">
               <div className="pure-u-18-24">
-                <PanelHeader onClick={this._onClosePanel} icon="glyphicon-search">Filter Catalogs by
-                  Facets</PanelHeader>
+                <PanelHeader onClick={this._onClosePanel} icon="glyphicon-search">Filter Catalogs by Facets</PanelHeader>
               </div>
               <div className="pure-u-6-24">
                 <form className="pure-form">
                   <fieldset>
-                    <div className="pure-control-group">
-                      <label htmlFor="facetKey">Key:</label>
+                    <label htmlFor="facetKey">Key:
                       <select id="facetKey"
                               value={ this.props.currentSelectedKey }
                               onChange={ this._onSelectedKey }>
-                        <option value="">-- Select a key --</option>
                         {
                           this.props.facets.items.map((x, i) => {
                             return (this.recommendedKeys.includes(x.key))
@@ -122,7 +119,7 @@ export class SearchCatalog extends React.Component {
                           })
                         }
                       </select>
-                    </div>
+                    </label>
                   </fieldset>
                 </form>
               </div>
