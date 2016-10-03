@@ -48,8 +48,8 @@ export class SearchCatalog extends React.Component {
     this._onSelectedKey = this._onSelectedKey.bind(this)
     this._onSelectedValue = this._onSelectedValue.bind(this)
     this._onSearchCatalog = this._onSearchCatalog.bind(this)
-    this._onClosePanel = this._onClosePanel.bind(this)
     this._onOpenPanel = this._onOpenPanel.bind(this)
+    this._togglePanel = this._togglePanel.bind(this)
   }
 
   _onAddFacet (event) {
@@ -86,12 +86,13 @@ export class SearchCatalog extends React.Component {
     this.props.fetchCatalogDatasets()
   }
 
-  _onClosePanel () {
-    this.props.clickTogglePanel(constants.PANEL_SEARCH_CATALOG, false)
-  }
-
   _onOpenPanel () {
     this.props.clickTogglePanel(constants.PANEL_SEARCH_CATALOG, true)
+  }
+
+  _togglePanel () {
+    let newState = !this.props.panelControls[constants.PANEL_SEARCH_CATALOG].show
+    this.props.clickTogglePanel(constants.PANEL_SEARCH_CATALOG, newState)
   }
 
   _mainComponent () {
@@ -106,7 +107,11 @@ export class SearchCatalog extends React.Component {
           <div className="container">
             <div className="row">
               <div className="col-md-9">
-                <PanelHeader onClick={this._onClosePanel} icon="glyphicon-search">Filter Catalogs by Facets
+                <PanelHeader
+                  panelIsActive={this.props.panelControls[constants.PANEL_SEARCH_CATALOG].show}
+                  onClick={this._togglePanel}
+                  icon="glyphicon-search">
+                  Filter Catalogs by Facets
                 </PanelHeader>
               </div>
               <div className="col-md-3">
