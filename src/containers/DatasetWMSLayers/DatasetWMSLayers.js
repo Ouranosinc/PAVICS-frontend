@@ -6,79 +6,87 @@ import DatasetWMSLayer from '../../components/DatasetWMSLayer'
 import * as constants from './../../routes/Visualize/constants'
 export class DatasetWMSLayers extends React.Component {
   static propTypes = {
-    clickTogglePanel: React.PropTypes.func.isRequired
-  };
-
-  constructor(props) {
-    super(props);
-    this._onClosePanel = this._onClosePanel.bind(this);
-    this._onSelectDatasetWMSLayer = this._onSelectDatasetWMSLayer.bind(this);
-    this._onLoadWMSLayer = this._onLoadWMSLayer.bind(this);
-    this._onOpenPanel = this._onOpenPanel.bind(this);
-    this._mainComponent = this._mainComponent.bind(this);
+    clickTogglePanel: React.PropTypes.func.isRequired,
+    openWmsLayer: React.PropTypes.func.isRequired,
+    selectLoadWms: React.PropTypes.func.isRequired,
+    fetchWMSLayerDetails: React.PropTypes.func.isRequired,
+    panelControls: React.PropTypes.object.isRequired,
+    selectedWMSLayers: React.PropTypes.object.isRequired,
+    currentOpenedDatasetWMSFile: React.PropTypes.string.isRequired,
+    currentOpenedWMSLayer: React.PropTypes.string.isRequired
   }
 
-  _onClosePanel() {
-    this.props.clickTogglePanel(constants.PANEL_DATASET_WMS_LAYERS, false);
+  constructor (props) {
+    super(props)
+    this._onSelectDatasetWMSLayer = this._onSelectDatasetWMSLayer.bind(this)
+    this._onLoadWMSLayer = this._onLoadWMSLayer.bind(this)
+    this._mainComponent = this._mainComponent.bind(this)
+    this._togglePanel = this._togglePanel.bind(this)
   }
 
-  _onOpenPanel() {
-    this.props.clickTogglePanel(constants.PANEL_DATASET_WMS_LAYERS, true);
-  }
-
-  _onSelectDatasetWMSLayer(url, layer) {
-    this.props.openWmsLayer(layer);
+  _onSelectDatasetWMSLayer (url, layer) {
+    this.props.openWmsLayer(layer)
     this.props.fetchWMSLayerDetails(url, layer)
   }
 
-  _onLoadWMSLayer(start, end, style, opacity) {
-    let url = "http://132.217.140.31:8080/ncWMS2/wms";
-    let layer = this.props.currentOpenedWMSLayer;
-    this.props.selectLoadWms(url, layer, start, end, opacity, style);
+  _onLoadWMSLayer (start, end, style, opacity) {
+    let url = 'http://132.217.140.31:8080/ncWMS2/wms'
+    let layer = this.props.currentOpenedWMSLayer
+    this.props.selectLoadWms(url, layer, start, end, opacity, style)
   }
 
-  _mainComponent() {
-    let MainComponent = null;
+  _mainComponent () {
+    let MainComponent = null
     if (this.props.currentOpenedDatasetWMSFile.length) {
       MainComponent =
         <div>
           <DatasetWMSLayersList
-            isFetching={ this.props.selectedWMSLayers.isFetching }
-            layers={ this.props.selectedWMSLayers.items }
-            onSelectLayer={this._onSelectDatasetWMSLayer }
-            currentLayer={this.props.currentOpenedWMSLayer}/>
+            isFetching={this.props.selectedWMSLayers.isFetching}
+            layers={this.props.selectedWMSLayers.items}
+            onSelectLayer={this._onSelectDatasetWMSLayer}
+            currentLayer={this.props.currentOpenedWMSLayer} />
           {
-            (this.props.currentOpenedWMSLayer.length) ?
-              <DatasetWMSLayer
-                onLoadWMSLayer={this._onLoadWMSLayer}
-              /> : null
+            (this.props.currentOpenedWMSLayer.length)
+              ? <DatasetWMSLayer onLoadWMSLayer={this._onLoadWMSLayer} />
+              : null
           }
         </div>
     } else {
       MainComponent =
-        <span className="NotAvailable">You must first select a dataset then "Open" chosen WMS file.</span>;
+        <span className="NotAvailable">You must first select a dataset then "Open" chosen WMS file.</span>
     }
-    return MainComponent;
+    return MainComponent
   }
 
-  render() {
+  _togglePanel () {
+    let newState = !this.props.panelControls[constants.PANEL_DATASET_WMS_LAYERS].show
+    this.props.clickTogglePanel(constants.PANEL_DATASET_WMS_LAYERS, newState)
+  }
+
+  render () {
     return (
-      this.props.panelControls[constants.PANEL_DATASET_WMS_LAYERS].show
-        ?
-        <Panel>
-          <PanelHeader onClick={this._onClosePanel} icon="glyphicon-globe">WMS Layers</PanelHeader>
-          {this._mainComponent()}
-        </Panel>
-        : <Panel><ToggleButton icon="glyphicon-globe" onClick={this._onOpenPanel}/></Panel>
-    );
+      <Panel>
+        <PanelHeader
+          panelIsActive={this.props.panelControls[constants.PANEL_DATASET_WMS_LAYERS].show}
+          onClick={this._togglePanel}
+          icon="glyphicon-globe">
+          WMS Layers
+        </PanelHeader>
+        {
+          this.props.panelControls[constants.PANEL_DATASET_WMS_LAYERS].show
+            ? this._mainComponent()
+            : null
+        }
+      </Panel>
+    )
   }
 }
 const mapStateToProps = (state) => {
   return {}
-};
+}
 const mapDispatchToProps = (dispatch) => {
   return {}
-};
+}
 export default connect(
   mapStateToProps,
   mapDispatchToProps
