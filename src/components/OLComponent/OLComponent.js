@@ -161,6 +161,14 @@ class OLComponent extends React.Component {
       view: this.view
     });
 
+    var mousePosition = new ol.control.MousePosition({
+      coordinateFormat: ol.coordinate.createStringXY(6),
+      projection: 'EPSG:4326'
+    });
+    map.addControl(mousePosition);
+
+
+
     var layerSwitcher = new ol.control.LayerSwitcher({
       tipLabel: 'Legend' // Optional label for button
     });
