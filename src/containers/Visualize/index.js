@@ -1,2 +1,3 @@
 import ClimateIndicators from './ClimateIndicators'
-export { ClimateIndicators }
+import MapNavBar from './MapNavBar'
+export {ClimateIndicators, MapNavBar}

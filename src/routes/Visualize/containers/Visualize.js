@@ -1,18 +1,15 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import classes from './Visualize.scss'
-
-//TODO: Fix, we should only import containers here
+// TODO: Fix, we should only import containers here
 import OLComponent from '../../../components/OLComponent'
 import DatasetDetails from '../../../components/DatasetDetails'
-
-//Containers
-import {DatasetWMSLayers, SearchCatalog, ClimateIndicators} from '../../../containers'
-
+// Containers
+import {DatasetWMSLayers, SearchCatalog, ClimateIndicators, MapNavBar} from '../../../containers'
 import {
-  //Panels
+  // Panels
   clickTogglePanel,
-  //Facets
+  // Facets
   selectFacetKey,
   selectFacetValue,
   addFacetKeyValue,
@@ -23,7 +20,7 @@ import {
   requestClimateIndicators,
   receiveClimateIndicatorsFailure,
   receiveClimateIndicators,
-  //datasets
+  // datasets
   requestDataset,
   receiveDatasetFailure,
   receiveDataset,
@@ -35,61 +32,58 @@ import {
   openDatasetWmsLayers,
   openWmsLayer,
   selectLoadWms,
-  //Async
+  // Async
   fetchFacets,
   fetchDataset,
   fetchCatalogDatasets,
   fetchDatasetWMSLayers,
   fetchWMSLayerDetails,
-  fetchClimateIndicators,
+  fetchClimateIndicators
 } from '../modules/Visualize'
-
-var me;
-
 class Visualize extends React.Component {
-  static propTypes = {};
-
-  constructor(props) {
-    super(props);
-    console.log(props);
-    this.props.fetchFacets();
-    this.lastKey = 0;
-    this.lastValue = 0;
-    me = this;
+  static propTypes = {
+    fetchFacets: React.PropTypes.func.isRequired
   }
 
+  constructor (props) {
+    super(props)
+    console.log(props)
+    this.props.fetchFacets()
+  }
 
-  render() {
+  render () {
     return (
-      <div className={classes['Visualize']}>
-        <div className={classes.mapContainer}>
-          <OLComponent {...this.props }/>
-        </div>
-        <div className={classes.left}>
-          <div className={classes.panel}>
-            <SearchCatalog {...this.props } />
+      <div>
+        <MapNavBar />
+        <div className={classes['Visualize']}>
+          <div className={classes.mapContainer}>
+            <OLComponent {...this.props} />
           </div>
-          <div className={classes.panel}>
-            <ClimateIndicators {...this.props } />
+          <div className={classes.left}>
+            <div className={classes.panel}>
+              <SearchCatalog {...this.props} />
+            </div>
+            <div className={classes.panel}>
+              <ClimateIndicators {...this.props} />
+            </div>
           </div>
-        </div>
-        <div className={classes.right}>
-          <div className={classes.panel}>
-            <DatasetDetails {...this.props } />
-          </div>
-          <div className={classes.panel}>
-            <DatasetWMSLayers {...this.props } />
+          <div className={classes.right}>
+            <div className={classes.panel}>
+              <DatasetDetails {...this.props} />
+            </div>
+            <div className={classes.panel}>
+              <DatasetWMSLayers {...this.props} />
+            </div>
           </div>
         </div>
       </div>
     )
   }
 }
-
 const mapActionCreators = {
-  //Panels
+  // Panels
   clickTogglePanel,
-  //Facets
+  // Facets
   selectFacetKey,
   selectFacetValue,
   addFacetKeyValue,
@@ -100,7 +94,7 @@ const mapActionCreators = {
   requestClimateIndicators,
   receiveClimateIndicatorsFailure,
   receiveClimateIndicators,
-  //Datasets
+  // Datasets
   requestDataset,
   receiveDatasetFailure,
   receiveDataset,
@@ -112,15 +106,14 @@ const mapActionCreators = {
   openDatasetWmsLayers,
   openWmsLayer,
   selectLoadWms,
-  //Async
+  // Async
   fetchFacets,
   fetchDataset,
   fetchCatalogDatasets,
   fetchDatasetWMSLayers,
   fetchWMSLayerDetails,
-  fetchClimateIndicators,
-};
-
+  fetchClimateIndicators
+}
 const mapStateToProps = (state) => ({
   currentSelectedKey: state.visualize.currentSelectedKey,
   currentSelectedValue: state.visualize.currentSelectedValue,
@@ -135,6 +128,5 @@ const mapStateToProps = (state) => ({
   facets: state.visualize.facets,
   climateIndicators: state.visualize.climateIndicators,
   panelControls: state.visualize.panelControls
-});
-
+})
 export default connect(mapStateToProps, mapActionCreators)(Visualize)
