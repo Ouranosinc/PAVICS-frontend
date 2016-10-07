@@ -622,6 +622,9 @@ const initialState = {
     },
     [constants.PANEL_CLIMATE_INDICATORS]: {
       show: false
+    },
+    [constants.PANEL_PLOTLY]: {
+      show: false
     }
   }
 };
