@@ -1,12 +1,12 @@
-import React from 'react'
-import {connect} from 'react-redux'
-import classes from './Visualize.scss'
+import React from 'react';
+import {connect} from 'react-redux';
+import classes from './Visualize.scss';
 // TODO: Fix, we should only import containers here
-import OLComponent from '../../../components/OLComponent'
-import DatasetDetails from '../../../components/DatasetDetails'
-import PlotlyWrapper from '../../../components/PlotlyWrapper'
+import OLComponent from '../../../components/OLComponent';
+import DatasetDetails from '../../../components/DatasetDetails';
+import PlotlyWrapper from '../../../components/PlotlyWrapper';
 // Containers
-import {DatasetWMSLayers, SearchCatalog, ClimateIndicators, MapNavBar} from '../../../containers'
+import {DatasetWMSLayers, SearchCatalog, ClimateIndicators, MapNavBar} from '../../../containers';
 import {
   // Panels
   clickTogglePanel,
@@ -40,24 +40,29 @@ import {
   fetchDatasetWMSLayers,
   fetchWMSLayerDetails,
   fetchClimateIndicators
-} from '../modules/Visualize'
+} from '../modules/Visualize';
 class Visualize extends React.Component {
   static propTypes = {
     fetchFacets: React.PropTypes.func.isRequired,
-    panelControls: React.PropTypes.object.isRequired
+    panelControls: React.PropTypes.object.isRequired,
+    plotlyData: React.PropTypes.object.isRequired
   }
 
   constructor (props) {
-    super(props)
-    console.log(props)
-    this.props.fetchFacets()
+    super(props);
+    console.log(props);
+    this.props.fetchFacets();
   }
 
   render () {
     return (
       <div>
         <MapNavBar {...this.props} />
-        <PlotlyWrapper panelControls={this.props.panelControls} />
+        <PlotlyWrapper
+          panelControls={this.props.panelControls}
+          data={this.props.plotlyData.data}
+          layout={this.props.plotlyData.layout}
+        />
         <div className={classes['Visualize']}>
           <div className={classes.mapContainer}>
             <OLComponent {...this.props} />
@@ -80,7 +85,7 @@ class Visualize extends React.Component {
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
 const mapActionCreators = {
@@ -116,7 +121,7 @@ const mapActionCreators = {
   fetchDatasetWMSLayers,
   fetchWMSLayerDetails,
   fetchClimateIndicators
-}
+};
 const mapStateToProps = (state) => ({
   currentSelectedKey: state.visualize.currentSelectedKey,
   currentSelectedValue: state.visualize.currentSelectedValue,
@@ -130,6 +135,7 @@ const mapStateToProps = (state) => ({
   datasets: state.visualize.datasets,
   facets: state.visualize.facets,
   climateIndicators: state.visualize.climateIndicators,
-  panelControls: state.visualize.panelControls
-})
-export default connect(mapStateToProps, mapActionCreators)(Visualize)
+  panelControls: state.visualize.panelControls,
+  plotlyData: state.visualize.plotlyData
+});
+export default connect(mapStateToProps, mapActionCreators)(Visualize);
