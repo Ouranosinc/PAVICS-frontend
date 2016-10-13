@@ -23,6 +23,7 @@ class PlotlyWrapper extends React.Component {
     this.container.data = this.props.data;
     this.container.layout = this.props.layout;
     Plotly.redraw(this.container);
+    Plotly.Plots.resize(this.container);
   }
 
   _bindRef (node) {
