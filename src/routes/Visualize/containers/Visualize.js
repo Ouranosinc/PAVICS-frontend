@@ -21,6 +21,9 @@ import {
   requestClimateIndicators,
   receiveClimateIndicatorsFailure,
   receiveClimateIndicators,
+  requestPlotlyData,
+  receivePlotlyDataFailure,
+  receivePlotlyData,
   // datasets
   requestDataset,
   receiveDatasetFailure,
@@ -39,11 +42,13 @@ import {
   fetchCatalogDatasets,
   fetchDatasetWMSLayers,
   fetchWMSLayerDetails,
-  fetchClimateIndicators
+  fetchClimateIndicators,
+  fetchPlotlyData
 } from '../modules/Visualize';
 class Visualize extends React.Component {
   static propTypes = {
     fetchFacets: React.PropTypes.func.isRequired,
+    fetchPlotlyData: React.PropTypes.func.isRequired,
     panelControls: React.PropTypes.object.isRequired,
     plotlyData: React.PropTypes.object.isRequired
   }
@@ -62,6 +67,7 @@ class Visualize extends React.Component {
           panelControls={this.props.panelControls}
           data={this.props.plotlyData.data}
           layout={this.props.plotlyData.layout}
+          fetchPlotlyData={this.props.fetchPlotlyData}
         />
         <div className={classes['Visualize']}>
           <div className={classes.mapContainer}>
@@ -102,6 +108,9 @@ const mapActionCreators = {
   requestClimateIndicators,
   receiveClimateIndicatorsFailure,
   receiveClimateIndicators,
+  requestPlotlyData,
+  receivePlotlyDataFailure,
+  receivePlotlyData,
   // Datasets
   requestDataset,
   receiveDatasetFailure,
@@ -120,7 +129,8 @@ const mapActionCreators = {
   fetchCatalogDatasets,
   fetchDatasetWMSLayers,
   fetchWMSLayerDetails,
-  fetchClimateIndicators
+  fetchClimateIndicators,
+  fetchPlotlyData
 };
 const mapStateToProps = (state) => ({
   currentSelectedKey: state.visualize.currentSelectedKey,

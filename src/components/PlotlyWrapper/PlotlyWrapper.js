@@ -5,11 +5,13 @@ class PlotlyWrapper extends React.Component {
   static propTypes = {
     panelControls: React.PropTypes.object.isRequired,
     data: React.PropTypes.array.isRequired,
-    layout: React.PropTypes.object.isRequired
+    layout: React.PropTypes.object.isRequired,
+    fetchPlotlyData: React.PropTypes.func.isRequired
   };
 
   constructor (props) {
     super(props);
+    this.props.fetchPlotlyData('PCP', 124, 360, 100, 101, 130, 131);
     this._bindRef = this._bindRef.bind(this);
   }
 
@@ -29,7 +31,7 @@ class PlotlyWrapper extends React.Component {
 
   render () {
     return (
-      <div className={this.props.panelControls[constants.PANEL_PLOTLY].show ? '' : ''}>
+      <div className={this.props.panelControls[constants.PANEL_PLOTLY].show ? '' : 'hidden'}>
         <div id="plotly" ref={this._bindRef}></div>
       </div>
     );
