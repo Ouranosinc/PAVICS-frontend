@@ -56,8 +56,10 @@ module.exports.getLayers = function * list (next) {
   // url='http://132.217.140.31:8080/ncWMS2/wms'
   // dataset='outputs/ouranos/subdaily/aet/pcp/aet_pcp_1970.nc'
   // http://132.217.140.31:8080/ncWMS2/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&DATASET=outputs/ouranos/subdaily/aet/pcp/aet_pcp_1970.nc
+  let wmsUrl = `${url}?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&DATASET=${dataset}`
+  console.log(wmsUrl);
   var options = {
-    url: `${url}?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&DATASET=${dataset}`
+    url: wmsUrl
   }
   var response = yield request(options)
   this.body = yield parseXMLThunk(response.body, url, dataset)
