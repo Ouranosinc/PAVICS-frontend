@@ -43,7 +43,10 @@ Build & Run on Linux
 $ git clone https://github.com/Ouranosinc/PAVICS-frontend.git
 $ cd PAVICS-frontend
 $ docker build -t pavics/geoweb .
-$ docker run -p 3000:3000 -it pavics/geoweb #Browse application at localhost:3000
+#To Run
+$ docker run -p 3000:3000 -it pavics/geoweb #Then browse application at localhost:3000
+#OR
+$ docker run -p 3000:3000 -e PAVICS_FRONTEND_IP=<host_ip> -t pavics/geoweb #Then browse application at host_ip:3000
 ```
 
 Build & Run on Windows:
