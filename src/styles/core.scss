@@ -31,6 +31,10 @@
     }
   }
 
+  .hidden {
+    visibility: collapse;
+  }
+
   .container{
     width: 100% !important;
   }

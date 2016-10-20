@@ -6,6 +6,7 @@ import Loader from './../../components/Loader'
 import SearchCatalogResults from './../../containers/SearchCatalogResults'
 import CriteriaSelection from './../../components/CriteriaSelection'
 import * as constants from './../../routes/Visualize/constants'
+import {MenuItem, DropdownButton} from 'react-bootstrap'
 export class SearchCatalog extends React.Component {
   static propTypes = {
     /* Helps Webstorm to auto-complete function calls and enforce React Props Validation*/
@@ -68,9 +69,9 @@ export class SearchCatalog extends React.Component {
   }
 
   // posterity
-  _onSelectedKey (event) {
-    this.props.selectFacetKey(event.target.value)
-    let facet = this.props.facets.items.find(x => x.key === event.target.value)
+  _onSelectedKey (eventKey) {
+    this.props.selectFacetKey(eventKey)
+    let facet = this.props.facets.items.find(x => x.key === eventKey)
     if (facet) {
       this.currentFacetValues = facet.values
     } else {
@@ -115,22 +116,15 @@ export class SearchCatalog extends React.Component {
                 </PanelHeader>
               </div>
               <div className="col-md-3">
-                <form>
-                  <label htmlFor="facetKey">Key:</label>
-                  <select
-                    id="facetKey"
-                    className="custom-select"
-                    value={this.props.currentSelectedKey}
-                    onChange={this._onSelectedKey}>
-                    {
-                      this.props.facets.items.map((x, i) => {
-                        return (this.recommendedKeys.includes(x.key))
-                          ? null
-                          : <option key={i + 1} value={x.key}>{x.key}</option>
-                      })
-                    }
-                  </select>
-                </form>
+                <DropdownButton title="Choose a facet" id="facetKey">
+                  {
+                    this.props.facets.items.map((x, i) => {
+                      return (this.recommendedKeys.includes(x.key))
+                        ? null
+                        : <MenuItem key={i} eventKey={x.key} onSelect={this._onSelectedKey}>{x.key}</MenuItem>
+                    })
+                  }
+                </DropdownButton>
               </div>
             </div>
             <div className="row">

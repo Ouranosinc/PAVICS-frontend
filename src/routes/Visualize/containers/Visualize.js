@@ -1,18 +1,16 @@
-import React from 'react'
-import {connect} from 'react-redux'
-import classes from './Visualize.scss'
-
-//TODO: Fix, we should only import containers here
-import OLComponent from '../../../components/OLComponent'
-import DatasetDetails from '../../../components/DatasetDetails'
-
-//Containers
-import {DatasetWMSLayers, SearchCatalog, ClimateIndicators} from '../../../containers'
-
+import React from 'react';
+import {connect} from 'react-redux';
+import classes from './Visualize.scss';
+// TODO: Fix, we should only import containers here
+import OLComponent from '../../../components/OLComponent';
+import DatasetDetails from '../../../components/DatasetDetails';
+import PlotlyWrapper from '../../../components/PlotlyWrapper';
+// Containers
+import {DatasetWMSLayers, SearchCatalog, ClimateIndicators, MapNavBar} from '../../../containers';
 import {
-  //Panels
+  // Panels
   clickTogglePanel,
-  //Facets
+  // Facets
   selectFacetKey,
   selectFacetValue,
   addFacetKeyValue,
@@ -23,7 +21,10 @@ import {
   requestClimateIndicators,
   receiveClimateIndicatorsFailure,
   receiveClimateIndicators,
-  //datasets
+  requestPlotlyData,
+  receivePlotlyDataFailure,
+  receivePlotlyData,
+  // datasets
   requestDataset,
   receiveDatasetFailure,
   receiveDataset,
@@ -35,61 +36,68 @@ import {
   openDatasetWmsLayers,
   openWmsLayer,
   selectLoadWms,
-  //Async
+  // Async
   fetchFacets,
   fetchDataset,
   fetchCatalogDatasets,
   fetchDatasetWMSLayers,
   fetchWMSLayerDetails,
   fetchClimateIndicators,
-} from '../modules/Visualize'
-
-var me;
-
+  fetchPlotlyData
+} from '../modules/Visualize';
 class Visualize extends React.Component {
-  static propTypes = {};
+  static propTypes = {
+    fetchFacets: React.PropTypes.func.isRequired,
+    fetchPlotlyData: React.PropTypes.func.isRequired,
+    panelControls: React.PropTypes.object.isRequired,
+    plotlyData: React.PropTypes.object.isRequired
+  }
 
-  constructor(props) {
+  constructor (props) {
     super(props);
     console.log(props);
     this.props.fetchFacets();
-    this.lastKey = 0;
-    this.lastValue = 0;
-    me = this;
   }
 
-
-  render() {
+  render () {
     return (
-      <div className={classes['Visualize']}>
-        <div className={classes.mapContainer}>
-          <OLComponent {...this.props }/>
-        </div>
-        <div className={classes.left}>
-          <div className={classes.panel}>
-            <SearchCatalog {...this.props } />
+      <div>
+        <MapNavBar {...this.props} />
+        <PlotlyWrapper
+          panelControls={this.props.panelControls}
+          data={this.props.plotlyData.data}
+          layout={this.props.plotlyData.layout}
+          fetchPlotlyData={this.props.fetchPlotlyData}
+        />
+        <div className={classes['Visualize']}>
+          <div className={classes.mapContainer}>
+            <OLComponent {...this.props} />
           </div>
-          <div className={classes.panel}>
-            <ClimateIndicators {...this.props } />
+          <div className={classes.left}>
+            <div className={classes.panel}>
+              <SearchCatalog {...this.props} />
+            </div>
+            <div className={classes.panel}>
+              <ClimateIndicators {...this.props} />
+            </div>
           </div>
-        </div>
-        <div className={classes.right}>
-          <div className={classes.panel}>
-            <DatasetDetails {...this.props } />
-          </div>
-          <div className={classes.panel}>
-            <DatasetWMSLayers {...this.props } />
+          <div className={classes.right}>
+            <div className={classes.panel}>
+              <DatasetDetails {...this.props} />
+            </div>
+            <div className={classes.panel}>
+              <DatasetWMSLayers {...this.props} />
+            </div>
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
-
 const mapActionCreators = {
-  //Panels
+  // Panels
   clickTogglePanel,
-  //Facets
+  // Facets
   selectFacetKey,
   selectFacetValue,
   addFacetKeyValue,
@@ -100,7 +108,10 @@ const mapActionCreators = {
   requestClimateIndicators,
   receiveClimateIndicatorsFailure,
   receiveClimateIndicators,
-  //Datasets
+  requestPlotlyData,
+  receivePlotlyDataFailure,
+  receivePlotlyData,
+  // Datasets
   requestDataset,
   receiveDatasetFailure,
   receiveDataset,
@@ -112,15 +123,15 @@ const mapActionCreators = {
   openDatasetWmsLayers,
   openWmsLayer,
   selectLoadWms,
-  //Async
+  // Async
   fetchFacets,
   fetchDataset,
   fetchCatalogDatasets,
   fetchDatasetWMSLayers,
   fetchWMSLayerDetails,
   fetchClimateIndicators,
+  fetchPlotlyData
 };
-
 const mapStateToProps = (state) => ({
   currentSelectedKey: state.visualize.currentSelectedKey,
   currentSelectedValue: state.visualize.currentSelectedValue,
@@ -134,7 +145,7 @@ const mapStateToProps = (state) => ({
   datasets: state.visualize.datasets,
   facets: state.visualize.facets,
   climateIndicators: state.visualize.climateIndicators,
-  panelControls: state.visualize.panelControls
+  panelControls: state.visualize.panelControls,
+  plotlyData: state.visualize.plotlyData
 });
-
-export default connect(mapStateToProps, mapActionCreators)(Visualize)
+export default connect(mapStateToProps, mapActionCreators)(Visualize);

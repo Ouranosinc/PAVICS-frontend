@@ -1,10 +1,10 @@
-import * as constants from './../constants'
+import * as constants from './../constants';
 // ------------------------------------
 // Constants
 // These should go in the constants.js file as well at some point
 // ------------------------------------
 export const COUNTER_INCREMENT = 'Visualize.COUNTER_INCREMENT';
-//SYNC
+// SYNC
 export const SELECT_FACET_KEY = 'Visualize.SELECT_FACET_KEY';
 export const SELECT_FACET_VALUE = 'Visualize.SELECT_FACET_VALUE';
 export const ADD_FACET_KEY_VALUE_PAIR = 'Visualize.ADD_FACET_KEY_VALUE_PAIR';
@@ -15,7 +15,10 @@ export const OPEN_DATASET_WMS_LAYERS = 'Visualize.OPEN_DATASET_WMS_LAYERS';
 export const OPEN_WMS_LAYER = 'Visualize.OPEN_WMS_LAYER';
 export const SELECT_LOAD_WMS = 'Visualize.SELECT_LOAD_WMS';
 export const CLICK_TOGGLE_PANEL = 'Visualize.CLICK_TOGGLE_PANEL';
-//ASYNC
+// ASYNC
+export const FETCH_PLOTLY_DATA_REQUEST = 'Visualize.FETCH_PLOTLY_DATA_REQUEST';
+export const FETCH_PLOTLY_DATA_FAILURE = 'Visualize.FETCH_PLOTLY_DATA_FAILURE';
+export const FETCH_PLOTLY_DATA_SUCCESS = 'Visualize.FETCH_PLOTLY_DATA_SUCCESS';
 export const FETCH_CLIMATE_INDICATORS_REQUEST = 'Visualize.FETCH_CLIMATE_INDICATORS_REQUEST';
 export const FETCH_CLIMATE_INDICATORS_FAILURE = 'Visualize.FETCH_CLIMATE_INDICATORS_FAILURE';
 export const FETCH_CLIMATE_INDICATORS_SUCCESS = 'Visualize.FETCH_CLIMATE_INDICATORS_SUCCESS';
@@ -37,57 +40,57 @@ export const FETCH_WMS_LAYER_DETAILS_SUCCESS = 'Visualize.FETCH_WMS_LAYER_DETAIL
 // ------------------------------------
 // Actions
 // ------------------------------------
-export function selectFacetKey(key) {
+export function selectFacetKey (key) {
   return {
     type: SELECT_FACET_KEY,
     key: key,
-    value: ""
-  }
+    value: ''
+  };
 }
-export function selectFacetValue(value) {
+export function selectFacetValue (value) {
   return {
     type: SELECT_FACET_VALUE,
     value: value
-  }
+  };
 }
-export function addFacetKeyValue(key, value) {
+export function addFacetKeyValue (key, value) {
   return {
     type: ADD_FACET_KEY_VALUE_PAIR,
     key: key,
     value: value
-  }
+  };
 }
-export function removeFacetKeyValue(key, value) {
+export function removeFacetKeyValue (key, value) {
   return {
     type: REMOVE_FACET_KEY_VALUE_PAIR,
     key: key,
     value: value
-  }
+  };
 }
-export function openDatasetDetails(id) {
+export function openDatasetDetails (id) {
   return {
     type: OPEN_DATASET_DETAILS,
     id: id
-  }
+  };
 }
-export function closeDatasetDetails() {
+export function closeDatasetDetails () {
   return {
     type: OPEN_DATASET_DETAILS
-  }
+  };
 }
-export function openDatasetWmsLayers(dataset) {
+export function openDatasetWmsLayers (dataset) {
   return {
     type: OPEN_DATASET_WMS_LAYERS,
     dataset: dataset
-  }
+  };
 }
-export function openWmsLayer(layer) {
+export function openWmsLayer (layer) {
   return {
     type: OPEN_WMS_LAYER,
     layer: layer
-  }
+  };
 }
-export function selectLoadWms(url, name, start, end, style, opacity) {
+export function selectLoadWms (url, name, start, end, style, opacity) {
   return {
     type: SELECT_LOAD_WMS,
     url: url,
@@ -96,56 +99,88 @@ export function selectLoadWms(url, name, start, end, style, opacity) {
     end: end,
     style: style,
     opacity: opacity
-  }
+  };
 }
-export function clickTogglePanel(panel, show) {
+export function clickTogglePanel (panel, show) {
   return {
     type: CLICK_TOGGLE_PANEL,
     panel: panel,
     show: show
-  }
+  };
 }
-export function requestClimateIndicators() {
+export function requestPlotlyData () {
+  return {
+    type: FETCH_PLOTLY_DATA_REQUEST,
+    plotlyData: {
+      requestedAt: Date.now(),
+      isFetching: true
+    }
+  };
+}
+export function receivePlotlyDataFailure (error) {
+  return {
+    type: FETCH_PLOTLY_DATA_FAILURE,
+    plotlyData: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      error: error
+    }
+  };
+}
+export function receivePlotlyData (json) {
+  let data = json.data;
+  let layout = json.layout;
+  return {
+    type: FETCH_PLOTLY_DATA_SUCCESS,
+    plotlyData: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      data: data,
+      layout: layout
+    }
+  };
+}
+export function requestClimateIndicators () {
   return {
     type: FETCH_CLIMATE_INDICATORS_REQUEST,
     climateIndicators: {
       requestedAt: Date.now(),
-      isFetching: true,
-    },
+      isFetching: true
+    }
   };
 }
-export function receiveClimateIndicatorsFailure(error) {
+export function receiveClimateIndicatorsFailure (error) {
   return {
     type: FETCH_CLIMATE_INDICATORS_FAILURE,
     climateIndicators: {
       receivedAt: Date.now(),
       isFetching: false,
-      error: error,
-    },
+      error: error
+    }
   };
 }
-export function receiveClimateIndicators(items) {
+export function receiveClimateIndicators (items) {
   return {
     type: FETCH_CLIMATE_INDICATORS_SUCCESS,
     climateIndicators: {
       receivedAt: Date.now(),
       isFetching: false,
-      items: items,
-    },
+      items: items
+    }
   };
 }
-export function requestFacets() {
+export function requestFacets () {
   return {
     type: FETCH_FACETS_REQUEST,
     facets: {
-      receivedAt: 1, //TODO: Fix
+      receivedAt: 1, // TODO: Fix
       requestedAt: Date.now(),
       isFetching: true,
       items: []
     }
-  }
+  };
 }
-export function receiveFacetsFailure(error) {
+export function receiveFacetsFailure (error) {
   return {
     type: FETCH_FACETS_FAILURE,
     facets: {
@@ -154,9 +189,9 @@ export function receiveFacetsFailure(error) {
       items: [],
       error: error
     }
-  }
+  };
 }
-export function receiveFacets(facets) {
+export function receiveFacets (facets) {
   return {
     type: FETCH_FACETS_SUCCESS,
     facets: {
@@ -165,20 +200,20 @@ export function receiveFacets(facets) {
       items: facets,
       error: null
     }
-  }
+  };
 }
-export function requestDataset() {
+export function requestDataset () {
   return {
     type: FETCH_DATASET_REQUEST,
     selectedDatasets: {
-      receivedAt: 1, //TODO: Fix
+      receivedAt: 1, // TODO: Fix
       requestedAt: Date.now(),
       isFetching: true,
       items: []
     }
-  }
+  };
 }
-export function receiveDatasetFailure(error) {
+export function receiveDatasetFailure (error) {
   return {
     type: FETCH_DATASET_FAILURE,
     selectedDatasets: {
@@ -187,9 +222,9 @@ export function receiveDatasetFailure(error) {
       items: [],
       error: error
     }
-  }
+  };
 }
-export function receiveDataset(dataset) {
+export function receiveDataset (dataset) {
   return {
     type: FETCH_DATASET_SUCCESS,
     selectedDatasets: {
@@ -198,9 +233,9 @@ export function receiveDataset(dataset) {
       items: [dataset],
       error: null
     }
-  }
+  };
 }
-export function requestCatalogDatasets() {
+export function requestCatalogDatasets () {
   return {
     type: FETCH_CATALOG_DATASETS_REQUEST,
     datasets: {
@@ -208,9 +243,9 @@ export function requestCatalogDatasets() {
       isFetching: true,
       items: []
     }
-  }
+  };
 }
-export function receiveCatalogDatasetsFailure(error) {
+export function receiveCatalogDatasetsFailure (error) {
   return {
     type: FETCH_CATALOG_DATASETS_FAILURE,
     datasets: {
@@ -219,9 +254,9 @@ export function receiveCatalogDatasetsFailure(error) {
       items: [],
       error: error
     }
-  }
+  };
 }
-export function receiveCatalogDatasets(datasets) {
+export function receiveCatalogDatasets (datasets) {
   return {
     type: FETCH_CATALOG_DATASETS_SUCCESS,
     datasets: {
@@ -230,9 +265,9 @@ export function receiveCatalogDatasets(datasets) {
       items: datasets,
       error: null
     }
-  }
+  };
 }
-export function requestDatasetWMSLayers() {
+export function requestDatasetWMSLayers () {
   return {
     type: FETCH_DATASET_WMS_LAYERS_REQUEST,
     selectedWMSLayers: {
@@ -240,9 +275,9 @@ export function requestDatasetWMSLayers() {
       isFetching: true,
       items: []
     }
-  }
+  };
 }
-export function receiveDatasetWMSLayersFailure(error) {
+export function receiveDatasetWMSLayersFailure (error) {
   return {
     type: FETCH_DATASET_WMS_LAYERS_FAILURE,
     selectedWMSLayers: {
@@ -251,9 +286,9 @@ export function receiveDatasetWMSLayersFailure(error) {
       items: [],
       error: error
     }
-  }
+  };
 }
-export function receiveDatasetWMSLayers(layers) {
+export function receiveDatasetWMSLayers (layers) {
   return {
     type: FETCH_DATASET_WMS_LAYERS_SUCCESS,
     selectedWMSLayers: {
@@ -262,9 +297,9 @@ export function receiveDatasetWMSLayers(layers) {
       items: layers,
       error: null
     }
-  }
+  };
 }
-export function requestWMSLayerDetails(layer, url) {
+export function requestWMSLayerDetails (layer, url) {
   return {
     type: FETCH_WMS_LAYER_DETAILS_REQUEST,
     selectedWMSLayer: {
@@ -274,9 +309,9 @@ export function requestWMSLayerDetails(layer, url) {
       isFetching: true,
       data: {}
     }
-  }
+  };
 }
-export function receiveWMSLayerDetailsFailure(error) {
+export function receiveWMSLayerDetailsFailure (error) {
   return {
     type: FETCH_WMS_LAYER_DETAILS_FAILURE,
     selectedWMSLayer: {
@@ -285,9 +320,9 @@ export function receiveWMSLayerDetailsFailure(error) {
       data: {},
       error: error
     }
-  }
+  };
 }
-export function receiveWMSLayerDetails(data) {
+export function receiveWMSLayerDetails (data) {
   return {
     type: FETCH_WMS_LAYER_DETAILS_SUCCESS,
     selectedWMSLayer: {
@@ -296,49 +331,73 @@ export function receiveWMSLayerDetails(data) {
       data: data,
       error: null
     }
-  }
+  };
 }
-//ASYNC
-export function fetchClimateIndicators() {
+// ASYNC
+export function fetchClimateIndicators () {
   return function (dispatch) {
     dispatch(requestClimateIndicators());
-    return fetch("/api/climate_indicators")
+    return fetch('/api/climate_indicators')
       .then(response => response.json())
       .then(json => dispatch(receiveClimateIndicators(json)))
       .catch(error => dispatch(receiveClimateIndicatorsFailure(error)));
-  }
+  };
 }
-export function fetchFacets() {
+export function fetchFacets () {
   return function (dispatch) {
     dispatch(requestFacets());
-    return fetch("/api/facets")
+    return fetch('/api/facets')
       .then(response => response.json())
-      .then(json =>dispatch(receiveFacets(json)))
-      .catch(error =>dispatch(receiveFacetsFailure(error)));
-  }
+      .then(json => dispatch(receiveFacets(json)))
+      .catch(error => dispatch(receiveFacetsFailure(error)));
+  };
 }
-export function fetchDataset(url) {
+export function fetchPlotlyData (
+  variableName,
+  timeInitialIndice,
+  timeFinalIndice,
+  spatial1InitialIndice,
+  spatial1FinalIndice,
+  spatial2InitialIndice,
+  spatial2FinalIndice
+) {
+  return function (dispatch) {
+    dispatch(requestPlotlyData());
+    let url = `/wps/plotly?variable_name=${variableName}&time_initial_indice=${timeInitialIndice}` +
+      `&time_final_indice=${timeFinalIndice}&spatial1_initial_indice=${spatial1InitialIndice}` +
+      `&spatial1_final_indice=${spatial1FinalIndice}&spatial2_initial_indice=${spatial2InitialIndice}` +
+      `&spatial2_final_indice=${spatial2FinalIndice}`;
+    return fetch(url)
+      .then((response) => {
+        console.log('variable name: ', variableName);
+        return response.json();
+      })
+      .then(json => dispatch(receivePlotlyData(json)))
+      .catch(error => dispatch(receivePlotlyDataFailure(error)));
+  };
+}
+export function fetchDataset (url) {
   return function (dispatch) {
     dispatch(requestDataset());
     return fetch(`/api/dataset?url=${url}`)
       .then(response => response.json())
       .then(json =>
         dispatch(receiveDataset(json))
-      )
-    //TODO FIX THIS HAPPEN FOR NO REASON
-    /*.catch(error =>
+      );
+    // TODO FIX THIS HAPPEN FOR NO REASON
+    /* .catch(error =>
      dispatch(receiveDatasetFailure(error))
-     )*/
-  }
+     ) */
+  };
 }
-export function fetchCatalogDatasets() {
+export function fetchCatalogDatasets () {
   return function (dispatch, getState) {
     dispatch(requestCatalogDatasets());
-    //Get current added facets by querying store
+    // Get current added facets by querying store
     let facets = getState().visualize.selectedFacets;
-    let constraints = "";
+    let constraints = '';
     facets.forEach(function (facet, i) {
-      constraints += `${(i > 0) ? "," : ""}${facet.key}:${facet.value}`;
+      constraints += `${(i > 0) ? ',' : ''}${facet.key}:${facet.value}`;
     });
     console.log(getState().visualize);
     return fetch(`/api/datasets?constraints=${constraints}`)
@@ -348,13 +407,13 @@ export function fetchCatalogDatasets() {
       )
       .catch(error =>
         dispatch(receiveCatalogDatasetsFailure(error))
-      )
-  }
+      );
+  };
 }
-export function fetchDatasetWMSLayers(url, dataset) {
+export function fetchDatasetWMSLayers (url, dataset) {
   return function (dispatch) {
     dispatch(requestDatasetWMSLayers());
-    dataset = "outputs/ouranos/subdaily/aet/pcp/aet_pcp_1970.nc"; //TODO, Dynamically use datasetid
+    dataset = 'outputs/ouranos/subdaily/aet/pcp/aet_pcp_1970.nc'; // TODO, Dynamically use datasetid
     return fetch(`/api/wms/dataset/layers?url=${url}&dataset=${dataset}`)
       .then(response => response.json())
       .then(json =>
@@ -362,10 +421,10 @@ export function fetchDatasetWMSLayers(url, dataset) {
       )
       .catch(error =>
         dispatch(receiveDatasetWMSLayersFailure(error))
-      )
-  }
+      );
+  };
 }
-export function fetchWMSLayerDetails(url, layer) {
+export function fetchWMSLayerDetails (url, layer) {
   return function (dispatch) {
     dispatch(requestWMSLayerDetails());
     return fetch(`${url}?request=GetMetadata&item=layerDetails&layerName=${layer}`)
@@ -375,38 +434,38 @@ export function fetchWMSLayerDetails(url, layer) {
       )
       .catch(error =>
         dispatch(receiveWMSLayerDetailsFailure(error))
-      )
-  }
+      );
+  };
 }
-//MERGE
+// MERGE
 /* The implementation for this will merge an update into the old state,
  *  where the first two entries are put in one List, and the rest in the new version of entries:
  */
-/*export function next(state) {
+/* export function next(state) {
  const entries = state.get('entries').concat(getWinners(state.get('vote')));
  return state.merge({
  vote: Map({pair: entries.take(2)}),
  entries: entries.skip(2)
  });
- }*/
+ } */
 
-//UPDATEIN
+// UPDATEIN
 /* Using updateIn makes this pleasingly succinct.
  *  What the code expresses is "reach into the nested data structure path ['vote', 'tally', 'Trainspotting'],
  *  and apply this function there. If there are keys missing along the path, create new Maps in their place.
  *  If the value at the end is missing, initialize it with 0".
  */
-/*export function vote(state, entry) {
+/* export function vote(state, entry) {
  return state.updateIn(
  ['vote', 'tally', entry],
  0,
  tally => tally + 1
  );
- }*/
+ } */
 export const actions = {
-  //Sync Panels
+  // Sync Panels
   clickTogglePanel,
-  //Sync Facets
+  // Sync Facets
   selectFacetKey,
   selectFacetValue,
   addFacetKeyValue,
@@ -417,7 +476,10 @@ export const actions = {
   requestClimateIndicators,
   receiveClimateIndicatorsFailure,
   receiveClimateIndicators,
-  //Sync Datasets
+  requestPlotlyData,
+  receivePlotlyDataFailure,
+  receivePlotlyData,
+  // Sync Datasets
   openDatasetDetails,
   closeDatasetDetails,
   requestDataset,
@@ -429,13 +491,14 @@ export const actions = {
   openDatasetWmsLayers,
   openWmsLayer,
   selectLoadWms,
-  //Async
+  // Async
   fetchFacets,
   fetchDataset,
   fetchCatalogDatasets,
   fetchDatasetWMSLayers,
   fetchWMSLayerDetails,
   fetchClimateIndicators,
+  fetchPlotlyData
 };
 // ------------------------------------
 // Action Handlers
@@ -450,10 +513,12 @@ const ACTION_HANDLERS = {
   [ADD_FACET_KEY_VALUE_PAIR]: (state, action) => {
     let facets = state.selectedFacets.concat({key: action.key, value: action.value});
     facets.sort(function (a, b) {
-      if (a.key + a.value < b.key + b.value)
+      if (a.key + a.value < b.key + b.value) {
         return -1;
-      if (a.key + a.value > b.key + b.value)
+      }
+      if (a.key + a.value > b.key + b.value) {
         return 1;
+      }
       return 0;
     });
     return ({...state, selectedFacets: facets});
@@ -461,14 +526,16 @@ const ACTION_HANDLERS = {
   [REMOVE_FACET_KEY_VALUE_PAIR]: (state, action) => {
     let selectedFacets = state.selectedFacets.slice();
     let index = selectedFacets.findIndex(x => x.key === action.key && x.value === action.value);
-    if (index > -1) selectedFacets.splice(index, 1);
+    if (index > -1) {
+      selectedFacets.splice(index, 1);
+    }
     return ({...state, selectedFacets: selectedFacets});
   },
   [OPEN_DATASET_DETAILS]: (state, action) => {
     return ({...state, currentOpenedDataset: action.id});
   },
   [CLOSE_DATASET_DETAILS]: (state) => {
-    return ({...state, currentOpenedDataset: ""});
+    return ({...state, currentOpenedDataset: ''});
   },
   [OPEN_DATASET_WMS_LAYERS]: (state, action) => {
     return ({...state, currentOpenedDatasetWMSFile: action.dataset});
@@ -489,7 +556,8 @@ const ACTION_HANDLERS = {
     });
   },
   [CLICK_TOGGLE_PANEL]: (state, action) => {
-    let panelControls = JSON.parse(JSON.stringify(state.panelControls)); //TODO: deepcopy With Immutable.js or something like that
+    // TODO: deepcopy With Immutable.js or something like that
+    let panelControls = JSON.parse(JSON.stringify(state.panelControls));
     panelControls[action.panel].show = action.show;
     return ({...state, panelControls: panelControls});
   },
@@ -510,6 +578,15 @@ const ACTION_HANDLERS = {
   },
   [FETCH_FACETS_SUCCESS]: (state, action) => {
     return ({...state, facets: action.facets});
+  },
+  [FETCH_PLOTLY_DATA_REQUEST]: (state, action) => {
+    return ({...state, plotlyData: Object.assign({}, state.plotlyData, action.plotlyData)});
+  },
+  [FETCH_PLOTLY_DATA_FAILURE]: (state, action) => {
+    return ({...state, plotlyData: Object.assign({}, state.plotlyData, action.plotlyData)});
+  },
+  [FETCH_PLOTLY_DATA_SUCCESS]: (state, action) => {
+    return ({...state, plotlyData: Object.assign({}, state.plotlyData, action.plotlyData)});
   },
   [FETCH_CLIMATE_INDICATORS_REQUEST]: (state, action) => {
     return ({...state, climateIndicators: Object.assign({}, state.climateIndicators, action.climateIndicators)});
@@ -553,13 +630,13 @@ const ACTION_HANDLERS = {
 // ------------------------------------
 const initialState = {
   currentSelectedKey: constants.DEFAULT_SELECTED_KEY,
-  currentSelectedValue: "",
-  currentOpenedDataset: "",
-  currentOpenedDatasetWMSFile: "",
-  currentOpenedWMSLayer: "",
+  currentSelectedValue: '',
+  currentOpenedDataset: '',
+  currentOpenedDatasetWMSFile: '',
+  currentOpenedWMSLayer: '',
   loadedWmsDatasets: [],
   selectedFacets: [],
-  selectedDatasets: { //One only ==> Details
+  selectedDatasets: {
     requestedAt: null,
     receivedAt: null,
     isFetching: false,
@@ -610,6 +687,14 @@ const initialState = {
     items: [],
     error: null
   },
+  plotlyData: {
+    isFecthing: false,
+    receivedAt: null,
+    requestedAt: null,
+    data: [],
+    layout: {},
+    error: null
+  },
   panelControls: {
     [constants.PANEL_SEARCH_CATALOG]: {
       show: true
@@ -622,10 +707,13 @@ const initialState = {
     },
     [constants.PANEL_CLIMATE_INDICATORS]: {
       show: false
+    },
+    [constants.PANEL_PLOTLY]: {
+      show: false
     }
   }
 };
-export default function visualizeReducer(state = initialState, action) {
+export default function visualizeReducer (state = initialState, action) {
   const handler = ACTION_HANDLERS[action.type];
-  return handler ? handler(state, action) : state
+  return handler ? handler(state, action) : state;
 }
