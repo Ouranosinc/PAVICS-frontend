@@ -55,7 +55,6 @@ export class DatasetWMSLayersList extends Component {
         </div>
       )
     }
-
   }
 }
 

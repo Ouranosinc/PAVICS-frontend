@@ -20,6 +20,11 @@ export const Header = () => (
     <Link to='/Visualize' activeClassName={classes.activeRoute}>
       Visualize
     </Link>
+    {' · '}
+    <Link to='/MapViewer' activeClassName={classes.activeRoute}>
+      MapViewer
+    </Link>
+
   </div>
 )
 

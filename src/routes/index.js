@@ -6,6 +6,7 @@ import OpenLayersRoute from './OpenLayers'
 import CesiumRoute from './Cesium'
 import WmsRoute from './WMS'
 import VisualizeRoute from './Visualize'
+import MapViewer from './MapViewer'
 
 /*  Note: Instead of using JSX, we recommend using react-router
     PlainRoute objects to build route definitions.   */
@@ -19,7 +20,8 @@ export const createRoutes = (store) => ({
     OpenLayersRoute(store),
     CesiumRoute(store),
     WmsRoute(store),
-    VisualizeRoute(store)
+    VisualizeRoute(store),
+    MapViewer(store)
   ]
 });
 
