@@ -1,0 +1,56 @@
+.MapViewer {
+  position: relative;
+
+  .mapContainer
+  {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .panel {
+    margin: 5px;
+  }
+
+  .left
+  {
+    max-width: 50%;
+    float: left;
+    margin: 15px;
+    .panel {
+      float: left;
+      clear: left;
+    }
+  }
+
+  .right
+  {
+    max-width: 42%;
+    float: right;
+    margin: 15px;
+    .panel {
+      float: right;
+      clear: right;
+    }
+  }
+
+  .frontComponents{
+    word-break: normal;
+    opacity: (0.8);
+
+    .topLeftComponents{
+      position: fixed;
+      z-index: 1000;
+      top: 110px;
+      left: 0;
+    }
+    .topRightComponents{
+      position: fixed;
+      z-index: 1000;
+      top: 110px;
+      right: 0;
+      float: right;
+    }
+  }
+}
