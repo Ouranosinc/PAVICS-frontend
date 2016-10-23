@@ -33,28 +33,32 @@ class MapViewerPanel extends React.Component {
     this.overlayLayers = new ol.layer.Group({'title': 'Overlays','opacity':1.0, 'visible':true,'zIndex':1});
     this.view = null;
     this.tmpLayer=null;
-    this.popup = null;
     this.dragBox = null;
     this.select= null;
     this.selectedFeatures= null;
     this.watersheds_layers_name = [];
+    this.bukowskis_layer_name = [];
     me=this;
   }
 
   // Returns base layers list
   getMapBaseLayersList() {
-    if (this.baseLayers != null) {
-      return this.baseLayers.getLayers()
+    if (me.baseLayers != null) {
+      return me.baseLayers.getLayers()
     }
     return []
   }
 
   // Returns overlay layers list
   getMapOverlayList() {
-    if (this.overlayLayers != null) {
-      return this.overlayLayers.getLayers()
+    if (me.overlayLayers != null) {
+      return me.overlayLayers.getLayers()
     }
     return []
+  }
+
+  getNumberOverlays(){
+    return me.overlayLayers.getLayers().getLength()
   }
 
   // Add backgrounnd layer (use once)
@@ -159,36 +163,36 @@ class MapViewerPanel extends React.Component {
     }));
   }
 
-  loadVectorFromGeoserver(layerId, visible, opacity, workspace){
+  loadFromWmsGeoserver(layerId, visible, opacity, workspace){
 
     var tiled = new ol.layer.Tile({
       visible: visible,
       opacity:opacity,
       source: new ol.source.TileWMS({
-        url: 'http://132.217.140.42:8080/geoserver/'+workspace+'/wms',
+        url: 'http://132.217.140.48:8080/geoserver/'+workspace+'/wms',
         params: {'FORMAT': 'image/png',
-          'VERSION': '1.1.1',
           tiled: true,
           STYLES: '',
           LAYERS: layerId
         }
       })
     });
-    var layers = this.getMapOverlayList();
+    var layers = me.getMapOverlayList();
     layers.push(tiled);
   }
 
-  loadHydroGraphicBassin(){
-    console.log(this.watersheds_layers_name.length);
-    for(let k =0; k<this.watersheds_layers_name.length; k++) {
-      console.log(this.watersheds_layers_name[k]);
-      this.loadVectorFromGeoserver(this.watersheds_layers_name[k], true, 0.5, 'WATERSHEDS');
+  loadLayers(layers_name, workspace, visible, opacity){
+    console.log(layers_name.length);
+    for(let k =0; k<layers_name.length; k++) {
+      console.log(layers_name[k]);
+      me.loadFromWmsGeoserver(layers_name[k], visible, opacity, workspace);
     }
   }
 
   initMap() {
 
-    this.view = new ol.View({
+
+    me.view = new ol.View({
       center: [-10997148, 8569099],
       zoom: 4
     })
@@ -205,10 +209,7 @@ class MapViewerPanel extends React.Component {
     });
     map.addControl(layerSwitcher);*/
 
-
-
-
-    this.map = map;
+    me.map = map;
 
     map.getView().on('propertychange', function(e) {
       switch (e.key) {
@@ -216,6 +217,31 @@ class MapViewerPanel extends React.Component {
           console.log(e.oldValue);
           break;
       }
+    });
+
+    me.map.on('singleclick', function(evt) {
+      //document.getElementById('nodelist').innerHTML = "Loading... please wait...";
+      var view = me.map.getView();
+      var viewResolution = view.getResolution();
+
+      var layers = me.getMapOverlayList();
+      console.log(viewResolution);
+      for(let k=0; k<layers.length; k++){
+        var source = layers[k].get('visible') ? layers[k].getSource() : null;
+
+        if(source != null)
+        {
+          var url = source.getGetFeatureInfoUrl(
+            evt.coordinate, viewResolution, view.getProjection(),
+            {'INFO_FORMAT': 'text/html', 'FEATURE_COUNT': 50});
+
+          if (url) {
+            console.log(url);
+          }
+        }
+      }
+
+
     });
 
   }
@@ -266,13 +292,10 @@ class MapViewerPanel extends React.Component {
     }
   }
 
-
-
-
   componentDidMount(){
 
     var parser = new ol.format.WMSCapabilities();
-    fetch('http://132.217.140.42:8080/geoserver/wms?request=getCapabilities').then(function(response) {
+    fetch('http://132.217.140.48:8080/geoserver/wms?request=getCapabilities').then(function(response) {
       return response.text();
     }).then(function(text) {
       var result = parser.read(text);
@@ -283,12 +306,21 @@ class MapViewerPanel extends React.Component {
 
         var layerobj = layers[i];
 
-        if(layerobj.Name.indexOf("WATERSHEDS")!==-1) {
+        if(layerobj.Name.indexOf("WATERSHEDS:BV_N1_S")!==-1) {
           console.log(layerobj.Name);
           me.watersheds_layers_name.push(layerobj.Name);
         }
+
+
+
+       /* if(layerobj.Name.indexOf("BUKOWSKI")!==-1) {
+          console.log(layerobj.Name);
+          me.bukowskis_layer_name.push(layerobj.Name);
+        }*/
       }
-      me.loadHydroGraphicBassin();
+      //me.loadLayers(me.bukowskis_layer_name,"BUKOWSKI",true, 0.5);
+      console.log(me.watersheds_layers_name.length);
+      me.loadLayers(me.watersheds_layers_name,"WATERSHEDS",true, 0.5);
     });
 
     this.initBackgroundLayer()
@@ -304,7 +336,6 @@ class MapViewerPanel extends React.Component {
   componentDidUpdate(prevProps, prevState){
 
   }
-
 
   handleToolbarClick(event) {
     var v = event
@@ -322,7 +353,6 @@ class MapViewerPanel extends React.Component {
           condition: ol.events.condition.platformModifierKeyOnly
         });
         me.map.addInteraction(me.dragBox);
-
         me.dragBox.on('boxend', function() {
           console.log(me.dragBox.getGeometry().getExtent());
           me.map.getView().fit(me.dragBox.getGeometry().getExtent(),me.map.getSize());
@@ -332,41 +362,72 @@ class MapViewerPanel extends React.Component {
       case 'select-id':
         me.select = new ol.interaction.Select();
         me.map.addInteraction(me.select);
-
         me.selectedFeatures = me.select.getFeatures();
-
         // a DragBox interaction used to select features by drawing boxes
         me.dragBox = new ol.interaction.DragBox({
           condition: ol.events.condition.platformModifierKeyOnly
         });
         me.map.addInteraction(me.dragBox);
-
         me.dragBox.on('boxend', function() {
           console.log(me.dragBox.getGeometry().getExtent());
 
           var extent = me.dragBox.getGeometry().getExtent();
-        /*  me.getMapOverlayList().forEach(function(layer){
+        me.getMapOverlayList().forEach(function(layer){
 
             layer.forEachFeatureIntersectingExtent(extent, function(feature) {
               me.selectedFeatures.push(feature);
             })
-          })*/
-
-
+          })
         });
 
         me.dragBox.on('boxstart', function() {
           me.selectedFeatures.clear();
         });
 
-        me.map.on('click', function() {
-          me.selectedFeatures.clear();
+        me.map.on('singleclick', function(evt) {
+          document.getElementById('info').innerHTML = "Loading... please wait...";
+          var view = me.map.getView();
+          var viewResolution = view.getResolution();
+
+          var layers = me.getMapOverlayList();
+          for(let k=0; k<me.getNumberOverlays(); k++){
+            var source = layers.item(k).getVisible() ? layers.item(k).getSource() : null;
+
+            if(source != null)
+            {
+              var url = source.getGetFeatureInfoUrl(
+                evt.coordinate, viewResolution, view.getProjection(),
+                {'INFO_FORMAT': 'text/html', 'FEATURE_COUNT': 50});
+
+              if (url) {
+                document.getElementById('info').innerHTML = '<iframe seamless src="' + url + '"></iframe>';
+              }
+
+              // generate a GetFeature request
+              var featureRequest = new ol.format.WFS().writeGetFeature({
+                srsName: 'EPSG:4326',
+                featureNS: 'http://openstreemap.org',
+                featurePrefix: 'osm',
+                featureTypes: ['water_areas'],
+                outputFormat: 'application/json',
+                filter: ol.format.filter.and(
+                  ol.format.filter.like('name', 'Mississippi*'),
+                  ol.format.filter.equalTo('waterway', 'riverbank')
+                )
+              });
+
+            }
+          }
+
+
         });
 
+
+        /*me.map.on('click', function() {
+          me.selectedFeatures.clear();
+        });*/
         break;
     }
-
-
 
     if(v.buttonClick.id !== 'zoom-selection-id' && v.buttonClick.id !== 'select-id' ){
       if (me.dragBox) {
@@ -380,7 +441,7 @@ class MapViewerPanel extends React.Component {
       me.select=null;
 
       if(me.selectedFeatures)
-        selectedFeatures.clear();
+        me.selectedFeatures.clear();
     }
   }
 
@@ -391,11 +452,9 @@ class MapViewerPanel extends React.Component {
     return(
       <div className={classes['MapViewerPanel']}>
         <MapViewToolbar id="map-view-toolbar-id" onMapViewToolbarClick={this.handleToolbarClick}/>
-        <div>
-        </div>
-        <div id="map" className="map">
-          <div id="popup" className="ol-popup"></div>
-        </div>
+        <div></div>
+        <div id="map" className="map"></div>
+        <div id="info"><em>Click on the map to get feature info</em></div>
       </div>
     )
   }
