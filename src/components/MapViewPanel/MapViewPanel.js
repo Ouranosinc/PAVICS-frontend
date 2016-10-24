@@ -14,10 +14,13 @@ require("ol3-layerswitcher/src/ol3-layerswitcher.css");
 //Couldn't figure out the bug when importing inner component css file but it works from node_modules
 
 var MapViewToolbar = require('../MapViewToolbar/MapViewToolbar');
+var Bootstrap = require('react-bootstrap');
+var Panel = Bootstrap.Panel
 
 var g_BING_API_KEY = 'AtXX65CBBfZXBxm6oMyf_5idMAMI7W6a5GuZ5acVcrYi6lCQayiiBz7_aMHB7JR7';
 
 var me;
+
 
 class MapViewerPanel extends React.Component {
   static propTypes = {
@@ -27,10 +30,12 @@ class MapViewerPanel extends React.Component {
 
   constructor(props) {
     super(props);
+    this.state = {toolId: "no-state-id"};
     this.layersCount = 0;
     this.map = null;
     this.baseLayers = new ol.layer.Group({'title': 'Base maps', 'opacity':1.0, 'visible':true,'zIndex':0});
     this.overlayLayers = new ol.layer.Group({'title': 'Overlays','opacity':1.0, 'visible':true,'zIndex':1});
+    this.watershedsLayers = new ol.layer.Group({'title': 'Watersheds','opacity':1.0, 'visible':true,'zIndex':1});
     this.view = null;
     this.tmpLayer=null;
     this.dragBox = null;
@@ -55,6 +60,18 @@ class MapViewerPanel extends React.Component {
       return me.overlayLayers.getLayers()
     }
     return []
+  }
+
+  // Returns overlay layers list
+  getWatershedLayerList() {
+    if (me.watershedsLayers != null) {
+      return me.watershedsLayers.getLayers()
+    }
+    return []
+  }
+
+  getNumberWatershedLayers(){
+    return me.getWatershedLayerList().getLength()
   }
 
   getNumberOverlays(){
@@ -181,13 +198,32 @@ class MapViewerPanel extends React.Component {
     layers.push(tiled);
   }
 
-  loadLayers(layers_name, workspace, visible, opacity){
+  loadFromWmsGeoserver(layerId, visible, opacity, workspace, layersList){
+
+    var tiled = new ol.layer.Tile({
+      visible: visible,
+      opacity:opacity,
+      source: new ol.source.TileWMS({
+        url: 'http://132.217.140.48:8080/geoserver/'+workspace+'/wms',
+        params: {'FORMAT': 'image/png',
+          tiled: true,
+          STYLES: '',
+          LAYERS: layerId
+        }
+      })
+    });
+    layersList.push(tiled);
+  }
+
+  loadLayers(layers_name, workspace, visible, opacity, layersList){
     console.log(layers_name.length);
     for(let k =0; k<layers_name.length; k++) {
       console.log(layers_name[k]);
-      me.loadFromWmsGeoserver(layers_name[k], visible, opacity, workspace);
+      me.loadFromWmsGeoserver(layers_name[k], visible, opacity, workspace,layersList);
     }
   }
+
+
 
   initMap() {
 
@@ -198,7 +234,7 @@ class MapViewerPanel extends React.Component {
     })
 
     var map = new ol.Map({
-      layers: [this.baseLayers, this.overlayLayers],
+      layers: [me.baseLayers, me.overlayLayers, me.watershedsLayers],
       target: 'map',
       renderer: 'canvas',
       view: this.view
@@ -211,6 +247,14 @@ class MapViewerPanel extends React.Component {
 
     me.map = map;
 
+    me.select = new ol.interaction.Select();
+    me.map.addInteraction(me.select);
+
+    // a DragBox interaction used to select features by drawing boxes
+    me.dragBox = new ol.interaction.DragBox({
+      condition: ol.events.condition.platformModifierKeyOnly
+    });
+
     map.getView().on('propertychange', function(e) {
       switch (e.key) {
         case 'resolution':
@@ -219,36 +263,48 @@ class MapViewerPanel extends React.Component {
       }
     });
 
+
+
     me.map.on('singleclick', function(evt) {
-      //document.getElementById('nodelist').innerHTML = "Loading... please wait...";
-      var view = me.map.getView();
-      var viewResolution = view.getResolution();
 
-      var layers = me.getMapOverlayList();
-      console.log(viewResolution);
-      for(let k=0; k<layers.length; k++){
-        var source = layers[k].get('visible') ? layers[k].getSource() : null;
+      if(me.state.toolId==='select-id') {
+        document.getElementById('info').innerHTML = "Loading... please wait...";
+        var view = me.map.getView();
+        var viewResolution = view.getResolution();
+        var layers = me.getWatershedLayerList();
+        for (let k = 0; k < layers.getLength(); k++) {
+          var source = layers.item(k).getVisible() ? layers.item(k).getSource() : null;
+          if (source != null) {
+            var url = source.getGetFeatureInfoUrl(
+              evt.coordinate, viewResolution, view.getProjection(),
+              {'INFO_FORMAT': 'text/html', 'FEATURE_COUNT': 50});
 
-        if(source != null)
-        {
-          var url = source.getGetFeatureInfoUrl(
-            evt.coordinate, viewResolution, view.getProjection(),
-            {'INFO_FORMAT': 'text/html', 'FEATURE_COUNT': 50});
-
-          if (url) {
-            console.log(url);
+            if (url) {
+              document.getElementById('info').innerHTML = '<iframe border=none height=110px width=100% seamless src="' + url + '"></iframe>';
+            }
           }
         }
       }
-
-
+      else{
+        document.getElementById('info').innerHTML = <div></div>;
+      }
     });
+
+
+    me.map.addInteraction(me.dragBox);
+    me.dragBox.on('boxend', function() {
+      console.log(me.dragBox.getGeometry().getExtent());
+
+      if(me.state.toolId==='zoom-selection-id')
+        me.map.getView().fit(me.dragBox.getGeometry().getExtent(),me.map.getSize());
+      });
+
 
   }
 
   /** Returns view resolution */
   getCurrentResolution() {
-    if (this.view != null) {
+    if (me.view != null) {
       return this.view.getResolution()
     }
     return -1;
@@ -256,39 +312,39 @@ class MapViewerPanel extends React.Component {
 
   /** Sets view resolution */
   setCurrentResolution(resolution) {
-    if (this.view != null) {
+    if (me.view != null) {
       this.view.setResolution(resolution)
     }
   }
 
   /** Returns current view center */
   getCurrentCenter() {
-    if (this.view != null) {
-      return this.view.getCenter()
+    if (me.view != null) {
+      return me.view.getCenter()
     }
     return [];
   }
 
   /** Sets current view center */
   setCurrentCenter(center) {
-    if (this.view != null) {
-      this.view.setCenter(center)
+    if (me.view != null) {
+      me.view.setCenter(center)
     }
     return [];
   }
 
   /** Returns current projection */
   getCurrentProjection() {
-    if (this.view != null) {
-      return this.view.getProjection()
+    if (me.view != null) {
+      return me.view.getProjection()
     }
     return "";
   }
 
   /** Sets current projection */
   setCurrentProjection(epsg_string) {
-    if (this.view != null) {
-      this.view.setProjection(epsg_string)
+    if (me.view != null) {
+      me.view.setProjection(epsg_string)
     }
   }
 
@@ -310,21 +366,14 @@ class MapViewerPanel extends React.Component {
           console.log(layerobj.Name);
           me.watersheds_layers_name.push(layerobj.Name);
         }
-
-
-
-       /* if(layerobj.Name.indexOf("BUKOWSKI")!==-1) {
-          console.log(layerobj.Name);
-          me.bukowskis_layer_name.push(layerobj.Name);
-        }*/
       }
       //me.loadLayers(me.bukowskis_layer_name,"BUKOWSKI",true, 0.5);
       console.log(me.watersheds_layers_name.length);
-      me.loadLayers(me.watersheds_layers_name,"WATERSHEDS",true, 0.5);
+      me.loadLayers(me.watersheds_layers_name,"WATERSHEDS",true, 0.5, me.getWatershedLayerList());
     });
 
-    this.initBackgroundLayer()
-    this.initMap();
+    me.initBackgroundLayer()
+    me.initMap();
   }
 
   componentWillUnmount(){
@@ -337,125 +386,47 @@ class MapViewerPanel extends React.Component {
 
   }
 
-  handleToolbarClick(event) {
-    var v = event
-    console.log("MapViewerPanel::handleToolbarClick : " + v.buttonClick.id);
-    switch(v.buttonClick.id){
-      case 'zoom-in-id':
-        me.setCurrentResolution(me.getCurrentResolution()*0.9);
-        break;
-      case 'zoom-out-id':
-        me.setCurrentResolution(me.getCurrentResolution()*1.1);
-        break;
-      case 'zoom-selection-id':
-        // a DragBox interaction used to select features by drawing boxes
-        me.dragBox = new ol.interaction.DragBox({
-          condition: ol.events.condition.platformModifierKeyOnly
-        });
-        me.map.addInteraction(me.dragBox);
-        me.dragBox.on('boxend', function() {
-          console.log(me.dragBox.getGeometry().getExtent());
-          me.map.getView().fit(me.dragBox.getGeometry().getExtent(),me.map.getSize());
+  _doZoomIn(){
+    me.setCurrentResolution(me.getCurrentResolution()*0.9);
+  }
 
-          });
-        break;
-      case 'select-id':
-        me.select = new ol.interaction.Select();
-        me.map.addInteraction(me.select);
-        me.selectedFeatures = me.select.getFeatures();
-        // a DragBox interaction used to select features by drawing boxes
-        me.dragBox = new ol.interaction.DragBox({
-          condition: ol.events.condition.platformModifierKeyOnly
-        });
-        me.map.addInteraction(me.dragBox);
-        me.dragBox.on('boxend', function() {
-          console.log(me.dragBox.getGeometry().getExtent());
+  _doZoomOut(){
+    console.log("MapViewerPanel::handleToolbarClick : " + me.state.toolId);
+    me.setCurrentResolution(me.getCurrentResolution()*1.1);
+  }
 
-          var extent = me.dragBox.getGeometry().getExtent();
-        me.getMapOverlayList().forEach(function(layer){
+  _doZoomSelection(){
+  }
 
-            layer.forEachFeatureIntersectingExtent(extent, function(feature) {
-              me.selectedFeatures.push(feature);
-            })
-          })
-        });
+  _doSelection(){
+  }
 
-        me.dragBox.on('boxstart', function() {
-          me.selectedFeatures.clear();
-        });
+  _handleToolbarClick(newState) {
 
-        me.map.on('singleclick', function(evt) {
-          document.getElementById('info').innerHTML = "Loading... please wait...";
-          var view = me.map.getView();
-          var viewResolution = view.getResolution();
-
-          var layers = me.getMapOverlayList();
-          for(let k=0; k<me.getNumberOverlays(); k++){
-            var source = layers.item(k).getVisible() ? layers.item(k).getSource() : null;
-
-            if(source != null)
-            {
-              var url = source.getGetFeatureInfoUrl(
-                evt.coordinate, viewResolution, view.getProjection(),
-                {'INFO_FORMAT': 'text/html', 'FEATURE_COUNT': 50});
-
-              if (url) {
-                document.getElementById('info').innerHTML = '<iframe seamless src="' + url + '"></iframe>';
-              }
-
-              // generate a GetFeature request
-              var featureRequest = new ol.format.WFS().writeGetFeature({
-                srsName: 'EPSG:4326',
-                featureNS: 'http://openstreemap.org',
-                featurePrefix: 'osm',
-                featureTypes: ['water_areas'],
-                outputFormat: 'application/json',
-                filter: ol.format.filter.and(
-                  ol.format.filter.like('name', 'Mississippi*'),
-                  ol.format.filter.equalTo('waterway', 'riverbank')
-                )
-              });
-
-            }
-          }
-
-
-        });
-
-
-        /*me.map.on('click', function() {
-          me.selectedFeatures.clear();
-        });*/
-        break;
-    }
-
-    if(v.buttonClick.id !== 'zoom-selection-id' && v.buttonClick.id !== 'select-id' ){
-      if (me.dragBox) {
-        me.map.removeInteraction(me.dragBox);
-      }
-      me.dragBox=null;
-
-      if (me.select) {
-        me.map.removeInteraction(me.select);
-      }
-      me.select=null;
-
+    if(newState.toolId !== me.state.toolId){
       if(me.selectedFeatures)
         me.selectedFeatures.clear();
     }
+
+    me.state = newState;
+    console.log("new state : ", me.state.toolId)
+    switch(me.state.toolId){
+      case 'zoom-in-id':me._doZoomIn();break;
+      case 'zoom-out-id':me._doZoomOut(); break;
+      case 'zoom-selection-id':me._doZoomSelection();break;
+      case 'select-id': me._doSelection();break;
+      }
   }
 
-
-
   render () {
-
     return(
-      <div className={classes['MapViewerPanel']}>
-        <MapViewToolbar id="map-view-toolbar-id" onMapViewToolbarClick={this.handleToolbarClick}/>
+      <Panel className={classes['MapViewerPanel']}>
+        <MapViewToolbar id="map-view-toolbar-id" onMapViewToolbarClick={this._handleToolbarClick}/>
         <div></div>
-        <div id="map" className="map"></div>
-        <div id="info"><em>Click on the map to get feature info</em></div>
-      </div>
+        <Panel id="info"><em>Click on the map to get feature info</em></Panel>
+        <div></div>
+        <Panel id="map" className="map"> </Panel>
+      </Panel>
     )
   }
 }

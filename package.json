@@ -121,6 +121,7 @@
     "react": "^15.3.2",
     "react-bootstrap-daterangepicker": "^3.2.1",
     "react-bootstrap":"^0.30.5",
+    "ron-react-autocomplete":"^3.0.1",
     "react-data-grid": "^1.0.54",
     "react-dom": "^15.3.2",
     "react-redux": "^4.0.0",

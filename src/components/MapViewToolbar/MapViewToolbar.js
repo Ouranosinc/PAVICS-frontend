@@ -9,37 +9,40 @@ var ButtonToolbar = Bootstrap.ButtonToolbar
 var ButtonGroup = Bootstrap.ButtonGroup
 var Button = Bootstrap.Button
 
-var MapViewToolbar = React.createClass(
-  {
+class MapViewToolbar extends React.Component{
+  constructor(props) {
+    super(props);
+    this.state = {toolId: "no-state-id"};
+  }
 
   componentDidMount(){
+  };
 
-  },
-
-  getInitialState: function() {
-    console.log("MapViewToolbar:getInitialState : ")
-    return {buttonClick:{id:"", changed:false}};
-  },
-
-  handleOnClick(option){
+  handleClick(toolId){
     console.log("MapViewToolbar:handleOnClick : ")
-    this.props.onMapViewToolbarClick({buttonClick:{id:option,changed:true}});
-    this.setState({buttonClick:{id:option, changed:true}});
-    this.setState({option: option});
-  },
+    this.props.onMapViewToolbarClick({toolId:toolId});
+    this.setState({toolId:toolId});
+  };
 
-  render: function() {
+  render(){
     return (
       <ButtonToolbar>
         <ButtonGroup>
-          <Button id="zoom-in-id" onClick={this.handleOnClick.bind(this,"zoom-in-id")} active={this.state.option === "zoom-in-id"}>zoom in</Button>
-          <Button id="zoom-out-id" onClick={this.handleOnClick.bind(this,"zoom-out-id")} active={this.state.option === "zoom-out-id"}>zoom out </Button>
-          <Button id="zoom-selection-id" onClick={this.handleOnClick.bind(this,"zoom-selection-id")} active={this.state.option === "zoom-selection-id"}>zoom selection </Button>
-          <Button id="select-id" onClick={this.handleOnClick.bind(this,"select-id")} active={this.state.option === "select-id"}>select</Button>
+          <Button id="zoom-in-id" onClick={this.handleClick.bind(this,"zoom-in-id")} active={this.state.toolId === "zoom-in-id"}>
+            zoom in
+          </Button>
+          <Button id="zoom-out-id" onClick={this.handleClick.bind(this,"zoom-out-id")} active={this.state.toolId === "zoom-out-id"}>
+            zoom out
+          </Button>
+          <Button id="zoom-selection-id" onClick={this.handleClick.bind(this,"zoom-selection-id")} active={this.state.toolId === "zoom-selection-id"}>
+            zoom selection
+          </Button>
+          <Button id="select-id" onClick={this.handleClick.bind(this,"select-id")} active={this.state.toolId === "select-id"}>
+            select</Button>
         </ButtonGroup>
       </ButtonToolbar>
     );
-  }
-});
+  };
+}
 
 module.exports = MapViewToolbar;
