@@ -98,11 +98,12 @@ class MapViewerPanel extends React.Component {
 
   // Add backgrounnd layer (use once)
   initBackgroundLayer() {
-    var yolo = this.getMapBaseLayersList();
-    this.addBingLayer('Aerial', this.getMapBaseLayersList(),'Aerial')
-    //var wmsUrl = "http://demo.boundlessgeo.com/geoserver/wms";
-    //var wmsParams = {'LAYERS': 'topp:states', 'TILED': true};
-    //this.addTileWMSLayer('topp:states', this.getMapOverlayList(), wmsUrl, wmsParams);
+    var yolo = me.getMapBaseLayersList();
+    me.addBingLayer('Aerial', this.getMapBaseLayersList(),'Aerial',true,1);
+    me.addBingLayer('AerialWithLabels', this.getMapBaseLayersList(),'AerialWithLabels',false,1);
+    me.addBingLayer('Road', this.getMapBaseLayersList(),'Road',false,1);
+
+
   }
 
   removeLayer(layers, title){
@@ -184,9 +185,10 @@ class MapViewerPanel extends React.Component {
     }
   }
 
-  addBingLayer(title, layers, bingStyle){
+  addBingLayer(title, layers, bingStyle,visible,opacity){
     layers.push(new ol.layer.Tile({
-      visible: true,
+      visible:visible,
+      opacity:opacity,
       preload: Infinity,
       source: new ol.source.BingMaps({
         key: g_BING_API_KEY,
@@ -251,7 +253,26 @@ class MapViewerPanel extends React.Component {
       zoom: 4
     })
 
+    var mousePositionControl = new ol.control.MousePosition({
+      coordinateFormat: ol.coordinate.createStringXY(4),
+      projection: 'EPSG:4326',
+      // comment the following two lines to have the mouse position
+      // be placed within the map.
+      className: 'custom-mouse-position',
+      target: document.getElementById('mouse-position'),
+      undefinedHTML: '&nbsp;'
+    });
+
+    var projectionSelect = document.getElementById('projection');
+    projectionSelect.addEventListener('change', function(event) {
+      mousePositionControl.setProjection(ol.proj.get(event.target.value));
+    });
+
     var map = new ol.Map({
+      controls: ol.control.defaults()
+      .extend([
+        mousePositionControl
+      ]),
       layers: [me.baseLayers, me.overlayLayers, me.watershedsLayers],
       target: 'map',
       renderer: 'canvas',
@@ -281,11 +302,10 @@ class MapViewerPanel extends React.Component {
       }
     });
 
-
-
     me.map.on('singleclick', function(evt) {
 
       if(me.state.toolId==='select-id') {
+        console.log('singleclick');
         document.getElementById('info').innerHTML = "Loading... please wait...";
         var view = me.map.getView();
         var viewResolution = view.getResolution();
@@ -307,6 +327,8 @@ class MapViewerPanel extends React.Component {
         document.getElementById('info').innerHTML = <div></div>;
       }
     });
+
+
 
 
     me.map.addInteraction(me.dragBox);
@@ -445,8 +467,16 @@ class MapViewerPanel extends React.Component {
         <MapViewToolbar id="map-view-toolbar-id" onMapViewToolbarClick={this._handleToolbarClick}/>
         <div></div>
         <Panel id="info"><em>Click on the map to get feature info</em></Panel>
-        <div></div>
         <Panel id="map" className="map"> </Panel>
+        <form>
+          <div id="mouse-position">
+          <label>Projection </label>
+          <select id="projection">
+            <option value="EPSG:4326">EPSG:4326</option>
+            <option value="EPSG:3857">EPSG:3857</option>
+          </select>
+          </div>
+        </form>
       </Panel>
     )
   }
