@@ -218,6 +218,40 @@ class MapViewerPanel extends React.Component {
     layers.push(tiled);
   }
 
+  loadFromWfsGeoserver(layerId, visible, opacity, workspace){
+
+    var str = 'http://132.217.140.48:8080/geoserver/wfs?service=WFS&' +
+      'version=1.1.0&request=GetFeature&typename='+layerId+'&' +
+      'outputFormat=application/json&srsname=EPSG:4326&' +
+      'bbox=' + extent.join(',') + ',EPSG:4326';
+
+    console.log(str);
+
+    var vectorSource = new ol.source.Vector({
+      format: new ol.format.GeoJSON(),
+      url: function(extent) {
+        return 'http://132.217.140.48:8080/geoserver/wfs?service=WFS&' +
+          'version=1.1.0&request=GetFeature&typename='+layerId+'&' +
+          'outputFormat=application/json&srsname=EPSG:4326&' +
+          'bbox=' + extent.join(',') + ',EPSG:4326';
+      },
+      strategy: ol.loadingstrategy.bbox
+    });
+
+    var vector = new ol.layer.Vector({
+      source: vectorSource,
+      style: new ol.style.Style({
+        stroke: new ol.style.Stroke({
+          color: 'rgba(0, 0, 255, 1.0)',
+          width: 2
+        })
+      })
+    });
+
+    var layers = me.getMapOverlayList();
+    layers.push(vector);
+  }
+
   loadFromWmsGeoserver(layerId, visible, opacity, workspace, layersList){
 
     var tiled = new ol.layer.Tile({
@@ -242,6 +276,14 @@ class MapViewerPanel extends React.Component {
     for(let k =0; k<layers_name.length; k++) {
       console.log(layers_name[k]);
       me.loadFromWmsGeoserver(layers_name[k], visible, opacity, workspace,layersList);
+    }
+  }
+
+  loadLayersWFS(layers_name, workspace, visible, opacity, layersList){
+    console.log(layers_name.length);
+    for(let k =0; k<layers_name.length; k++) {
+      console.log(layers_name[k]);
+      me.loadFromWfsGeoserver(layers_name[k], visible, opacity, workspace,layersList);
     }
   }
 
