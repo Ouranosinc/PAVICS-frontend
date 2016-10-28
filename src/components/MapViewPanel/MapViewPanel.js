@@ -4,6 +4,7 @@
 
 
 import React from 'react'
+require('jquery');
 
 import classes from './MapViewPanel.scss'
 import ol from 'openlayers';
@@ -22,6 +23,7 @@ var g_BING_API_KEY = 'AtXX65CBBfZXBxm6oMyf_5idMAMI7W6a5GuZ5acVcrYi6lCQayiiBz7_aM
 var me;
 
 
+
 class MapViewerPanel extends React.Component {
   static propTypes = {
     capabilities: React.PropTypes.object,
@@ -36,6 +38,7 @@ class MapViewerPanel extends React.Component {
     this.baseLayers = new ol.layer.Group({'title': 'Base maps', 'opacity':1.0, 'visible':true,'zIndex':0});
     this.overlayLayers = new ol.layer.Group({'title': 'Overlays','opacity':1.0, 'visible':true,'zIndex':1});
     this.watershedsLayers = new ol.layer.Group({'title': 'Watersheds','opacity':1.0, 'visible':true,'zIndex':1});
+    this.featuresSelectedLayer=null;
     this.view = null;
     this.tmpLayer=null;
     this.dragBox = null;
@@ -43,7 +46,46 @@ class MapViewerPanel extends React.Component {
     this.selectedFeatures= null;
     this.watersheds_layers_name = [];
     this.bukowskis_layer_name = [];
+    this.dragExtent=null;
     me=this;
+  }
+
+  _addFeaturesFromWfsResponse(vectorSource, response) {
+    var features = vectorSource.readFeatures(response);
+    vectorSource.addFeatures(features);
+  }
+
+
+  _createLayer(nameId){
+    // the source is configured with a format, loader function and a
+    // strategy, the strategy causes the loader function to be called
+    // in different ways.  With the tile strategy, it will call with
+    // extents matching tile boundaries for the current zoom level
+    var vectorSource = new ol.source.Vector({
+      format: new ol.format.GeoJSON(),
+    });
+
+    // styles for the vector layer
+    var fill = new ol.style.Fill({
+      color: 'rgba(0,255,255,0.5)'
+    });
+
+    var stroke = new ol.style.Stroke({
+      color: 'rgba(255,255,255,0.5)'
+    });
+
+    var vectorStyle = new ol.style.Style({
+      fill: fill,
+      stroke: stroke,
+    });
+
+    // a vector layer, this time with some style options
+    var layer = new ol.layer.Vector({
+      source: vectorSource,
+      style: vectorStyle
+    });
+    layer.set('nameId', nameId);
+    return layer;
   }
 
   getGroupLayerExtent(layersGroup){
@@ -218,7 +260,7 @@ class MapViewerPanel extends React.Component {
     layers.push(tiled);
   }
 
-  loadFromWfsGeoserver(layerId, visible, opacity, workspace){
+  loadFromWfsGeoserver(layerId, visible, opacity, workspace,extent){
 
     var str = 'http://132.217.140.48:8080/geoserver/wfs?service=WFS&' +
       'version=1.1.0&request=GetFeature&typename='+layerId+'&' +
@@ -238,18 +280,7 @@ class MapViewerPanel extends React.Component {
       strategy: ol.loadingstrategy.bbox
     });
 
-    var vector = new ol.layer.Vector({
-      source: vectorSource,
-      style: new ol.style.Style({
-        stroke: new ol.style.Stroke({
-          color: 'rgba(0, 0, 255, 1.0)',
-          width: 2
-        })
-      })
-    });
 
-    var layers = me.getMapOverlayList();
-    layers.push(vector);
   }
 
   loadFromWmsGeoserver(layerId, visible, opacity, workspace, layersList){
@@ -279,20 +310,59 @@ class MapViewerPanel extends React.Component {
     }
   }
 
-  loadLayersWFS(layers_name, workspace, visible, opacity, layersList){
+  loadLayersWFS(layers_name, workspace, visible, opacity, layersList,extent){
     console.log(layers_name.length);
     for(let k =0; k<layers_name.length; k++) {
       console.log(layers_name[k]);
-      me.loadFromWfsGeoserver(layers_name[k], visible, opacity, workspace,layersList);
+      me.loadFromWfsGeoserver(layers_name[k], visible, opacity, workspace,layersList,extent);
     }
+  }
+
+  _doFeatureSelection(){
+
+      if(me.featuresSelectedLayer==null){
+        me.featuresSelectedLayer=me._createLayer(layerId);
+        me.map.addLayer(me.featuresSelectedLayer)
+      }
+      me.featuresSelectedLayer.getSource().clear();
+
+      console.log("_doDragExtentAction :" + me.dragExtent)
+
+      var layerId = "WATERSHEDS:BV_N1_S";
+
+      var proj = me.map.getView().getProjection().getCode();
+
+      var url = 'http://132.217.140.48:8080/geoserver/wfs?service=WFS&' +
+        'version=1.1.0&request=GetFeature&typename='+layerId+'&' +
+        'outputFormat=application/json&srsname='+proj+'&' +
+        'bbox=' + me.dragExtent.join(',')+','+proj;
+
+      $.ajax({url: url,
+        success: function(response){
+          var format = new ol.format.GeoJSON();
+          var features = format.readFeatures(response,
+            {featureProjection: proj});
+          me.featuresSelectedLayer.getSource().addFeatures(features);
+        },
+        error: function (request, status, error) {
+          alert(request.responseText);
+        }
+      });
+  }
+
+  _doDragExtentAction(){
+    if(me.state.toolId==='select-id') {
+      me._doFeatureSelection();
+    }
+
   }
 
 
   initMap() {
 
     me.view = new ol.View({
-      center: [-10997148, 8569099],
-      zoom: 4
+      center: [-8065301, 5787882],
+      zoom: 6
     })
 
     var mousePositionControl = new ol.control.MousePosition({
@@ -309,6 +379,8 @@ class MapViewerPanel extends React.Component {
     projectionSelect.addEventListener('change', function(event) {
       mousePositionControl.setProjection(ol.proj.get(event.target.value));
     });
+
+
 
     var map = new ol.Map({
       controls: ol.control.defaults()
@@ -370,15 +442,10 @@ class MapViewerPanel extends React.Component {
       }
     });
 
-
-
-
     me.map.addInteraction(me.dragBox);
     me.dragBox.on('boxend', function() {
-      console.log(me.dragBox.getGeometry().getExtent());
-
-      if(me.state.toolId==='zoom-selection-id')
-        me.map.getView().fit(me.dragBox.getGeometry().getExtent(),me.map.getSize());
+      me.dragExtent = me.dragBox.getGeometry().getExtent()
+      me._doDragExtentAction();
       });
   }
 
@@ -439,9 +506,7 @@ class MapViewerPanel extends React.Component {
 
       var layers = result.Capability.Layer.Layer;
       for (var i = 0, len = layers.length; i < len; i++) {
-
         var layerobj = layers[i];
-
         if(layerobj.Name.indexOf("WATERSHEDS:BV_N1_S")!==-1) {
           console.log(layerobj.Name);
           me.watersheds_layers_name.push(layerobj.Name);

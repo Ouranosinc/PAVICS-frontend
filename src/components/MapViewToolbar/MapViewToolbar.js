@@ -11,7 +11,7 @@ var Button = Bootstrap.Button;
 var Image = Bootstrap.Image;
 
 import ZoomInImg from './assets/mActionZoomIn.png';
-import ZoomOutImg from './assets/mActionZoomIn.png';
+import ZoomOutImg from './assets/mActionZoomOut.png';
 import ZoomToSelectedImg from './assets/mActionZoomToSelected.png';
 import ZoomFullExtentImg from './assets/mActionZoomFullExtent.png';
 import SelectImg  from './assets/mActionSelect.png';
@@ -40,9 +40,6 @@ class MapViewToolbar extends React.Component{
           </Button>
           <Button id="zoom-out-id" onClick={this.handleClick.bind(this,"zoom-out-id")}>
             <Image src={ZoomOutImg} responsive></Image>
-          </Button>
-          <Button id="zoom-selection-id" onClick={this.handleClick.bind(this,"zoom-selection-id")}>
-            <Image src={ZoomToSelectedImg} responsive></Image>
           </Button>
           <Button id="zoom-full-extend-id" onClick={this.handleClick.bind(this,"zoom-full-extend-id")}>
             <Image src={ZoomFullExtentImg} responsive></Image>
