@@ -46,6 +46,24 @@ class MapViewerPanel extends React.Component {
     me=this;
   }
 
+  getGroupLayerExtent(layersGroup){
+    var extentMax1 = ol.extent;
+    var layers = layersGroup.getLayers();
+    for (let k = 0; k < layers.getLength(); k++) {
+      var source = layers.item(k).getVisible() ? layers.item(k).getSource() : null;
+      if (source !== null) {
+        var ext = layers.item(k).getExtent();
+        extentMax1.extend(source.getExtent());
+      }
+    }
+    return extentMax;
+  }
+
+  getMaxLayersExtent(){
+    var extentMax=me.getGroupLayerExtent(me.watershedsLayers);
+    return extentMax;
+  }
+
   // Returns base layers list
   getMapBaseLayersList() {
     if (me.baseLayers != null) {
@@ -215,6 +233,8 @@ class MapViewerPanel extends React.Component {
     layersList.push(tiled);
   }
 
+
+
   loadLayers(layers_name, workspace, visible, opacity, layersList){
     console.log(layers_name.length);
     for(let k =0; k<layers_name.length; k++) {
@@ -224,9 +244,7 @@ class MapViewerPanel extends React.Component {
   }
 
 
-
   initMap() {
-
 
     me.view = new ol.View({
       center: [-10997148, 8569099],
@@ -298,8 +316,6 @@ class MapViewerPanel extends React.Component {
       if(me.state.toolId==='zoom-selection-id')
         me.map.getView().fit(me.dragBox.getGeometry().getExtent(),me.map.getSize());
       });
-
-
   }
 
   /** Returns view resolution */
@@ -401,6 +417,10 @@ class MapViewerPanel extends React.Component {
   _doSelection(){
   }
 
+  _doZoomMaxExtent(){
+    me.map.getView().fit(me.getMaxLayersExtent(),me.map.getSize());
+  }
+
   _handleToolbarClick(newState) {
 
     if(newState.toolId !== me.state.toolId){
@@ -414,6 +434,7 @@ class MapViewerPanel extends React.Component {
       case 'zoom-in-id':me._doZoomIn();break;
       case 'zoom-out-id':me._doZoomOut(); break;
       case 'zoom-selection-id':me._doZoomSelection();break;
+      case 'zoom-full-extend-id':me._doZoomMaxExtent();break;
       case 'select-id': me._doSelection();break;
       }
   }
