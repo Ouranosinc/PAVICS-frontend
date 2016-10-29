@@ -43,7 +43,7 @@ const ACTION_HANDLERS = {
 const initialState = {
   currentSelectedKey: constants.DEFAULT_SELECTED_KEY
 };
-export default function visualizeReducer(state = initialState, action) {
+export default function MapViewerReducer(state = initialState, action) {
   const handler = ACTION_HANDLERS[action.type];
   return handler ? handler(state, action) : state
 }

@@ -1,3 +1,1 @@
-/**
- * Created by beaulima on 16-10-20.
- */
+export const PANEL_LAYER_MANAGER = 'MapViewer.LayerManager'

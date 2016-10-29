@@ -4,7 +4,6 @@
 
 
 import React from 'react'
-require('jquery');
 
 import classes from './MapViewPanel.scss'
 import ol from 'openlayers';
@@ -12,11 +11,16 @@ window.ol = ol; //_ol3-layerswitcher.js needs ol as global (...)
 require('ol3-layerswitcher/src/ol3-layerswitcher.js');
 require("openlayers/css/ol.css");
 require("ol3-layerswitcher/src/ol3-layerswitcher.css");
+require('jquery');
 //Couldn't figure out the bug when importing inner component css file but it works from node_modules
 
 var MapViewToolbar = require('../MapViewToolbar/MapViewToolbar');
 var Bootstrap = require('react-bootstrap');
 var Panel = Bootstrap.Panel
+
+var Grid = Bootstrap.Grid;
+var Row = Bootstrap.Row;
+var Col = Bootstrap.Col;
 
 var g_BING_API_KEY = 'AtXX65CBBfZXBxm6oMyf_5idMAMI7W6a5GuZ5acVcrYi6lCQayiiBz7_aMHB7JR7';
 
@@ -46,7 +50,8 @@ class MapViewerPanel extends React.Component {
     this.selectedFeatures= null;
     this.watersheds_layers_name = [];
     this.bukowskis_layer_name = [];
-    this.dragExtent=null;
+    this.dragExtent=ol.extent.createEmpty();
+    this.clickCoordinate = null;
     me=this;
   }
 
@@ -318,6 +323,25 @@ class MapViewerPanel extends React.Component {
     }
   }
 
+  _presentFeatures(){
+
+    if(me.featuresSelectedLayer){
+      var info=[];
+      var html = '<div>'
+      me.featuresSelectedLayer.getSource().forEachFeature(function(feature) {
+        var props = feature.getProperties();
+        console.log(props);
+        html += '<div>'
+        html += feature.get('NOM_BASSIN');
+        html += '</div>'
+      });
+      html += '</div>'
+
+      document.getElementById('info').innerHTML = html;
+
+    }
+  }
+
   _doFeatureSelection(){
 
       if(me.featuresSelectedLayer==null){
@@ -340,9 +364,11 @@ class MapViewerPanel extends React.Component {
       $.ajax({url: url,
         success: function(response){
           var format = new ol.format.GeoJSON();
-          var features = format.readFeatures(response,
-            {featureProjection: proj});
+          var features = format.readFeatures(response, {featureProjection: proj});
           me.featuresSelectedLayer.getSource().addFeatures(features);
+
+          me._presentFeatures();
+
         },
         error: function (request, status, error) {
           alert(request.responseText);
@@ -371,7 +397,7 @@ class MapViewerPanel extends React.Component {
       // comment the following two lines to have the mouse position
       // be placed within the map.
       className: 'custom-mouse-position',
-      target: document.getElementById('mouse-position'),
+      target: document.getElementById('mouse-position-id'),
       undefinedHTML: '&nbsp;'
     });
 
@@ -421,21 +447,34 @@ class MapViewerPanel extends React.Component {
       if(me.state.toolId==='select-id') {
         console.log('singleclick');
         document.getElementById('info').innerHTML = "Loading... please wait...";
-        var view = me.map.getView();
-        var viewResolution = view.getResolution();
-        var layers = me.getWatershedLayerList();
-        for (let k = 0; k < layers.getLength(); k++) {
-          var source = layers.item(k).getVisible() ? layers.item(k).getSource() : null;
-          if (source != null) {
-            var url = source.getGetFeatureInfoUrl(
-              evt.coordinate, viewResolution, view.getProjection(),
-              {'INFO_FORMAT': 'text/html', 'FEATURE_COUNT': 50});
+        me.clickCoordinate = evt.coordinate;
+        var tl = ol.coordinate.add(evt.coordinate, [-10e-6, -10e-6]);
+        var br = ol.coordinate.add(evt.coordinate, [10e-6, 10e-6]);
 
-            if (url) {
-              document.getElementById('info').innerHTML = '<iframe border=none height=110px width=100% seamless src="' + url + '"></iframe>';
-            }
-          }
+        var minX;
+        var maxX;
+
+        if(tl[0] < br[0]){
+          minX=tl[0];
+          maxX=br[0];
+        }else{
+          minX=br[0];
+          maxX=tl[0];
         }
+
+        var minY;
+        var maxY;
+
+        if(tl[1] < br[1]){
+          minY=tl[1];
+          maxY=br[1];
+        }else{
+          minY=br[1];
+          maxY=tl[1];
+        }
+
+        me.dragExtent = [minX, minY, maxX, maxY]
+        me._doFeatureSelection();
       }
       else{
         document.getElementById('info').innerHTML = <div></div>;
@@ -570,21 +609,22 @@ class MapViewerPanel extends React.Component {
 
   render () {
     return(
-      <Panel className={classes['MapViewerPanel']}>
+
+      <div className={classes['MapViewerPanel']}>
         <MapViewToolbar id="map-view-toolbar-id" onMapViewToolbarClick={this._handleToolbarClick}/>
         <div></div>
-        <Panel id="info"><em>Click on the map to get feature info</em></Panel>
-        <Panel id="map" className="map"> </Panel>
-        <form>
-          <div id="mouse-position">
-          <label>Projection </label>
-          <select id="projection">
-            <option value="EPSG:4326">EPSG:4326</option>
-            <option value="EPSG:3857">EPSG:3857</option>
-          </select>
+        <Panel id="map" className="map"/>
+        <form id="mouse-position-id">
+          <div>
+            <label>Projection</label>
+            <select id="projection">
+              <option value="EPSG:4326">EPSG:4326</option>
+              <option value="EPSG:3857">EPSG:3857</option>
+            </select>
           </div>
         </form>
-      </Panel>
+        <div id="info"><em>Click on the map to get feature info</em></div>
+      </div>
     )
   }
 }

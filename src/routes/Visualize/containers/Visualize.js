@@ -45,6 +45,7 @@ import {
   fetchClimateIndicators,
   fetchPlotlyData
 } from '../modules/Visualize';
+
 class Visualize extends React.Component {
   static propTypes = {
     fetchFacets: React.PropTypes.func.isRequired,
