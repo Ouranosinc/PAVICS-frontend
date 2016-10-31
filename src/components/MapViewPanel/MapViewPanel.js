@@ -37,6 +37,7 @@ class MapViewerPanel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {toolId: "no-state-id"};
+    this.state = {clickCoordinate: [0,0] };
     this.layersCount = 0;
     this.map = null;
     this.baseLayers = new ol.layer.Group({'title': 'Base maps', 'opacity':1.0, 'visible':true,'zIndex':0});
@@ -51,7 +52,6 @@ class MapViewerPanel extends React.Component {
     this.watersheds_layers_name = [];
     this.bukowskis_layer_name = [];
     this.dragExtent=ol.extent.createEmpty();
-    this.clickCoordinate = null;
     me=this;
   }
 
@@ -447,7 +447,7 @@ class MapViewerPanel extends React.Component {
       if(me.state.toolId==='select-id') {
         console.log('singleclick');
         document.getElementById('info').innerHTML = "Loading... please wait...";
-        me.clickCoordinate = evt.coordinate;
+        me.setState({clickCoordinate:evt.coordinate})
         var tl = ol.coordinate.add(evt.coordinate, [-10e-6, -10e-6]);
         var br = ol.coordinate.add(evt.coordinate, [10e-6, 10e-6]);
 
