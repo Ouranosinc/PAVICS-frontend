@@ -7,6 +7,7 @@ import DatasetDetails from '../../../components/DatasetDetails';
 import PlotlyWrapper from '../../../components/PlotlyWrapper';
 // Containers
 import {DatasetWMSLayers, SearchCatalog, ClimateIndicators, MapNavBar} from '../../../containers';
+import TimeSlider from '../../../containers/TimeSlider'
 import {
   // Panels
   clickTogglePanel,
@@ -76,6 +77,7 @@ class Visualize extends React.Component {
           <div className={classes.left}>
             <div className={classes.panel}>
               <SearchCatalog {...this.props} />
+              <TimeSlider {...this.props} />
             </div>
             <div className={classes.panel}>
               <ClimateIndicators {...this.props} />
