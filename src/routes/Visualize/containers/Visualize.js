@@ -64,6 +64,7 @@ class Visualize extends React.Component {
     return (
       <div>
         <MapNavBar {...this.props} />
+        <TimeSlider {...this.props} />
         <PlotlyWrapper
           panelControls={this.props.panelControls}
           data={this.props.plotlyData.data}
@@ -77,7 +78,6 @@ class Visualize extends React.Component {
           <div className={classes.left}>
             <div className={classes.panel}>
               <SearchCatalog {...this.props} />
-              <TimeSlider {...this.props} />
             </div>
             <div className={classes.panel}>
               <ClimateIndicators {...this.props} />

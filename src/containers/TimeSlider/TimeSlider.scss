@@ -1,7 +1,23 @@
 .TimeSlider {
-  width: 500px;
+  height:200px;
+  width: 800px;
 
-  .slider.slider-horizontal{
-    width: 500px !important;
+  .CurrentDateTime{
+
+  }
+
+  .SliderMonths{
+    margin-top: 10px;
+  }
+  .SliderYears{
+    margin-top: 20px;
+  }
+
+  .StepControls{
+    margin-top: 80px;
+  }
+
+  .InlineFormGroup {
+    margin: 0 3px;
   }
 }
