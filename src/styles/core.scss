@@ -9,7 +9,7 @@
   }
 
   h3{
-    margin-top: 0px;
+    margin-top: 0;
   }
 
   html,
@@ -39,8 +39,17 @@
     width: 100% !important;
   }
 
-  .panel-body{
-    padding: 5px;
+  .panel {
+    background-color: inherit;
+    color: #ffffff !important;
+    .panel-heading {
+      color: #ffffff !important;
+      background-color: rgba(0, 0, 0, 0.5) !important;
+    }
+    .panel-body{
+      background-color: rgba(0, 0, 0, 0.3);
+      padding: 5px;
+    }
   }
 
   #cesiumDiv {
