@@ -1,26 +1,22 @@
-import React from 'react'
-import { IndexLink, Link } from 'react-router'
-import classes from './Header.scss'
+import React from 'react';
+import { Link } from 'react-router';
 
-export const Header = () => (
-  <div>
-    <h1>PAVICS Platform</h1>
-    <IndexLink to='/' activeClassName={classes.activeRoute}>
-      Home
-    </IndexLink>
-    {' · '}
-    <Link to='/cesium' activeClassName={classes.activeRoute}>
-      Cesium
-    </Link>
-    {' · '}
-    <Link to='/WMS' activeClassName={classes.activeRoute}>
-    WMS
-    </Link>
-    {' · '}
-    <Link to='/Visualize' activeClassName={classes.activeRoute}>
-      Visualize
-    </Link>
-  </div>
-)
+class Header extends React.Component {
+  render () {
+    return (
+      <div className="container">
+        <div className="row">
+          <div className="col-md-4 col-md-offset-4">
+            <div className="btn-group btn-group-justified btn-group-raised">
+              <Link to="/Gandalf" className="btn">Gandalf</Link>
+              <Link to="/Visualize" className="btn">Visualize</Link>
+              <Link to="/Workboard" className="btn">Workboard</Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
 
-export default Header
+export default Header;
