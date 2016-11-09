@@ -1,12 +1,11 @@
 // We only need to import the modules necessary for initial render
 import CoreLayout from '../layouts/CoreLayout/CoreLayout';
 import Home from './Home';
-import CounterRoute from './Counter';
 import OpenLayersRoute from './OpenLayers';
 import CesiumRoute from './Cesium';
 import WmsRoute from './WMS';
 import VisualizeRoute from './Visualize';
-import GandalfRoute from './Gandalf';
+import PavicsRoute from './Pavics';
 
 /*  Note: Instead of using JSX, we recommend using react-router
     PlainRoute objects to build route definitions.   */
@@ -16,12 +15,11 @@ export const createRoutes = (store) => ({
   component: CoreLayout,
   indexRoute: Home,
   childRoutes: [
-    CounterRoute(store),
     OpenLayersRoute(store),
     CesiumRoute(store),
     WmsRoute(store),
     VisualizeRoute(store),
-    GandalfRoute(store)
+    PavicsRoute(store)
   ]
 });
 
