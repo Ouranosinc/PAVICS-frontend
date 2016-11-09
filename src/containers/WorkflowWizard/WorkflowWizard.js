@@ -1,10 +1,11 @@
 import React from 'react';
 import ProcessesSelector from './../../components/ProcessesSelector';
-import { Panel, Grid, Row, Col } from 'react-bootstrap';
+import {Panel, Grid, Row, Col} from 'react-bootstrap';
 class WorkflowWizard extends React.Component {
   static propTypes = {
-    processes: React.PropTypes.array.isRequired
-  };
+    processes: React.PropTypes.array.isRequired,
+    chooseProcess: React.PropTypes.func.isRequired
+  }
   render () {
     return (
       <Grid>
@@ -13,6 +14,7 @@ class WorkflowWizard extends React.Component {
             <Panel header="Choose workflow">
               <ProcessesSelector
                 processes={this.props.processes}
+                chooseProcess={this.props.chooseProcess}
               />
             </Panel>
           </Col>

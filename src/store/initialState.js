@@ -1,8 +1,12 @@
-import * as constants from './../routes/Visualize/constants';
+import * as constants from './../constants';
 const initialState = {
   processes: [
-    {title: 'hello world', description: 'example process that welcomes user'}
+    {title: 'hello world', description: 'example process that welcomes user', id: 'helloworld'}
   ],
+  workflowWizard: {
+    selectedProcess: '',
+    currentStep: constants.WORKFLOW_STEP_PROCESS
+  },
   currentSelectedKey: constants.DEFAULT_SELECTED_KEY,
   currentSelectedValue: '',
   currentOpenedDataset: '',
