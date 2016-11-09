@@ -1,7 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {WorkflowWizard} from './../../../containers';
-import * as constants from './../../../constants';
 import {
   chooseProcess
 } from './../modules/Pavics';
@@ -9,25 +8,18 @@ class Pavics extends React.Component {
   static propTypes = {
     processes: React.PropTypes.array.isRequired,
     chooseProcess: React.PropTypes.func.isRequired,
-    currentStep: React.PropTypes.string.isRequired
+    currentStep: React.PropTypes.string.isRequired,
+    selectedProcess: React.PropTypes.object.isRequired
   };
-  makeSection () {
-    switch (this.props.currentStep) {
-      case constants.WORKFLOW_STEP_PROCESS:
-        return (
-          <WorkflowWizard
-            processes={this.props.processes}
-            chooseProcess={this.props.chooseProcess}
-          />
-        );
-      case constants.WORKFLOW_STEP_INPUTS:
-        return (
-          <div>inputs step</div>
-        );
-    }
-  }
   render () {
-    return this.makeSection();
+    return (
+      <WorkflowWizard
+        processes={this.props.processes}
+        chooseProcess={this.props.chooseProcess}
+        currentStep={this.props.currentStep}
+        selectedProcess={this.props.selectedProcess}
+      />
+    );
   }
 }
 const mapActionCreators = {
@@ -35,8 +27,9 @@ const mapActionCreators = {
 };
 const mapStateToProps = (state) => {
   return {
-    processes: state.pavics.processes,
-    currentStep: state.pavics.workflowWizard.currentStep
+    processes: state.pavics.workflowWizard.processes,
+    currentStep: state.pavics.workflowWizard.currentStep,
+    selectedProcess: state.pavics.workflowWizard.selectedProcess
   };
 };
 export default connect(mapStateToProps, mapActionCreators)(Pavics);

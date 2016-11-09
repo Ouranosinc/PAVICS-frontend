@@ -1,11 +1,11 @@
 import * as constants from './../constants';
 const initialState = {
-  processes: [
-    {title: 'hello world', description: 'example process that welcomes user', id: 'helloworld'}
-  ],
   workflowWizard: {
-    selectedProcess: '',
-    currentStep: constants.WORKFLOW_STEP_PROCESS
+    selectedProcess: {},
+    currentStep: constants.WORKFLOW_STEP_PROCESS,
+    processes: [
+      {title: 'hello world', description: 'example process that welcomes user', id: 'helloworld'}
+    ]
   },
   currentSelectedKey: constants.DEFAULT_SELECTED_KEY,
   currentSelectedValue: '',

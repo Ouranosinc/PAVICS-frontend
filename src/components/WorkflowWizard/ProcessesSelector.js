@@ -9,7 +9,7 @@ class ProcessesSelector extends React.Component {
       <div>
         {this.props.processes.map((process, i) => {
           return (
-            <div onClick={() => this.props.chooseProcess(process.id)} key={i}>
+            <div onClick={() => this.props.chooseProcess(process)} key={i}>
               <h3>{process.title}</h3>
               <p>{process.description}</p>
             </div>

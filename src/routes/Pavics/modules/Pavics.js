@@ -1,9 +1,9 @@
 import initialState from './../../../store/initialState';
 import * as constants from './../../../constants';
-function assignNewProcess (id) {
+function assignNewProcess (process) {
   return {
     type: constants.WORKFLOW_CHOOSE_PROCESS,
-    id: id
+    process: process
   };
 }
 function chooseStep (step) {
@@ -12,9 +12,9 @@ function chooseStep (step) {
     step: step
   };
 }
-export function chooseProcess (id) {
+export function chooseProcess (process) {
   return function (dispatch) {
-    dispatch(assignNewProcess(id));
+    dispatch(assignNewProcess(process));
     dispatch(chooseStep(constants.WORKFLOW_STEP_INPUTS));
   };
 }
@@ -26,9 +26,9 @@ export const ACTION_HANDLERS = {
       {
         workflowWizard: Object.assign(
           {},
-          ...state.workflowWizard,
+          state.workflowWizard,
           {
-            selectedProcess: action.id
+            selectedProcess: action.process
           }
         )
       });
@@ -40,7 +40,7 @@ export const ACTION_HANDLERS = {
       {
         workflowWizard: Object.assign(
           {},
-          ...state.workflowWizard,
+          state.workflowWizard,
           {
             currentStep: action.step
           }
