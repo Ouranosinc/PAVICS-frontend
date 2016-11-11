@@ -2,6 +2,8 @@
  * Created by beaulima on 16-10-20.
  */
 
+var GEOSERVER48_ROUTE = 'http://132.217.140.48:8080/geoserver';
+var NCWMS31_ROUTE = 'http://132.217.140.31:8080/ncWMS2/wms';
 
 import React from 'react'
 
@@ -26,31 +28,45 @@ var g_BING_API_KEY = 'AtXX65CBBfZXBxm6oMyf_5idMAMI7W6a5GuZ5acVcrYi6lCQayiiBz7_aM
 
 var me;
 
-
-
 class MapViewerPanel extends React.Component {
   static propTypes = {
     capabilities: React.PropTypes.object,
     dataset: React.PropTypes.object,
   };
 
+  _createGroupLayer(name, title, visible, opacity, zIndex){
+    return {'id':name, 'layerGroup':new ol.layer.Group({'title': title, 'opacity':opacity, 'visible':visible,'zIndex':zIndex})};
+  }
+
   constructor(props) {
     super(props);
     this.state = {toolId: "no-state-id"};
     this.state = {clickCoordinate: [0,0] };
+    this.wmsLayersCatalog=[];
+
+   /* this.layers = [];
+    this.layers.push({'id':'baseLayers', 'layerGroup':new ol.layer.Group({'title': 'Base maps', 'opacity':1.0, 'visible':true,'zIndex':0})});
+    this.layers.push({'id':'overlayLayers', 'layerGroup':new ol.layer.Group({'title': 'Overlays', 'opacity':1.0, 'visible':true,'zIndex':1})});
+    this.layers.push({'id':'watershedsLayers', 'layerGroup':new ol.layer.Group({'title': 'Watersheds', 'opacity':1.0, 'visible':true,'zIndex':2})});
+
+    this.layers.push(me._createGroupLayer('baseLayers','Base maps', 1.0, true, 0));
+    this.layers.push(me._createGroupLayer('baseLayers','Base maps', 1.0, true, 0));
+    this.layers.push(me._createGroupLayer('baseLayers','Base maps', 1.0, true, 0));*/
+
+
+
     this.layersCount = 0;
     this.map = null;
     this.baseLayers = new ol.layer.Group({'title': 'Base maps', 'opacity':1.0, 'visible':true,'zIndex':0});
     this.overlayLayers = new ol.layer.Group({'title': 'Overlays','opacity':1.0, 'visible':true,'zIndex':1});
     this.watershedsLayers = new ol.layer.Group({'title': 'Watersheds','opacity':1.0, 'visible':true,'zIndex':1});
     this.featuresSelectedLayer=null;
+
     this.view = null;
     this.tmpLayer=null;
     this.dragBox = null;
     this.select= null;
     this.selectedFeatures= null;
-    this.watersheds_layers_name = [];
-    this.bukowskis_layer_name = [];
     this.dragExtent=ol.extent.createEmpty();
     me=this;
   }
@@ -93,6 +109,7 @@ class MapViewerPanel extends React.Component {
     return layer;
   }
 
+  // A finir
   getGroupLayerExtent(layersGroup){
     var extentMax1 = ol.extent;
     var layers = layersGroup.getLayers();
@@ -100,7 +117,6 @@ class MapViewerPanel extends React.Component {
       var source = layers.item(k).getVisible() ? layers.item(k).getSource() : null;
       if (source !== null) {
         var ext = layers.item(k).getExtent();
-        extentMax1.extend(source.getExtent());
       }
     }
     return extentMax;
@@ -149,8 +165,6 @@ class MapViewerPanel extends React.Component {
     me.addBingLayer('Aerial', this.getMapBaseLayersList(),'Aerial',true,1);
     me.addBingLayer('AerialWithLabels', this.getMapBaseLayersList(),'AerialWithLabels',false,1);
     me.addBingLayer('Road', this.getMapBaseLayersList(),'Road',false,1);
-
-
   }
 
   removeLayer(layers, title){
@@ -266,53 +280,33 @@ class MapViewerPanel extends React.Component {
   }
 
   loadFromWfsGeoserver(layerId, visible, opacity, workspace,extent){
-
-    var str = 'http://132.217.140.48:8080/geoserver/wfs?service=WFS&' +
+    var proj = me.map.getView().getProjection().getCode();
+    var str  = me._getWfsRequest(GEOSERVER48_ROUTE, layerId, proj, extent);
+    /*var str = 'http://132.217.140.48:8080/geoserver/wfs?service=WFS&' +
       'version=1.1.0&request=GetFeature&typename='+layerId+'&' +
       'outputFormat=application/json&srsname=EPSG:4326&' +
-      'bbox=' + extent.join(',') + ',EPSG:4326';
-
-    console.log(str);
-
+      'bbox=' + extent.join(',') + ',EPSG:4326';*/
     var vectorSource = new ol.source.Vector({
       format: new ol.format.GeoJSON(),
-      url: function(extent) {
-        return 'http://132.217.140.48:8080/geoserver/wfs?service=WFS&' +
-          'version=1.1.0&request=GetFeature&typename='+layerId+'&' +
-          'outputFormat=application/json&srsname=EPSG:4326&' +
-          'bbox=' + extent.join(',') + ',EPSG:4326';
-      },
+      url: str,
       strategy: ol.loadingstrategy.bbox
     });
-
-
   }
 
-  loadFromWmsGeoserver(layerId, visible, opacity, workspace, layersList){
-
+  _loadFromWms(serverUrl, workspaceLayerName, workspaceName, visible, opacity, layersList){
     var tiled = new ol.layer.Tile({
       visible: visible,
       opacity:opacity,
       source: new ol.source.TileWMS({
-        url: 'http://132.217.140.48:8080/geoserver/'+workspace+'/wms',
+        url: [serverUrl,workspaceName,'wms'].join('/'),
         params: {'FORMAT': 'image/png',
           tiled: true,
           STYLES: '',
-          LAYERS: layerId
+          LAYERS: workspaceLayerName
         }
       })
     });
     layersList.push(tiled);
-  }
-
-
-
-  loadLayers(layers_name, workspace, visible, opacity, layersList){
-    console.log(layers_name.length);
-    for(let k =0; k<layers_name.length; k++) {
-      console.log(layers_name[k]);
-      me.loadFromWmsGeoserver(layers_name[k], visible, opacity, workspace,layersList);
-    }
   }
 
   loadLayersWFS(layers_name, workspace, visible, opacity, layersList,extent){
@@ -342,24 +336,35 @@ class MapViewerPanel extends React.Component {
     }
   }
 
-  _doFeatureSelection(){
+  _getWfsRequest(serverUrl, layerId, proj, extent){
+    return serverUrl+ '/wfs?service=WFS&' +
+      'version=1.1.0&request=GetFeature&typename='+layerId+'&' +
+      'outputFormat=application/json&srsname='+proj+'&' +
+      'bbox=' + extent.join(',')+','+proj;
+  }
+
+  _doFeatureSelection(olayerId,layerId){
 
       if(me.featuresSelectedLayer==null){
-        me.featuresSelectedLayer=me._createLayer(layerId);
+        me.featuresSelectedLayer=me._createLayer(olayerId);
         me.map.addLayer(me.featuresSelectedLayer)
       }
       me.featuresSelectedLayer.getSource().clear();
 
       console.log("_doDragExtentAction :" + me.dragExtent)
 
-      var layerId = "WATERSHEDS:BV_N1_S";
+      //var layerId = "WATERSHEDS:BV_N1_S";
 
       var proj = me.map.getView().getProjection().getCode();
 
-      var url = 'http://132.217.140.48:8080/geoserver/wfs?service=WFS&' +
+      /*var url = 'http://132.217.140.48:8080/geoserver/wfs?service=WFS&' +
         'version=1.1.0&request=GetFeature&typename='+layerId+'&' +
         'outputFormat=application/json&srsname='+proj+'&' +
-        'bbox=' + me.dragExtent.join(',')+','+proj;
+        'bbox=' + me.dragExtent.join(',')+','+proj;*/
+
+      var url = me._getWfsRequest(GEOSERVER48_ROUTE, layerId, proj, me.dragExtent );
+
+      console.log(url)
 
       $.ajax({url: url,
         success: function(response){
@@ -378,11 +383,9 @@ class MapViewerPanel extends React.Component {
 
   _doDragExtentAction(){
     if(me.state.toolId==='select-id') {
-      me._doFeatureSelection();
+      me._doFeatureSelection('select-id', 'WATERSHEDS:BV_N1_S' );
     }
-
   }
-
 
   initMap() {
 
@@ -405,8 +408,6 @@ class MapViewerPanel extends React.Component {
     projectionSelect.addEventListener('change', function(event) {
       mousePositionControl.setProjection(ol.proj.get(event.target.value));
     });
-
-
 
     var map = new ol.Map({
       controls: ol.control.defaults()
@@ -474,7 +475,7 @@ class MapViewerPanel extends React.Component {
         }
 
         me.dragExtent = [minX, minY, maxX, maxY]
-        me._doFeatureSelection();
+        me._doFeatureSelection('select-id', 'WATERSHEDS:BV_N1_S' );
       }
       else{
         document.getElementById('info').innerHTML = <div></div>;
@@ -534,26 +535,35 @@ class MapViewerPanel extends React.Component {
     }
   }
 
+  _getWmsCapabilities(serverUrl){
+    return [serverUrl,'wms?request=getCapabilities'].join('/');
+  }
+
+  _loadLayer(serverUrl, workspaceLayerName, workspaceName, visible, opacity, groupLayers){
+    for (var i = 0, len = me.wmsLayersCatalog.length; i < len; i++) {
+      var layerobj = me.wmsLayersCatalog[i];
+      console.log(layerobj.Name);
+      if(layerobj.Name.indexOf(workspaceLayerName)!==-1) {
+        console.log(["Found",layerobj.Name].join(':'));
+        me._loadFromWms(serverUrl,workspaceLayerName, workspaceName,visible,opacity,me.getWatershedLayerList());
+      }
+    }
+  }
+
   componentDidMount(){
 
     var parser = new ol.format.WMSCapabilities();
-    fetch('http://132.217.140.48:8080/geoserver/wms?request=getCapabilities').then(function(response) {
+    fetch(me._getWmsCapabilities(GEOSERVER48_ROUTE)).then(function(response) {
       return response.text();
     }).then(function(text) {
       var result = parser.read(text);
       //console.log(JSON.stringify(result, null, 2));
-
       var layers = result.Capability.Layer.Layer;
       for (var i = 0, len = layers.length; i < len; i++) {
         var layerobj = layers[i];
-        if(layerobj.Name.indexOf("WATERSHEDS:BV_N1_S")!==-1) {
-          console.log(layerobj.Name);
-          me.watersheds_layers_name.push(layerobj.Name);
-        }
+        me.wmsLayersCatalog.push(layerobj)
       }
-      //me.loadLayers(me.bukowskis_layer_name,"BUKOWSKI",true, 0.5);
-      console.log(me.watersheds_layers_name.length);
-      me.loadLayers(me.watersheds_layers_name,"WATERSHEDS",true, 0.5, me.getWatershedLayerList());
+      me._loadLayer(GEOSERVER48_ROUTE, "WATERSHEDS:BV_N1_S", 'WATERSHEDS', true, 0.5, me.getWatershedLayerList())
     });
 
     me.initBackgroundLayer()
@@ -567,7 +577,6 @@ class MapViewerPanel extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState){
-
   }
 
   _doZoomIn(){
