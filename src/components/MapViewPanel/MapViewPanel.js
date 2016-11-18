@@ -4,6 +4,7 @@
 
 var GEOSERVER48_ROUTE = 'http://132.217.140.48:8080/geoserver';
 var NCWMS31_ROUTE = 'http://132.217.140.31:8083/thredds';
+var NASA_DISC1 = 'http://disc1.gsfc.nasa.gov/daac-bin/wms_airs'
 
 import React from 'react'
 
@@ -137,17 +138,22 @@ class MapViewerPanel extends React.Component {
 
   // Returns base layers list
   getMapBaseLayersList() {
-    return me._getLayersGroup('baseLayers').getLayers()
+    return me._getLayersGroup('baseLayers').getLayers();
   }
 
   // Returns overlay layers list
   getMapOverlayList() {
-    return me._getLayersGroup('overlayLayers').getLayers()
+    return me._getLayersGroup('overlayLayers').getLayers();
   }
 
   // Returns overlay layers list
   getWatershedLayerList() {
-    return me._getLayersGroup('watershedsLayers').getLayers()
+    return me._getLayersGroup('watershedsLayers').getLayers();
+  }
+
+  // Returns overlay layers list
+  getNasaLayerList() {
+    return me._getLayersGroup('nasaAirCO2').getLayers();
   }
 
   // Add backgrounnd layer (use once)
@@ -164,7 +170,7 @@ class MapViewerPanel extends React.Component {
     for(layer in layers)
       if(title===layer.get('title')) {
         console.log('addTileWMSLayer: First Remove layer ' + layer.get('title'));
-        this.map.removeLayer(layer)
+        this.map.removeLayer(layer);
       }
   }
 
@@ -252,7 +258,7 @@ class MapViewerPanel extends React.Component {
     }));
   }
 
-  _loadFromWms(serverUrl, workspaceLayerName, workspaceName, visible, opacity){
+  _loadFromGeoserverWms(serverUrl, workspaceLayerName, workspaceName, visible, opacity,style){
     var tiled = new ol.layer.Tile({
       visible: visible,
       opacity:opacity,
@@ -268,7 +274,8 @@ class MapViewerPanel extends React.Component {
     return  tiled
   }
 
-  _loadFromThreddsWms(serverUrl, layerName, visible, opacity, style){
+
+  _loadFromGenericWms(serverUrl, layerName, layerName2, visible, opacity, style){
     var tiled = new ol.layer.Tile({
       visible: visible,
       opacity:opacity,
@@ -276,8 +283,10 @@ class MapViewerPanel extends React.Component {
         url:serverUrl,
         params: {'FORMAT': 'image/png',
           tiled: true,
-          STYLES: style,
-          LAYERS: layerName
+          STYLES: style='default',
+          LAYERS: layerName,
+          TRANSPARENT:'TRUE',
+          time:'2002-11-01'
         }
       })
     });
@@ -473,7 +482,7 @@ class MapViewerPanel extends React.Component {
           maxY=tl[1];
         }
 
-        me.dragExtent = [minX, minY, maxX, maxY]
+        me.dragExtent = [minX, minY, maxX, maxY];
         me._doFeatureSelection('select-id', me._getLayersCatalog());
         //me._doFeatureSelection(GEOSERVER48_ROUTE, 'select-id', 'WATERSHEDS:BV_N1_S' );
       }
@@ -541,8 +550,12 @@ class MapViewerPanel extends React.Component {
     }
   }
 
-  _getWmsCapabilities(serverUrl){
+  _getWmsCapabilitiesRequest(serverUrl){
     return [serverUrl,'wms?request=GetCapabilities'].join('/');
+  }
+
+  _getWmsCapabilitiesRequest2(serverUrl){
+    return [serverUrl,'?service=WMS&VERSION=1.1.1&REQUEST=GetCapabilities'].join('/');
   }
 
   _getThreddsWmsCapabilities(serverUrl){
@@ -556,10 +569,10 @@ class MapViewerPanel extends React.Component {
     return {'workspaceId':r1[0], 'layerId':r1[1]};
   }
 
-  _getWmsCapabilities2(serverUrl, callback){
+  _getWmsCapabilities2(serverUrl, getWmsCapabilitiesFunc, callback){
     var parser = new ol.format.WMSCapabilities();
-    console.log(me._getWmsCapabilities(serverUrl));
-    fetch(me._getWmsCapabilities(serverUrl)).then(function(response) {
+    console.log(getWmsCapabilitiesFunc(serverUrl));
+    fetch(getWmsCapabilitiesFunc(serverUrl)).then(function(response) {
       return response.text();
     }).then(function(text) {
       var result = parser.read(text);
@@ -599,7 +612,7 @@ class MapViewerPanel extends React.Component {
       var LayersCatalogData = layersCatalog[i];
       if(LayersCatalogData['layerData'].Name.indexOf(workspaceLayerId)!==-1) {
         var info = me._fromLayerDataGetWorkspace(LayersCatalogData);
-        var layer = loadFunc(LayersCatalogData['serverUrl'],workspaceLayerId, info['workspaceId'],false,1.0);
+        var layer = loadFunc(LayersCatalogData['serverUrl'],workspaceLayerId, info['workspaceId'],false,1.0, "");
         LayersCatalogData['layerObj'] = layer;
       }
     }
@@ -645,18 +658,18 @@ class MapViewerPanel extends React.Component {
           var filter = "SUP_KM2 >10";
 
           me._applyFilter(layerObj, filterType, filter);*/
-
         }
       }
     }
   }
 
-  _loadGEOSERVER48SpecificLayer(){
-    me._loadFromCatalog(me._getLayersCatalog(), "WATERSHEDS:BV_N1_S", me._loadFromWms);
-    me._loadFromCatalog(me._getLayersCatalog(), "WATERSHEDS:BV_N2_S", me._loadFromWms);
-    me._loadFromCatalog(me._getLayersCatalog(), "WATERSHEDS:BV_N3_S", me._loadFromWms);
-    me._loadFromCatalog(me._getLayersCatalog(), "ADMINBOUNDARIES:canada_admin_boundaries", me._loadFromWms);
-    me._loadFromCatalog(me._getLayersCatalog(), "opengeo:countries", me._loadFromWms);
+  _loadGEOSERVER48SpecificLayers(){
+    me._loadFromCatalog(me._getLayersCatalog(), "WATERSHEDS:BV_N1_S", me._loadFromGeoserverWms);
+    me._loadFromCatalog(me._getLayersCatalog(), "WATERSHEDS:BV_N2_S", me._loadFromGeoserverWms);
+    me._loadFromCatalog(me._getLayersCatalog(), "WATERSHEDS:BV_N3_S", me._loadFromGeoserverWms);
+    me._loadFromCatalog(me._getLayersCatalog(), "ADMINBOUNDARIES:canada_admin_boundaries", me._loadFromGeoserverWms);
+    me._loadFromCatalog(me._getLayersCatalog(), "opengeo:countries", me._loadFromGeoserverWms);
+
     me._addLayerFromCatalog(me._getLayersCatalog(), "WATERSHEDS:BV_N1_S", true, 0.50, me.getWatershedLayerList(),1,1);
     me._addLayerFromCatalog(me._getLayersCatalog(), "WATERSHEDS:BV_N2_S", true, 0.50, me.getWatershedLayerList(),1,1);
     me._addLayerFromCatalog(me._getLayersCatalog(), "WATERSHEDS:BV_N3_S", true, 0.50, me.getWatershedLayerList(),0,1);
@@ -664,7 +677,14 @@ class MapViewerPanel extends React.Component {
     me._addLayerFromCatalog(me._getLayersCatalog(), "opengeo:countries", true, 1.0, me.getWatershedLayerList(),0,1);
   }
 
-  _loadNCWMSSpecificLayer() {
+  _loadNCWMSSpecificLayers() {
+
+  }
+
+  _loadNasaSpecificLayers() {
+
+   // me._loadFromCatalog(me._getLayersCatalog(), "AIRX3C2M_CO2", me._loadFromGenericWms);
+  //  me._addLayerFromCatalog(me._getLayersCatalog(), "AIRX3C2M_CO2", true, 1.0, me.getMapBaseLayersList(),1,1);
 
   }
 
@@ -675,10 +695,14 @@ class MapViewerPanel extends React.Component {
   componentDidMount(){
 
     me._addLayerGroup('baseLayers','Base maps', 1.0, true, 0);
+    me._addLayerGroup('nasaAirCO2','AIRS CO2', 1.0, true, 1);
     me._addLayerGroup('overlayLayers','Overlays', 1.0, true, 1);
-    me._addLayerGroup('watershedsLayers','Watersheds', 1.0, true, 2);
+    me._addLayerGroup('watershedsLayers','Watersheds', 1.0, true, 3);
 
-    me._getWmsCapabilities2(GEOSERVER48_ROUTE, me._loadGEOSERVER48SpecificLayer);
+
+
+    me._getWmsCapabilities2(GEOSERVER48_ROUTE, me._getWmsCapabilitiesRequest, me._loadGEOSERVER48SpecificLayers);
+    me._getWmsCapabilities2(NASA_DISC1, me._getWmsCapabilitiesRequest2, me._loadNasaSpecificLayers);
     //me._getWmsCapabilities2(NCWMS31_ROUTE, me._loadGEOSERVER48SpecificLayer);
 
     //me._getThreddsWmsCapabilities2(NCWMS31_ROUTE ,me._loadNWSSpecificLayer)
