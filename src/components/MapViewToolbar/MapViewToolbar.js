@@ -9,6 +9,8 @@ var ButtonToolbar = Bootstrap.ButtonToolbar;
 var ButtonGroup = Bootstrap.ButtonGroup;
 var Button = Bootstrap.Button;
 var Image = Bootstrap.Image;
+var DropdownButton =Bootstrap.DropdownButton;
+var MenuItem =Bootstrap.MenuItem;
 
 import ZoomInImg from './assets/mActionZoomIn.png';
 import ZoomOutImg from './assets/mActionZoomOut.png';
@@ -44,13 +46,15 @@ class MapViewToolbar extends React.Component{
           <Button id="zoom-full-extend-id" onClick={this.handleClick.bind(this,"zoom-full-extend-id")}>
             <Image src={ZoomFullExtentImg} responsive></Image>
           </Button>
-
         </ButtonGroup>
+
         <ButtonGroup>
           <Button id="select-id" onClick={this.handleClick.bind(this,"select-id")} active={this.state.toolId === "select-id"} >
             <Image src={SelectImg} responsive></Image>
           </Button>
         </ButtonGroup>
+
+
       </ButtonToolbar>
     );
   };

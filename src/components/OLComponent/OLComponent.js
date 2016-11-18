@@ -43,7 +43,7 @@ class OLComponent extends React.Component {
 
   // Add backgrounnd layer (use once)
   initBackgroundLayer () {
-    this.addBingLayer('Aerial', this.getMapBaseLayersList(), 'Aerial')
+    this.addBingLayer('AerialWithLabels', this.getMapBaseLayersList(), 'AerialWithLabels')
     // var wmsUrl = "http://demo.boundlessgeo.com/geoserver/wms"
     // var wmsParams = {'LAYERS': 'topp:states', 'TILED': true}
     // this.addTileWMSLayer('topp:states', this.getMapOverlayList(), wmsUrl, wmsParams)
@@ -224,7 +224,7 @@ class OLComponent extends React.Component {
     if (this.props.loadedWmsDatasets.length && this.layersCount !== this.props.loadedWmsDatasets.length) {
       var wmsUrl = this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].url
       // var wmsUrl = "http://132.217.140.31:8080/ncWMS2/wms"
-      /* http://132.217.140.31:8080/ncWMS2/wms?
+      /* http://132.217.140.31:8083/ncWMS2/wms?
        FORMAT=image%2Fpng&
        TRANSPARENT=TRUE&
        STYLES=default-scalar%2Fdefault&
