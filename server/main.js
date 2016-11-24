@@ -14,10 +14,11 @@ const debug = _debug('app:server');
 const paths = config.utils_paths;
 const app = new Koa();
 // Controllers
-import {birdhouse, datasets, facets, wms, consumer, wps} from './controllers';
+import {birdhouse, datasets, facets, wms, consumer, wps, phoenix} from './controllers';
 // Routes
 let router = require('koa-router')();
 router.get('/wps/:identifier', consumer.resolve);
+router.get('/phoenix/:identifier', phoenix.consume);
 app.use(router.routes());
 app.use(router.allowedMethods());
 app.use(route.get('/api/wms/capabilities', birdhouse.getCapabilities));

@@ -4,7 +4,13 @@ class ProcessesSelector extends React.Component {
   static propTypes = {
     processes: React.PropTypes.array.isRequired,
     chooseProcess: React.PropTypes.func.isRequired,
-    executeProcess: React.PropTypes.func.isRequired
+    executeProcess: React.PropTypes.func.isRequired,
+    fetchProcesses: React.PropTypes.func.isRequired
+  }
+
+  constructor (props) {
+    super(props);
+    this.props.fetchProcesses();
   }
 
   makeChooseProcessCallback (process) {

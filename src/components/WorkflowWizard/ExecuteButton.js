@@ -6,7 +6,6 @@ class ExecuteButton extends React.Component {
   }
 
   render () {
-    console.log('wat');
     return (
       <Button onClick={this.props.executeProcess}>
         executeProcess

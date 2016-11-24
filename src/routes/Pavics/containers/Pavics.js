@@ -3,7 +3,8 @@ import {connect} from 'react-redux';
 import {WorkflowWizard} from './../../../containers';
 import {
   chooseProcess,
-  executeProcess
+  executeProcess,
+  fetchProcesses
 } from './../modules/Pavics';
 class Pavics extends React.Component {
   static propTypes = {
@@ -23,7 +24,8 @@ class Pavics extends React.Component {
 }
 const mapActionCreators = {
   chooseProcess,
-  executeProcess
+  executeProcess,
+  fetchProcesses
 };
 const mapStateToProps = (state) => {
   return {

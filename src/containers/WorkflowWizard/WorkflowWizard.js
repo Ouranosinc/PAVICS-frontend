@@ -16,11 +16,7 @@ class WorkflowWizard extends React.Component {
       case constants.WORKFLOW_STEP_PROCESS:
         return (
           <Panel header="Choose workflow">
-            <ProcessesSelector
-              processes={this.props.processes}
-              chooseProcess={this.props.chooseProcess}
-              executeProcess={this.props.executeProcess}
-            />
+            <ProcessesSelector {...this.props} />
           </Panel>
         );
       case constants.WORKFLOW_STEP_INPUTS:

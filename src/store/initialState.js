@@ -3,9 +3,7 @@ const initialState = {
   workflowWizard: {
     selectedProcess: {},
     currentStep: constants.WORKFLOW_STEP_PROCESS,
-    processes: [
-      {title: 'hello world', description: 'example process that welcomes user', id: 'helloworld'}
-    ]
+    processes: []
   },
   currentSelectedKey: constants.DEFAULT_SELECTED_KEY,
   currentSelectedValue: '',

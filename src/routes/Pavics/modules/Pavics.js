@@ -12,48 +12,60 @@ function chooseStep (step) {
     step: step
   };
 }
+function setProcesses (processes) {
+  return {
+    type: constants.WORKFLOW_SET_PROCESSES,
+    processes: processes
+  };
+}
 export function chooseProcess (process) {
   return (dispatch) => {
     dispatch(assignNewProcess(process));
     dispatch(chooseStep(constants.WORKFLOW_STEP_INPUTS));
   };
 }
-export function executeProcess () {
-  console.log('executing process!');
+export function fetchProcesses () {
   return (dispatch) => {
-    return fetch('/wps/execute')
-      .then(response => { console.log('received:', response); })
-      .catch(error => { console.log('problem', error); });
+    return fetch('/phoenix/processes')
+      .then(response => response.json())
+      .then(json => dispatch(setProcesses(json.items)))
+      .catch(err => {
+        console.log(err);
+      });
+  };
+}
+export function executeProcess () {
+  return () => {
+    return fetch('/phoenix/execute')
+      .then(response => {
+        console.log('received:', response);
+      })
+      .catch(error => {
+        console.log('problem', error);
+      });
   };
 }
 export const ACTION_HANDLERS = {
   [constants.WORKFLOW_CHOOSE_PROCESS]: (state, action) => {
-    return Object.assign(
-      {},
-      state,
-      {
-        workflowWizard: Object.assign(
-          {},
-          state.workflowWizard,
-          {
-            selectedProcess: action.process
-          }
-        )
-      });
+    return Object.assign({}, state, {
+      workflowWizard: Object.assign({}, state.workflowWizard, {
+        selectedProcess: action.process
+      })
+    });
   },
   [constants.WORKFLOW_CHANGE_STEP]: (state, action) => {
-    return Object.assign(
-      {},
-      state,
-      {
-        workflowWizard: Object.assign(
-          {},
-          state.workflowWizard,
-          {
-            currentStep: action.step
-          }
-        )
-      });
+    return Object.assign({}, state, {
+      workflowWizard: Object.assign({}, state.workflowWizard, {
+        currentStep: action.step
+      })
+    });
+  },
+  [constants.WORKFLOW_SET_PROCESSES]: (state, action) => {
+    return Object.assign({}, state, {
+      workflowWizard: Object.assign({}, state.workflowWizard, {
+        processes: action.processes
+      })
+    });
   }
 };
 function pavicsReducer (state = initialState, action) {
