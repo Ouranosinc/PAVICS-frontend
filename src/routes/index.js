@@ -1,9 +1,5 @@
 // We only need to import the modules necessary for initial render
 import CoreLayout from '../layouts/CoreLayout/CoreLayout';
-import Home from './Home';
-import OpenLayersRoute from './OpenLayers';
-import CesiumRoute from './Cesium';
-import WmsRoute from './WMS';
 import VisualizeRoute from './Visualize';
 import PavicsRoute from './Pavics';
 
@@ -13,13 +9,9 @@ import PavicsRoute from './Pavics';
 export const createRoutes = (store) => ({
   path: '/',
   component: CoreLayout,
-  indexRoute: Home,
+  indexRoute: PavicsRoute(store),
   childRoutes: [
-    OpenLayersRoute(store),
-    CesiumRoute(store),
-    WmsRoute(store),
-    VisualizeRoute(store),
-    PavicsRoute(store)
+    VisualizeRoute(store)
   ]
 });
 

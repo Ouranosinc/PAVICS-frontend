@@ -1,16 +1,16 @@
 import React from 'react';
-import { Button, ButtonGroup, Grid, Row, Col } from 'react-bootstrap';
+import { Grid, Row, Col, Nav, NavItem } from 'react-bootstrap';
 class Header extends React.Component {
   render () {
     return (
       <Grid>
         <Row className="schow-grid">
           <Col md={4} mdOffset={4}>
-            <ButtonGroup justified>
-              <Button href="/Gandalf">Gandalf</Button>
-              <Button href="/Visualize">Visualize</Button>
-              <Button href="/Workboard">Workboard</Button>
-            </ButtonGroup>
+            <Nav bsStyle="pills" justified>
+              <NavItem href="/">Workflow Wizard</NavItem>
+              <NavItem href="/visualize">Visualize</NavItem>
+              <NavItem href="/workboard">Workboard</NavItem>
+            </Nav>
           </Col>
         </Row>
       </Grid>
