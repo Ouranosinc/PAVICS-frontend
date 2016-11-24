@@ -7,7 +7,8 @@ class WorkflowWizard extends React.Component {
     processes: React.PropTypes.array.isRequired,
     chooseProcess: React.PropTypes.func.isRequired,
     currentStep: React.PropTypes.string.isRequired,
-    selectedProcess: React.PropTypes.object.isRequired
+    selectedProcess: React.PropTypes.object.isRequired,
+    executeProcess: React.PropTypes.func.isRequired
   }
 
   makeSection () {
@@ -18,6 +19,7 @@ class WorkflowWizard extends React.Component {
             <ProcessesSelector
               processes={this.props.processes}
               chooseProcess={this.props.chooseProcess}
+              executeProcess={this.props.executeProcess}
             />
           </Panel>
         );

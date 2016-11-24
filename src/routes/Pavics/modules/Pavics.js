@@ -13,9 +13,17 @@ function chooseStep (step) {
   };
 }
 export function chooseProcess (process) {
-  return function (dispatch) {
+  return (dispatch) => {
     dispatch(assignNewProcess(process));
     dispatch(chooseStep(constants.WORKFLOW_STEP_INPUTS));
+  };
+}
+export function executeProcess () {
+  console.log('executing process!');
+  return (dispatch) => {
+    return fetch('/wps/execute')
+      .then(response => { console.log('received:', response); })
+      .catch(error => { console.log('problem', error); });
   };
 }
 export const ACTION_HANDLERS = {
@@ -48,7 +56,8 @@ export const ACTION_HANDLERS = {
       });
   }
 };
-export default function pavicsReducer (state = initialState, action) {
+function pavicsReducer (state = initialState, action) {
   const handler = ACTION_HANDLERS[action.type];
   return handler ? handler(state, action) : state;
 }
+export default pavicsReducer;

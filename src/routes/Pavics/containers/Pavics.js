@@ -2,28 +2,28 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {WorkflowWizard} from './../../../containers';
 import {
-  chooseProcess
+  chooseProcess,
+  executeProcess
 } from './../modules/Pavics';
 class Pavics extends React.Component {
   static propTypes = {
     processes: React.PropTypes.array.isRequired,
     chooseProcess: React.PropTypes.func.isRequired,
     currentStep: React.PropTypes.string.isRequired,
-    selectedProcess: React.PropTypes.object.isRequired
+    selectedProcess: React.PropTypes.object.isRequired,
+    executeProcess: React.PropTypes.func.isRequired
   };
   render () {
     return (
       <WorkflowWizard
-        processes={this.props.processes}
-        chooseProcess={this.props.chooseProcess}
-        currentStep={this.props.currentStep}
-        selectedProcess={this.props.selectedProcess}
+        {...this.props}
       />
     );
   }
 }
 const mapActionCreators = {
-  chooseProcess
+  chooseProcess,
+  executeProcess
 };
 const mapStateToProps = (state) => {
   return {

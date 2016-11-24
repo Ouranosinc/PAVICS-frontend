@@ -17,10 +17,28 @@ var consumer = (function () {
   };
   return {
     resolve: function * (next) {
-      console.log('consuming ', this.params.identifier);
+      console.log('consuming:', this.params.identifier);
       let response;
       let url;
       switch (this.params.identifier) {
+        case 'execute':
+          let options = {
+            method: 'POST',
+            headers: {
+              Authorization: 'Basic UGhvZW5peDpxd2VydHk=',
+              'Content-Type': 'multipart/form-data'
+            },
+            url: 'https://outarde.crim.ca:8443/processes/execute?wps=emu_&process=helloworld',
+            form: {
+              user: 'koa form data',
+              submit: 'submit'
+            },
+            rejectUnauthorized: false
+          };
+          console.log('options:', options);
+          response = yield request(options);
+          this.body = response.body;
+          break;
         case 'pavicsearch':
           url = config.pavics_pywps_path + urlEncode(this.request.query);
           console.log('consuming: ' + url);
