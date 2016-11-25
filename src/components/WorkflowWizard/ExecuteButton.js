@@ -8,7 +8,7 @@ class ExecuteButton extends React.Component {
   render () {
     return (
       <Button onClick={this.props.executeProcess}>
-        executeProcess
+        Run process
       </Button>
     );
   }

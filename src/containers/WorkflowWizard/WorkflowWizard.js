@@ -9,11 +9,12 @@ class WorkflowWizard extends React.Component {
     currentStep: React.PropTypes.string.isRequired,
     selectedProcess: React.PropTypes.object.isRequired,
     selectedProcessInputs: React.PropTypes.array.isRequired,
-    executeProcess: React.PropTypes.func.isRequired
+    selectedProcessValues: React.PropTypes.object.isRequired,
+    executeProcess: React.PropTypes.func.isRequired,
+    handleSelectedProcessValueChange: React.PropTypes.func.isRequired
   }
 
   makeSection () {
-    console.log(this.props.selectedProcessInputs);
     switch (this.props.currentStep) {
       case constants.WORKFLOW_STEP_PROCESS:
         return (
@@ -37,7 +38,12 @@ class WorkflowWizard extends React.Component {
                   {
                     this.props.selectedProcessInputs.length === 0
                       ? null
-                      : <ProcessForm inputs={this.props.selectedProcessInputs} />
+                      : <ProcessForm
+                        executeProcess={this.props.executeProcess}
+                        handleSelectedProcessValueChange={this.props.handleSelectedProcessValueChange}
+                        selectedProcess={this.props.selectedProcess}
+                        selectedProcessInputs={this.props.selectedProcessInputs}
+                        selectedProcessValues={this.props.selectedProcessValues} />
                   }
                 </Panel>
               </Col>

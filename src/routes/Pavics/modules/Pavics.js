@@ -30,13 +30,23 @@ function setProcessInputs (inputs) {
     inputs: inputs
   };
 }
+function setSelectedProcessValues (key, value) {
+  return {
+    type: constants.WORKFLOW_SET_ACTIVE_PROCESS_VALUES,
+    key: key,
+    value: value
+  };
+}
+export function handleSelectedProcessValueChange (key, value) {
+  return dispatch => {
+    dispatch(setSelectedProcessValues(key, value));
+  };
+}
 export function fetchProcessInputs (provider, process) {
   return dispatch => {
-    console.log(process);
     return fetch(`/phoenix/inputs?provider=${provider}&process=${process}`)
       .then(response => response.json())
       .then(json => {
-        console.log(json);
         dispatch(setProcessInputs(json.inputs));
       })
       .catch(err => {
@@ -96,6 +106,15 @@ export const ACTION_HANDLERS = {
     return Object.assign({}, state, {
       workflowWizard: Object.assign({}, state.workflowWizard, {
         selectedProcessInputs: action.inputs
+      })
+    });
+  },
+  [constants.WORKFLOW_SET_ACTIVE_PROCESS_VALUES]: (state, action) => {
+    return Object.assign({}, state, {
+      workflowWizard: Object.assign({}, state.workflowWizard, {
+        selectedProcessValues: Object.assign({}, state.workflowWizard.selectedProcessValues, {
+          [action.key]: action.value
+        })
       })
     });
   },

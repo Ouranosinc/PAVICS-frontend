@@ -3,6 +3,7 @@ const initialState = {
   workflowWizard: {
     selectedProcess: {},
     selectedProcessInputs: [],
+    selectedProcessValues: {},
     currentStep: constants.WORKFLOW_STEP_PROCESS,
     processes: [],
     wpsProvider: 'flying'

@@ -1,6 +1,5 @@
 import React from 'react';
 import {Nav, NavItem} from 'react-bootstrap';
-import {ExecuteButton} from './';
 class ProcessesSelector extends React.Component {
   static propTypes = {
     processes: React.PropTypes.array.isRequired,
@@ -53,7 +52,6 @@ class ProcessesSelector extends React.Component {
             </div>
           );
         })}
-        <ExecuteButton executeProcess={this.props.executeProcess} />
       </div>
     );
   }
