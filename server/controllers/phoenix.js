@@ -8,7 +8,7 @@ let phoenix = (() => {
       switch (this.params.identifier) {
         case 'processes' :
           options = {
-            url: config.pavics_phoenix_path + '/processes/list?wps=flying',
+            url: config.pavics_phoenix_path + '/processes/list?wps=' + this.request.query.provider,
             headers: {
               Accept: 'application/json'
             },

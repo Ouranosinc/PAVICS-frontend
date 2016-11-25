@@ -18,15 +18,27 @@ function setProcesses (processes) {
     processes: processes
   };
 }
+function setWpsProvider (provider) {
+  return {
+    type: constants.WORKFLOW_SET_WPS_PROVIDER,
+    provider: provider
+  };
+}
+export function selectWpsProvider (provider) {
+  return dispatch => {
+    dispatch(setWpsProvider(provider));
+    dispatch(fetchProcesses(provider));
+  };
+}
 export function chooseProcess (process) {
   return (dispatch) => {
     dispatch(assignNewProcess(process));
     dispatch(chooseStep(constants.WORKFLOW_STEP_INPUTS));
   };
 }
-export function fetchProcesses () {
+export function fetchProcesses (provider) {
   return (dispatch) => {
-    return fetch('/phoenix/processes')
+    return fetch(`/phoenix/processes?provider=${provider}`)
       .then(response => response.json())
       .then(json => dispatch(setProcesses(json.items)))
       .catch(err => {
@@ -46,6 +58,13 @@ export function executeProcess () {
   };
 }
 export const ACTION_HANDLERS = {
+  [constants.WORKFLOW_SET_WPS_PROVIDER]: (state, action) => {
+    return Object.assign({}, state, {
+      workflowWizard: Object.assign({}, state.workflowWizard, {
+        wpsProvider: action.provider
+      })
+    });
+  },
   [constants.WORKFLOW_CHOOSE_PROCESS]: (state, action) => {
     return Object.assign({}, state, {
       workflowWizard: Object.assign({}, state.workflowWizard, {

@@ -4,16 +4,10 @@ import {WorkflowWizard} from './../../../containers';
 import {
   chooseProcess,
   executeProcess,
-  fetchProcesses
+  fetchProcesses,
+  selectWpsProvider
 } from './../modules/Pavics';
 class Pavics extends React.Component {
-  static propTypes = {
-    processes: React.PropTypes.array.isRequired,
-    chooseProcess: React.PropTypes.func.isRequired,
-    currentStep: React.PropTypes.string.isRequired,
-    selectedProcess: React.PropTypes.object.isRequired,
-    executeProcess: React.PropTypes.func.isRequired
-  };
   render () {
     return (
       <WorkflowWizard
@@ -25,13 +19,15 @@ class Pavics extends React.Component {
 const mapActionCreators = {
   chooseProcess,
   executeProcess,
-  fetchProcesses
+  fetchProcesses,
+  selectWpsProvider
 };
 const mapStateToProps = (state) => {
   return {
     processes: state.pavics.workflowWizard.processes,
     currentStep: state.pavics.workflowWizard.currentStep,
-    selectedProcess: state.pavics.workflowWizard.selectedProcess
+    selectedProcess: state.pavics.workflowWizard.selectedProcess,
+    wpsProvider: state.pavics.workflowWizard.wpsProvider
   };
 };
 export default connect(mapStateToProps, mapActionCreators)(Pavics);

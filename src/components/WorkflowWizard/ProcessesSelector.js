@@ -1,16 +1,19 @@
 import React from 'react';
+import {Nav, NavItem} from 'react-bootstrap';
 import {ExecuteButton} from './';
 class ProcessesSelector extends React.Component {
   static propTypes = {
     processes: React.PropTypes.array.isRequired,
     chooseProcess: React.PropTypes.func.isRequired,
     executeProcess: React.PropTypes.func.isRequired,
-    fetchProcesses: React.PropTypes.func.isRequired
+    fetchProcesses: React.PropTypes.func.isRequired,
+    selectWpsProvider: React.PropTypes.func.isRequired,
+    wpsProvider: React.PropTypes.string.isRequired
   }
 
   constructor (props) {
     super(props);
-    this.props.fetchProcesses();
+    this.props.fetchProcesses(this.props.wpsProvider);
   }
 
   makeChooseProcessCallback (process) {
@@ -19,9 +22,19 @@ class ProcessesSelector extends React.Component {
     };
   }
 
+  changeWPSprovider = (selectedKey) => {
+    console.log(selectedKey);
+    this.props.selectWpsProvider(selectedKey);
+  };
+
   render () {
     return (
       <div>
+        <Nav onSelect={this.changeWPSprovider}>
+          <NavItem eventKey="emu_">Emu2</NavItem>
+          <NavItem eventKey="flying">Flying</NavItem>
+          <NavItem eventKey="emu_external">Emu external</NavItem>
+        </Nav>
         {this.props.processes.map((process, i) => {
           return (
             <div onClick={this.makeChooseProcessCallback(process)} key={i}>

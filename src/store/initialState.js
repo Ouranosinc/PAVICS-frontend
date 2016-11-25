@@ -3,7 +3,8 @@ const initialState = {
   workflowWizard: {
     selectedProcess: {},
     currentStep: constants.WORKFLOW_STEP_PROCESS,
-    processes: []
+    processes: [],
+    wpsProvider: 'flying'
   },
   currentSelectedKey: constants.DEFAULT_SELECTED_KEY,
   currentSelectedValue: '',
