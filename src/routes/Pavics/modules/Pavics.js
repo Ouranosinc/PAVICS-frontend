@@ -1,6 +1,6 @@
 import initialState from './../../../store/initialState';
 import * as constants from './../../../constants';
-function assignNewProcess (process) {
+function setSelectedProcess (process) {
   return {
     type: constants.WORKFLOW_CHOOSE_PROCESS,
     process: process
@@ -24,6 +24,26 @@ function setWpsProvider (provider) {
     provider: provider
   };
 }
+function setProcessInputs (inputs) {
+  return {
+    type: constants.WORKFLOW_SET_ACTIVE_PROCESS_INPUTS,
+    inputs: inputs
+  };
+}
+export function fetchProcessInputs (provider, process) {
+  return dispatch => {
+    console.log(process);
+    return fetch(`/phoenix/inputs?provider=${provider}&process=${process}`)
+      .then(response => response.json())
+      .then(json => {
+        console.log(json);
+        dispatch(setProcessInputs(json.inputs));
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+}
 export function selectWpsProvider (provider) {
   return dispatch => {
     dispatch(setWpsProvider(provider));
@@ -32,7 +52,7 @@ export function selectWpsProvider (provider) {
 }
 export function chooseProcess (process) {
   return (dispatch) => {
-    dispatch(assignNewProcess(process));
+    dispatch(setSelectedProcess(process));
     dispatch(chooseStep(constants.WORKFLOW_STEP_INPUTS));
   };
 }
@@ -69,6 +89,13 @@ export const ACTION_HANDLERS = {
     return Object.assign({}, state, {
       workflowWizard: Object.assign({}, state.workflowWizard, {
         selectedProcess: action.process
+      })
+    });
+  },
+  [constants.WORKFLOW_SET_ACTIVE_PROCESS_INPUTS]: (state, action) => {
+    return Object.assign({}, state, {
+      workflowWizard: Object.assign({}, state.workflowWizard, {
+        selectedProcessInputs: action.inputs
       })
     });
   },

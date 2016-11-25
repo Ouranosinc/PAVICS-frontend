@@ -2,6 +2,7 @@ import * as constants from './../constants';
 const initialState = {
   workflowWizard: {
     selectedProcess: {},
+    selectedProcessInputs: [],
     currentStep: constants.WORKFLOW_STEP_PROCESS,
     processes: [],
     wpsProvider: 'flying'

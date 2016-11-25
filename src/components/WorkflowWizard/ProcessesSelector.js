@@ -7,6 +7,7 @@ class ProcessesSelector extends React.Component {
     chooseProcess: React.PropTypes.func.isRequired,
     executeProcess: React.PropTypes.func.isRequired,
     fetchProcesses: React.PropTypes.func.isRequired,
+    fetchProcessInputs: React.PropTypes.func.isRequired,
     selectWpsProvider: React.PropTypes.func.isRequired,
     wpsProvider: React.PropTypes.string.isRequired
   }
@@ -19,11 +20,20 @@ class ProcessesSelector extends React.Component {
   makeChooseProcessCallback (process) {
     return () => {
       this.props.chooseProcess(process);
+      // TODO remove the boilerplate when api provides the identifier
+      let processIdentifier;
+      if (process.identifier) {
+        processIdentifier = process.identifier;
+      } else {
+        let param = process.url.slice('process=');
+        let bits = param.split('=');
+        processIdentifier = bits.slice(-1)[0];
+      }
+      this.props.fetchProcessInputs(this.props.wpsProvider, processIdentifier);
     };
   }
 
   changeWPSprovider = (selectedKey) => {
-    console.log(selectedKey);
     this.props.selectWpsProvider(selectedKey);
   };
 

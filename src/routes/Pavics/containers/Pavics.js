@@ -5,7 +5,8 @@ import {
   chooseProcess,
   executeProcess,
   fetchProcesses,
-  selectWpsProvider
+  selectWpsProvider,
+  fetchProcessInputs
 } from './../modules/Pavics';
 class Pavics extends React.Component {
   render () {
@@ -20,13 +21,15 @@ const mapActionCreators = {
   chooseProcess,
   executeProcess,
   fetchProcesses,
-  selectWpsProvider
+  selectWpsProvider,
+  fetchProcessInputs
 };
 const mapStateToProps = (state) => {
   return {
     processes: state.pavics.workflowWizard.processes,
     currentStep: state.pavics.workflowWizard.currentStep,
     selectedProcess: state.pavics.workflowWizard.selectedProcess,
+    selectedProcessInputs: state.pavics.workflowWizard.selectedProcessInputs,
     wpsProvider: state.pavics.workflowWizard.wpsProvider
   };
 };

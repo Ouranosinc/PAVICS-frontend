@@ -6,6 +6,19 @@ let phoenix = (() => {
       let options;
       let response;
       switch (this.params.identifier) {
+        case 'inputs':
+          let provider = this.request.query.provider;
+          let process = this.request.query.process;
+          options = {
+            url: `${config.pavics_phoenix_path}/processes/execute?wps=${provider}&process=${process}`,
+            headers: {
+              Accept: 'application/json'
+            },
+            rejectUnauthorized: false
+          };
+          response = yield request(options);
+          this.body = response.body;
+          break;
         case 'processes' :
           options = {
             url: config.pavics_phoenix_path + '/processes/list?wps=' + this.request.query.provider,
