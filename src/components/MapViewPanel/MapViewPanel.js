@@ -687,7 +687,7 @@ class MapViewerPanel extends React.Component {
     //me._addLayerFromCatalog(me._getLayersCatalog(), "WATERSHEDS:BV_N3_S", true, 0.50, me.getWatershedLayerList(),0,1);
     me._addLayerFromCatalog(me._getLayersCatalog(), "ADMINBOUNDARIES:canada_admin_boundaries", true, 1.0, me.getWatershedLayerList(),0,0);
     me._addLayerFromCatalog(me._getLayersCatalog(), "opengeo:countries", true, 1.0, me.getWatershedLayerList(),0,0);
-  }   
+  }
 
   _loadNCWMSSpecificLayers() {
 
@@ -802,6 +802,10 @@ class MapViewerPanel extends React.Component {
 
   _wpsSubset_WFS(wpsUrl,featureids, layerId)
     {
+
+
+
+
       var method = 'POST';
 
       var postData =
@@ -852,7 +856,6 @@ class MapViewerPanel extends React.Component {
           var parseString = require('xml2js').parseString;
           parseString(text, function (err, result) {
           var href = result['wps:ExecuteResponse']['wps:ProcessOutputs'][0]['wps:Output'][0]['wps:Reference'][0]['$'].href;
-
           console.dir(href);
 
             var hrefWmsRefGetCapabilities = href.replace('http://localhost:8090/wpsoutputs/flyingpigeon', 'http://132.217.140.52:8083/thredds/wms/birdhouse/flyingpigeon')
@@ -861,7 +864,6 @@ class MapViewerPanel extends React.Component {
 
             var hrefWmsRef = href.replace('http://localhost:8090/wpsoutputs/flyingpigeon', 'http://132.217.140.52:8083/thredds/wms/birdhouse/flyingpigeon');
             console.dir(hrefWmsRefGetCapabilities);
-
 
             me._getThreddsWmsCapabilities2(hrefWmsRef ,me._getWmsCapabilitiesRequest2, null);
 
@@ -874,7 +876,31 @@ class MapViewerPanel extends React.Component {
     var featureids='states.11';
     var layerId='usa:states';
     var wpsUrl = 'http://132.217.140.52:8093/wps';
-    me._wpsSubset_WFS(wpsUrl,featureids,layerId);
+
+    if(me.featuresSelectedLayer){
+      var info=[];
+      var html = '<div>'
+      me.featuresSelectedLayer.getSource().forEachFeature(function(feature) {
+        var props = feature.getProperties();
+        console.log(props);
+        html += '<div>'
+        html += [feature.get('NOM_BASSIN'),feature.getId(),feature.get('serverUrl'),feature.get('workspaceLayer')].join(',');
+        html += '</div>'
+
+        layerId = feature.get('workspaceLayer');
+        featureids = feature.getId();
+        me._wpsSubset_WFS(wpsUrl,featureids,layerId);
+
+      });
+      html += '</div>'
+
+
+      document.getElementById('info').innerHTML = html;
+
+
+
+    }
+
   }
 
 
