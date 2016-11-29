@@ -7,12 +7,20 @@ class ProcessForm extends React.Component {
     selectedProcessInputs: React.PropTypes.array.isRequired,
     selectedProcessValues: React.PropTypes.object.isRequired,
     handleSelectedProcessValueChange: React.PropTypes.func.isRequired,
-    executeProcess: React.PropTypes.func.isRequired
+    executeProcess: React.PropTypes.func.isRequired,
+    wpsProvider: React.PropTypes.string.isRequired
   };
 
   handleChange = (event) => {
     let elem = event.target;
     this.props.handleSelectedProcessValueChange(elem.id, elem.value);
+  };
+
+  execute = () => {
+    let identifier = this.props.selectedProcess.identifier;
+    let provider = this.props.wpsProvider;
+    let values = this.props.selectedProcessValues;
+    this.props.executeProcess(provider, identifier, values);
   };
 
   render () {
@@ -32,7 +40,7 @@ class ProcessForm extends React.Component {
         }
         <FormGroup>
           <Col smOffset={2} sm={10}>
-            <ExecuteButton executeProcess={this.props.executeProcess} />
+            <ExecuteButton executeProcess={this.execute} />
           </Col>
         </FormGroup>
       </Form>

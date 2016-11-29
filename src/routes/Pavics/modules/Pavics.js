@@ -1,6 +1,19 @@
 import initialState from './../../../store/initialState';
 import * as constants from './../../../constants';
 function setSelectedProcess (process) {
+  // TODO remove the boilerplate when api provides the identifier
+  // TODO uplicated in ProcessesSelector to make executing easier
+  let processIdentifier;
+  if (process.identifier) {
+    processIdentifier = process.identifier;
+  } else {
+    let param = process.url.slice('process=');
+    let bits = param.split('=');
+    processIdentifier = bits.slice(-1)[0];
+  }
+  process = Object.assign(process, {
+    identifier: processIdentifier
+  });
   return {
     type: constants.WORKFLOW_CHOOSE_PROCESS,
     process: process
@@ -76,9 +89,17 @@ export function fetchProcesses (provider) {
       });
   };
 }
-export function executeProcess () {
+export function executeProcess (wpsProvider, process, inputValues) {
   return () => {
-    return fetch('/phoenix/execute')
+    console.log(inputValues);
+    let array = [];
+    for (let key in inputValues) {
+      if (inputValues.hasOwnProperty(key)) {
+        array.push(encodeURIComponent(key) + '=' + encodeURIComponent(inputValues[key]));
+      }
+    }
+    let string = array.join(';');
+    return fetch(`/phoenix/execute?wps=${wpsProvider}&process=${process}&inputs=${string}`)
       .then(response => {
         console.log('received:', response);
       })

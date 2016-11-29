@@ -20,6 +20,7 @@ class ProcessesSelector extends React.Component {
     return () => {
       this.props.chooseProcess(process);
       // TODO remove the boilerplate when api provides the identifier
+      // TODO duplicated in module/pavics to make executing easier
       let processIdentifier;
       if (process.identifier) {
         processIdentifier = process.identifier;

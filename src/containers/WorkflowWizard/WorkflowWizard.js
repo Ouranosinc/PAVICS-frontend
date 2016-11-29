@@ -11,7 +11,8 @@ class WorkflowWizard extends React.Component {
     selectedProcessInputs: React.PropTypes.array.isRequired,
     selectedProcessValues: React.PropTypes.object.isRequired,
     executeProcess: React.PropTypes.func.isRequired,
-    handleSelectedProcessValueChange: React.PropTypes.func.isRequired
+    handleSelectedProcessValueChange: React.PropTypes.func.isRequired,
+    wpsProvider: React.PropTypes.string.isRequired
   }
 
   makeSection () {
@@ -43,7 +44,8 @@ class WorkflowWizard extends React.Component {
                         handleSelectedProcessValueChange={this.props.handleSelectedProcessValueChange}
                         selectedProcess={this.props.selectedProcess}
                         selectedProcessInputs={this.props.selectedProcessInputs}
-                        selectedProcessValues={this.props.selectedProcessValues} />
+                        selectedProcessValues={this.props.selectedProcessValues}
+                        wpsProvider={this.props.wpsProvider} />
                   }
                 </Panel>
               </Col>
