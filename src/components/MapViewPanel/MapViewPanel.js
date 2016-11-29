@@ -720,49 +720,9 @@ class MapViewerPanel extends React.Component {
 
   }
 
-  _dummyWfs(){
-    var url = 'http://132.217.140.48:8080/geoserver/ows';
-    var method = 'POST';
 
-    var postData =
-      '<wfs:GetFeature\n'
-      + '  service="WFS"\n'
-      + '  version="1.0.0"\n'
-      + '  outputFormat="GML2"\n'
-      + '  xmlns:topp="http://www.openplans.org/topp"\n'
-      + '  xmlns:wfs="http://www.opengis.net/wfs"\n'
-      + '  xmlns:ogc="http://www.opengis.net/ogc"\n'
-      + '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n'
-      + '  xsi:schemaLocation="http://www.opengis.net/wfs\n'
-      + '  http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd">\n'
-      + '  <wfs:Query typeName="WATERSHEDS:BV_N1_S">\n'
-      + '    <ogc:Filter>\n'
-      + '      <ogc:FeatureId fid="BV_N1_S.483"/>\n'
-      + '    </ogc:Filter>\n'
-      + '    </wfs:Query>\n'
-      + '</wfs:GetFeature>\n';
 
-    fetch(url,{
-      method: method,
-      mode: 'cors',
-      redirect: 'follow',
-      headers: new Headers({
-        'Content-Type': 'text/xml'
-      }),
-      body:postData
-    }).then(function(response) {
-      return response.text();
-    }).then(function(text) {
-
-      var parseString = require('xml2js').parseString;
-      parseString(text, function (err, result) {
-        console.dir(result);
-      });
-
-    });
-  }
-
-  _wpsSubset_WFS(wpsUrl,featureids, layerId)8443
+  _wpsSubset_WFS(wpsUrl,featureids, layerId)
     {
       var method = 'POST';
       var postData =
