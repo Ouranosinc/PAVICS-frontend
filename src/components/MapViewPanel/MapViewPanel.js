@@ -762,7 +762,7 @@ class MapViewerPanel extends React.Component {
     });
   }
 
-  _wpsSubset_WFS(wpsUrl,featureids, layerId)
+  _wpsSubset_WFS(wpsUrl,featureids, layerId)8443
     {
       var method = 'POST';
       var postData =
@@ -831,6 +831,7 @@ class MapViewerPanel extends React.Component {
   _loadPr(){
     console.log('_loadPr');
     me._loadFromCatalog(me._getLayersCatalog(), "pr", me._loadFromGenericWms);
+    me._addLayerFromCatalog(me._getLayersCatalog(), "pr", true, 1.0, me.getMapOverlayList(),10,0);
 
   }
 
