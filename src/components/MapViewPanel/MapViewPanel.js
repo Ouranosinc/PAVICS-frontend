@@ -2,6 +2,8 @@
  * Created by beaulima on 16-10-20.
  */
 
+
+
 var GEOSERVER48_ROUTE = 'http://132.217.140.48:8080/geoserver';
 var NCWMS31_ROUTE = 'http://132.217.140.31:8083/thredds';
 var NASA_DISC1 = 'http://disc1.gsfc.nasa.gov/daac-bin/wms_airs'
@@ -11,10 +13,17 @@ import React from 'react'
 import classes from './MapViewPanel.scss'
 import ol from 'openlayers';
 window.ol = ol; //_ol3-layerswitcher.js needs ol as global (...)
+
 require('ol3-layerswitcher/src/ol3-layerswitcher.js');
 require("openlayers/css/ol.css");
 require("ol3-layerswitcher/src/ol3-layerswitcher.css");
+
 require('jquery');
+//require('./wpsclients.js')
+
+/*require('./wps-js/js/deps.wps-js.js');
+require('./wps-js/js/wps-js-all');*/
+
 //Couldn't figure out the bug when importing inner component css file but it works from node_modules
 
 var MapViewToolbar = require('../MapViewToolbar/MapViewToolbar');
@@ -588,20 +597,23 @@ class MapViewerPanel extends React.Component {
     });
   }
 
-  _getThreddsWmsCapabilities2(serverUrl, callback){
+  _getThreddsWmsCapabilities2(serverUrl, getWmsCapabilitiesFunc, callback){
     var parser = new ol.format.WMSCapabilities();
-    console.log(me._getThreddsWmsCapabilities(serverUrl));
-    fetch(me._getThreddsWmsCapabilities(serverUrl)).then(function(response) {
+    console.log(getWmsCapabilitiesFunc(serverUrl));
+    fetch(getWmsCapabilitiesFunc(serverUrl)).then(function(response) {
       return response.text();
     }).then(function(text) {
       var result = parser.read(text);
       var layers = result.Capability.Layer.Layer;
       for (var i = 0, len = layers.length; i < len; i++) {
-        var layerData = layers[i];
-        layerData.serverUrl=serverUrl;
-        layerData.selectable=false;
-        me.layersCatalog.push({'layerData':layerData, 'serverUrl':serverUrl, 'layerObj':null})
-        console.log(layerData['Title'])
+        var layerData0 = layers[i].Layer;
+        for (var i = 0, len = layerData0.length; i < len; i++) {
+          var layerData = layerData0[i];
+          layerData.serverUrl = serverUrl;
+          layerData.selectable = false;
+          me.layersCatalog.push({'layerData': layerData, 'serverUrl': serverUrl, 'layerObj': null})
+          console.log(layerData['Name'])
+        }
       }
       if(callback!=null) callback()
     });
@@ -671,10 +683,10 @@ class MapViewerPanel extends React.Component {
     me._loadFromCatalog(me._getLayersCatalog(), "opengeo:countries", me._loadFromGeoserverWms);
 
     me._addLayerFromCatalog(me._getLayersCatalog(), "WATERSHEDS:BV_N1_S", true, 0.50, me.getWatershedLayerList(),1,1);
-    me._addLayerFromCatalog(me._getLayersCatalog(), "WATERSHEDS:BV_N2_S", true, 0.50, me.getWatershedLayerList(),1,1);
-    me._addLayerFromCatalog(me._getLayersCatalog(), "WATERSHEDS:BV_N3_S", true, 0.50, me.getWatershedLayerList(),0,1);
-    me._addLayerFromCatalog(me._getLayersCatalog(), "ADMINBOUNDARIES:canada_admin_boundaries", true, 1.0, me.getWatershedLayerList(),0,1);
-    me._addLayerFromCatalog(me._getLayersCatalog(), "opengeo:countries", true, 1.0, me.getWatershedLayerList(),0,1);
+    //me._addLayerFromCatalog(me._getLayersCatalog(), "WATERSHEDS:BV_N2_S", true, 0.50, me.getWatershedLayerList(),1,1);
+    //me._addLayerFromCatalog(me._getLayersCatalog(), "WATERSHEDS:BV_N3_S", true, 0.50, me.getWatershedLayerList(),0,1);
+    me._addLayerFromCatalog(me._getLayersCatalog(), "ADMINBOUNDARIES:canada_admin_boundaries", true, 1.0, me.getWatershedLayerList(),0,0);
+    me._addLayerFromCatalog(me._getLayersCatalog(), "opengeo:countries", true, 1.0, me.getWatershedLayerList(),0,0);
   }
 
   _loadNCWMSSpecificLayers() {
@@ -694,15 +706,17 @@ class MapViewerPanel extends React.Component {
 
   componentDidMount(){
 
+
+
     me._addLayerGroup('baseLayers','Base maps', 1.0, true, 0);
-    me._addLayerGroup('nasaAirCO2','AIRS CO2', 1.0, true, 1);
+    //me._addLayerGroup('nasaAirCO2','AIRS CO2', 1.0, true, 1);
     me._addLayerGroup('overlayLayers','Overlays', 1.0, true, 1);
     me._addLayerGroup('watershedsLayers','Watersheds', 1.0, true, 3);
 
 
 
     me._getWmsCapabilities2(GEOSERVER48_ROUTE, me._getWmsCapabilitiesRequest, me._loadGEOSERVER48SpecificLayers);
-    me._getWmsCapabilities2(NASA_DISC1, me._getWmsCapabilitiesRequest2, me._loadNasaSpecificLayers);
+    //me._getWmsCapabilities2(NASA_DISC1, me._getWmsCapabilitiesRequest2, me._loadNasaSpecificLayers);
     //me._getWmsCapabilities2(NCWMS31_ROUTE, me._loadGEOSERVER48SpecificLayer);
 
     //me._getThreddsWmsCapabilities2(NCWMS31_ROUTE ,me._loadNWSSpecificLayer)
@@ -739,9 +753,131 @@ class MapViewerPanel extends React.Component {
 
   _doChangeBaseLayer(){
 
-
-
   }
+
+  _dummyWfs(){
+    var url = 'http://132.217.140.48:8080/geoserver/ows';
+    var method = 'POST';
+
+    var postData =
+      '<wfs:GetFeature\n'
+      + '  service="WFS"\n'
+      + '  version="1.0.0"\n'
+      + '  outputFormat="GML2"\n'
+      + '  xmlns:topp="http://www.openplans.org/topp"\n'
+      + '  xmlns:wfs="http://www.opengis.net/wfs"\n'
+      + '  xmlns:ogc="http://www.opengis.net/ogc"\n'
+      + '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n'
+      + '  xsi:schemaLocation="http://www.opengis.net/wfs\n'
+      + '  http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd">\n'
+      + '  <wfs:Query typeName="WATERSHEDS:BV_N1_S">\n'
+      + '    <ogc:Filter>\n'
+      + '      <ogc:FeatureId fid="BV_N1_S.483"/>\n'
+      + '    </ogc:Filter>\n'
+      + '    </wfs:Query>\n'
+      + '</wfs:GetFeature>\n';
+
+    fetch(url,{
+      method: method,
+      mode: 'cors',
+      redirect: 'follow',
+      headers: new Headers({
+        'Content-Type': 'text/xml'
+      }),
+      body:postData
+    }).then(function(response) {
+      return response.text();
+    }).then(function(text) {
+
+
+      var parseString = require('xml2js').parseString;
+      parseString(text, function (err, result) {
+        console.dir(result);
+      });
+
+
+      var g = 0;
+    });
+  }
+
+  _wpsSubset_WFS(wpsUrl,featureids, layerId)
+    {
+      var method = 'POST';
+
+      var postData =
+        '<wps:Execute service="WPS" version="1.0.0"\n'
+        + '            xmlns:wps="http://www.opengis.net/wps/1.0.0"\n'
+        + '            xmlns:ows="http://www.opengis.net/ows/1.1"\n'
+        + '            xmlns:xlink="http://www.w3.org/1999/xlink"\n'
+        + '            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"           xsi:schemaLocation="http://www.opengis.net/wps/1.0.0              http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd">\n'
+        + ' <ows:Identifier>subset_WFS</ows:Identifier>\n'
+        + ' <wps:DataInputs>\n'
+        + '  <wps:Input>\n'
+        + '    <ows:Identifier>resource</ows:Identifier>\n'
+        + '                <wps:Reference mimeType="application/x-netcdf"           xlink:href="http://132.217.140.31:8083/thredds/fileServer/birdhouse/CMIP5/CCCMA/CanESM2/historical/mon/atmos/r1i1p1/pr/pr_Amon_CanESM2_historical_r1i1p1_185001-200512.nc"/>\n'
+        + '              </wps:Input>\n'
+        + '             <wps:Input>\n'
+        + '                <ows:Identifier>featureids</ows:Identifier>\n'
+        + '                <wps:Data>\n'
+        + '                  <wps:LiteralData>'+featureids+'</wps:LiteralData>\n'
+        + '                </wps:Data>\n'
+        + '              </wps:Input>\n'
+        + '              <wps:Input>\n'
+        + '               <ows:Identifier>typename</ows:Identifier>\n'
+        + '                <wps:Data>\n'
+        + '                  <wps:LiteralData>'+layerId+'</wps:LiteralData>\n'
+        + '                </wps:Data>\n'
+        + '             </wps:Input>\n'
+        + '           </wps:DataInputs>\n'
+        + '           <wps:ResponseForm>\n'
+        + '             <wps:ResponseDocument storeExecuteResponse="false"           lineage="false" status="false">\n'
+        + '               <wps:Output          asReference="true" mimeType="application/x-netcdf">\n'
+        + '                  <ows:Identifier>ncout</ows:Identifier>\n'
+        + '                </wps:Output>\n'
+        + '              </wps:ResponseDocument>\n'
+        + '           </wps:ResponseForm>\n'
+        + '          </wps:Execute>\n'
+
+      fetch(wpsUrl, {
+        method: method,
+        mode: 'cors',
+        redirect: 'follow',
+        headers: new Headers({
+          'Content-Type': 'text/xml'
+        }),
+        body: postData
+      }).then(function (response) {
+        return response.text();
+      }).then(function (text) {
+          var parseString = require('xml2js').parseString;
+          parseString(text, function (err, result) {
+          var href = result['wps:ExecuteResponse']['wps:ProcessOutputs'][0]['wps:Output'][0]['wps:Reference'][0]['$'].href;
+
+          console.dir(href);
+
+            var hrefWmsRefGetCapabilities = href.replace('http://localhost:8090/wpsoutputs/flyingpigeon', 'http://132.217.140.52:8083/thredds/wms/birdhouse/flyingpigeon')
+              +'?service=WMS&version=1.3.0&request=GetCapabilities';
+            console.dir(hrefWmsRefGetCapabilities);
+
+            var hrefWmsRef = href.replace('http://localhost:8090/wpsoutputs/flyingpigeon', 'http://132.217.140.52:8083/thredds/wms/birdhouse/flyingpigeon');
+            console.dir(hrefWmsRefGetCapabilities);
+
+
+            me._getThreddsWmsCapabilities2(hrefWmsRef ,me._getWmsCapabilitiesRequest2, null);
+
+        });
+      });
+    }
+
+  _doWpsLayer(){
+    console.log('_doWpsLayer');
+    var featureids='states.11';
+    var layerId='usa:states';
+    var wpsUrl = 'http://132.217.140.52:8093/wps';
+    me._wpsSubset_WFS(wpsUrl,featureids,layerId);
+  }
+
+
 
   _handleToolbarClick(newState) {
 
@@ -759,6 +895,9 @@ class MapViewerPanel extends React.Component {
       case 'zoom-full-extend-id':me._doZoomMaxExtent();break;
       case 'select-id': me._doSelection();break;
       case 'select-baselayer-id' : me._doChangeBaseLayer(); break;
+      case 'wps-id' : me._doWpsLayer(); break;
+
+
       }
   }
 

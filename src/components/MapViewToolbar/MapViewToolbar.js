@@ -17,6 +17,7 @@ import ZoomOutImg from './assets/mActionZoomOut.png';
 import ZoomToSelectedImg from './assets/mActionZoomToSelected.png';
 import ZoomFullExtentImg from './assets/mActionZoomFullExtent.png';
 import SelectImg  from './assets/mActionSelect.png';
+import WPSExecImg  from './assets/mActionExWpsLayer.png';
 
 class MapViewToolbar extends React.Component{
   constructor(props) {
@@ -46,12 +47,19 @@ class MapViewToolbar extends React.Component{
           <Button id="zoom-full-extend-id" onClick={this.handleClick.bind(this,"zoom-full-extend-id")}>
             <Image src={ZoomFullExtentImg} responsive></Image>
           </Button>
+
+          <Button id="wps-id" onClick={this.handleClick.bind(this,"wps-id")}>
+            <Image src={WPSExecImg} responsive></Image>
+          </Button>
+
         </ButtonGroup>
 
         <ButtonGroup>
           <Button id="select-id" onClick={this.handleClick.bind(this,"select-id")} active={this.state.toolId === "select-id"} >
             <Image src={SelectImg} responsive></Image>
           </Button>
+
+
         </ButtonGroup>
 
 

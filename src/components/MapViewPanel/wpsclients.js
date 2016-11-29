@@ -1,3 +1,7 @@
+/**
+ * Created by beaulima on 16-11-28.
+ */
+
 // JSONIX overrides
 WCS_1_1.defaultElementNamespaceURI = 'http:\/\/www.opengis.net\/wcs\/1.1.1';
 // end of JSONIX overrides
