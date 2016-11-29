@@ -5,6 +5,8 @@
 
 
 var GEOSERVER48_ROUTE = 'http://outarde.crim.ca:8095/geoserver';
+var WPS_ROUTE = 'http://outarde.crim.ca:8093/wps';
+var OUTARDE_SERVER = 'http://outarde.crim.ca';
 var NCWMS31_ROUTE = 'http://outarde.crim.ca:8083/thredds';
 var NASA_DISC1 = 'http://disc1.gsfc.nasa.gov/daac-bin/wms_airs'
 
@@ -720,9 +722,7 @@ class MapViewerPanel extends React.Component {
 
   }
 
-  
-
-  _wpsSubset_WFS(wpsUrl,featureids, layerId)
+  _wpsSubset_WFS(wpsUrl, featureids, layerId)
     {
       var method = 'POST';
       var postData =
@@ -776,11 +776,11 @@ class MapViewerPanel extends React.Component {
           var href = result['wps:ExecuteResponse']['wps:ProcessOutputs'][0]['wps:Output'][0]['wps:Reference'][0]['$'].href;
           console.dir(href);
 
-            var hrefWmsRefGetCapabilities = href.replace('http://localhost:8090/wpsoutputs/flyingpigeon', 'http://132.217.140.52:8083/thredds/wms/birdhouse/flyingpigeon')
+            var hrefWmsRefGetCapabilities = href.replace(OUTARDE_SERVER+':8090/wpsoutputs/flyingpigeon', OUTARDE_SERVER+':8083/thredds/wms/birdhouse/flyingpigeon')
               +'?service=WMS&version=1.3.0&request=GetCapabilities';
             console.dir(hrefWmsRefGetCapabilities);
 
-            var hrefWmsRef = href.replace('http://localhost:8090/wpsoutputs/flyingpigeon', 'http://132.217.140.52:8083/thredds/wms/birdhouse/flyingpigeon');
+            var hrefWmsRef = href.replace(OUTARDE_SERVER+':8090/wpsoutputs/flyingpigeon', OUTARDE_SERVER+':8083/thredds/wms/birdhouse/flyingpigeon');
             console.dir(hrefWmsRefGetCapabilities);
 
             me._getThreddsWmsCapabilities2(hrefWmsRef ,me._getWmsCapabilitiesRequest2, "1.3.0", me._loadPr());
@@ -792,7 +792,6 @@ class MapViewerPanel extends React.Component {
     console.log('_loadPr');
     me._loadFromCatalog(me._getLayersCatalog(), "pr", me._loadFromGenericWms);
     me._addLayerFromCatalog(me._getLayersCatalog(), "pr", true, 1.0, me.getMapOverlayList(),10,0);
-
   }
 
   _loadFromCatalog(layersCatalog, workspaceLayerId, loadFunc){
@@ -800,7 +799,7 @@ class MapViewerPanel extends React.Component {
       var LayersCatalogData = layersCatalog[i];
       if(LayersCatalogData['layerData'].Name.indexOf(workspaceLayerId)!==-1) {
         var info = me._fromLayerDataGetWorkspace(LayersCatalogData);
-        var layer = loadFunc(LayersCatalogData['serverUrl'],workspaceLayerId, info['workspaceId'],false,1.0, "");
+        var layer = loadFunc(LayersCatalogData['serverUrl'],workspaceLayerId, info['workspaceId'],false,1.0, 'boxfill/rainbow');
         LayersCatalogData['layerObj'] = layer;
       }
     }
@@ -812,11 +811,16 @@ class MapViewerPanel extends React.Component {
       opacity:opacity,
       source: new ol.source.TileWMS({
         url:serverUrl,
-        params: {'FORMAT': 'image/png',
+        params: {
+          'FORMAT': 'image/png',
           tiled: true,
-          STYLES: 'default',
+          STYLES: style,
           LAYERS: layerName,
-          TRANSPARENT:'TRUE'
+          TRANSPARENT:'TRUE',
+          VERSION:'1.1.1',
+          WIDTH:'256',
+          HEIGHT:'256',
+          EPSG:'4326'
         }
       })
     });
@@ -825,9 +829,7 @@ class MapViewerPanel extends React.Component {
 
   _doWpsLayer(){
     console.log('_doWpsLayer');
-    var featureids='states.11';
-    var layerId='usa:states';
-    var wpsUrl = 'http://132.217.140.52:8093/wps';
+    var wpsUrl = WPS_ROUTE;
 
     if(me.featuresSelectedLayer){
       var info=[];
@@ -839,8 +841,8 @@ class MapViewerPanel extends React.Component {
         html += [feature.get('NOM_BASSIN'),feature.getId(),feature.get('serverUrl'),feature.get('workspaceLayer')].join(',');
         html += '</div>'
 
-        layerId = feature.get('workspaceLayer');
-        featureids = feature.getId();
+        var layerId = feature.get('workspaceLayer');
+        var featureids = feature.getId();
         me._wpsSubset_WFS(wpsUrl,featureids,layerId);
 
       });
