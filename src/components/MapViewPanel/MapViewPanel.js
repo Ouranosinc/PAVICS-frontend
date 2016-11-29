@@ -4,8 +4,8 @@
 
 
 
-var GEOSERVER48_ROUTE = 'http://132.217.140.48:8080/geoserver';
-var NCWMS31_ROUTE = 'http://132.217.140.31:8083/thredds';
+var GEOSERVER48_ROUTE = 'http://outarde.crim.ca:8095/geoserver';
+var NCWMS31_ROUTE = 'http://outarde.crim.ca:8083/thredds';
 var NASA_DISC1 = 'http://disc1.gsfc.nasa.gov/daac-bin/wms_airs'
 
 import React from 'react'
@@ -19,10 +19,6 @@ require("openlayers/css/ol.css");
 require("ol3-layerswitcher/src/ol3-layerswitcher.css");
 
 require('jquery');
-//require('./wpsclients.js')
-
-/*require('./wps-js/js/deps.wps-js.js');
-require('./wps-js/js/wps-js-all');*/
 
 //Couldn't figure out the bug when importing inner component css file but it works from node_modules
 
@@ -284,23 +280,7 @@ class MapViewerPanel extends React.Component {
   }
 
 
-  _loadFromGenericWms(serverUrl, layerName, layerName2, visible, opacity, style){
-    var tiled = new ol.layer.Tile({
-      visible: visible,
-      opacity:opacity,
-      source: new ol.source.TileWMS({
-        url:serverUrl,
-        params: {'FORMAT': 'image/png',
-          tiled: true,
-          STYLES: style='default',
-          LAYERS: layerName,
-          TRANSPARENT:'TRUE',
-          time:'2002-11-01'
-        }
-      })
-    });
-    return  tiled
-  }
+
 
   _presentFeatures(){
 
@@ -563,8 +543,8 @@ class MapViewerPanel extends React.Component {
     return [serverUrl,'wms?request=GetCapabilities'].join('/');
   }
 
-  _getWmsCapabilitiesRequest2(serverUrl){
-    return [serverUrl,'?service=WMS&VERSION=1.1.1&REQUEST=GetCapabilities'].join('/');
+  _getWmsCapabilitiesRequest2(serverUrl, version){
+    return [serverUrl,'?service=WMS&VERSION='+version+'&REQUEST=GetCapabilities'].join('/');
   }
 
   _getThreddsWmsCapabilities(serverUrl){
@@ -578,10 +558,10 @@ class MapViewerPanel extends React.Component {
     return {'workspaceId':r1[0], 'layerId':r1[1]};
   }
 
-  _getWmsCapabilities2(serverUrl, getWmsCapabilitiesFunc, callback){
+  _getWmsCapabilities2(serverUrl, getWmsCapabilitiesFunc, version, callback){
     var parser = new ol.format.WMSCapabilities();
-    console.log(getWmsCapabilitiesFunc(serverUrl));
-    fetch(getWmsCapabilitiesFunc(serverUrl)).then(function(response) {
+    console.log(getWmsCapabilitiesFunc(serverUrl,version));
+    fetch(getWmsCapabilitiesFunc(serverUrl,version)).then(function(response) {
       return response.text();
     }).then(function(text) {
       var result = parser.read(text);
@@ -597,10 +577,10 @@ class MapViewerPanel extends React.Component {
     });
   }
 
-  _getThreddsWmsCapabilities2(serverUrl, getWmsCapabilitiesFunc, callback){
+  _getThreddsWmsCapabilities2(serverUrl, getWmsCapabilitiesFunc, version, callback){
     var parser = new ol.format.WMSCapabilities();
-    console.log(getWmsCapabilitiesFunc(serverUrl));
-    fetch(getWmsCapabilitiesFunc(serverUrl)).then(function(response) {
+    console.log(getWmsCapabilitiesFunc(serverUrl,version));
+    fetch(getWmsCapabilitiesFunc(serverUrl,version)).then(function(response) {
       return response.text();
     }).then(function(text) {
       var result = parser.read(text);
@@ -619,16 +599,7 @@ class MapViewerPanel extends React.Component {
     });
   }
 
-  _loadFromCatalog(layersCatalog, workspaceLayerId, loadFunc){
-    for (var i = 0, len = layersCatalog.length; i < len; i++) {
-      var LayersCatalogData = layersCatalog[i];
-      if(LayersCatalogData['layerData'].Name.indexOf(workspaceLayerId)!==-1) {
-        var info = me._fromLayerDataGetWorkspace(LayersCatalogData);
-        var layer = loadFunc(LayersCatalogData['serverUrl'],workspaceLayerId, info['workspaceId'],false,1.0, "");
-        LayersCatalogData['layerObj'] = layer;
-      }
-    }
-  }
+
 
   _applyFilter(layerObj, filterType, filter){
 
@@ -706,19 +677,13 @@ class MapViewerPanel extends React.Component {
 
   componentDidMount(){
 
-
-
     me._addLayerGroup('baseLayers','Base maps', 1.0, true, 0);
     //me._addLayerGroup('nasaAirCO2','AIRS CO2', 1.0, true, 1);
     me._addLayerGroup('overlayLayers','Overlays', 1.0, true, 1);
     me._addLayerGroup('watershedsLayers','Watersheds', 1.0, true, 3);
-
-
-
-    me._getWmsCapabilities2(GEOSERVER48_ROUTE, me._getWmsCapabilitiesRequest, me._loadGEOSERVER48SpecificLayers);
-    //me._getWmsCapabilities2(NASA_DISC1, me._getWmsCapabilitiesRequest2, me._loadNasaSpecificLayers);
-    //me._getWmsCapabilities2(NCWMS31_ROUTE, me._loadGEOSERVER48SpecificLayer);
-
+    me._getWmsCapabilities2(GEOSERVER48_ROUTE, me._getWmsCapabilitiesRequest, "1.1.1", me._loadGEOSERVER48SpecificLayers);
+    //me._getWmsCapabilities2(NASA_DISC1, me._getWmsCapabilitiesRequest2, "1.1.1", me._loadNasaSpecificLayers);
+    //me._getWmsCapabilities2(NCWMS31_ROUTE, "1.1.1", me._loadGEOSERVER48SpecificLayer);
     //me._getThreddsWmsCapabilities2(NCWMS31_ROUTE ,me._loadNWSSpecificLayer)
     me.initBackgroundLayer();
     me.initMap();
@@ -789,25 +754,17 @@ class MapViewerPanel extends React.Component {
       return response.text();
     }).then(function(text) {
 
-
       var parseString = require('xml2js').parseString;
       parseString(text, function (err, result) {
         console.dir(result);
       });
 
-
-      var g = 0;
     });
   }
 
   _wpsSubset_WFS(wpsUrl,featureids, layerId)
     {
-
-
-
-
       var method = 'POST';
-
       var postData =
         '<wps:Execute service="WPS" version="1.0.0"\n'
         + '            xmlns:wps="http://www.opengis.net/wps/1.0.0"\n'
@@ -852,7 +809,8 @@ class MapViewerPanel extends React.Component {
         body: postData
       }).then(function (response) {
         return response.text();
-      }).then(function (text) {
+      }).then(function (text)
+      {
           var parseString = require('xml2js').parseString;
           parseString(text, function (err, result) {
           var href = result['wps:ExecuteResponse']['wps:ProcessOutputs'][0]['wps:Output'][0]['wps:Reference'][0]['$'].href;
@@ -865,11 +823,44 @@ class MapViewerPanel extends React.Component {
             var hrefWmsRef = href.replace('http://localhost:8090/wpsoutputs/flyingpigeon', 'http://132.217.140.52:8083/thredds/wms/birdhouse/flyingpigeon');
             console.dir(hrefWmsRefGetCapabilities);
 
-            me._getThreddsWmsCapabilities2(hrefWmsRef ,me._getWmsCapabilitiesRequest2, null);
-
+            me._getThreddsWmsCapabilities2(hrefWmsRef ,me._getWmsCapabilitiesRequest2, "1.3.0", me._loadPr());
         });
       });
     }
+
+  _loadPr(){
+    console.log('_loadPr');
+    me._loadFromCatalog(me._getLayersCatalog(), "pr", me._loadFromGenericWms);
+
+  }
+
+  _loadFromCatalog(layersCatalog, workspaceLayerId, loadFunc){
+    for (var i = 0, len = layersCatalog.length; i < len; i++) {
+      var LayersCatalogData = layersCatalog[i];
+      if(LayersCatalogData['layerData'].Name.indexOf(workspaceLayerId)!==-1) {
+        var info = me._fromLayerDataGetWorkspace(LayersCatalogData);
+        var layer = loadFunc(LayersCatalogData['serverUrl'],workspaceLayerId, info['workspaceId'],false,1.0, "");
+        LayersCatalogData['layerObj'] = layer;
+      }
+    }
+  }
+
+  _loadFromGenericWms(serverUrl, layerName, layerName2, visible, opacity, style){
+    var tiled = new ol.layer.Tile({
+      visible: visible,
+      opacity:opacity,
+      source: new ol.source.TileWMS({
+        url:serverUrl,
+        params: {'FORMAT': 'image/png',
+          tiled: true,
+          STYLES: 'default',
+          LAYERS: layerName,
+          TRANSPARENT:'TRUE'
+        }
+      })
+    });
+    return  tiled
+  }
 
   _doWpsLayer(){
     console.log('_doWpsLayer');
@@ -893,17 +884,9 @@ class MapViewerPanel extends React.Component {
 
       });
       html += '</div>'
-
-
       document.getElementById('info').innerHTML = html;
-
-
-
     }
-
   }
-
-
 
   _handleToolbarClick(newState) {
 
