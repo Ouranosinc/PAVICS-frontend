@@ -11,6 +11,9 @@ const initialState = {
       selectedProvider: null
     }
   },
+  platform: {
+    section: constants.PLATFORM_SECTION_WORKFLOWS
+  },
   currentSelectedKey: constants.DEFAULT_SELECTED_KEY,
   currentSelectedValue: '',
   currentOpenedDataset: '',

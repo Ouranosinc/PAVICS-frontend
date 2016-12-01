@@ -1,6 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {WorkflowWizard} from './../../../containers';
+import Header from './../../../components/Header';
 import {
   chooseProcess,
   executeProcess,
@@ -8,14 +9,35 @@ import {
   selectWpsProvider,
   fetchProcessInputs,
   handleSelectedProcessValueChange,
-  fetchProviders
+  fetchProviders,
+  goToSection,
+  chooseStep
 } from './../modules/Pavics';
+import * as constants from './../../../constants';
 class Pavics extends React.Component {
+  static propTypes = {
+    platform: React.PropTypes.object.isRequired
+  };
+  makeSection () {
+    switch (this.props.platform.section) {
+      case constants.PLATFORM_SECTION_WORKFLOWS:
+        return (
+          <WorkflowWizard {...this.props} />
+        );
+      case constants.PLATFORM_SECTION_MONITOR:
+        return (
+          <div>
+            monitor
+          </div>
+        );
+    }
+  }
   render () {
     return (
-      <WorkflowWizard
-        {...this.props}
-      />
+      <div>
+        <Header {...this.props} />
+        {this.makeSection()}
+      </div>
     );
   }
 }
@@ -26,7 +48,9 @@ const mapActionCreators = {
   fetchProviders,
   selectWpsProvider,
   fetchProcessInputs,
-  handleSelectedProcessValueChange
+  handleSelectedProcessValueChange,
+  goToSection,
+  chooseStep
 };
 const mapStateToProps = (state) => {
   return {
@@ -35,7 +59,8 @@ const mapStateToProps = (state) => {
     selectedProcess: state.pavics.workflowWizard.selectedProcess,
     selectedProcessInputs: state.pavics.workflowWizard.selectedProcessInputs,
     selectedProcessValues: state.pavics.workflowWizard.selectedProcessValues,
-    providers: state.pavics.workflowWizard.providers
+    providers: state.pavics.workflowWizard.providers,
+    platform: state.pavics.platform
   };
 };
 export default connect(mapStateToProps, mapActionCreators)(Pavics);

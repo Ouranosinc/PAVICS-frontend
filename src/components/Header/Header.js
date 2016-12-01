@@ -1,15 +1,27 @@
 import React from 'react';
 import { Grid, Row, Col, Nav, NavItem } from 'react-bootstrap';
+import * as constants from './../../constants';
 class Header extends React.Component {
+  static propTypes = {
+    goToSection: React.PropTypes.func.isRequired,
+    chooseStep: React.PropTypes.func.isRequired
+  };
+  monitor = () => {
+    this.props.goToSection(constants.PLATFORM_SECTION_MONITOR);
+  };
+  workflows = () => {
+    this.props.chooseStep(constants.WORKFLOW_STEP_PROCESS);
+    this.props.goToSection(constants.PLATFORM_SECTION_WORKFLOWS);
+  };
   render () {
     return (
       <Grid>
         <Row className="schow-grid">
           <Col md={4} mdOffset={4}>
             <Nav bsStyle="pills" justified>
-              <NavItem href="/">Workflow Wizard</NavItem>
+              <NavItem onClick={this.workflows}>Workflow Wizard</NavItem>
               <NavItem href="/visualize">Visualize</NavItem>
-              <NavItem href="/workboard">Workboard</NavItem>
+              <NavItem onClick={this.monitor}>Workboard</NavItem>
             </Nav>
           </Col>
         </Row>

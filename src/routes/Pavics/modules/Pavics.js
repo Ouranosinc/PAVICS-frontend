@@ -19,12 +19,6 @@ function setSelectedProcess (process) {
     process: process
   };
 }
-function chooseStep (step) {
-  return {
-    type: constants.WORKFLOW_CHANGE_STEP,
-    step: step
-  };
-}
 function setProcesses (processes) {
   return {
     type: constants.WORKFLOW_SET_PROCESSES,
@@ -58,6 +52,21 @@ function setSelectedProcessValues (key, value) {
     key: key,
     value: value
   };
+}
+function setSection (section) {
+  return {
+    type: constants.PLATFORM_SET_SECTION,
+    section: section
+  };
+}
+export function chooseStep (step) {
+  return {
+    type: constants.WORKFLOW_CHANGE_STEP,
+    step: step
+  };
+}
+export function goToSection (section) {
+  return dispatch => dispatch(setSection(section));
 }
 export function handleSelectedProcessValueChange (key, value) {
   return dispatch => {
@@ -127,65 +136,61 @@ export function executeProcess (provider, process, inputValues) {
       });
   };
 }
-export const ACTION_HANDLERS = {
+export const WORKFLOW_WIZARD_HANDLERS = {
   [constants.WORKFLOW_SET_WPS_PROVIDER]: (state, action) => {
     return Object.assign({}, state, {
-      workflowWizard: Object.assign({}, state.workflowWizard, {
-        providers: Object.assign({}, state.workflowWizard.providers, {
-          selectedProvider: action.provider
-        })
+      providers: Object.assign({}, state.providers, {
+        selectedProvider: action.provider
       })
     });
   },
   [constants.WORKFLOW_CHOOSE_PROCESS]: (state, action) => {
-    return Object.assign({}, state, {
-      workflowWizard: Object.assign({}, state.workflowWizard, {
-        selectedProcess: action.process
-      })
-    });
+    return {...state, selectedProcess: action.process};
   },
   [constants.WORKFLOW_SET_ACTIVE_PROCESS_INPUTS]: (state, action) => {
-    return Object.assign({}, state, {
-      workflowWizard: Object.assign({}, state.workflowWizard, {
-        selectedProcessInputs: action.inputs
-      })
-    });
+    return {...state, selectedProcessInputs: action.inputs};
   },
   [constants.WORKFLOW_SET_ACTIVE_PROCESS_VALUES]: (state, action) => {
     return Object.assign({}, state, {
-      workflowWizard: Object.assign({}, state.workflowWizard, {
-        selectedProcessValues: Object.assign({}, state.workflowWizard.selectedProcessValues, {
-          [action.key]: action.value
-        })
+      selectedProcessValues: Object.assign({}, state.selectedProcessValues, {
+        [action.key]: action.value
       })
     });
   },
   [constants.WORKFLOW_CHANGE_STEP]: (state, action) => {
-    return Object.assign({}, state, {
-      workflowWizard: Object.assign({}, state.workflowWizard, {
-        currentStep: action.step
-      })
-    });
+    return {...state, currentStep: action.step};
   },
   [constants.WORKFLOW_SET_PROCESSES]: (state, action) => {
-    return Object.assign({}, state, {
-      workflowWizard: Object.assign({}, state.workflowWizard, {
-        processes: action.processes
-      })
-    });
+    return {...state, processes: action.processes};
   },
   [constants.WORKFLOW_SET_PROVIDERS]: (state, action) => {
     return Object.assign({}, state, {
-      workflowWizard: Object.assign({}, state.workflowWizard, {
-        providers: Object.assign({}, state.workflowWizard.providers, {
-          items: action.items
-        })
-      })
+      providers: {...state.providers, items: action.items}
     });
   }
 };
-function pavicsReducer (state = initialState, action) {
-  const handler = ACTION_HANDLERS[action.type];
+
+const PLATFORM_HANDLERS = {
+  [constants.PLATFORM_SET_SECTION]: (state, action) => {
+    return {...state, section: action.section};
+  }
+};
+
+function workflowWizardReducer (state = initialState.workflowWizard, action) {
+  const handler = WORKFLOW_WIZARD_HANDLERS[action.type];
   return handler ? handler(state, action) : state;
 }
+
+function platformReducer (state = initialState.platform, action) {
+  const handler = PLATFORM_HANDLERS[action.type];
+  return handler ? handler(state, action) : state;
+}
+
+function pavicsReducer (state = initialState, action) {
+  return {
+    workflowWizard: workflowWizardReducer(state.workflowWizard, action),
+    platform: platformReducer(state.platform, action)
+  };
+}
+
 export default pavicsReducer;
