@@ -20,6 +20,17 @@ let phoenix = (() => {
           response = yield request(options);
           this.body = response.body;
           break;
+        case 'jobs' :
+          options = {
+            url: config.pavics_phoenix_path + '/monitor',
+            headers: {
+              Accept: 'application/json'
+            },
+            rejectUnauthorized: false
+          };
+          response = yield request(options);
+          this.body = response.body;
+          break;
         case 'processes' :
           options = {
             url: config.pavics_phoenix_path + '/processes',

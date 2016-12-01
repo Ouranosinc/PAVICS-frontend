@@ -19,6 +19,12 @@ function setSelectedProcess (process) {
     process: process
   };
 }
+function setJobs (jobs) {
+  return {
+    type: constants.MONITOR_SET_JOBS,
+    jobs: jobs
+  };
+}
 function setProcesses (processes) {
   return {
     type: constants.WORKFLOW_SET_PROCESSES,
@@ -95,6 +101,16 @@ export function chooseProcess (process) {
   return (dispatch) => {
     dispatch(setSelectedProcess(process));
     dispatch(chooseStep(constants.WORKFLOW_STEP_INPUTS));
+  };
+}
+export function fetchJobs () {
+  return (dispatch) => {
+    return fetch('/phoenix/jobs')
+      .then(response => response.json())
+      .then(json => dispatch(setJobs(json.jobs)))
+      .catch(err => {
+        console.log(err);
+      });
   };
 }
 export function fetchProcesses (provider) {
@@ -176,20 +192,32 @@ const PLATFORM_HANDLERS = {
   }
 };
 
-function workflowWizardReducer (state = initialState.workflowWizard, action) {
+const MONITOR_HANDLERS = {
+  [constants.MONITOR_SET_JOBS]: (state, action) => {
+    return {...state, jobs: action.jobs};
+  }
+};
+
+function workflowWizardReducer (state, action) {
   const handler = WORKFLOW_WIZARD_HANDLERS[action.type];
   return handler ? handler(state, action) : state;
 }
 
-function platformReducer (state = initialState.platform, action) {
+function platformReducer (state, action) {
   const handler = PLATFORM_HANDLERS[action.type];
+  return handler ? handler(state, action) : state;
+}
+
+function monitorReducer (state, action) {
+  const handler = MONITOR_HANDLERS[action.type];
   return handler ? handler(state, action) : state;
 }
 
 function pavicsReducer (state = initialState, action) {
   return {
     workflowWizard: workflowWizardReducer(state.workflowWizard, action),
-    platform: platformReducer(state.platform, action)
+    platform: platformReducer(state.platform, action),
+    monitor: monitorReducer(state.monitor, action)
   };
 }
 

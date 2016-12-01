@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {WorkflowWizard} from './../../../containers';
+import {WorkflowWizard, Monitor} from './../../../containers';
 import Header from './../../../components/Header';
 import {
   chooseProcess,
@@ -11,7 +11,8 @@ import {
   handleSelectedProcessValueChange,
   fetchProviders,
   goToSection,
-  chooseStep
+  chooseStep,
+  fetchJobs
 } from './../modules/Pavics';
 import * as constants from './../../../constants';
 class Pavics extends React.Component {
@@ -26,9 +27,7 @@ class Pavics extends React.Component {
         );
       case constants.PLATFORM_SECTION_MONITOR:
         return (
-          <div>
-            monitor
-          </div>
+          <Monitor {...this.props} />
         );
     }
   }
@@ -50,7 +49,8 @@ const mapActionCreators = {
   fetchProcessInputs,
   handleSelectedProcessValueChange,
   goToSection,
-  chooseStep
+  chooseStep,
+  fetchJobs
 };
 const mapStateToProps = (state) => {
   return {
@@ -60,7 +60,8 @@ const mapStateToProps = (state) => {
     selectedProcessInputs: state.pavics.workflowWizard.selectedProcessInputs,
     selectedProcessValues: state.pavics.workflowWizard.selectedProcessValues,
     providers: state.pavics.workflowWizard.providers,
-    platform: state.pavics.platform
+    platform: state.pavics.platform,
+    monitor: state.pavics.monitor
   };
 };
 export default connect(mapStateToProps, mapActionCreators)(Pavics);

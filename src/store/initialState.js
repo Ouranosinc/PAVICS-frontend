@@ -14,6 +14,9 @@ const initialState = {
   platform: {
     section: constants.PLATFORM_SECTION_WORKFLOWS
   },
+  monitor: {
+    jobs: []
+  },
   currentSelectedKey: constants.DEFAULT_SELECTED_KEY,
   currentSelectedValue: '',
   currentOpenedDataset: '',
