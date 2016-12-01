@@ -8,7 +8,7 @@ class ProcessForm extends React.Component {
     selectedProcessValues: React.PropTypes.object.isRequired,
     handleSelectedProcessValueChange: React.PropTypes.func.isRequired,
     executeProcess: React.PropTypes.func.isRequired,
-    wpsProvider: React.PropTypes.string.isRequired
+    selectedProvider: React.PropTypes.string.isRequired
   };
 
   handleChange = (event) => {
@@ -18,7 +18,7 @@ class ProcessForm extends React.Component {
 
   execute = () => {
     let identifier = this.props.selectedProcess.identifier;
-    let provider = this.props.wpsProvider;
+    let provider = this.props.selectedProvider;
     let values = this.props.selectedProcessValues;
     this.props.executeProcess(provider, identifier, values);
   };

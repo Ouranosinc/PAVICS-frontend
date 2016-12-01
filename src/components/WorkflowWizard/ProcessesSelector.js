@@ -6,14 +6,18 @@ class ProcessesSelector extends React.Component {
     chooseProcess: React.PropTypes.func.isRequired,
     executeProcess: React.PropTypes.func.isRequired,
     fetchProcesses: React.PropTypes.func.isRequired,
+    fetchProviders: React.PropTypes.func.isRequired,
     fetchProcessInputs: React.PropTypes.func.isRequired,
     selectWpsProvider: React.PropTypes.func.isRequired,
-    wpsProvider: React.PropTypes.string.isRequired
+    providers: React.PropTypes.object.isRequired
   }
 
   constructor (props) {
     super(props);
-    this.props.fetchProcesses(this.props.wpsProvider);
+    this.props.fetchProviders();
+    if (this.props.providers.selectedProvider) {
+      this.props.fetchProcesses(this.props.providers.selectedProvider);
+    }
   }
 
   makeChooseProcessCallback (process) {
@@ -29,21 +33,21 @@ class ProcessesSelector extends React.Component {
         let bits = param.split('=');
         processIdentifier = bits.slice(-1)[0];
       }
-      this.props.fetchProcessInputs(this.props.wpsProvider, processIdentifier);
+      this.props.fetchProcessInputs(this.props.providers.selectedProvider, processIdentifier);
     };
   }
 
   changeWPSprovider = (selectedKey) => {
-    this.props.selectWpsProvider(selectedKey);
+    this.props.selectWpsProvider(this.props.providers.items[selectedKey].identifier);
   };
 
   render () {
     return (
       <div>
         <Nav onSelect={this.changeWPSprovider}>
-          <NavItem eventKey="emu_">Emu2</NavItem>
-          <NavItem eventKey="flying">Flying</NavItem>
-          <NavItem eventKey="emu_external">Emu external</NavItem>
+          {
+            this.props.providers.items.map((provider, i) => <NavItem key={i} eventKey={i}>{provider.title}</NavItem>)
+          }
         </Nav>
         {this.props.processes.map((process, i) => {
           return (

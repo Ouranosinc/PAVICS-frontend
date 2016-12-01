@@ -31,6 +31,15 @@ function setProcesses (processes) {
     processes: processes
   };
 }
+function setProviders (providers) {
+  providers.map(provider => {
+    provider.identifier = provider.url.replace('/processes/list?wps=', '');
+  });
+  return {
+    type: constants.WORKFLOW_SET_PROVIDERS,
+    items: providers
+  };
+}
 function setWpsProvider (provider) {
   return {
     type: constants.WORKFLOW_SET_WPS_PROVIDER,
@@ -81,7 +90,7 @@ export function chooseProcess (process) {
 }
 export function fetchProcesses (provider) {
   return (dispatch) => {
-    return fetch(`/phoenix/processes?provider=${provider}`)
+    return fetch(`/phoenix/processesList?provider=${provider}`)
       .then(response => response.json())
       .then(json => dispatch(setProcesses(json.items)))
       .catch(err => {
@@ -89,7 +98,17 @@ export function fetchProcesses (provider) {
       });
   };
 }
-export function executeProcess (wpsProvider, process, inputValues) {
+export function fetchProviders () {
+  return (dispatch) => {
+    return fetch('/phoenix/processes')
+      .then(response => response.json())
+      .then(json => dispatch(setProviders(json.items)))
+      .catch(err => {
+        console.log(err);
+      });
+  };
+}
+export function executeProcess (provider, process, inputValues) {
   return () => {
     console.log(inputValues);
     let array = [];
@@ -99,7 +118,7 @@ export function executeProcess (wpsProvider, process, inputValues) {
       }
     }
     let string = array.join(';');
-    return fetch(`/phoenix/execute?wps=${wpsProvider}&process=${process}&inputs=${string}`)
+    return fetch(`/phoenix/execute?wps=${provider}&process=${process}&inputs=${string}`)
       .then(response => {
         console.log('received:', response);
       })
@@ -112,7 +131,9 @@ export const ACTION_HANDLERS = {
   [constants.WORKFLOW_SET_WPS_PROVIDER]: (state, action) => {
     return Object.assign({}, state, {
       workflowWizard: Object.assign({}, state.workflowWizard, {
-        wpsProvider: action.provider
+        providers: Object.assign({}, state.workflowWizard.providers, {
+          selectedProvider: action.provider
+        })
       })
     });
   },
@@ -150,6 +171,15 @@ export const ACTION_HANDLERS = {
     return Object.assign({}, state, {
       workflowWizard: Object.assign({}, state.workflowWizard, {
         processes: action.processes
+      })
+    });
+  },
+  [constants.WORKFLOW_SET_PROVIDERS]: (state, action) => {
+    return Object.assign({}, state, {
+      workflowWizard: Object.assign({}, state.workflowWizard, {
+        providers: Object.assign({}, state.workflowWizard.providers, {
+          items: action.items
+        })
       })
     });
   }

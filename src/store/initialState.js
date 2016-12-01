@@ -6,7 +6,10 @@ const initialState = {
     selectedProcessValues: {},
     currentStep: constants.WORKFLOW_STEP_PROCESS,
     processes: [],
-    wpsProvider: 'flying'
+    providers: {
+      items: [],
+      selectedProvider: null
+    }
   },
   currentSelectedKey: constants.DEFAULT_SELECTED_KEY,
   currentSelectedValue: '',
