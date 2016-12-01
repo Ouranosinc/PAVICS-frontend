@@ -5,13 +5,17 @@
 
 
 var GEOSERVER48_ROUTE = 'http://outarde.crim.ca:8095/geoserver';
+//GEOSERVER48_ROUTE = 'http://132.217.140.48:8080/geoserver';
 var WPS_ROUTE = 'http://outarde.crim.ca:8093/wps';
+//WPS_ROUTE = 'http://132.217.140.52:8093/wps';
 var OUTARDE_SERVER = 'http://outarde.crim.ca';
+//OUTARDE_SERVER = 'http://132.217.140.52';
 var NCWMS31_ROUTE = 'http://outarde.crim.ca:8083/thredds';
 var NASA_DISC1 = 'http://disc1.gsfc.nasa.gov/daac-bin/wms_airs'
+var NETCDF_DATA = 'http://132.217.140.31:8083/thredds/fileServer/birdhouse/CMIP5/CCCMA/CanESM2/historical/mon/atmos/r1i1p1/pr/pr_Amon_CanESM2_historical_r1i1p1_185001-200512.nc';
 
 import React from 'react'
-
+require('jquery');
 import classes from './MapViewPanel.scss'
 import ol from 'openlayers';
 window.ol = ol; //_ol3-layerswitcher.js needs ol as global (...)
@@ -20,7 +24,15 @@ require('ol3-layerswitcher/src/ol3-layerswitcher.js');
 require("openlayers/css/ol.css");
 require("ol3-layerswitcher/src/ol3-layerswitcher.css");
 
-require('jquery');
+
+function wait(ms){
+  var start = new Date().getTime();
+  var end = start;
+  while(end < start + ms) {
+    end = new Date().getTime();
+  }
+}
+
 
 //Couldn't figure out the bug when importing inner component css file but it works from node_modules
 
@@ -65,10 +77,10 @@ class MapViewerPanel extends React.Component {
     this.select= null;
     this.selectedFeatures= null;
     this.dragExtent=ol.extent.createEmpty();
+    this.wpsSubset_WFS_count = 0;
     me=this;
+
   }
-
-
 
   _addLayerGroup(id, title, opacity, visible, zIndex){
     me.layersGroup.push(me._createGroupLayer(id,title, opacity, visible, zIndex));
@@ -78,6 +90,15 @@ class MapViewerPanel extends React.Component {
     for(var k=0; k<me.layersGroup.length; k++){
       if(me.layersGroup[k]['id']===layerGroupId){
         return me.layersGroup[k]['layerGroup'];
+      }
+    }
+    return null;
+  }
+
+  _getLayersGroupList(layerGroupId){
+    for(var k=0; k<me.layersGroup.length; k++){
+      if(me.layersGroup[k]['id']===layerGroupId){
+        return me.layersGroup[k]['layerGroup'].getLayers();
       }
     }
     return null;
@@ -145,22 +166,22 @@ class MapViewerPanel extends React.Component {
 
   // Returns base layers list
   getMapBaseLayersList() {
-    return me._getLayersGroup('baseLayers').getLayers();
+    return me._getLayersGroupList('baseLayers');
   }
 
   // Returns overlay layers list
   getMapOverlayList() {
-    return me._getLayersGroup('overlayLayers').getLayers();
+    return me._getLayersGroupList('overlayLayers');
   }
 
   // Returns overlay layers list
   getWatershedLayerList() {
-    return me._getLayersGroup('watershedsLayers').getLayers();
+    return me._getLayersGroupList('watershedsLayers');
   }
 
   // Returns overlay layers list
   getNasaLayerList() {
-    return me._getLayersGroup('nasaAirCO2').getLayers();
+    return me._getLayersGroupList('nasaAirCO2');
   }
 
   // Add backgrounnd layer (use once)
@@ -252,6 +273,7 @@ class MapViewerPanel extends React.Component {
 
   addBingLayer(title, layersGroup, bingStyle,visible,opacity){
     layersGroup.push(new ol.layer.Tile({
+      title:title,
       visible:visible,
       opacity:opacity,
       preload: Infinity,
@@ -264,24 +286,6 @@ class MapViewerPanel extends React.Component {
       })
     }));
   }
-
-  _loadFromGeoserverWms(serverUrl, workspaceLayerName, workspaceName, visible, opacity,style){
-    var tiled = new ol.layer.Tile({
-      visible: visible,
-      opacity:opacity,
-      source: new ol.source.TileWMS({
-        url: [serverUrl,workspaceName,'wms'].join('/'),
-        params: {'FORMAT': 'image/png',
-          tiled: true,
-          STYLES: '',
-          LAYERS: workspaceLayerName
-        }
-      })
-    });
-    return  tiled
-  }
-
-
 
 
   _presentFeatures(){
@@ -369,7 +373,8 @@ class MapViewerPanel extends React.Component {
       // {'layerData':layerData, 'serverUrl':serverUrl, 'layerObj':null}
       var wmsLayerCatalogData = layersCatalog[k];
       if(wmsLayerCatalogData['layerObj']!=null) {
-        if(wmsLayerCatalogData['layerData'].selectable) {
+        var y = wmsLayerCatalogData['layerObj'].getVisible();
+        if(wmsLayerCatalogData['layerData'].selectable && wmsLayerCatalogData['layerObj'].getVisible() ) {
           var wfsUrl = me._getWfsRequest(wmsLayerCatalogData['serverUrl'], wmsLayerCatalogData['layerData'].Name, proj, me.dragExtent);
           var serverUrl = wmsLayerCatalogData['serverUrl'];
           var workapcelayerId = wmsLayerCatalogData['layerData'].Name;
@@ -387,113 +392,7 @@ class MapViewerPanel extends React.Component {
     }
   }
 
-  initMap() {
 
-    me.view = new ol.View({
-      center: [-8065301, 5787882],
-      zoom: 6
-    })
-
-    var mousePositionControl = new ol.control.MousePosition({
-      coordinateFormat: ol.coordinate.createStringXY(4),
-      projection: 'EPSG:4326',
-      // comment the following two lines to have the mouse position
-      // be placed within the map.
-      className: 'custom-mouse-position',
-      target: document.getElementById('mouse-position-id'),
-      undefinedHTML: '&nbsp;'
-    });
-
-    var projectionSelect = document.getElementById('projection');
-    projectionSelect.addEventListener('change', function(event) {
-      mousePositionControl.setProjection(ol.proj.get(event.target.value));
-    });
-
-    var layers=[];
-    for(var k=0; k<me.layersGroup.length; k++){
-      layers.push(me.layersGroup[k]['layerGroup'])
-    }
-    var map = new ol.Map({
-      controls: ol.control.defaults()
-      .extend([
-        mousePositionControl
-      ]),
-      layers:layers,
-      target: 'map',
-      renderer: 'canvas',
-      view: this.view
-    });
-
-    me.map = map;
-
-    me.select = new ol.interaction.Select();
-    me.map.addInteraction(me.select);
-
-    // a DragBox interaction used to select features by drawing boxes
-    me.dragBox = new ol.interaction.DragBox({
-      condition: ol.events.condition.platformModifierKeyOnly
-    });
-
-    map.getView().on('propertychange', function(e) {
-      switch (e.key) {
-        case 'resolution':
-          console.log(e.oldValue);
-          break;
-      }
-    });
-
-    me.map.on('singleclick', function(evt) {
-
-      if(me.state.toolId==='select-id') {
-        console.log('singleclick');
-        document.getElementById('info').innerHTML = "Loading... please wait...";
-        me.setState({clickCoordinate:evt.coordinate})
-        var tl = ol.coordinate.add(evt.coordinate, [-10e-6, -10e-6]);
-        var br = ol.coordinate.add(evt.coordinate, [10e-6, 10e-6]);
-
-        var minX;
-        var maxX;
-
-        if(tl[0] < br[0]){
-          minX=tl[0];
-          maxX=br[0];
-        }else{
-          minX=br[0];
-          maxX=tl[0];
-        }
-
-        var minY;
-        var maxY;
-
-        if(tl[1] < br[1]){
-          minY=tl[1];
-          maxY=br[1];
-        }else{
-          minY=br[1];
-          maxY=tl[1];
-        }
-
-        me.dragExtent = [minX, minY, maxX, maxY];
-        me._doFeatureSelection('select-id', me._getLayersCatalog());
-        //me._doFeatureSelection(GEOSERVER48_ROUTE, 'select-id', 'WATERSHEDS:BV_N1_S' );
-      }
-      else{
-        document.getElementById('info').innerHTML = <div></div>;
-      }
-    });
-
-    me.map.addInteraction(me.dragBox);
-    me.dragBox.on('boxend', function() {
-      me.dragExtent = me.dragBox.getGeometry().getExtent()
-      me._doDragExtentAction();
-      });
-
-   /* me.layerSwitcher = new ol.control.LayerSwitcher({
-      tipLabel: 'Legend' // Optional label for button
-    });
-    me.layerSwitcher.setMap(me.map);
-    me.map.addControl(me.layerSwitcher);*/
-  }
 
   /** Returns view resolution */
   getCurrentResolution() {
@@ -560,7 +459,7 @@ class MapViewerPanel extends React.Component {
     return {'workspaceId':r1[0], 'layerId':r1[1]};
   }
 
-  _getWmsCapabilities2(serverUrl, getWmsCapabilitiesFunc, version, callback){
+  _getWmsCapabilities2(serverUrl, getWmsCapabilitiesFunc, version, callback, options){
     var parser = new ol.format.WMSCapabilities();
     console.log(getWmsCapabilitiesFunc(serverUrl,version));
     fetch(getWmsCapabilitiesFunc(serverUrl,version)).then(function(response) {
@@ -579,7 +478,7 @@ class MapViewerPanel extends React.Component {
     });
   }
 
-  _getThreddsWmsCapabilities2(serverUrl, getWmsCapabilitiesFunc, version, callback){
+  _getThreddsWmsCapabilities2(serverUrl, getWmsCapabilitiesFunc, version, callback, options){
     var parser = new ol.format.WMSCapabilities();
     console.log(getWmsCapabilitiesFunc(serverUrl,version));
     fetch(getWmsCapabilitiesFunc(serverUrl,version)).then(function(response) {
@@ -591,13 +490,17 @@ class MapViewerPanel extends React.Component {
         var layerData0 = layers[i].Layer;
         for (var i = 0, len = layerData0.length; i < len; i++) {
           var layerData = layerData0[i];
+          if(typeof options !== 'undefined'){
+            layerData.Title = [layerData.Title, options.process_name, options.fid].join(' ');
+          }
+
           layerData.serverUrl = serverUrl;
           layerData.selectable = false;
           me.layersCatalog.push({'layerData': layerData, 'serverUrl': serverUrl, 'layerObj': null})
           console.log(layerData['Name'])
         }
       }
-      if(callback!=null) callback()
+      if(callback!=null) callback(options)
     });
   }
 
@@ -627,12 +530,19 @@ class MapViewerPanel extends React.Component {
 
   }
 
-  _addLayerFromCatalog(layersCatalog,workspaceLayerId, visible,opacity, layerGroup, zIndex, selectable){
+  _addLayerFromCatalog(layersCatalog,workspaceLayerId, visible,opacity, layerGroup, zIndex, selectable, options){
     for (var i = 0, len = layersCatalog.length; i < len; i++) {
       var LayersCatalogData = layersCatalog[i];
-      if(LayersCatalogData['layerData'].Name.indexOf(workspaceLayerId)!==-1) {
+      if(LayersCatalogData['layerData'].Name === workspaceLayerId) {
+        console.log(['_addLayerFromCatalog', LayersCatalogData['layerData'].Name].join(':'));
         var layerObj=LayersCatalogData['layerObj'];
         if(layerObj!=null){
+
+          if(typeof options !== 'undefined'){
+            LayersCatalogData['layerData'].Name = [LayersCatalogData['layerData'].Name, options.process_name, options.fid].join(' ');
+            console.log(['_addLayerFromCatalog', LayersCatalogData['layerData'].Name].join(':'));
+          }
+
           layerObj.setVisible(visible);
           layerObj.setOpacity(opacity);
           layerObj.setZIndex(zIndex);
@@ -656,10 +566,10 @@ class MapViewerPanel extends React.Component {
     me._loadFromCatalog(me._getLayersCatalog(), "opengeo:countries", me._loadFromGeoserverWms);
 
     me._addLayerFromCatalog(me._getLayersCatalog(), "WATERSHEDS:BV_N1_S", true, 0.50, me.getWatershedLayerList(),1,1);
-    //me._addLayerFromCatalog(me._getLayersCatalog(), "WATERSHEDS:BV_N2_S", true, 0.50, me.getWatershedLayerList(),1,1);
-    //me._addLayerFromCatalog(me._getLayersCatalog(), "WATERSHEDS:BV_N3_S", true, 0.50, me.getWatershedLayerList(),0,1);
-    me._addLayerFromCatalog(me._getLayersCatalog(), "ADMINBOUNDARIES:canada_admin_boundaries", true, 1.0, me.getWatershedLayerList(),0,0);
-    me._addLayerFromCatalog(me._getLayersCatalog(), "opengeo:countries", true, 1.0, me.getWatershedLayerList(),0,0);
+    me._addLayerFromCatalog(me._getLayersCatalog(), "WATERSHEDS:BV_N2_S", true, 0.50, me.getWatershedLayerList(),1,1);
+    me._addLayerFromCatalog(me._getLayersCatalog(), "WATERSHEDS:BV_N3_S", true, 0.50, me.getWatershedLayerList(),0,1);
+    me._addLayerFromCatalog(me._getLayersCatalog(), "ADMINBOUNDARIES:canada_admin_boundaries", true, 1.0, me._getLayersGroupList('administrative'),0,1);
+    me._addLayerFromCatalog(me._getLayersCatalog(), "opengeo:countries", true, 1.0, me._getLayersGroupList('administrative'),0,1);
   }
 
   _loadNCWMSSpecificLayers() {
@@ -677,12 +587,15 @@ class MapViewerPanel extends React.Component {
 
   }
 
+
+
   componentDidMount(){
 
     me._addLayerGroup('baseLayers','Base maps', 1.0, true, 0);
     //me._addLayerGroup('nasaAirCO2','AIRS CO2', 1.0, true, 1);
     me._addLayerGroup('overlayLayers','Overlays', 1.0, true, 1);
-    me._addLayerGroup('watershedsLayers','Watersheds', 1.0, true, 3);
+    me._addLayerGroup('watershedsLayers','Watersheds', 1.0, true, 2);
+    me._addLayerGroup('administrative','Admnistrative', 1.0, true, 3);
     me._getWmsCapabilities2(GEOSERVER48_ROUTE, me._getWmsCapabilitiesRequest, "1.1.1", me._loadGEOSERVER48SpecificLayers);
     //me._getWmsCapabilities2(NASA_DISC1, me._getWmsCapabilitiesRequest2, "1.1.1", me._loadNasaSpecificLayers);
     //me._getWmsCapabilities2(NCWMS31_ROUTE, "1.1.1", me._loadGEOSERVER48SpecificLayer);
@@ -722,20 +635,27 @@ class MapViewerPanel extends React.Component {
 
   }
 
-  _wpsSubset_WFS(wpsUrl, featureids, layerId)
+  _wpsSubset_WFS(wpsUrl, featureids, layerId, netcdfRef)
     {
       var method = 'POST';
       var postData =
-        '<wps:Execute service="WPS" version="1.0.0"\n'
-        + '            xmlns:wps="http://www.opengis.net/wps/1.0.0"\n'
-        + '            xmlns:ows="http://www.opengis.net/ows/1.1"\n'
-        + '            xmlns:xlink="http://www.w3.org/1999/xlink"\n'
-        + '            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"           xsi:schemaLocation="http://www.opengis.net/wps/1.0.0              http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd">\n'
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        + '<wps:Execute service="WPS" version="1.0.0"\n'
+        + ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n'
+        + 'xmlns="http://www.opengis.net/wps/1.0.0"\n'
+        + '    xmlns:wfs="http://www.opengis.net/wfs"\n'
+        + '    xmlns:wps="http://www.opengis.net/wps/1.0.0"\n'
+        + '  xmlns:ows="http://www.opengis.net/ows/1.1"\n'
+        + '  xmlns:gml="http://www.opengis.net/gml"\n'
+        + '  xmlns:ogc="http://www.opengis.net/ogc"\n'
+        + '  xmlns:wcs="http://www.opengis.net/wcs/1.1.1"\n'
+        + '  xmlns:xlink="http://www.w3.org/1999/xlink"\n'
+        + '  xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsAll.xsd">\n'
         + ' <ows:Identifier>subset_WFS</ows:Identifier>\n'
         + ' <wps:DataInputs>\n'
         + '  <wps:Input>\n'
         + '    <ows:Identifier>resource</ows:Identifier>\n'
-        + '                <wps:Reference mimeType="application/x-netcdf"           xlink:href="http://132.217.140.31:8083/thredds/fileServer/birdhouse/CMIP5/CCCMA/CanESM2/historical/mon/atmos/r1i1p1/pr/pr_Amon_CanESM2_historical_r1i1p1_185001-200512.nc"/>\n'
+        + '                <wps:Reference mimeType="application/x-netcdf"           xlink:href="' + netcdfRef + '"/>\n'
         + '              </wps:Input>\n'
         + '             <wps:Input>\n'
         + '                <ows:Identifier>featureids</ows:Identifier>\n'
@@ -757,7 +677,9 @@ class MapViewerPanel extends React.Component {
         + '                </wps:Output>\n'
         + '              </wps:ResponseDocument>\n'
         + '           </wps:ResponseForm>\n'
-        + '          </wps:Execute>\n'
+        + '          </wps:Execute>\n';
+
+      console.log(postData);
 
       fetch(wpsUrl, {
         method: method,
@@ -774,53 +696,100 @@ class MapViewerPanel extends React.Component {
           var parseString = require('xml2js').parseString;
           parseString(text, function (err, result) {
           var href = result['wps:ExecuteResponse']['wps:ProcessOutputs'][0]['wps:Output'][0]['wps:Reference'][0]['$'].href;
-          console.dir(href);
+
 
             var hrefWmsRefGetCapabilities = href.replace(OUTARDE_SERVER+':8090/wpsoutputs/flyingpigeon', OUTARDE_SERVER+':8083/thredds/wms/birdhouse/flyingpigeon')
               +'?service=WMS&version=1.3.0&request=GetCapabilities';
-            console.dir(hrefWmsRefGetCapabilities);
 
             var hrefWmsRef = href.replace(OUTARDE_SERVER+':8090/wpsoutputs/flyingpigeon', OUTARDE_SERVER+':8083/thredds/wms/birdhouse/flyingpigeon');
-            console.dir(hrefWmsRefGetCapabilities);
 
-            me._getThreddsWmsCapabilities2(hrefWmsRef ,me._getWmsCapabilitiesRequest2, "1.3.0", me._loadPr());
+            console.dir(href);
+            console.dir(hrefWmsRefGetCapabilities);
+            var options = {process_name:'subset_WFS', fid:featureids};
+            me._getThreddsWmsCapabilities2(hrefWmsRef ,me._getWmsCapabilitiesRequest2, "1.3.0", me._loadPr,options);
+
         });
+      }).catch(function(error) {
+        console.log('Fetch catch: ' + error.message);
       });
     }
 
-  _loadPr(){
+  _loadPr(options){
     console.log('_loadPr');
-    me._loadFromCatalog(me._getLayersCatalog(), "pr", me._loadFromGenericWms);
-    me._addLayerFromCatalog(me._getLayersCatalog(), "pr", true, 1.0, me.getMapOverlayList(),10,0);
+    me._loadFromCatalog(me._getLayersCatalog(), "pr", me._loadFromGenericThreddWms);
+    me._addLayerFromCatalog(me._getLayersCatalog(), "pr", true, 1.0, me.getMapOverlayList(),10,0, options);
   }
 
   _loadFromCatalog(layersCatalog, workspaceLayerId, loadFunc){
     for (var i = 0, len = layersCatalog.length; i < len; i++) {
       var LayersCatalogData = layersCatalog[i];
+      console.log('_loadFromCatalog :' + LayersCatalogData['layerData'].Name);
       if(LayersCatalogData['layerData'].Name.indexOf(workspaceLayerId)!==-1) {
         var info = me._fromLayerDataGetWorkspace(LayersCatalogData);
-        var layer = loadFunc(LayersCatalogData['serverUrl'],workspaceLayerId, info['workspaceId'],false,1.0, 'boxfill/rainbow');
+        var layer = loadFunc(LayersCatalogData['serverUrl'],workspaceLayerId, info['workspaceId'],false,1.0, 'boxfill/rainbow',LayersCatalogData);
         LayersCatalogData['layerObj'] = layer;
+        console.log('_loadFromCatalog :' + workspaceLayerId + ' OK');
       }
     }
   }
 
-  _loadFromGenericWms(serverUrl, layerName, layerName2, visible, opacity, style){
+  _loadFromGeoserverWms(serverUrl, workspaceLayerName, workspaceName, visible, opacity,style,LayersCatalogData){
     var tiled = new ol.layer.Tile({
+      title:LayersCatalogData.layerData.Title,
+      visible: visible,
+      opacity:opacity,
+      source: new ol.source.TileWMS({
+        url: [serverUrl,workspaceName,'wms'].join('/'),
+        params: {'FORMAT': 'image/png',
+          tiled: true,
+          STYLES: '',
+          LAYERS: workspaceLayerName
+        }
+      })
+    });
+    return  tiled
+  }
+
+  _loadFromGenericWms( serverUrl, layerName, layerName2, visible, opacity, style,LayersCatalogData){
+    var tiled = new ol.layer.Tile({
+      title:LayersCatalogData.layerData.Title,
       visible: visible,
       opacity:opacity,
       source: new ol.source.TileWMS({
         url:serverUrl,
         params: {
-          'FORMAT': 'image/png',
-          tiled: true,
+          FORMAT: 'image/png',
+          TILED: true,
           STYLES: style,
           LAYERS: layerName,
+          TRANSPARENT:'TRUE'
+        }
+      })
+    });
+    return  tiled
+  }
+
+  _loadFromGenericThreddWms( serverUrl, layerName, layerName2, visible, opacity, style,LayersCatalogData){
+    var tiled = new ol.layer.Tile({
+      visible: true,
+      opacity:1.0,
+      title:LayersCatalogData.layerData.Title,
+      source: new ol.source.TileWMS({
+        url:LayersCatalogData.layerData.serverUrl,
+        params: {
+          TIME: LayersCatalogData.layerData.Dimension[0].default,
+          FORMAT: 'image/png',
+          TILED: true,
+          STYLES: 'boxfill/occam',
+          LAYERS: LayersCatalogData.layerData.Name,
           TRANSPARENT:'TRUE',
-          VERSION:'1.1.1',
-          WIDTH:'256',
-          HEIGHT:'256',
-          EPSG:'4326'
+          VERSION:'1.3.0',
+          EPSG:'4326',
+          COLORSCALERANGE:'0.0000004000,0.00006000',
+          NUMCOLORBANDS:'10',
+          LOGSCALE:false,
+          VERSION:'1.1.1'
+
         }
       })
     });
@@ -830,6 +799,8 @@ class MapViewerPanel extends React.Component {
   _doWpsLayer(){
     console.log('_doWpsLayer');
     var wpsUrl = WPS_ROUTE;
+
+    var netcdfRef = NETCDF_DATA;
 
     if(me.featuresSelectedLayer){
       var info=[];
@@ -843,7 +814,7 @@ class MapViewerPanel extends React.Component {
 
         var layerId = feature.get('workspaceLayer');
         var featureids = feature.getId();
-        me._wpsSubset_WFS(wpsUrl,featureids,layerId);
+        me._wpsSubset_WFS(wpsUrl,featureids,layerId,netcdfRef);
 
       });
       html += '</div>'
@@ -868,9 +839,116 @@ class MapViewerPanel extends React.Component {
       case 'select-id': me._doSelection();break;
       case 'select-baselayer-id' : me._doChangeBaseLayer(); break;
       case 'wps-id' : me._doWpsLayer(); break;
-
-
       }
+  }
+
+  initMap() {
+
+    me.view = new ol.View({
+      center: [-8065301, 5787882],
+      zoom: 6
+    })
+
+    var mousePositionControl = new ol.control.MousePosition({
+      coordinateFormat: ol.coordinate.createStringXY(4),
+      projection: 'EPSG:4326',
+      // comment the following two lines to have the mouse position
+      // be placed within the map.
+      className: 'custom-mouse-position',
+      target: document.getElementById('mouse-position-id'),
+      undefinedHTML: '&nbsp;'
+    });
+
+    var projectionSelect = document.getElementById('projection');
+    projectionSelect.addEventListener('change', function(event) {
+      mousePositionControl.setProjection(ol.proj.get(event.target.value));
+    });
+
+    var layers=[];
+    for(var k=0; k<me.layersGroup.length; k++){
+      layers.push(me.layersGroup[k]['layerGroup'])
+    }
+    var map = new ol.Map({
+      controls: ol.control.defaults()
+        .extend([
+          mousePositionControl
+        ]),
+      layers:layers,
+      target: 'map',
+      renderer: 'canvas',
+      view: this.view
+    });
+
+    me.map = map;
+
+    me.select = new ol.interaction.Select();
+    me.map.addInteraction(me.select);
+
+    // a DragBox interaction used to select features by drawing boxes
+    me.dragBox = new ol.interaction.DragBox({
+      condition: ol.events.condition.platformModifierKeyOnly
+    });
+
+    map.getView().on('propertychange', function(e) {
+      switch (e.key) {
+        case 'resolution':
+          //console.log(e.oldValue);
+          break;
+      }
+    });
+
+    me.map.on('singleclick', function(evt) {
+
+      if(me.state.toolId==='select-id') {
+        console.log('singleclick');
+        document.getElementById('info').innerHTML = "Loading... please wait...";
+        me.setState({clickCoordinate:evt.coordinate})
+        var tl = ol.coordinate.add(evt.coordinate, [-10e-6, -10e-6]);
+        var br = ol.coordinate.add(evt.coordinate, [10e-6, 10e-6]);
+
+        var minX;
+        var maxX;
+
+        if(tl[0] < br[0]){
+          minX=tl[0];
+          maxX=br[0];
+        }else{
+          minX=br[0];
+          maxX=tl[0];
+        }
+
+        var minY;
+        var maxY;
+
+        if(tl[1] < br[1]){
+          minY=tl[1];
+          maxY=br[1];
+        }else{
+          minY=br[1];
+          maxY=tl[1];
+        }
+
+        me.dragExtent = [minX, minY, maxX, maxY];
+        me._doFeatureSelection('select-id', me._getLayersCatalog());
+        //me._doFeatureSelection(GEOSERVER48_ROUTE, 'select-id', 'WATERSHEDS:BV_N1_S' );
+      }
+      else{
+        document.getElementById('info').innerHTML = <div></div>;
+      }
+    });
+
+    me.map.addInteraction(me.dragBox);
+    me.dragBox.on('boxend', function() {
+      me.dragExtent = me.dragBox.getGeometry().getExtent()
+      me._doDragExtentAction();
+    });
+
+    me.layerSwitcher = new ol.control.LayerSwitcher({
+     tipLabel: 'Legend' // Optional label for button
+     });
+
+    me.layerSwitcher.setMap(me.map);
+     me.map.addControl(me.layerSwitcher);
   }
 
   render () {
