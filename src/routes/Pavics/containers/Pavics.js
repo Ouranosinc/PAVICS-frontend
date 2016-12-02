@@ -35,7 +35,6 @@ class Pavics extends React.Component {
 }
 const mapActionCreators = {...actionCreators};
 const mapStateToProps = (state) => {
-  console.log('state:', state);
   return {
     processes: state.pavics.workflowWizard.processes,
     currentStep: state.pavics.workflowWizard.currentStep,

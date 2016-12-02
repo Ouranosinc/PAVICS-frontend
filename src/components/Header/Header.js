@@ -23,8 +23,8 @@ class Header extends React.Component {
           <Col md={4} mdOffset={4}>
             <Nav bsStyle="pills" justified>
               <NavItem onClick={this.workflows}>Workflow Wizard</NavItem>
-              <NavItem onClick={this.visualize}>Visualize</NavItem>
               <NavItem onClick={this.monitor}>Workboard</NavItem>
+              <NavItem onClick={this.visualize}>Visualize</NavItem>
             </Nav>
           </Col>
         </Row>
