@@ -1,7 +1,7 @@
-import React from 'react'
-import Panel, {PanelHeader} from './../../components/Panel'
-import Table, {TableHeader, TableBody} from './../../components/Table'
-import * as constants from './../../routes/Visualize/constants'
+import React from 'react';
+import Panel, {PanelHeader} from './../../components/Panel';
+import Table, {TableHeader, TableBody} from './../../components/Table';
+import * as constants from './../../constants';
 class ClimateIndicators extends React.Component {
   static propTypes = {
     fetchClimateIndicators: React.PropTypes.func.isRequired,
@@ -11,32 +11,32 @@ class ClimateIndicators extends React.Component {
   }
 
   constructor (props) {
-    super(props)
-    this.props.fetchClimateIndicators()
-    this._togglePanel = this._togglePanel.bind(this)
+    super(props);
+    this.props.fetchClimateIndicators();
+    this.togglePanel = this.togglePanel.bind(this);
   }
 
-  _formatRows () {
+  formatRows () {
     if (this.props.climateIndicators.items.length === 0) {
-      return []
+      return [];
     } else {
       return this.props.climateIndicators.items.map((x, i) => [
         <input type="radio" name="climate-indicator" key={i} />,
         x.value
-      ])
+      ]);
     }
   }
 
-  _togglePanel () {
-    let newState = !this.props.panelControls[constants.PANEL_CLIMATE_INDICATORS].show
-    this.props.clickTogglePanel(constants.PANEL_CLIMATE_INDICATORS, newState)
-  }
+  togglePanel = () => {
+    let newState = !this.props.panelControls[constants.PANEL_CLIMATE_INDICATORS].show;
+    this.props.clickTogglePanel(constants.PANEL_CLIMATE_INDICATORS, newState);
+  };
 
   render () {
     return (
       <Panel>
         <PanelHeader
-          onClick={this._togglePanel}
+          onClick={this.togglePanel}
           icon="glyphicon-list"
           panelIsActive={this.props.panelControls[constants.PANEL_CLIMATE_INDICATORS].show}>
           Climate Indicators
@@ -46,14 +46,14 @@ class ClimateIndicators extends React.Component {
             ? (
             <Table>
               <TableHeader fields={['', 'Indicator Name']} />
-              <TableBody rows={this._formatRows()} selectedIndex={-1} />
+              <TableBody rows={this.formatRows()} selectedIndex={-1} />
             </Table>
           )
             : null
         }
 
       </Panel>
-    )
+    );
   }
 }
-export default ClimateIndicators
+export default ClimateIndicators;

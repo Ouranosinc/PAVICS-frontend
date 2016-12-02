@@ -1,19 +1,8 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {WorkflowWizard, Monitor} from './../../../containers';
+import {WorkflowWizard, Monitor, Visualize} from './../../../containers';
 import Header from './../../../components/Header';
-import {
-  chooseProcess,
-  executeProcess,
-  fetchProcesses,
-  selectWpsProvider,
-  fetchProcessInputs,
-  handleSelectedProcessValueChange,
-  fetchProviders,
-  goToSection,
-  chooseStep,
-  fetchJobs
-} from './../modules/Pavics';
+import * as actionCreators from './../modules/Pavics';
 import * as constants from './../../../constants';
 class Pavics extends React.Component {
   static propTypes = {
@@ -29,6 +18,10 @@ class Pavics extends React.Component {
         return (
           <Monitor {...this.props} />
         );
+      case constants.PLATFORM_SECTION_VISUALIZE:
+        return (
+          <Visualize {...this.props} />
+        );
     }
   }
   render () {
@@ -40,19 +33,9 @@ class Pavics extends React.Component {
     );
   }
 }
-const mapActionCreators = {
-  chooseProcess,
-  executeProcess,
-  fetchProcesses,
-  fetchProviders,
-  selectWpsProvider,
-  fetchProcessInputs,
-  handleSelectedProcessValueChange,
-  goToSection,
-  chooseStep,
-  fetchJobs
-};
+const mapActionCreators = {...actionCreators};
 const mapStateToProps = (state) => {
+  console.log('state:', state);
   return {
     processes: state.pavics.workflowWizard.processes,
     currentStep: state.pavics.workflowWizard.currentStep,
@@ -61,7 +44,21 @@ const mapStateToProps = (state) => {
     selectedProcessValues: state.pavics.workflowWizard.selectedProcessValues,
     providers: state.pavics.workflowWizard.providers,
     platform: state.pavics.platform,
-    monitor: state.pavics.monitor
+    monitor: state.pavics.monitor,
+    currentSelectedKey: state.pavics.visualize.currentSelectedKey,
+    currentSelectedValue: state.pavics.visualize.currentSelectedValue,
+    currentOpenedDataset: state.pavics.visualize.currentOpenedDataset,
+    currentOpenedDatasetWMSFile: state.pavics.visualize.currentOpenedDatasetWMSFile,
+    currentOpenedWMSLayer: state.pavics.visualize.currentOpenedWMSLayer,
+    loadedWmsDatasets: state.pavics.visualize.loadedWmsDatasets,
+    selectedFacets: state.pavics.visualize.selectedFacets,
+    selectedDatasets: state.pavics.visualize.selectedDatasets,
+    selectedWMSLayers: state.pavics.visualize.selectedWMSLayers,
+    datasets: state.pavics.visualize.datasets,
+    facets: state.pavics.visualize.facets,
+    climateIndicators: state.pavics.visualize.climateIndicators,
+    panelControls: state.pavics.visualize.panelControls,
+    plotlyData: state.pavics.visualize.plotlyData
   };
 };
 export default connect(mapStateToProps, mapActionCreators)(Pavics);

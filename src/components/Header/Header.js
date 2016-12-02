@@ -13,6 +13,9 @@ class Header extends React.Component {
     this.props.chooseStep(constants.WORKFLOW_STEP_PROCESS);
     this.props.goToSection(constants.PLATFORM_SECTION_WORKFLOWS);
   };
+  visualize = () => {
+    this.props.goToSection(constants.PLATFORM_SECTION_VISUALIZE);
+  };
   render () {
     return (
       <Grid>
@@ -20,7 +23,7 @@ class Header extends React.Component {
           <Col md={4} mdOffset={4}>
             <Nav bsStyle="pills" justified>
               <NavItem onClick={this.workflows}>Workflow Wizard</NavItem>
-              <NavItem href="/visualize">Visualize</NavItem>
+              <NavItem onClick={this.visualize}>Visualize</NavItem>
               <NavItem onClick={this.monitor}>Workboard</NavItem>
             </Nav>
           </Col>
