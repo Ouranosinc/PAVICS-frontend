@@ -1,12 +1,12 @@
-import React from 'react'
-import {connect} from 'react-redux'
-import Panel, {ToggleButton, PanelHeader} from './../../components/Panel'
-import FacetLabel from './../../components/FacetLabel'
-import Loader from './../../components/Loader'
-import SearchCatalogResults from './../../containers/SearchCatalogResults'
-import CriteriaSelection from './../../components/CriteriaSelection'
-import * as constants from './../../routes/Visualize/constants'
-import {MenuItem, DropdownButton} from 'react-bootstrap'
+import React from 'react';
+import {connect} from 'react-redux';
+import Panel, {ToggleButton, PanelHeader} from './../../components/Panel';
+import FacetLabel from './../../components/FacetLabel';
+import Loader from './../../components/Loader';
+import SearchCatalogResults from './../../containers/SearchCatalogResults';
+import CriteriaSelection from './../../components/CriteriaSelection';
+import * as constants from './../../constants';
+import {MenuItem, DropdownButton} from 'react-bootstrap';
 export class SearchCatalog extends React.Component {
   static propTypes = {
     /* Helps Webstorm to auto-complete function calls and enforce React Props Validation*/
@@ -33,73 +33,73 @@ export class SearchCatalog extends React.Component {
   };
 
   constructor (props) {
-    super(props)
+    super(props);
     this.recommendedKeys = [
       'project',
       'model',
       'variable'
-    ]
-    this.currentSelectedKey = ''
-    this.currentSelectedValue = ''
-    this.currentFacetValues = []
+    ];
+    this.currentSelectedKey = '';
+    this.currentSelectedValue = '';
+    this.currentFacetValues = [];
     // This way we can remove "me" from component and always use "this",
     // but it must be done for all components methods with callbacks...
-    this._onAddFacet = this._onAddFacet.bind(this)
-    this._onRemoveFacet = this._onRemoveFacet.bind(this)
-    this._onSelectedKey = this._onSelectedKey.bind(this)
-    this._onSelectedValue = this._onSelectedValue.bind(this)
-    this._onSearchCatalog = this._onSearchCatalog.bind(this)
-    this._onOpenPanel = this._onOpenPanel.bind(this)
-    this._togglePanel = this._togglePanel.bind(this)
+    this._onAddFacet = this._onAddFacet.bind(this);
+    this._onRemoveFacet = this._onRemoveFacet.bind(this);
+    this._onSelectedKey = this._onSelectedKey.bind(this);
+    this._onSelectedValue = this._onSelectedValue.bind(this);
+    this._onSearchCatalog = this._onSearchCatalog.bind(this);
+    this._onOpenPanel = this._onOpenPanel.bind(this);
+    this._togglePanel = this._togglePanel.bind(this);
   }
 
   _onAddFacet (event) {
     if (this.props.currentSelectedKey.length && this.props.currentSelectedValue.length) {
-      this.props.addFacetKeyValue(this.props.currentSelectedKey, this.props.currentSelectedValue)
-      this.props.selectFacetKey('')
+      this.props.addFacetKeyValue(this.props.currentSelectedKey, this.props.currentSelectedValue);
+      this.props.selectFacetKey('');
       // TODO: Auto-fetch on onAddFacet() ?
-      this.props.fetchCatalogDatasets()
+      this.props.fetchCatalogDatasets();
     }
   }
 
   _onRemoveFacet (key, value) {
-    this.props.removeFacetKeyValue(key, value)
+    this.props.removeFacetKeyValue(key, value);
     // TODO: Auto-fetch on onRemoveFacet() ?
-    this.props.fetchCatalogDatasets()
+    this.props.fetchCatalogDatasets();
   }
 
   // posterity
   _onSelectedKey (eventKey) {
-    this.props.selectFacetKey(eventKey)
-    let facet = this.props.facets.items.find(x => x.key === eventKey)
+    this.props.selectFacetKey(eventKey);
+    let facet = this.props.facets.items.find(x => x.key === eventKey);
     if (facet) {
-      this.currentFacetValues = facet.values
+      this.currentFacetValues = facet.values;
     } else {
-      this.currentFacetValues = []
+      this.currentFacetValues = [];
     }
   }
 
   _onSelectedValue (event) {
-    this.props.selectFacetValue(event.target.value)
+    this.props.selectFacetValue(event.target.value);
   }
 
   _onSearchCatalog (event) {
-    this.props.fetchCatalogDatasets()
+    this.props.fetchCatalogDatasets();
   }
 
   _onOpenPanel () {
-    this.props.clickTogglePanel(constants.PANEL_SEARCH_CATALOG, true)
+    this.props.clickTogglePanel(constants.PANEL_SEARCH_CATALOG, true);
   }
 
   _togglePanel () {
-    let newState = !this.props.panelControls[constants.PANEL_SEARCH_CATALOG].show
-    this.props.clickTogglePanel(constants.PANEL_SEARCH_CATALOG, newState)
+    let newState = !this.props.panelControls[constants.PANEL_SEARCH_CATALOG].show;
+    this.props.clickTogglePanel(constants.PANEL_SEARCH_CATALOG, newState);
   }
 
   _mainComponent () {
-    let mainComponent
+    let mainComponent;
     if (this.props.facets.isFetching) {
-      mainComponent = <Loader name="facets" />
+      mainComponent = <Loader name="facets" />;
     } else {
       mainComponent = (
         this.props.facets.items.length === 0
@@ -121,7 +121,7 @@ export class SearchCatalog extends React.Component {
                     this.props.facets.items.map((x, i) => {
                       return (this.recommendedKeys.includes(x.key))
                         ? null
-                        : <MenuItem key={i} eventKey={x.key} onSelect={this._onSelectedKey}>{x.key}</MenuItem>
+                        : <MenuItem key={i} eventKey={x.key} onSelect={this._onSelectedKey}>{x.key}</MenuItem>;
                     })
                   }
                 </DropdownButton>
@@ -134,13 +134,13 @@ export class SearchCatalog extends React.Component {
                     <CriteriaSelection
                       criteriaName={facetKey}
                       variables={this.props.facets.items.find((x) => {
-                        return x.key === facetKey
+                        return x.key === facetKey;
                       })}
                       selectedFacets={this.props.selectedFacets}
                       addFacetKeyValue={this.props.addFacetKeyValue}
                       removeFacetKeyValue={this.props.removeFacetKeyValue}
                       fetchCatalogDatasets={this.props.fetchCatalogDatasets} />
-                  </div>
+                  </div>;
                 })
               }
               {
@@ -150,7 +150,7 @@ export class SearchCatalog extends React.Component {
                     <CriteriaSelection
                       criteriaName={this.props.currentSelectedKey}
                       variables={this.props.facets.items.find((x) => {
-                        return x.key === this.props.currentSelectedKey
+                        return x.key === this.props.currentSelectedKey;
                       })}
                       selectedFacets={this.props.selectedFacets}
                       addFacetKeyValue={this.props.addFacetKeyValue}
@@ -179,7 +179,7 @@ export class SearchCatalog extends React.Component {
                       </div>
                     </div>
                   )
-                    : null
+                    : null;
                 })
               }
               {
@@ -203,9 +203,9 @@ export class SearchCatalog extends React.Component {
             </div>
           </div>
         )
-      )
+      );
     }
-    return mainComponent
+    return mainComponent;
   }
 
   render () {
@@ -218,16 +218,7 @@ export class SearchCatalog extends React.Component {
         </Panel>
       )
         : <Panel><ToggleButton icon="glyphicon-search" onClick={this._onOpenPanel} /></Panel>
-    )
+    );
   }
 }
-const mapStateToProps = (state) => {
-  return {}
-}
-const mapDispatchToProps = (dispatch) => {
-  return {}
-}
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(SearchCatalog)
+export default SearchCatalog;

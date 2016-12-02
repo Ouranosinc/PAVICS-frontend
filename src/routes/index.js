@@ -1,6 +1,5 @@
 // We only need to import the modules necessary for initial render
 import CoreLayout from '../layouts/CoreLayout/CoreLayout';
-import VisualizeRoute from './Visualize';
 import PavicsRoute from './Pavics';
 
 /*  Note: Instead of using JSX, we recommend using react-router
@@ -9,10 +8,7 @@ import PavicsRoute from './Pavics';
 export const createRoutes = (store) => ({
   path: '/',
   component: CoreLayout,
-  indexRoute: PavicsRoute(store),
-  childRoutes: [
-    VisualizeRoute(store)
-  ]
+  indexRoute: PavicsRoute(store)
 });
 
 /*  Note: childRoutes can be chunked or otherwise loaded programmatically

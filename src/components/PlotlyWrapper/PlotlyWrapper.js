@@ -1,6 +1,6 @@
 import React from 'react';
 import Plotly from 'plotly.js';
-import * as constants from './../../routes/Visualize/constants';
+import * as constants from './../../constants';
 class PlotlyWrapper extends React.Component {
   static propTypes = {
     panelControls: React.PropTypes.object.isRequired,

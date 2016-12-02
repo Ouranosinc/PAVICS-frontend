@@ -2,18 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {WorkflowWizard, Monitor} from './../../../containers';
 import Header from './../../../components/Header';
-import {
-  chooseProcess,
-  executeProcess,
-  fetchProcesses,
-  selectWpsProvider,
-  fetchProcessInputs,
-  handleSelectedProcessValueChange,
-  fetchProviders,
-  goToSection,
-  chooseStep,
-  fetchJobs
-} from './../modules/Pavics';
+import * as actionCreators from './../modules/Pavics';
 import * as constants from './../../../constants';
 class Pavics extends React.Component {
   static propTypes = {
@@ -40,18 +29,7 @@ class Pavics extends React.Component {
     );
   }
 }
-const mapActionCreators = {
-  chooseProcess,
-  executeProcess,
-  fetchProcesses,
-  fetchProviders,
-  selectWpsProvider,
-  fetchProcessInputs,
-  handleSelectedProcessValueChange,
-  goToSection,
-  chooseStep,
-  fetchJobs
-};
+const mapActionCreators = {...actionCreators};
 const mapStateToProps = (state) => {
   return {
     processes: state.pavics.workflowWizard.processes,
