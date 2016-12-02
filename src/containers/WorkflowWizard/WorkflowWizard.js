@@ -12,7 +12,8 @@ class WorkflowWizard extends React.Component {
     selectedProcessValues: React.PropTypes.object.isRequired,
     executeProcess: React.PropTypes.func.isRequired,
     handleSelectedProcessValueChange: React.PropTypes.func.isRequired,
-    providers: React.PropTypes.object.isRequired
+    providers: React.PropTypes.object.isRequired,
+    goToSection: React.PropTypes.func.isRequired
   }
 
   makeSection () {
@@ -40,6 +41,7 @@ class WorkflowWizard extends React.Component {
                     this.props.selectedProcessInputs.length === 0
                       ? null
                       : <ProcessForm
+                        goToSection={this.props.goToSection}
                         executeProcess={this.props.executeProcess}
                         handleSelectedProcessValueChange={this.props.handleSelectedProcessValueChange}
                         selectedProcess={this.props.selectedProcess}
