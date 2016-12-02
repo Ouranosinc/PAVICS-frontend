@@ -781,7 +781,7 @@ function pavicsReducer (state = initialState, action) {
     workflowWizard: workflowWizardReducer(state.workflowWizard, action),
     platform: platformReducer(state.platform, action),
     monitor: monitorReducer(state.monitor, action),
-    visualize: visualizeReducer(state, action)
+    visualize: visualizeReducer(state.visualize, action)
   };
 }
 

@@ -17,87 +17,89 @@ const initialState = {
   monitor: {
     jobs: []
   },
-  currentSelectedKey: constants.DEFAULT_SELECTED_KEY,
-  currentSelectedValue: '',
-  currentOpenedDataset: '',
-  currentOpenedDatasetWMSFile: '',
-  currentOpenedWMSLayer: '',
-  loadedWmsDatasets: [],
-  selectedFacets: [],
-  selectedDatasets: {
-    requestedAt: null,
-    receivedAt: null,
-    isFetching: false,
-    items: [],
-    error: null
-  },
-  selectedWMSLayers: {
-    requestedAt: null,
-    receivedAt: null,
-    isFetching: false,
-    items: [],
-    error: null
-  },
-  selectedWMSLayer: {
-    layerDetails: {
+  visualize: {
+    currentSelectedKey: constants.DEFAULT_SELECTED_KEY,
+    currentSelectedValue: '',
+    currentOpenedDataset: '',
+    currentOpenedDatasetWMSFile: '',
+    currentOpenedWMSLayer: '',
+    loadedWmsDatasets: [],
+    selectedFacets: [],
+    selectedDatasets: {
       requestedAt: null,
       receivedAt: null,
       isFetching: false,
-      data: {},
+      items: [],
       error: null
     },
-    timesteps: {
+    selectedWMSLayers: {
       requestedAt: null,
       receivedAt: null,
       isFetching: false,
-      data: {},
+      items: [],
       error: null
-    }
-  },
-  facets: {
-    requestedAt: null,
-    receivedAt: null,
-    isFetching: false,
-    items: [],
-    error: null
-  },
-  climateIndicators: {
-    requestedAt: null,
-    receivedAt: null,
-    isFetching: false,
-    items: [],
-    error: null
-  },
-  datasets: {
-    requestedAt: null,
-    receivedAt: null,
-    isFetching: false,
-    items: [],
-    error: null
-  },
-  plotlyData: {
-    isFecthing: false,
-    receivedAt: null,
-    requestedAt: null,
-    data: [],
-    layout: {},
-    error: null
-  },
-  panelControls: {
-    [constants.PANEL_SEARCH_CATALOG]: {
-      show: true
     },
-    [constants.PANEL_DATASET_DETAILS]: {
-      show: false
+    selectedWMSLayer: {
+      layerDetails: {
+        requestedAt: null,
+        receivedAt: null,
+        isFetching: false,
+        data: {},
+        error: null
+      },
+      timesteps: {
+        requestedAt: null,
+        receivedAt: null,
+        isFetching: false,
+        data: {},
+        error: null
+      }
     },
-    [constants.PANEL_DATASET_WMS_LAYERS]: {
-      show: false
+    facets: {
+      requestedAt: null,
+      receivedAt: null,
+      isFetching: false,
+      items: [],
+      error: null
     },
-    [constants.PANEL_CLIMATE_INDICATORS]: {
-      show: false
+    climateIndicators: {
+      requestedAt: null,
+      receivedAt: null,
+      isFetching: false,
+      items: [],
+      error: null
     },
-    [constants.PANEL_PLOTLY]: {
-      show: false
+    datasets: {
+      requestedAt: null,
+      receivedAt: null,
+      isFetching: false,
+      items: [],
+      error: null
+    },
+    plotlyData: {
+      isFecthing: false,
+      receivedAt: null,
+      requestedAt: null,
+      data: [],
+      layout: {},
+      error: null
+    },
+    panelControls: {
+      [constants.PANEL_SEARCH_CATALOG]: {
+        show: true
+      },
+      [constants.PANEL_DATASET_DETAILS]: {
+        show: false
+      },
+      [constants.PANEL_DATASET_WMS_LAYERS]: {
+        show: false
+      },
+      [constants.PANEL_CLIMATE_INDICATORS]: {
+        show: false
+      },
+      [constants.PANEL_PLOTLY]: {
+        show: false
+      }
     }
   }
 };

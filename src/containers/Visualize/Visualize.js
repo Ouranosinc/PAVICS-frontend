@@ -5,7 +5,7 @@ import OLComponent from '../../components/OLComponent';
 import DatasetDetails from '../../components/DatasetDetails';
 import PlotlyWrapper from '../../components/PlotlyWrapper';
 // Containers
-import {DatasetWMSLayers, SearchCatalog, ClimateIndicators, MapNavBar} from '../../containers';
+import {DatasetWMSLayers, SearchCatalog, ClimateIndicators} from '../../containers';
 class Visualize extends React.Component {
   static propTypes = {
     fetchFacets: React.PropTypes.func.isRequired,
@@ -23,7 +23,6 @@ class Visualize extends React.Component {
   render () {
     return (
       <div>
-        <MapNavBar {...this.props} />
         <PlotlyWrapper
           panelControls={this.props.panelControls}
           data={this.props.plotlyData.data}
