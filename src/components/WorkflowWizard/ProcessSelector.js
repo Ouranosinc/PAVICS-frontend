@@ -1,5 +1,6 @@
 import React from 'react';
 import {Nav, NavItem} from 'react-bootstrap';
+import classes from './WorkflowWizard.scss';
 class ProcessSelector extends React.Component {
   static propTypes = {
     processes: React.PropTypes.array.isRequired,
@@ -43,7 +44,7 @@ class ProcessSelector extends React.Component {
 
   render () {
     return (
-      <div>
+      <div className={classes.WorkflowWizard}>
         <Nav onSelect={this.changeWPSprovider}>
           {
             this.props.providers.items.map((provider, i) => <NavItem key={i} eventKey={i}>{provider.title}</NavItem>)
@@ -51,7 +52,7 @@ class ProcessSelector extends React.Component {
         </Nav>
         {this.props.processes.map((process, i) => {
           return (
-            <div onClick={this.makeChooseProcessCallback(process)} key={i}>
+            <div className={classes.clickable} onClick={this.makeChooseProcessCallback(process)} key={i}>
               <h3>{process.title}</h3>
               <p>{process.description}</p>
             </div>
