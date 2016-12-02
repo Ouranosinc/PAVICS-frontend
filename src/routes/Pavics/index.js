@@ -1,7 +1,7 @@
 import { injectReducer } from '../../store/reducers';
 
 export default (store) => ({
-  path: 'pavics',
+  path: '',
   getComponent (nextState, cb) {
     require.ensure([], (require) => {
       const Pavics = require('./containers/Pavics').default;
