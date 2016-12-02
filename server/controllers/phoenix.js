@@ -22,7 +22,7 @@ let phoenix = (() => {
           break;
         case 'jobs' :
           options = {
-            url: config.pavics_phoenix_path + '/monitor',
+            url: config.pavics_phoenix_path + '/monitor?limit=100',
             headers: {
               Accept: 'application/json'
             },

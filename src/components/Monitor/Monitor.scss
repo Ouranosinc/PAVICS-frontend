@@ -3,7 +3,7 @@
     text-align: left;
     width: 100%;
     margin: 15px 0;
-    height: 240px;
+    height: 325px;
   }
 }
 
@@ -15,6 +15,9 @@
     background-color: rgba(0, 0, 0, 0.3);
   }
   .ag-row-odd {
-    background-color: rgba(0, 0, 0, 0.15) !important;
+    background-color: rgba(0, 0, 0, 0.1) !important;
+  }
+  .ag-row-even {
+    background-color: rgba(0, 0, 0, 0.2) !important;
   }
 }

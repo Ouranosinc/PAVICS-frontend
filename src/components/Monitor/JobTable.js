@@ -1,4 +1,5 @@
 import {Panel, Grid, Row, Col} from 'react-bootstrap';
+import {IGetRowsParams} from 'ag-grid';
 import {AgGridReact} from 'ag-grid-react';
 import './../../../node_modules/ag-grid/dist/styles/ag-grid.css';
 import './../../../node_modules/ag-grid/dist/styles/theme-bootstrap.css';
@@ -27,8 +28,24 @@ class JobTable extends React.Component {
     }
   };
 
+  datasource = () => {
+    return {
+      getRows: (params: IGetRowsParams) => {
+        let rowCount = this.props.jobs.length;
+        let rows = [];
+        for (let i = params.startRow; i < params.endRow; i++) {
+          if (this.props.jobs[i]) {
+            rows.push(this.props.jobs[i]);
+          }
+        }
+        params.successCallback(rows, rowCount);
+      }
+    };
+  };
+
   onGridReady = (params) => {
     this.api = params.api;
+    this.api.setDatasource(this.datasource());
   };
 
   render () {
@@ -43,6 +60,9 @@ class JobTable extends React.Component {
                   className={classes.agGrid}
                   rowData={this.props.jobs}
                   columnDefs={this.columnDefs()}
+                  rowModelType="pagination"
+                  paginationPageSize={10}
+                  rowHeight={25}
                   enableSorting
                 />
               </div>
