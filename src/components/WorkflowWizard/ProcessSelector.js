@@ -1,6 +1,6 @@
 import React from 'react';
 import {Nav, NavItem} from 'react-bootstrap';
-class ProcessesSelector extends React.Component {
+class ProcessSelector extends React.Component {
   static propTypes = {
     processes: React.PropTypes.array.isRequired,
     chooseProcess: React.PropTypes.func.isRequired,
@@ -61,4 +61,4 @@ class ProcessesSelector extends React.Component {
     );
   }
 }
-export default ProcessesSelector;
+export default ProcessSelector;

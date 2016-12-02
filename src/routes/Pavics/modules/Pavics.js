@@ -2,7 +2,7 @@ import initialState from './../../../store/initialState';
 import * as constants from './../../../constants';
 function setSelectedProcess (process) {
   // TODO remove the boilerplate when api provides the identifier
-  // TODO uplicated in ProcessesSelector to make executing easier
+  // TODO uplicated in ProcessSelector to make executing easier
   let processIdentifier;
   if (process.identifier) {
     processIdentifier = process.identifier;
