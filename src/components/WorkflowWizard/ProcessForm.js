@@ -1,6 +1,7 @@
 import React from 'react';
 import {Form, FormGroup, Col, FormControl} from 'react-bootstrap';
 import {ExecuteButton} from './../../components/WorkflowWizard';
+import classes from './WorkflowWizard.scss';
 class ProcessForm extends React.Component {
   static propTypes = {
     selectedProcess: React.PropTypes.object.isRequired,
@@ -10,18 +11,35 @@ class ProcessForm extends React.Component {
     executeProcess: React.PropTypes.func.isRequired,
     selectedProvider: React.PropTypes.string.isRequired
   };
-
   handleChange = (event) => {
     let elem = event.target;
     this.props.handleSelectedProcessValueChange(elem.id, elem.value);
   };
-
   execute = () => {
     let identifier = this.props.selectedProcess.identifier;
     let provider = this.props.selectedProvider;
     let values = this.props.selectedProcessValues;
     this.props.executeProcess(provider, identifier, values);
   };
+
+  makeInput (input) {
+    switch (input.dataType) {
+      case '//www.w3.org/TR/xmlschema-2/#boolean':
+        return (
+          <div>
+            <FormControl bsClass={classes.checkbox} id={input.name} type="checkbox" onChange={this.handleChange} />
+            <p>{input.description}</p>
+          </div>
+        );
+      default:
+        return (
+          <div>
+            <FormControl id={input.name} type="text" onChange={this.handleChange} />
+            <p>{input.description}</p>
+          </div>
+        );
+    }
+  }
 
   render () {
     return (
@@ -32,8 +50,7 @@ class ProcessForm extends React.Component {
               <FormGroup key={i}>
                 <Col sm={2}>{elem.title}</Col>
                 <Col sm={10}>
-                  <FormControl id={elem.name} type="text" onChange={this.handleChange} />
-                  <p>{elem.description}</p>
+                  {this.makeInput(elem)}
                 </Col>
               </FormGroup>
             );
