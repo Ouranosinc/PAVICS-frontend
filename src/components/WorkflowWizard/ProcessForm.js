@@ -32,7 +32,8 @@ class ProcessForm extends React.Component {
               <FormGroup key={i}>
                 <Col sm={2}>{elem.title}</Col>
                 <Col sm={10}>
-                  <FormControl id={elem.name} type="text" placeholder={elem.dataType} onChange={this.handleChange} />
+                  <FormControl id={elem.name} type="text" onChange={this.handleChange} />
+                  <p>{elem.description}</p>
                 </Col>
               </FormGroup>
             );
