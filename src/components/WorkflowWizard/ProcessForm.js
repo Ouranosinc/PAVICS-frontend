@@ -2,6 +2,7 @@ import React from 'react';
 import {Form, FormGroup, Col, FormControl} from 'react-bootstrap';
 import {ExecuteButton} from './../../components/WorkflowWizard';
 import classes from './WorkflowWizard.scss';
+import * as constants from './../../constants';
 class ProcessForm extends React.Component {
   static propTypes = {
     selectedProcess: React.PropTypes.object.isRequired,
@@ -9,7 +10,8 @@ class ProcessForm extends React.Component {
     selectedProcessValues: React.PropTypes.object.isRequired,
     handleSelectedProcessValueChange: React.PropTypes.func.isRequired,
     executeProcess: React.PropTypes.func.isRequired,
-    selectedProvider: React.PropTypes.string.isRequired
+    selectedProvider: React.PropTypes.string.isRequired,
+    goToSection: React.PropTypes.func.isRequired
   };
   handleChange = (event) => {
     let elem = event.target;
@@ -20,6 +22,7 @@ class ProcessForm extends React.Component {
     let provider = this.props.selectedProvider;
     let values = this.props.selectedProcessValues;
     this.props.executeProcess(provider, identifier, values);
+    this.props.goToSection(constants.PLATFORM_SECTION_MONITOR);
   };
 
   makeInput (input) {
