@@ -4,10 +4,12 @@ import {WorkflowWizard, Monitor, Visualize} from './../../../containers';
 import Header from './../../../components/Header';
 import * as actionCreators from './../modules/Pavics';
 import * as constants from './../../../constants';
+import Map from './../../../components/Map';
 class Pavics extends React.Component {
   static propTypes = {
     platform: React.PropTypes.object.isRequired
   };
+
   makeSection () {
     switch (this.props.platform.section) {
       case constants.PLATFORM_SECTION_WORKFLOWS:
@@ -22,8 +24,13 @@ class Pavics extends React.Component {
         return (
           <Visualize {...this.props} />
         );
+      case constants.PLATFORM_SECTION_OLCOMPONENT:
+        return (
+          <Map />
+        );
     }
   }
+
   render () {
     return (
       <div>

@@ -16,6 +16,9 @@ class Header extends React.Component {
   visualize = () => {
     this.props.goToSection(constants.PLATFORM_SECTION_VISUALIZE);
   };
+  olcomponent = () => {
+    this.props.goToSection(constants.PLATFORM_SECTION_OLCOMPONENT);
+  };
   render () {
     return (
       <Grid>
@@ -25,6 +28,7 @@ class Header extends React.Component {
               <NavItem onClick={this.workflows}>Workflow Wizard</NavItem>
               <NavItem onClick={this.monitor}>Workboard</NavItem>
               <NavItem onClick={this.visualize}>Visualize</NavItem>
+              <NavItem onClick={this.olcomponent}>Visualize 2</NavItem>
             </Nav>
           </Col>
         </Row>
