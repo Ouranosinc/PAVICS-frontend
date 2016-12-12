@@ -1,12 +1,13 @@
-import React from 'react'
-import classes from './OLComponent.scss'
-import ol from 'openlayers'
-window.ol = ol // _ol3-layerswitcher.js needs ol as global (...)
-require('ol3-layerswitcher/src/ol3-layerswitcher.js')
-require('openlayers/css/ol.css')
-require('ol3-layerswitcher/src/ol3-layerswitcher.css')
+import React from 'react';
+import classes from './OLComponent.scss';
+import ol from 'openlayers';
+// _ol3-layerswitcher.js needs ol as global (...)
+window.ol = ol;
+require('ol3-layerswitcher/src/ol3-layerswitcher.js');
+require('openlayers/css/ol.css');
+require('ol3-layerswitcher/src/ol3-layerswitcher.css');
 // Couldn't figure out the bug when importing inner component css file but it works from node_modules
-var G_BING_API_KEY = 'AtXX65CBBfZXBxm6oMyf_5idMAMI7W6a5GuZ5acVcrYi6lCQayiiBz7_aMHB7JR7'
+let G_BING_API_KEY = 'AtXX65CBBfZXBxm6oMyf_5idMAMI7W6a5GuZ5acVcrYi6lCQayiiBz7_aMHB7JR7';
 class OLComponent extends React.Component {
   static propTypes = {
     capabilities: React.PropTypes.object,
@@ -15,46 +16,48 @@ class OLComponent extends React.Component {
   }
 
   constructor (props) {
-    super(props)
-    this.layersCount = 0
-    this.map = null
-    this.baseLayers = new ol.layer.Group({'title': 'Base maps', 'opacity': 1.0, 'visible': true, 'zIndex': 0})
-    this.overlayLayers = new ol.layer.Group({'title': 'Overlays', 'opacity': 1.0, 'visible': true, 'zIndex': 1})
-    this.view = null
-    this.tmpLayer = null
-    this.popup = null
+    super(props);
+    this.layersCount = 0;
+    this.map = null;
+    this.baseLayers = new ol.layer.Group({'title': 'Base maps', 'opacity': 1.0, 'visible': true, 'zIndex': 0});
+    this.overlayLayers = new ol.layer.Group({'title': 'Overlays', 'opacity': 1.0, 'visible': true, 'zIndex': 1});
+    this.view = null;
+    this.tmpLayer = null;
+    this.popup = null;
   }
 
   // Returns base layers list
   getMapBaseLayersList () {
     if (this.baseLayers != null) {
-      return this.baseLayers.getLayers()
+      return this.baseLayers.getLayers();
     }
-    return []
+    return [];
   }
 
   // Returns overlay layers list
   getMapOverlayList () {
     if (this.overlayLayers != null) {
-      return this.overlayLayers.getLayers()
+      return this.overlayLayers.getLayers();
     }
-    return []
+    return [];
   }
 
   // Add backgrounnd layer (use once)
   initBackgroundLayer () {
-    this.addBingLayer('Aerial', this.getMapBaseLayersList(), 'Aerial')
-    // var wmsUrl = "http://demo.boundlessgeo.com/geoserver/wms"
-    // var wmsParams = {'LAYERS': 'topp:states', 'TILED': true}
+    this.addBingLayer('Aerial', this.getMapBaseLayersList(), 'Aerial');
+    // let wmsUrl = "http://demo.boundlessgeo.com/geoserver/wms"
+    // let wmsParams = {'LAYERS': 'topp:states', 'TILED': true}
     // this.addTileWMSLayer('topp:states', this.getMapOverlayList(), wmsUrl, wmsParams)
   }
 
   removeLayer (layers, title) {
-    var layer
+    let layer;
     for (layer in layers) {
-      if (title === layer.get('title')) {
-        console.log('addTileWMSLayer: First Remove layer ' + layer.get('title'))
-        this.map.removeLayer(layer)
+      if (layers.hasOwnProperty(layer)) {
+        if (title === layer.get('title')) {
+          console.log('addTileWMSLayer: First Remove layer ' + layer.get('title'));
+          this.map.removeLayer(layer);
+        }
       }
     }
   }
@@ -66,22 +69,24 @@ class OLComponent extends React.Component {
    @param extent region extent to load
    @param serverType Server's type
    */
-  addTileWMSLayer (title,
-                   layers,
-                   wmsUrl,
-                   wmsParams,
-                   extent,
-                   serverType,
-                   visible = true) {
-    var layer = this.getTileWMSLayer(title,
+  addTileWMSLayer (
+    title,
+    layers,
+    wmsUrl,
+    wmsParams,
+    extent,
+    serverType,
+    visible = true
+  ) {
+    let layer = this.getTileWMSLayer(title,
       wmsUrl,
       wmsParams,
       extent,
       serverType,
-      visible)
-    layers.push(layer)
-    console.log('addTileWMSLayer: Add layer ' + layer.get('title'))
-    return layer
+      visible);
+    layers.push(layer);
+    console.log('addTileWMSLayer: Add layer ' + layer.get('title'));
+    return layer;
   }
 
   /*! \brief Returns a ol3 layer to a layers list
@@ -91,12 +96,14 @@ class OLComponent extends React.Component {
    @param extent region extent to load
    @param serverType Server's type
    */
-  getTileWMSLayer (title,
-                   wmsUrl,
-                   wmsParams,
-                   extent,
-                   serverType = '',
-                   visible = true) {
+  getTileWMSLayer (
+    title,
+    wmsUrl,
+    wmsParams,
+    extent,
+    serverType = '',
+    visible = true
+  ) {
     if (extent === undefined) {
       return new ol.layer.Tile(
         {
@@ -109,7 +116,7 @@ class OLComponent extends React.Component {
               params: wmsParams,
               serverType: serverType
             })
-        })
+        });
     } else {
       return new ol.layer.Tile(
         {
@@ -121,7 +128,7 @@ class OLComponent extends React.Component {
               params: wmsParams,
               serverType: serverType
             })
-        })
+        });
     }
   }
 
@@ -136,82 +143,82 @@ class OLComponent extends React.Component {
         // "no photos at this zoom level" tiles
         // maxZoom: 19
       })
-    }))
+    }));
   }
 
   initMap () {
     this.view = new ol.View({
       center: [-10997148, 8569099],
       zoom: 4
-    })
+    });
     let map = new ol.Map({
       layers: [this.baseLayers, this.overlayLayers],
       target: 'map',
       renderer: 'canvas',
       view: this.view
-    })
+    });
     let mousePosition = new ol.control.MousePosition({
       coordinateFormat: ol.coordinate.createStringXY(6),
       projection: 'EPSG:4326',
       target: document.getElementById('mouseCoordinates')
-    })
-    map.addControl(mousePosition)
+    });
+    map.addControl(mousePosition);
     let layerSwitcher = new ol.control.LayerSwitcher({
       tipLabel: 'Legend' // Optional label for button
-    })
-    map.addControl(layerSwitcher)
-    this.map = map
+    });
+    map.addControl(layerSwitcher);
+    this.map = map;
   }
 
   /** Returns view resolution */
   getCurrentResolution () {
     if (this.view != null) {
-      return this.view.getResolution()
+      return this.view.getResolution();
     }
-    return -1
+    return -1;
   }
 
   /** Sets view resolution */
   setCurrentResolution (resolution) {
     if (this.view != null) {
-      this.view.setResolution(resolution)
+      this.view.setResolution(resolution);
     }
   }
 
   /** Returns current view center */
   getCurrentCenter () {
     if (this.view != null) {
-      return this.view.getCenter()
+      return this.view.getCenter();
     }
-    return []
+    return [];
   }
 
   /** Sets current view center */
   setCurrentCenter (center) {
     if (this.view != null) {
-      this.view.setCenter(center)
+      this.view.setCenter(center);
     }
-    return []
+    return [];
   }
 
   /** Returns current projection */
   getCurrentProjection () {
     if (this.view != null) {
-      return this.view.getProjection()
+      return this.view.getProjection();
     }
-    return ''
+    return '';
   }
 
   /** Sets current projection */
   setCurrentProjection (epsgString) {
     if (this.view != null) {
-      this.view.setProjection(epsgString)
+      this.view.setProjection(epsgString);
     }
   }
 
   componentDidMount () {
-    this.initBackgroundLayer()
-    this.initMap()
+    this.initBackgroundLayer();
+    this.initMap();
   }
 
   componentWillUnmount () {
@@ -222,8 +229,8 @@ class OLComponent extends React.Component {
 
   componentDidUpdate (prevProps, prevState) {
     if (this.props.loadedWmsDatasets.length && this.layersCount !== this.props.loadedWmsDatasets.length) {
-      var wmsUrl = this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].url
-      // var wmsUrl = "http://132.217.140.31:8080/ncWMS2/wms"
+      let wmsUrl = this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].url;
+      // let wmsUrl = "http://132.217.140.31:8080/ncWMS2/wms"
       /* http://132.217.140.31:8080/ncWMS2/wms?
        FORMAT=image%2Fpng&
        TRANSPARENT=TRUE&
@@ -263,9 +270,9 @@ class OLComponent extends React.Component {
        STYLES=&
        BBOX=-7514065.628545966%2C7514065.628545966%2C-5009377.08569731%2C10018754.171394622
        */
-      var wmsName = this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].name
+      let wmsName = this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].name;
       // TODO: Do we need to dynamically set style + palette
-      var wmsParams = {
+      let wmsParams = {
         'TRANSPARENT': 'TRUE',
         'STYLES': this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].style,
         'LAYERS': this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].name,
@@ -279,13 +286,13 @@ class OLComponent extends React.Component {
         // TODO DYNAMICALLY SET TIME
         'SRS': 'EPSG:4326'
         // 'ANIMATION': 'TRUE' // TODO: Must be supported by ncWMS server?
-      }
+      };
       if (this.tmpLayer) {
         // this.tmpLayer.setVisible(false)
-        this.map.removeLayer(this.tmpLayer)
+        this.map.removeLayer(this.tmpLayer);
       }
-      this.tmpLayer = this.addTileWMSLayer(wmsName, this.getMapOverlayList(), wmsUrl, wmsParams)
-      this.layersCount = this.props.loadedWmsDatasets.length
+      this.tmpLayer = this.addTileWMSLayer(wmsName, this.getMapOverlayList(), wmsUrl, wmsParams);
+      this.layersCount = this.props.loadedWmsDatasets.length;
     } else {
     }
   }
@@ -297,7 +304,7 @@ class OLComponent extends React.Component {
           <div id="popup" className="ol-popup"></div>
         </div>
       </div>
-    )
+    );
   }
 }
-export default OLComponent
+export default OLComponent;
