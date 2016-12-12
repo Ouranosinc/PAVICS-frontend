@@ -2,6 +2,7 @@
 import config from '../../config';
 import {parseString} from 'xml2js';
 import request from 'koa-request';
+// TODO probably not the place to hardcode this
 const thredds = 'http://outarde.crim.ca:8083/thredds/wms/birdhouse/';
 const wmsUrlSuffix = '?service=WMS&version=1.3.0&request=GetCapabilities';
 // Explanation here http://blog.stevensanderson.com/2013/12/21/experiments-with-koa-and-javascript-generators/
