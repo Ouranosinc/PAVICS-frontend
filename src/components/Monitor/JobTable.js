@@ -6,6 +6,7 @@ import './../../../node_modules/ag-grid/dist/styles/theme-bootstrap.css';
 import classes from './Monitor.scss';
 import React from 'react';
 import LinkCellRenderer from './LinkCellRenderer';
+import OnclickCellRenderer from './OnclickCellRenderer';
 class JobTable extends React.Component {
   static propTypes = {
     jobs: React.PropTypes.array.isRequired
@@ -16,7 +17,8 @@ class JobTable extends React.Component {
       {headerName: 'Process Identifier', field: 'title'},
       {headerName: 'Status', field: 'status'},
       {headerName: 'Duration', field: 'duration'},
-      {headerName: 'Result (xml)', field: 'status_location', cellRendererFramework: LinkCellRenderer}
+      {headerName: 'Result (xml)', field: 'status_location', cellRendererFramework: LinkCellRenderer},
+      {headerName: 'Visualize', field: 'visualize', cellRendererFramework: OnclickCellRenderer}
     ];
   }
 
@@ -35,6 +37,15 @@ class JobTable extends React.Component {
         let rows = [];
         for (let i = params.startRow; i < params.endRow; i++) {
           if (this.props.jobs[i]) {
+            let job = this.props.jobs[i];
+            console.log('job:', job);
+            let param = job['status_location'];
+            let click = (param) => {
+              console.log('clicked:', param);
+            };
+            job['visualize'] = {
+              'onclick': () => { click(param); }
+            };
             rows.push(this.props.jobs[i]);
           }
         }
