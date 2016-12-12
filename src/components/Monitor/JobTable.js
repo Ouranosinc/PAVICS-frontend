@@ -1,4 +1,4 @@
-import {Panel, Grid, Row, Col} from 'react-bootstrap';
+import {Panel} from 'react-bootstrap';
 import {IGetRowsParams} from 'ag-grid';
 import {AgGridReact} from 'ag-grid-react';
 import './../../../node_modules/ag-grid/dist/styles/ag-grid.css';
@@ -50,26 +50,22 @@ class JobTable extends React.Component {
 
   render () {
     return (
-      <Grid className={classes.Monitor}>
-        <Row>
-          <Col mdOffset={2} md={8}>
-            <Panel header="Jobs">
-              <div className={classes.agGrid + ' ag-bootstrap'}>
-                <AgGridReact
-                  onGridReady={this.onGridReady}
-                  className={classes.agGrid}
-                  rowData={this.props.jobs}
-                  columnDefs={this.columnDefs()}
-                  rowModelType="pagination"
-                  paginationPageSize={10}
-                  rowHeight={25}
-                  enableSorting
-                />
-              </div>
-            </Panel>
-          </Col>
-        </Row>
-      </Grid>
+      <div className={classes.Monitor}>
+        <Panel header="Jobs">
+          <div className={classes.agGrid + ' ag-bootstrap'}>
+            <AgGridReact
+              onGridReady={this.onGridReady}
+              className={classes.agGrid}
+              rowData={this.props.jobs}
+              columnDefs={this.columnDefs()}
+              rowModelType="pagination"
+              paginationPageSize={10}
+              rowHeight={25}
+              enableSorting
+            />
+          </div>
+        </Panel>
+      </div>
     );
   }
 }

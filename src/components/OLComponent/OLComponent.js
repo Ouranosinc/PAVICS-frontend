@@ -146,13 +146,41 @@ class OLComponent extends React.Component {
     }));
   }
 
+  makeWMSlayer (title, url, time, styles, layerName) {
+    return new ol.layer.Tile({
+      visible: true,
+      opacity: 0.7,
+      title: title,
+      source: new ol.source.TileWMS({
+        url: url,
+        params: {
+          TIME: time,
+          FORMAT: 'image/png',
+          TILED: true,
+          STYLES: styles,
+          LAYERS: layerName,
+          TRANSPARENT: 'TRUE',
+          VERSION: '1.3.0',
+          EPSG: '4326',
+          COLORSCALERANGE: '0.0000004000,0.00006000',
+          NUMCOLORBANDS: '10',
+          LOGSCALE: false,
+          crossOrigin: 'anonymous'
+        }
+      })
+    });
+  };
+
   initMap () {
+    let url = 'http://outarde.crim.ca:8083/thredds/wms/birdhouse/flyingpigeon/' +
+      'ncout-d149d317-b67f-11e6-acaf-fa163ee00329.nc?service=WMS&version=1.3.0&request=GetCapabilities';
+    let layer = this.makeWMSlayer('my title', url, '2005-12-07T12:00:00.000Z', 'boxfill/occam', 'pr');
     this.view = new ol.View({
       center: [-10997148, 8569099],
       zoom: 4
     });
     let map = new ol.Map({
-      layers: [this.baseLayers, this.overlayLayers],
+      layers: [this.baseLayers, this.overlayLayers, layer],
       target: 'map',
       renderer: 'canvas',
       view: this.view
