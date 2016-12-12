@@ -9,7 +9,8 @@ import LinkCellRenderer from './LinkCellRenderer';
 import OnclickCellRenderer from './OnclickCellRenderer';
 class JobTable extends React.Component {
   static propTypes = {
-    jobs: React.PropTypes.array.isRequired
+    jobs: React.PropTypes.array.isRequired,
+    fetchVisualizableData: React.PropTypes.func.isRequired
   };
 
   columnDefs () {
@@ -38,10 +39,10 @@ class JobTable extends React.Component {
         for (let i = params.startRow; i < params.endRow; i++) {
           if (this.props.jobs[i]) {
             let job = this.props.jobs[i];
-            console.log('job:', job);
             let param = job['status_location'];
             let click = (param) => {
               console.log('clicked:', param);
+              this.props.fetchVisualizableData(param);
             };
             job['visualize'] = {
               'onclick': () => { click(param); }

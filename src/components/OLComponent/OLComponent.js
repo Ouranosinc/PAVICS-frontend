@@ -12,7 +12,8 @@ class OLComponent extends React.Component {
   static propTypes = {
     capabilities: React.PropTypes.object,
     dataset: React.PropTypes.object,
-    loadedWmsDatasets: React.PropTypes.array.isRequired
+    loadedWmsDatasets: React.PropTypes.array.isRequired,
+    layer: React.PropTypes.object.isRequired
   }
 
   constructor (props) {
@@ -147,7 +148,7 @@ class OLComponent extends React.Component {
   }
 
   makeWMSlayer (title, url, time, styles, layerName) {
-    return new ol.layer.Tile({
+    let layer = new ol.layer.Tile({
       visible: true,
       opacity: 0.7,
       title: title,
@@ -169,18 +170,16 @@ class OLComponent extends React.Component {
         }
       })
     });
+    this.map.addLayer(layer);
   };
 
   initMap () {
-    let url = 'http://outarde.crim.ca:8083/thredds/wms/birdhouse/flyingpigeon/' +
-      'ncout-d149d317-b67f-11e6-acaf-fa163ee00329.nc?service=WMS&version=1.3.0&request=GetCapabilities';
-    let layer = this.makeWMSlayer('my title', url, '2005-12-07T12:00:00.000Z', 'boxfill/occam', 'pr');
     this.view = new ol.View({
       center: [-10997148, 8569099],
       zoom: 4
     });
     let map = new ol.Map({
-      layers: [this.baseLayers, this.overlayLayers, layer],
+      layers: [this.baseLayers, this.overlayLayers],
       target: 'map',
       renderer: 'canvas',
       view: this.view
@@ -256,6 +255,11 @@ class OLComponent extends React.Component {
   }
 
   componentDidUpdate (prevProps, prevState) {
+    if (this.props.layer && this.props.layer.title) {
+      let layer = this.props.layer;
+      console.log('making wms layer', layer);
+      this.makeWMSlayer(layer.title, layer.url, layer.time, layer.style, layer.name);
+    }
     if (this.props.loadedWmsDatasets.length && this.layersCount !== this.props.loadedWmsDatasets.length) {
       let wmsUrl = this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].url;
       // let wmsUrl = "http://132.217.140.31:8080/ncWMS2/wms"

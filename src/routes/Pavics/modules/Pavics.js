@@ -1,6 +1,5 @@
 import initialState from './../../../store/initialState';
 import * as constants from './../../../constants';
-
 const COUNTER_INCREMENT = 'Visualize.COUNTER_INCREMENT';
 // SYNC
 const SELECT_FACET_KEY = 'Visualize.SELECT_FACET_KEY';
@@ -506,6 +505,22 @@ export function chooseStep (step) {
     step: step
   };
 }
+function setLayer (layer) {
+  return {
+    type: constants.SET_WMS_LAYER,
+    layer: layer
+  };
+}
+export function fetchVisualizableData (statusLocation) {
+  return dispatch => {
+    return fetch(`/api/wms/visualizableData?status=${statusLocation}`)
+      .then(response => response.json())
+      .then(json => dispatch(setLayer(json)))
+      .catch(err => {
+        console.log(err);
+      });
+  };
+}
 export function goToSection (section) {
   return dispatch => dispatch(setSection(section));
 }
@@ -620,8 +635,10 @@ const WORKFLOW_WIZARD_HANDLERS = {
     });
   }
 };
-
 const VISUALIZE_HANDLERS = {
+  [constants.SET_WMS_LAYER]: (state, action) => {
+    return {...state, layer: action.layer};
+  },
   [SELECT_FACET_KEY]: (state, action) => {
     return ({...state, currentSelectedKey: action.key, currentSelectedValue: action.value});
   },
@@ -743,39 +760,32 @@ const VISUALIZE_HANDLERS = {
     return ({...state, selectedWMSLayer: action.selectedWMSLayer});
   }
 };
-
 const PLATFORM_HANDLERS = {
   [constants.PLATFORM_SET_SECTION]: (state, action) => {
     return {...state, section: action.section};
   }
 };
-
 const MONITOR_HANDLERS = {
   [constants.MONITOR_SET_JOBS]: (state, action) => {
     return {...state, jobs: action.jobs};
   }
 };
-
 function workflowWizardReducer (state, action) {
   const handler = WORKFLOW_WIZARD_HANDLERS[action.type];
   return handler ? handler(state, action) : state;
 }
-
 function platformReducer (state, action) {
   const handler = PLATFORM_HANDLERS[action.type];
   return handler ? handler(state, action) : state;
 }
-
 function monitorReducer (state, action) {
   const handler = MONITOR_HANDLERS[action.type];
   return handler ? handler(state, action) : state;
 }
-
 function visualizeReducer (state, action) {
   const handler = VISUALIZE_HANDLERS[action.type];
   return handler ? handler(state, action) : state;
 }
-
 function pavicsReducer (state = initialState, action) {
   return {
     workflowWizard: workflowWizardReducer(state.workflowWizard, action),
@@ -784,5 +794,4 @@ function pavicsReducer (state = initialState, action) {
     visualize: visualizeReducer(state.visualize, action)
   };
 }
-
 export default pavicsReducer;

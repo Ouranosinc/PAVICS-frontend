@@ -3,7 +3,8 @@ import JobTable from './../../components/Monitor';
 class Monitor extends React.Component {
   static propTypes = {
     fetchJobs: React.PropTypes.func.isRequired,
-    monitor: React.PropTypes.object.isRequired
+    monitor: React.PropTypes.object.isRequired,
+    fetchVisualizableData: React.PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -13,7 +14,7 @@ class Monitor extends React.Component {
 
   render () {
     return (
-      <JobTable jobs={this.props.monitor.jobs} />
+      <JobTable jobs={this.props.monitor.jobs} fetchVisualizableData={this.props.fetchVisualizableData} />
     );
   }
 }

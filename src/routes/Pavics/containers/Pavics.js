@@ -64,7 +64,8 @@ const mapStateToProps = (state) => {
     facets: state.pavics.visualize.facets,
     climateIndicators: state.pavics.visualize.climateIndicators,
     panelControls: state.pavics.visualize.panelControls,
-    plotlyData: state.pavics.visualize.plotlyData
+    plotlyData: state.pavics.visualize.plotlyData,
+    layer: state.pavics.visualize.layer
   };
 };
 export default connect(mapStateToProps, mapActionCreators)(Pavics);
