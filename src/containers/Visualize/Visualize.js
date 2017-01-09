@@ -30,7 +30,7 @@ class Visualize extends React.Component {
           </div>
           <div className={classes.left}>
             <div className={classes.panel}>
-              <TimeSlider {...this.props} />
+              <TimeSlider {...this.props} monthsRange={false} yearsRange={false} />
             </div>
           </div>
           <div className={classes.right}>

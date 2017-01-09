@@ -10,8 +10,9 @@ const DIVIDER = 1000;
 
 export class TimeSlider extends React.Component {
   static propTypes = {
-
-  }
+    monthsRange: React.PropTypes.bool.isRequired,
+    yearsRange: React.PropTypes.bool.isRequired,
+  };
 
   constructor(props) {
     super(props);
@@ -71,9 +72,7 @@ export class TimeSlider extends React.Component {
           <FormGroup className={classes['InlineFormGroup']}>
             <FormControl componentClass="select" placeholder="Hour" onChange={this._onSelectedHour}>
               <option value="">Hr.</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
+                {[...Array(24)].map((x, i) => <option key={i} value={(i<10)?'0'+i:i}>{(i<10)?'0'+i:i}</option>)}
             </FormControl>
           </FormGroup>
           <FormGroup className={classes['InlineFormGroup']}>
@@ -98,7 +97,7 @@ export class TimeSlider extends React.Component {
                   max={new Date(2016, 12, 31).valueOf()/DIVIDER}
                   marks={marksMonths}
                   included={false}
-                  range={true}
+                  range={this.props.monthsRange}
                   defaultValue={[5, 8]}
                   onChange={this._onChangedMonthSlider}
           />
@@ -108,8 +107,9 @@ export class TimeSlider extends React.Component {
                   min={1960}
                   max={1985}
                   marks={marksYears}
+                  range={this.props.yearsRange}
                   included={false}
-                  defaultValue={1960}
+                  defaultValue={[1960, 1968]}
                   onChange={this._onChangedYearSlider}
           />
         </Col>
@@ -120,9 +120,12 @@ export class TimeSlider extends React.Component {
           <FormGroup className={classes['InlineFormGroup']}>
             <FormControl style={{width:'90px'}} type="number" placeholder="Number" value={this.state.stepLength} onChange={this._onChangedStepLength}/>
           </FormGroup>
+          <ControlLabel>
+            Granularity:
+          </ControlLabel>
           <FormGroup className={classes['InlineFormGroup']}>
             <FormControl componentClass="select" placeholder="Granularity Level" onChange={this._onChangedStepGranularity}>
-              <option value="">Gran. Lvl.</option>
+              <option value="">Choose</option>
               <option value="minute">minutes</option>
               <option value="hour">hours</option>
               <option value="day">days</option>
@@ -135,7 +138,7 @@ export class TimeSlider extends React.Component {
           </ControlLabel>
           <FormGroup className={classes['InlineFormGroup']}>
             <FormControl componentClass="select" placeholder="Speed Level" onChange={this._onChangedStepSpeed}>
-              <option value="">Spd.</option>
+              <option value="">Choose</option>
               <option value="slow">slow</option>
               <option value="medium">medium</option>
               <option value="fast">fast</option>
