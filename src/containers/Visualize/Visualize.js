@@ -2,6 +2,7 @@ import React from 'react';
 import classes from './Visualize.scss';
 // TODO: Fix, we should only import containers here
 import OLComponent from '../../components/OLComponent';
+import TimeSlider from '../../containers/TimeSlider';
 import DatasetDetails from '../../components/DatasetDetails';
 import {Monitor} from './../';
 // Containers
@@ -29,18 +30,12 @@ class Visualize extends React.Component {
           </div>
           <div className={classes.left}>
             <div className={classes.panel}>
-              <SearchCatalog {...this.props} />
-            </div>
-            <div className={classes.panel}>
-              <Monitor {...this.props} />
+              <TimeSlider {...this.props} />
             </div>
           </div>
           <div className={classes.right}>
             <div className={classes.panel}>
               <DatasetDetails {...this.props} />
-            </div>
-            <div className={classes.panel}>
-              <DatasetWMSLayers {...this.props} />
             </div>
           </div>
         </div>
