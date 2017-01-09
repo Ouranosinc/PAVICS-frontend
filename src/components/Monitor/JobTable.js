@@ -1,4 +1,4 @@
-import {Panel, Grid, Row, Col} from 'react-bootstrap';
+import {Panel} from 'react-bootstrap';
 import {IGetRowsParams} from 'ag-grid';
 import {AgGridReact} from 'ag-grid-react';
 import './../../../node_modules/ag-grid/dist/styles/ag-grid.css';
@@ -6,9 +6,11 @@ import './../../../node_modules/ag-grid/dist/styles/theme-bootstrap.css';
 import classes from './Monitor.scss';
 import React from 'react';
 import LinkCellRenderer from './LinkCellRenderer';
+import OnclickCellRenderer from './OnclickCellRenderer';
 class JobTable extends React.Component {
   static propTypes = {
-    jobs: React.PropTypes.array.isRequired
+    jobs: React.PropTypes.array.isRequired,
+    fetchVisualizableData: React.PropTypes.func.isRequired
   };
 
   columnDefs () {
@@ -16,7 +18,8 @@ class JobTable extends React.Component {
       {headerName: 'Process Identifier', field: 'title'},
       {headerName: 'Status', field: 'status'},
       {headerName: 'Duration', field: 'duration'},
-      {headerName: 'Result (xml)', field: 'status_location', cellRendererFramework: LinkCellRenderer}
+      {headerName: 'Result (xml)', field: 'status_location', cellRendererFramework: LinkCellRenderer},
+      {headerName: 'Visualize', field: 'visualize', cellRendererFramework: OnclickCellRenderer}
     ];
   }
 
@@ -57,8 +60,23 @@ class JobTable extends React.Component {
     return {
       rowCount: this.props.jobs.length,
       getRows: (params: IGetRowsParams) => {
-        let sortedData = sortData(params.sortModel);
-        params.successCallback(sortedData.slice(params.startRow, params.endRow));
+        let rowCount = this.props.jobs.length;
+        let rows = [];
+        for (let i = params.startRow; i < params.endRow; i++) {
+          if (this.props.jobs[i]) {
+            let job = this.props.jobs[i];
+            let param = job['status_location'];
+            let click = (param) => {
+              console.log('clicked:', param);
+              this.props.fetchVisualizableData(param);
+            };
+            job['visualize'] = {
+              'onclick': () => { click(param); }
+            };
+            rows.push(this.props.jobs[i]);
+          }
+        }
+        params.successCallback(rows, rowCount);
       }
     };
   };

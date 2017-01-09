@@ -2,12 +2,14 @@
   .agGrid {
     text-align: left;
     width: 100%;
-    margin: 15px 0;
     height: 325px;
   }
 }
 
 :global {
+  .ag-paging-row-summary-panel {
+    width: auto;
+  }
   .ag-header-cell {
     text-align: left;
   }

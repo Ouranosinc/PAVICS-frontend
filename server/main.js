@@ -1,5 +1,4 @@
 import Koa from 'koa';
-import route from 'koa-route';
 import convert from 'koa-convert';
 import webpack from 'webpack';
 import webpackConfig from '../build/webpack.config';
@@ -19,14 +18,15 @@ import {birdhouse, datasets, facets, wms, consumer, wps, phoenix} from './contro
 let router = require('koa-router')();
 router.get('/wps/:identifier', consumer.resolve);
 router.get('/phoenix/:identifier', phoenix.consume);
+router.get('/api/wms/capabilities', birdhouse.getCapabilities);
+router.get('/api/wms/visualizableData', birdhouse.fetchVisualizableLayer);
+router.get('/api/wms/dataset/layers', wms.getLayers);
+router.get('/api/facets', facets.getFacets);
+router.get('/api/datasets', datasets.getDatasets);
+router.get('/api/dataset', datasets.getDataset);
+router.get('/api/climate_indicators', wps.getClimateIndicators);
 app.use(router.routes());
 app.use(router.allowedMethods());
-app.use(route.get('/api/wms/capabilities', birdhouse.getCapabilities));
-app.use(route.get('/api/wms/dataset/layers', wms.getLayers));
-app.use(route.get('/api/facets', facets.getFacets));
-app.use(route.get('/api/datasets', datasets.getDatasets));
-app.use(route.get('/api/dataset', datasets.getDataset));
-app.use(route.get('/api/climate_indicators', wps.getClimateIndicators));
 // Enable koa-proxy if it has been enabled in the config.
 // Because it's been enabled, so I guess we should enable it
 if (config.proxy && config.proxy.enabled) {

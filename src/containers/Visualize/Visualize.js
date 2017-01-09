@@ -3,9 +3,9 @@ import classes from './Visualize.scss';
 // TODO: Fix, we should only import containers here
 import OLComponent from '../../components/OLComponent';
 import DatasetDetails from '../../components/DatasetDetails';
-import PlotlyWrapper from '../../components/PlotlyWrapper';
+import {Monitor} from './../';
 // Containers
-import {DatasetWMSLayers, SearchCatalog, ClimateIndicators} from '../../containers';
+import {DatasetWMSLayers, SearchCatalog} from '../../containers';
 class Visualize extends React.Component {
   static propTypes = {
     fetchFacets: React.PropTypes.func.isRequired,
@@ -23,12 +23,6 @@ class Visualize extends React.Component {
   render () {
     return (
       <div>
-        <PlotlyWrapper
-          panelControls={this.props.panelControls}
-          data={this.props.plotlyData.data}
-          layout={this.props.plotlyData.layout}
-          fetchPlotlyData={this.props.fetchPlotlyData}
-        />
         <div className={classes['Visualize']}>
           <div className={classes.mapContainer}>
             <OLComponent {...this.props} />
@@ -38,7 +32,7 @@ class Visualize extends React.Component {
               <SearchCatalog {...this.props} />
             </div>
             <div className={classes.panel}>
-              <ClimateIndicators {...this.props} />
+              <Monitor {...this.props} />
             </div>
           </div>
           <div className={classes.right}>
