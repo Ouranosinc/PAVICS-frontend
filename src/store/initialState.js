@@ -18,6 +18,7 @@ const initialState = {
     jobs: []
   },
   visualize: {
+    layer: {},
     currentSelectedKey: constants.DEFAULT_SELECTED_KEY,
     currentSelectedValue: '',
     currentOpenedDataset: '',
