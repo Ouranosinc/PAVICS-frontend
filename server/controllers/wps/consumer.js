@@ -17,7 +17,7 @@ var consumer = (function () {
   };
   return {
     resolve: function * (next) {
-      console.log('consuming ', this.params.identifier);
+      console.log('consuming:', this.params.identifier);
       let response;
       let url;
       switch (this.params.identifier) {

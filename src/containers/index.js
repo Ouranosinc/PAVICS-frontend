@@ -1,8 +1,10 @@
-import DatasetWMSLayers from './DatasetWMSLayers'
-import SearchCatalog from './SearchCatalog'
-import SearchCatalogResults from './SearchCatalogResults'
+import DatasetWMSLayers from './DatasetWMSLayers';
+import SearchCatalog from './SearchCatalog';
+import SearchCatalogResults from './SearchCatalogResults';
 import {TimeSlider} from './TimeSlider'
-import {ClimateIndicators, MapNavBar} from './Visualize'
+import {ClimateIndicators, MapNavBar, Visualize} from './Visualize';
+import WorkflowWizard from './WorkflowWizard';
+import Monitor from './Monitor';
 
 export {
   DatasetWMSLayers,
@@ -10,6 +12,9 @@ export {
   SearchCatalogResults,
   ClimateIndicators,
   MapNavBar,
+  WorkflowWizard,
+  Monitor,
+  Visualize
   TimeSlider
 }
 export default () => {

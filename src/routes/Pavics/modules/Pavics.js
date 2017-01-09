@@ -1,42 +1,40 @@
-import * as constants from './../constants';
-// ------------------------------------
-// Constants
-// These should go in the constants.js file as well at some point
-// ------------------------------------
-export const COUNTER_INCREMENT = 'Visualize.COUNTER_INCREMENT';
+import initialState from './../../../store/initialState';
+import * as constants from './../../../constants';
+
+const COUNTER_INCREMENT = 'Visualize.COUNTER_INCREMENT';
 // SYNC
-export const SELECT_FACET_KEY = 'Visualize.SELECT_FACET_KEY';
-export const SELECT_FACET_VALUE = 'Visualize.SELECT_FACET_VALUE';
-export const ADD_FACET_KEY_VALUE_PAIR = 'Visualize.ADD_FACET_KEY_VALUE_PAIR';
-export const REMOVE_FACET_KEY_VALUE_PAIR = 'Visualize.REMOVE_FACET_KEY_VALUE_PAIR';
-export const OPEN_DATASET_DETAILS = 'Visualize.OPEN_DATASET_DETAILS';
-export const CLOSE_DATASET_DETAILS = 'Visualize.CLOSE_DATASET_DETAILS';
-export const OPEN_DATASET_WMS_LAYERS = 'Visualize.OPEN_DATASET_WMS_LAYERS';
-export const OPEN_WMS_LAYER = 'Visualize.OPEN_WMS_LAYER';
-export const SELECT_LOAD_WMS = 'Visualize.SELECT_LOAD_WMS';
-export const CLICK_TOGGLE_PANEL = 'Visualize.CLICK_TOGGLE_PANEL';
+const SELECT_FACET_KEY = 'Visualize.SELECT_FACET_KEY';
+const SELECT_FACET_VALUE = 'Visualize.SELECT_FACET_VALUE';
+const ADD_FACET_KEY_VALUE_PAIR = 'Visualize.ADD_FACET_KEY_VALUE_PAIR';
+const REMOVE_FACET_KEY_VALUE_PAIR = 'Visualize.REMOVE_FACET_KEY_VALUE_PAIR';
+const OPEN_DATASET_DETAILS = 'Visualize.OPEN_DATASET_DETAILS';
+const CLOSE_DATASET_DETAILS = 'Visualize.CLOSE_DATASET_DETAILS';
+const OPEN_DATASET_WMS_LAYERS = 'Visualize.OPEN_DATASET_WMS_LAYERS';
+const OPEN_WMS_LAYER = 'Visualize.OPEN_WMS_LAYER';
+const SELECT_LOAD_WMS = 'Visualize.SELECT_LOAD_WMS';
+const CLICK_TOGGLE_PANEL = 'Visualize.CLICK_TOGGLE_PANEL';
 // ASYNC
-export const FETCH_PLOTLY_DATA_REQUEST = 'Visualize.FETCH_PLOTLY_DATA_REQUEST';
-export const FETCH_PLOTLY_DATA_FAILURE = 'Visualize.FETCH_PLOTLY_DATA_FAILURE';
-export const FETCH_PLOTLY_DATA_SUCCESS = 'Visualize.FETCH_PLOTLY_DATA_SUCCESS';
-export const FETCH_CLIMATE_INDICATORS_REQUEST = 'Visualize.FETCH_CLIMATE_INDICATORS_REQUEST';
-export const FETCH_CLIMATE_INDICATORS_FAILURE = 'Visualize.FETCH_CLIMATE_INDICATORS_FAILURE';
-export const FETCH_CLIMATE_INDICATORS_SUCCESS = 'Visualize.FETCH_CLIMATE_INDICATORS_SUCCESS';
-export const FETCH_FACETS_REQUEST = 'Visualize.FETCH_FACETS_REQUEST';
-export const FETCH_FACETS_FAILURE = 'Visualize.FETCH_FACETS_FAILURE';
-export const FETCH_FACETS_SUCCESS = 'Visualize.FETCH_FACETS_SUCCESS';
-export const FETCH_DATASET_REQUEST = 'Visualize.FETCH_DATASET_REQUEST';
-export const FETCH_DATASET_FAILURE = 'Visualize.FETCH_DATASET_FAILURE';
-export const FETCH_DATASET_SUCCESS = 'Visualize.FETCH_DATASET_SUCCESS';
-export const FETCH_CATALOG_DATASETS_REQUEST = 'Visualize.FETCH_CATALOG_DATASETS_REQUEST';
-export const FETCH_CATALOG_DATASETS_FAILURE = 'Visualize.FETCH_CATALOG_DATASETS_FAILURE';
-export const FETCH_CATALOG_DATASETS_SUCCESS = 'Visualize.FETCH_CATALOG_DATASETS_SUCCESS';
-export const FETCH_DATASET_WMS_LAYERS_REQUEST = 'Visualize.FETCH_DATASET_WMS_LAYERS_REQUEST';
-export const FETCH_DATASET_WMS_LAYERS_FAILURE = 'Visualize.FETCH_DATASET_WMS_LAYERS_FAILURE';
-export const FETCH_DATASET_WMS_LAYERS_SUCCESS = 'Visualize.FETCH_DATASET_WMS_LAYERS_SUCCESS';
-export const FETCH_WMS_LAYER_DETAILS_REQUEST = 'Visualize.FETCH_WMS_LAYER_DETAILS_REQUEST';
-export const FETCH_WMS_LAYER_DETAILS_FAILURE = 'Visualize.FETCH_WMS_LAYER_DETAILS_FAILURE';
-export const FETCH_WMS_LAYER_DETAILS_SUCCESS = 'Visualize.FETCH_WMS_LAYER_DETAILS_SUCCESS';
+const FETCH_PLOTLY_DATA_REQUEST = 'Visualize.FETCH_PLOTLY_DATA_REQUEST';
+const FETCH_PLOTLY_DATA_FAILURE = 'Visualize.FETCH_PLOTLY_DATA_FAILURE';
+const FETCH_PLOTLY_DATA_SUCCESS = 'Visualize.FETCH_PLOTLY_DATA_SUCCESS';
+const FETCH_CLIMATE_INDICATORS_REQUEST = 'Visualize.FETCH_CLIMATE_INDICATORS_REQUEST';
+const FETCH_CLIMATE_INDICATORS_FAILURE = 'Visualize.FETCH_CLIMATE_INDICATORS_FAILURE';
+const FETCH_CLIMATE_INDICATORS_SUCCESS = 'Visualize.FETCH_CLIMATE_INDICATORS_SUCCESS';
+const FETCH_FACETS_REQUEST = 'Visualize.FETCH_FACETS_REQUEST';
+const FETCH_FACETS_FAILURE = 'Visualize.FETCH_FACETS_FAILURE';
+const FETCH_FACETS_SUCCESS = 'Visualize.FETCH_FACETS_SUCCESS';
+const FETCH_DATASET_REQUEST = 'Visualize.FETCH_DATASET_REQUEST';
+const FETCH_DATASET_FAILURE = 'Visualize.FETCH_DATASET_FAILURE';
+const FETCH_DATASET_SUCCESS = 'Visualize.FETCH_DATASET_SUCCESS';
+const FETCH_CATALOG_DATASETS_REQUEST = 'Visualize.FETCH_CATALOG_DATASETS_REQUEST';
+const FETCH_CATALOG_DATASETS_FAILURE = 'Visualize.FETCH_CATALOG_DATASETS_FAILURE';
+const FETCH_CATALOG_DATASETS_SUCCESS = 'Visualize.FETCH_CATALOG_DATASETS_SUCCESS';
+const FETCH_DATASET_WMS_LAYERS_REQUEST = 'Visualize.FETCH_DATASET_WMS_LAYERS_REQUEST';
+const FETCH_DATASET_WMS_LAYERS_FAILURE = 'Visualize.FETCH_DATASET_WMS_LAYERS_FAILURE';
+const FETCH_DATASET_WMS_LAYERS_SUCCESS = 'Visualize.FETCH_DATASET_WMS_LAYERS_SUCCESS';
+const FETCH_WMS_LAYER_DETAILS_REQUEST = 'Visualize.FETCH_WMS_LAYER_DETAILS_REQUEST';
+const FETCH_WMS_LAYER_DETAILS_FAILURE = 'Visualize.FETCH_WMS_LAYER_DETAILS_FAILURE';
+const FETCH_WMS_LAYER_DETAILS_SUCCESS = 'Visualize.FETCH_WMS_LAYER_DETAILS_SUCCESS';
 // ------------------------------------
 // Actions
 // ------------------------------------
@@ -437,73 +435,193 @@ export function fetchWMSLayerDetails (url, layer) {
       );
   };
 }
-// MERGE
-/* The implementation for this will merge an update into the old state,
- *  where the first two entries are put in one List, and the rest in the new version of entries:
- */
-/* export function next(state) {
- const entries = state.get('entries').concat(getWinners(state.get('vote')));
- return state.merge({
- vote: Map({pair: entries.take(2)}),
- entries: entries.skip(2)
- });
- } */
-
-// UPDATEIN
-/* Using updateIn makes this pleasingly succinct.
- *  What the code expresses is "reach into the nested data structure path ['vote', 'tally', 'Trainspotting'],
- *  and apply this function there. If there are keys missing along the path, create new Maps in their place.
- *  If the value at the end is missing, initialize it with 0".
- */
-/* export function vote(state, entry) {
- return state.updateIn(
- ['vote', 'tally', entry],
- 0,
- tally => tally + 1
- );
- } */
-export const actions = {
-  // Sync Panels
-  clickTogglePanel,
-  // Sync Facets
-  selectFacetKey,
-  selectFacetValue,
-  addFacetKeyValue,
-  removeFacetKeyValue,
-  requestFacets,
-  receiveFacetsFailure,
-  receiveFacets,
-  requestClimateIndicators,
-  receiveClimateIndicatorsFailure,
-  receiveClimateIndicators,
-  requestPlotlyData,
-  receivePlotlyDataFailure,
-  receivePlotlyData,
-  // Sync Datasets
-  openDatasetDetails,
-  closeDatasetDetails,
-  requestDataset,
-  receiveDatasetFailure,
-  receiveDataset,
-  requestCatalogDatasets,
-  receiveCatalogDatasetsFailure,
-  receiveCatalogDatasets,
-  openDatasetWmsLayers,
-  openWmsLayer,
-  selectLoadWms,
-  // Async
-  fetchFacets,
-  fetchDataset,
-  fetchCatalogDatasets,
-  fetchDatasetWMSLayers,
-  fetchWMSLayerDetails,
-  fetchClimateIndicators,
-  fetchPlotlyData
+function setSelectedProcess (process) {
+  // TODO remove the boilerplate when api provides the identifier
+  // TODO uplicated in ProcessSelector to make executing easier
+  let processIdentifier;
+  if (process.identifier) {
+    processIdentifier = process.identifier;
+  } else {
+    let param = process.url.slice('process=');
+    let bits = param.split('=');
+    processIdentifier = bits.slice(-1)[0];
+  }
+  process = Object.assign(process, {
+    identifier: processIdentifier
+  });
+  return {
+    type: constants.WORKFLOW_CHOOSE_PROCESS,
+    process: process
+  };
+}
+function setJobs (jobs) {
+  return {
+    type: constants.MONITOR_SET_JOBS,
+    jobs: jobs
+  };
+}
+function setProcesses (processes) {
+  return {
+    type: constants.WORKFLOW_SET_PROCESSES,
+    processes: processes
+  };
+}
+function setProviders (providers) {
+  providers.map(provider => {
+    provider.identifier = provider.url.replace('/processes/list?wps=', '');
+  });
+  return {
+    type: constants.WORKFLOW_SET_PROVIDERS,
+    items: providers
+  };
+}
+function setWpsProvider (provider) {
+  return {
+    type: constants.WORKFLOW_SET_WPS_PROVIDER,
+    provider: provider
+  };
+}
+function setProcessInputs (inputs) {
+  return {
+    type: constants.WORKFLOW_SET_ACTIVE_PROCESS_INPUTS,
+    inputs: inputs
+  };
+}
+function setSelectedProcessValues (key, value) {
+  return {
+    type: constants.WORKFLOW_SET_ACTIVE_PROCESS_VALUES,
+    key: key,
+    value: value
+  };
+}
+function setSection (section) {
+  return {
+    type: constants.PLATFORM_SET_SECTION,
+    section: section
+  };
+}
+export function chooseStep (step) {
+  return {
+    type: constants.WORKFLOW_CHANGE_STEP,
+    step: step
+  };
+}
+export function goToSection (section) {
+  return dispatch => dispatch(setSection(section));
+}
+export function handleSelectedProcessValueChange (key, value) {
+  return dispatch => {
+    dispatch(setSelectedProcessValues(key, value));
+  };
+}
+export function fetchProcessInputs (provider, process) {
+  return dispatch => {
+    return fetch(`/phoenix/inputs?provider=${provider}&process=${process}`)
+      .then(response => response.json())
+      .then(json => {
+        dispatch(setProcessInputs(json.inputs));
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+}
+export function selectWpsProvider (provider) {
+  return dispatch => {
+    dispatch(setWpsProvider(provider));
+    dispatch(fetchProcesses(provider));
+  };
+}
+export function chooseProcess (process) {
+  return (dispatch) => {
+    dispatch(setSelectedProcess(process));
+    dispatch(chooseStep(constants.WORKFLOW_STEP_INPUTS));
+  };
+}
+export function fetchJobs () {
+  return (dispatch) => {
+    return fetch('/phoenix/jobs')
+      .then(response => response.json())
+      .then(json => dispatch(setJobs(json.jobs)))
+      .catch(err => {
+        console.log(err);
+      });
+  };
+}
+export function fetchProcesses (provider) {
+  return (dispatch) => {
+    return fetch(`/phoenix/processesList?provider=${provider}`)
+      .then(response => response.json())
+      .then(json => dispatch(setProcesses(json.items)))
+      .catch(err => {
+        console.log(err);
+      });
+  };
+}
+export function fetchProviders () {
+  return (dispatch) => {
+    return fetch('/phoenix/processes')
+      .then(response => response.json())
+      .then(json => dispatch(setProviders(json.items)))
+      .catch(err => {
+        console.log(err);
+      });
+  };
+}
+export function executeProcess (provider, process, inputValues) {
+  return () => {
+    console.log(inputValues);
+    let array = [];
+    for (let key in inputValues) {
+      if (inputValues.hasOwnProperty(key)) {
+        array.push(encodeURIComponent(key) + '=' + encodeURIComponent(inputValues[key]));
+      }
+    }
+    let string = array.join(';');
+    return fetch(`/phoenix/execute?wps=${provider}&process=${process}&inputs=${string}`)
+      .then(response => {
+        console.log('received:', response);
+      })
+      .catch(error => {
+        console.log('problem', error);
+      });
+  };
+}
+const WORKFLOW_WIZARD_HANDLERS = {
+  [constants.WORKFLOW_SET_WPS_PROVIDER]: (state, action) => {
+    return Object.assign({}, state, {
+      providers: Object.assign({}, state.providers, {
+        selectedProvider: action.provider
+      })
+    });
+  },
+  [constants.WORKFLOW_CHOOSE_PROCESS]: (state, action) => {
+    return {...state, selectedProcess: action.process};
+  },
+  [constants.WORKFLOW_SET_ACTIVE_PROCESS_INPUTS]: (state, action) => {
+    return {...state, selectedProcessInputs: action.inputs};
+  },
+  [constants.WORKFLOW_SET_ACTIVE_PROCESS_VALUES]: (state, action) => {
+    return Object.assign({}, state, {
+      selectedProcessValues: Object.assign({}, state.selectedProcessValues, {
+        [action.key]: action.value
+      })
+    });
+  },
+  [constants.WORKFLOW_CHANGE_STEP]: (state, action) => {
+    return {...state, currentStep: action.step};
+  },
+  [constants.WORKFLOW_SET_PROCESSES]: (state, action) => {
+    return {...state, processes: action.processes};
+  },
+  [constants.WORKFLOW_SET_PROVIDERS]: (state, action) => {
+    return Object.assign({}, state, {
+      providers: {...state.providers, items: action.items}
+    });
+  }
 };
-// ------------------------------------
-// Action Handlers
-// ------------------------------------
-const ACTION_HANDLERS = {
+
+const VISUALIZE_HANDLERS = {
   [SELECT_FACET_KEY]: (state, action) => {
     return ({...state, currentSelectedKey: action.key, currentSelectedValue: action.value});
   },
@@ -625,95 +743,46 @@ const ACTION_HANDLERS = {
     return ({...state, selectedWMSLayer: action.selectedWMSLayer});
   }
 };
-// ------------------------------------
-// Reducer
-// ------------------------------------
-const initialState = {
-  currentSelectedKey: constants.DEFAULT_SELECTED_KEY,
-  currentSelectedValue: '',
-  currentOpenedDataset: '',
-  currentOpenedDatasetWMSFile: '',
-  currentOpenedWMSLayer: '',
-  loadedWmsDatasets: [],
-  selectedFacets: [],
-  selectedDatasets: {
-    requestedAt: null,
-    receivedAt: null,
-    isFetching: false,
-    items: [],
-    error: null
-  },
-  selectedWMSLayers: {
-    requestedAt: null,
-    receivedAt: null,
-    isFetching: false,
-    items: [],
-    error: null
-  },
-  selectedWMSLayer: {
-    layerDetails: {
-      requestedAt: null,
-      receivedAt: null,
-      isFetching: false,
-      data: {},
-      error: null
-    },
-    timesteps: {
-      requestedAt: null,
-      receivedAt: null,
-      isFetching: false,
-      data: {},
-      error: null
-    }
-  },
-  facets: {
-    requestedAt: null,
-    receivedAt: null,
-    isFetching: false,
-    items: [],
-    error: null
-  },
-  climateIndicators: {
-    requestedAt: null,
-    receivedAt: null,
-    isFetching: false,
-    items: [],
-    error: null
-  },
-  datasets: {
-    requestedAt: null,
-    receivedAt: null,
-    isFetching: false,
-    items: [],
-    error: null
-  },
-  plotlyData: {
-    isFecthing: false,
-    receivedAt: null,
-    requestedAt: null,
-    data: [],
-    layout: {},
-    error: null
-  },
-  panelControls: {
-    [constants.PANEL_SEARCH_CATALOG]: {
-      show: true
-    },
-    [constants.PANEL_DATASET_DETAILS]: {
-      show: false
-    },
-    [constants.PANEL_DATASET_WMS_LAYERS]: {
-      show: false
-    },
-    [constants.PANEL_CLIMATE_INDICATORS]: {
-      show: false
-    },
-    [constants.PANEL_PLOTLY]: {
-      show: false
-    }
+
+const PLATFORM_HANDLERS = {
+  [constants.PLATFORM_SET_SECTION]: (state, action) => {
+    return {...state, section: action.section};
   }
 };
-export default function visualizeReducer (state = initialState, action) {
-  const handler = ACTION_HANDLERS[action.type];
+
+const MONITOR_HANDLERS = {
+  [constants.MONITOR_SET_JOBS]: (state, action) => {
+    return {...state, jobs: action.jobs};
+  }
+};
+
+function workflowWizardReducer (state, action) {
+  const handler = WORKFLOW_WIZARD_HANDLERS[action.type];
   return handler ? handler(state, action) : state;
 }
+
+function platformReducer (state, action) {
+  const handler = PLATFORM_HANDLERS[action.type];
+  return handler ? handler(state, action) : state;
+}
+
+function monitorReducer (state, action) {
+  const handler = MONITOR_HANDLERS[action.type];
+  return handler ? handler(state, action) : state;
+}
+
+function visualizeReducer (state, action) {
+  const handler = VISUALIZE_HANDLERS[action.type];
+  return handler ? handler(state, action) : state;
+}
+
+function pavicsReducer (state = initialState, action) {
+  return {
+    workflowWizard: workflowWizardReducer(state.workflowWizard, action),
+    platform: platformReducer(state.platform, action),
+    monitor: monitorReducer(state.monitor, action),
+    visualize: visualizeReducer(state.visualize, action)
+  };
+}
+
+export default pavicsReducer;
