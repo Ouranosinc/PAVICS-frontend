@@ -29,10 +29,36 @@ class JobTable extends React.Component {
     if (this.api) {
       this.api.sizeColumnsToFit();
     }
+    this.api.setDatasource(this.datasource());
   };
 
   datasource = () => {
+    let sortData = (sortModel) => {
+      if (sortModel && sortModel.length > 0) {
+        let sortResult = this.props.jobs.slice();
+        sortResult.sort((elemA, elemB) => {
+          for (let i = 0, nbColumns = sortModel.length; i < nbColumns; i++) {
+            let columnModel = sortModel[i];
+            let valA = elemA[columnModel.colId];
+            let valB = elemB[columnModel.colId];
+            if (valA === valB) {
+              continue;
+            }
+            let sortDirection = columnModel.sort === 'asc' ? 1 : -1;
+            if (valA > valB) {
+              return sortDirection;
+            } else {
+              return sortDirection * -1;
+            }
+          }
+          return 0;
+        });
+        return sortResult;
+      }
+      return this.props.jobs;
+    };
     return {
+      rowCount: this.props.jobs.length,
       getRows: (params: IGetRowsParams) => {
         let rowCount = this.props.jobs.length;
         let rows = [];
@@ -57,27 +83,29 @@ class JobTable extends React.Component {
 
   onGridReady = (params) => {
     this.api = params.api;
-    this.api.setDatasource(this.datasource());
   };
 
   render () {
     return (
-      <div className={classes.Monitor}>
-        <Panel header="Jobs">
-          <div className={classes.agGrid + ' ag-bootstrap'}>
-            <AgGridReact
-              onGridReady={this.onGridReady}
-              className={classes.agGrid}
-              rowData={this.props.jobs}
-              columnDefs={this.columnDefs()}
-              rowModelType="pagination"
-              paginationPageSize={10}
-              rowHeight={25}
-              enableSorting
-            />
-          </div>
-        </Panel>
-      </div>
+      <Grid className={classes.Monitor}>
+        <Row>
+          <Col mdOffset={2} md={8}>
+            <Panel header="Jobs">
+              <div className={classes.agGrid + ' ag-bootstrap'}>
+                <AgGridReact
+                  onGridReady={this.onGridReady}
+                  className={classes.agGrid}
+                  columnDefs={this.columnDefs()}
+                  rowModelType="pagination"
+                  paginationPageSize={10}
+                  rowHeight={25}
+                  enableServerSideSorting
+                />
+              </div>
+            </Panel>
+          </Col>
+        </Row>
+      </Grid>
     );
   }
 }
