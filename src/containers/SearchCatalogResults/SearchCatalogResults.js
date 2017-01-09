@@ -9,7 +9,7 @@ export class SearchCatalogResults extends React.Component {
     closeDatasetDetails: React.PropTypes.func.isRequired,
     openDatasetDetails: React.PropTypes.func.isRequired,
     fetchDataset: React.PropTypes.func.isRequired,
-    currentOpenedDataset: React.PropTypes.object.isRequired,
+    currentOpenedDataset: React.PropTypes.string.isRequired,
     datasets: React.PropTypes.object.isRequired
   }
 

@@ -1,4 +1,4 @@
-import {Panel} from 'react-bootstrap';
+import {Panel, Grid, Row, Col} from 'react-bootstrap';
 import {IGetRowsParams} from 'ag-grid';
 import {AgGridReact} from 'ag-grid-react';
 import './../../../node_modules/ag-grid/dist/styles/ag-grid.css';
