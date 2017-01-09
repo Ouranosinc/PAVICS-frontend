@@ -14,7 +14,7 @@ export {
   MapNavBar,
   WorkflowWizard,
   Monitor,
-  Visualize
+  Visualize,
   TimeSlider
 }
 export default () => {
