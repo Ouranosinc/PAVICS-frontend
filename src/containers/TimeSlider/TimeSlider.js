@@ -61,13 +61,13 @@ export class TimeSlider extends React.Component {
             <FormControl type="text" placeholder="Current" value={this.state.current} onChange={this._onChangedCurrentDate}/>
           </FormGroup>
           {/*<FormGroup className={classes['InlineFormGroup']}>
-            <FormControl componentClass="select" placeholder="Day" onChange={this._onSelectedDay}>
-              <option value="">Day</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-            </FormControl>
-          </FormGroup>*/}
+           <FormControl componentClass="select" placeholder="Day" onChange={this._onSelectedDay}>
+           <option value="">Day</option>
+           <option value="1">1</option>
+           <option value="2">2</option>
+           <option value="3">3</option>
+           </FormControl>
+           </FormGroup>*/}
           <FormGroup className={classes['InlineFormGroup']}>
             <FormControl componentClass="select" placeholder="Hour" onChange={this._onSelectedHour}>
               <option value="">Hr.</option>
@@ -88,11 +88,11 @@ export class TimeSlider extends React.Component {
         </Form>
         <Col sm={12}>
           <Slider tipFormatter={(v) => {
-                    let date = new Date(v * 1000); // * 1000 To divide by 1000 the number of values
-                    // console.log(date); //Logged date is 1 month early than what's returned by date.getMonth() (????)
-                    // Same problem with moment.js
-                    return ((date.getMonth() === 0)? "12": date.getMonth()) +"/" + date.getDate();
-                  }}
+            let date = new Date(v * 1000); // * 1000 To divide by 1000 the number of values
+            // console.log(date); //Logged date is 1 month early than what's returned by date.getMonth() (????)
+            // Same problem with moment.js
+            return ((date.getMonth() === 0)? "12": date.getMonth()) +"/" + date.getDate();
+          }}
                   className={classes['SliderMonths']}
                   min={new Date(2016, 1, 1).valueOf()/DIVIDER}
                   max={new Date(2016, 12, 31).valueOf()/DIVIDER}
@@ -171,7 +171,7 @@ export class TimeSlider extends React.Component {
               <Glyphicon glyph="fast-forward" />
             </Button>
           </FormGroup>
-         </Form>
+        </Form>
       </div>
     )
   }
@@ -245,9 +245,9 @@ export class TimeSlider extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  return {}
-}
-;
+    return {}
+  }
+  ;
 const mapDispatchToProps = (dispatch) => {
   return {}
 };
