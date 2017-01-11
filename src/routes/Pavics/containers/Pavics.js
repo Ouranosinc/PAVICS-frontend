@@ -62,6 +62,7 @@ const mapStateToProps = (state) => {
     selectedWMSLayers: state.pavics.visualize.selectedWMSLayers,
     selectedWMSLayerDetails: state.pavics.visualize.selectedWMSLayerDetails,
     selectedWMSLayerTimesteps: state.pavics.visualize.selectedWMSLayerTimesteps,
+    currentTime: state.pavics.visualize.currentTime,
     datasets: state.pavics.visualize.datasets,
     facets: state.pavics.visualize.facets,
     climateIndicators: state.pavics.visualize.climateIndicators,

@@ -23,7 +23,7 @@ export class TimeSlider extends React.Component {
     this._onChangedStepLength = this._onChangedStepLength.bind(this);
     this._onChangedStepSpeed = this._onChangedStepSpeed.bind(this);
     this._onChangedMonthSlider = this._onChangedMonthSlider.bind(this);
-    this._onChangedMonthSlider = this._onChangedMonthSlider.bind(this);
+    this._onChangedYearSlider = this._onChangedYearSlider.bind(this);
     this._onSelectedDay = this._onSelectedDay.bind(this);
     this._onSelectedHour = this._onSelectedHour.bind(this);
     this._onSelectedMinute = this._onSelectedMinute.bind(this);
@@ -39,7 +39,9 @@ export class TimeSlider extends React.Component {
         1940: '1940',
         1980: '1980',
         2020: '2020'
-      }
+      },
+      currentYear: 1900,
+      currentMonthDay: '01-01'
     };
   }
 
@@ -47,6 +49,8 @@ export class TimeSlider extends React.Component {
     if (nextProps.selectedWMSLayerDetails && nextProps.selectedWMSLayerDetails.data && (nextProps.selectedWMSLayerDetails.data !== this.props.selectedWMSLayerDetails.data)) {
       this.changeYearRange(nextProps.selectedWMSLayerDetails.data);
     }
+
+    //TODO DISABLE SOME MONTHS/YEARS IF NO DATA
 
     if (nextProps.selectedWMSLayerTimesteps && nextProps.selectedWMSLayerTimesteps.data && (nextProps.selectedWMSLayerTimesteps.data !== this.props.selectedWMSLayerTimesteps.data)) {
       this.changeTimesteps(nextProps.selectedWMSLayerTimesteps.data)
@@ -71,6 +75,7 @@ export class TimeSlider extends React.Component {
     }else {
       marksYears[firstYear] = firstYear;
 
+      // Following algorithm works but is subject to rendering mismatch if min/max is near defined gaps
       // Find appropriate year gap between marks (5-10-25-100)
       let distance = lastYear - firstYear;
       let gap = 0;
@@ -109,22 +114,25 @@ export class TimeSlider extends React.Component {
         j = j+gap;
       }
 
-      console.log('gap: ' + gap);
-
       marksYears[lastYear] = lastYear;
     }
     this.setState({
+      currentYear: firstYear,
       firstYear: firstYear,
       lastYear: lastYear,
       marksYears: marksYears
     });
-    console.log('layer details arrived!!');
-    console.log('datesWithData: ' + selectedWMSLayerDetailsData.datesWithData);
   }
 
   changeTimesteps(selectedWMSLayerTimestepsData){
     // TODO TIMESTEPS FOR HOURS/MINUTES
     console.log('timesteps arrived!!');
+  }
+
+  changeCurrentTime(){
+    // 1960-01-01T00:00:00.000Z
+    // TODO DYNAMISE HOUR/MINUTE
+    this.props.setCurrentTime(`${this.state.currentYear}-${this.state.currentMonthDay}T00:00:00.000Z`);
   }
 
   render() {
@@ -198,7 +206,8 @@ export class TimeSlider extends React.Component {
                   marks={this.state.marksYears}
                   range={false}
                   included={false}
-                  defaultValue={1960}
+                  value={this.state.currentYear}
+                  defaultValue={1900}
                   onChange={this._onChangedYearSlider}
           />
         </Col>
@@ -276,18 +285,27 @@ export class TimeSlider extends React.Component {
         new Date(values[1] * gap)
       ];
       console.log("[" +
-        (((dates[0].getMonth() === 0)? "12": dates[0].getMonth()) +"/" + dates[0].getDate()) + ", " +
-        (((dates[1].getMonth() === 0)? "12": dates[1].getMonth()) +"/" + dates[1].getDate()) + "]");
+        (((dates[0].getMonth() === 0)? "12": dates[0].getMonth()) +"-" + dates[0].getDate()) + ", " +
+        (((dates[1].getMonth() === 0)? "12": dates[1].getMonth()) +"-" + dates[1].getDate()) + "]");
     }else{
       // Only one
       let date = new Date(values * gap);
-      console.log(((date.getMonth() === 0)? "12": date.getMonth()) +"/" + date.getDate());
+      let month = date.getMonth();
+      let day = date.getDate();
+      let monthDay = ((month === 0)? "12": (month < 10 ? '0'+month : month)) +"-" + (day < 10 ? '0'+day : day);
+      this.setState({currentMonthDay: monthDay}, () => this.changeCurrentTime());
+      console.log(monthDay);
     }
 
   }
 
-  _onChangedYearSlider(value) {
-    console.log(value);
+  _onChangedYearSlider(values) {
+    if(values[0]){
+      //TODO: Year range
+    }else{
+      this.setState({currentYear: values}, () => this.changeCurrentTime());
+      console.log(values);
+    }
   }
 
   _onChangedCurrentDate (event) {

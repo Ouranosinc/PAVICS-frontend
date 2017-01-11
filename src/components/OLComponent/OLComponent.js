@@ -19,6 +19,7 @@ class OLComponent extends React.Component {
   constructor (props) {
     super(props);
     this.layersCount = 0;
+    this.layers = [];
     this.map = null;
     this.baseLayers = new ol.layer.Group({'title': 'Base maps', 'opacity': 1.0, 'visible': true, 'zIndex': 0});
     this.overlayLayers = new ol.layer.Group({'title': 'Overlays', 'opacity': 1.0, 'visible': true, 'zIndex': 1});
@@ -76,15 +77,7 @@ class OLComponent extends React.Component {
    @param extent region extent to load
    @param serverType Server's type
    */
-  addTileWMSLayer (
-    title,
-    layers,
-    wmsUrl,
-    wmsParams,
-    extent,
-    serverType,
-    visible = true
-  ) {
+  addTileWMSLayer (title, layers, wmsUrl, wmsParams, extent, serverType, visible = true) {
     let layer = this.getTileWMSLayer(title,
       wmsUrl,
       wmsParams,
@@ -111,30 +104,26 @@ class OLComponent extends React.Component {
     serverType = '',
     visible = true
   ) {
+    this.source = new ol.source.TileWMS(
+      {
+        url: wmsUrl,
+        params: wmsParams,
+        serverType: serverType
+      });
     if (extent === undefined) {
       return new ol.layer.Tile(
         {
           visible: visible,
           title: title,
           opacity: 0.4, // TODO: Set opacity dynamically
-          source: new ol.source.TileWMS(
-            {
-              url: wmsUrl,
-              params: wmsParams,
-              serverType: serverType
-            })
+          source: this.source
         });
     } else {
       return new ol.layer.Tile(
         {
           title: title,
           extent: extent,
-          source: new ol.source.TileWMS(
-            {
-              url: wmsUrl,
-              params: wmsParams,
-              serverType: serverType
-            })
+          source: this.source
         });
     }
   }
@@ -154,29 +143,31 @@ class OLComponent extends React.Component {
   }
 
   makeWMSlayer (title, url, time, styles, layerName) {
+    this.source = new ol.source.TileWMS({
+      url: url,
+      params: {
+        TIME: time,
+        FORMAT: 'image/png',
+        TILED: true,
+        STYLES: styles,
+        LAYERS: layerName,
+        TRANSPARENT: 'TRUE',
+        VERSION: '1.3.0',
+        EPSG: '4326',
+        COLORSCALERANGE: '0.0000004000,0.00006000',
+        NUMCOLORBANDS: '10',
+        LOGSCALE: false,
+        crossOrigin: 'anonymous'
+      }
+    });
     let layer = new ol.layer.Tile({
       visible: true,
       opacity: 0.7,
       title: title,
-      source: new ol.source.TileWMS({
-        url: url,
-        params: {
-          TIME: time,
-          FORMAT: 'image/png',
-          TILED: true,
-          STYLES: styles,
-          LAYERS: layerName,
-          TRANSPARENT: 'TRUE',
-          VERSION: '1.3.0',
-          EPSG: '4326',
-          COLORSCALERANGE: '0.0000004000,0.00006000',
-          NUMCOLORBANDS: '10',
-          LOGSCALE: false,
-          crossOrigin: 'anonymous'
-        }
-      })
+      source: this.source
     });
     this.map.addLayer(layer);
+    this.layers.push(layer)
   };
 
   initMap () {
@@ -257,8 +248,20 @@ class OLComponent extends React.Component {
   componentWillUnmount () {
     // TODO: Verify if usefull
     // this.map.setTarget(null)
-    // this.map = null
+    // this.map = null//
   }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.currentTime && nextProps.currentTime !== this.props.currentTime) {
+      if(this.source){
+        this.source.updateParams({
+          TIME: nextProps.currentTime
+        });
+        console.log('change time');
+      }
+    }
+  }
+
 
   componentDidUpdate (prevProps, prevState) {
     if (this.props.layer && this.props.layer.title) {
@@ -268,46 +271,6 @@ class OLComponent extends React.Component {
     }
     if (this.props.loadedWmsDatasets.length && this.layersCount !== this.props.loadedWmsDatasets.length) {
       let wmsUrl = this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].url;
-      // let wmsUrl = "http://132.217.140.31:8080/ncWMS2/wms"
-      /* http://132.217.140.31:8080/ncWMS2/wms?
-       FORMAT=image%2Fpng&
-       TRANSPARENT=TRUE&
-       STYLES=default-scalar%2Fdefault&
-       LAYERS=aet_pcp_1970%2FPCP&
-       TIME=1970-12-31T18%253A00%253A00.000Z&
-       COLORSCALERANGE=-0.00004458%2C0.0009362&
-       NUMCOLORBANDS=250&
-       ABOVEMAXCOLOR=0x000000&
-       BELOWMINCOLOR=0x000000&
-       BGCOLOR=transparent&
-       LOGSCALE=false&
-       SERVICE=WMS&
-       VERSION=1.1.1&
-       REQUEST=GetMap&
-       SRS=EPSG%3A4326&
-       BBOX=-74.40659123765,68.390113143525,-21.609886856475,121.18681752
-       */
-      /*
-       http://132.217.140.31:8080/ncWMS2/wms?
-       REQUEST=GetLegendGraphic&
-       PALETTE=default&
-       COLORBARONLY=true&
-       WIDTH=110&
-       HEIGHT=264&
-       SERVICE=WMS&
-       VERSION=1.3.0&
-       REQUEST=GetMap&
-       FORMAT=image%2Fpng&
-       TRANSPARENT=TRUE&
-       LAYERS=aet_pcp_1970&
-       BGCOLOR=transparent&
-       SRS=EPSG%3A4326&
-       WIDTH=256&
-       HEIGHT=256&
-       CRS=EPSG%3A3857&
-       STYLES=&
-       BBOX=-7514065.628545966%2C7514065.628545966%2C-5009377.08569731%2C10018754.171394622
-       */
       let wmsName = this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].name;
       // TODO: Do we need to dynamically set style + palette
       let wmsParams = {
@@ -319,14 +282,9 @@ class OLComponent extends React.Component {
         'NUMCOLORBANDS': '10',
         'LOGSCALE': false,
         'crossOrigin': 'anonymous',
-        // 'ABOVEMAXCOLOR': '0x000000',
-        // 'BELOWMINCOLOR': '0x000000',
         'BGCOLOR': 'transparent',
         'TIME': this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].start,
-        // -> /1970-12-31T18:00:00.000Z',
-        // TODO DYNAMICALLY SET TIME
         'SRS': 'EPSG:4326'
-        // 'ANIMATION': 'TRUE' // TODO: Must be supported by ncWMS server?
       };
       if (this.tmpLayer) {
         // this.tmpLayer.setVisible(false)

@@ -19,6 +19,10 @@
     height: 100%;
   }
 
+  .btn, .input-group-btn .btn {
+    padding: 8px 15px;
+  }
+
   *,
   *:before,
   *:after {

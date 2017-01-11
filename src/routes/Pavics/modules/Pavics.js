@@ -12,6 +12,7 @@ const OPEN_DATASET_WMS_LAYERS = 'Visualize.OPEN_DATASET_WMS_LAYERS';
 const OPEN_WMS_LAYER = 'Visualize.OPEN_WMS_LAYER';
 const SELECT_LOAD_WMS = 'Visualize.SELECT_LOAD_WMS';
 const CLICK_TOGGLE_PANEL = 'Visualize.CLICK_TOGGLE_PANEL';
+const SET_CURRENT_TIME_ISO = 'Visualize.SET_CURRENT_TIME_ISO';
 // ASYNC
 const FETCH_PLOTLY_DATA_REQUEST = 'Visualize.FETCH_PLOTLY_DATA_REQUEST';
 const FETCH_PLOTLY_DATA_FAILURE = 'Visualize.FETCH_PLOTLY_DATA_FAILURE';
@@ -106,6 +107,12 @@ export function clickTogglePanel (panel, show) {
     type: CLICK_TOGGLE_PANEL,
     panel: panel,
     show: show
+  };
+}
+export function setCurrentTime (datetime) {
+  return {
+    type: SET_CURRENT_TIME_ISO,
+    currentTime: datetime
   };
 }
 export function requestPlotlyData () {
@@ -740,6 +747,9 @@ const VISUALIZE_HANDLERS = {
         opacity: action.opacity
       })
     });
+  },
+  [SET_CURRENT_TIME_ISO]: (state, action) => {
+    return ({...state, currentTime: action.currentTime});
   },
   [CLICK_TOGGLE_PANEL]: (state, action) => {
     // TODO: deepcopy With Immutable.js or something like that

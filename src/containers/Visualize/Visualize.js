@@ -23,15 +23,13 @@ class Visualize extends React.Component {
     let wmsUrl = 'http://outarde.crim.ca:8084/ncWMS2/wms';
     // let wmsUrl = 'http://outarde.crim.ca:8083/thredds/wms/birdhouse/flyingpigeon/ncout-d149d317-b67f-11e6-acaf-fa163ee00329.nc';
     let dataset = 'outputs/flyingpigeon/ncout-ffc3a3eb-b7db-11e6-acaf-fa163ee00329.nc';
-    // let dataset = 'outputs/data/ncep/cfsr/pr/pr_1hr_cfsr_reanalysis_197912.nc';
+    // let dataset = 'outputs/data/ouranos/subdaily/aet/pcp/aet_pcp_1966.nc';
+
     this.props.fetchFacets();
     this.props.openDatasetWmsLayers(dataset);
     this.props.fetchDatasetWMSLayers(wmsUrl, dataset);
     this.props.clickTogglePanel(constants.PANEL_DATASET_DETAILS, false);
     this.props.clickTogglePanel(constants.PANEL_DATASET_WMS_LAYERS, true);
-    let layer = dataset + '/pr'; // this.props.currentOpenedWMSLayer;
-    // Not loading correctly
-    // this.props.selectLoadWms(wmsUrl, layer, "2005-12-07T12:00:00.000Z", "", 'boxfill/occam', 0.4);
   }
 
   render () {

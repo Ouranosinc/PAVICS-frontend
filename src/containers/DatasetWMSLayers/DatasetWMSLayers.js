@@ -32,7 +32,7 @@ export class DatasetWMSLayers extends React.Component {
     this.props.openWmsLayer(layer);
     this.props.fetchWMSLayerDetails(url, layer);
     this.props.fetchWMSLayerTimesteps(url, layer, '2005-12-07T12:00:00.000Z');
-    // this.props.fetchWMSLayerTimesteps(url, layer, '1979-12-07T00:00:00.000Z');
+    // this.props.fetchWMSLayerTimesteps(url, layer, '1966-01-01T00:00:00.000Z');
   }
 
   _onLoadWMSLayer (start, end, style, opacity) {
@@ -53,7 +53,9 @@ export class DatasetWMSLayers extends React.Component {
             currentLayer={this.props.currentOpenedWMSLayer} />
           {
             (this.props.currentOpenedWMSLayer.length)
-              ? <DatasetWMSLayer onLoadWMSLayer={this._onLoadWMSLayer} />
+              ? <DatasetWMSLayer setCurrentTime={this.props.setCurrentTime}
+                                 selectedWMSLayerDetails={this.props.selectedWMSLayerDetails}
+                                 onLoadWMSLayer={this._onLoadWMSLayer} />
               : null
           }
         </div>;
