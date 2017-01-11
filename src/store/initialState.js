@@ -24,7 +24,7 @@ const initialState = {
     currentOpenedDataset: '',
     currentOpenedDatasetWMSFile: '',
     currentOpenedWMSLayer: '',
-    currentTime: '1960-01-01T00:00:00.000Z',
+    currentDateTime: '1900-01-01T00:00:00.000Z',
     loadedWmsDatasets: [],
     selectedFacets: [],
     selectedDatasets: {

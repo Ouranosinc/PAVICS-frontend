@@ -109,10 +109,10 @@ export function clickTogglePanel (panel, show) {
     show: show
   };
 }
-export function setCurrentTime (datetime) {
+export function setCurrentDateTime (datetime) {
   return {
     type: SET_CURRENT_TIME_ISO,
-    currentTime: datetime
+    currentDateTime: datetime
   };
 }
 export function requestPlotlyData () {
@@ -487,9 +487,11 @@ export function fetchWMSLayerTimesteps (url, layer, day) {
       .then(json =>
         dispatch(receiveWMSLayerTimesteps(json))
       )
-      .catch(error =>
-        dispatch(receiveWMSLayerTimestepsFailure(error))
-      );
+      // TODO FIX THIS HAPPEN FOR NO REASON
+      /*.catch(error => {
+        console.log(error);
+        dispatch(receiveWMSLayerTimestepsFailure(error));
+      });*/
   };
 }
 function setSelectedProcess (process) {
@@ -749,7 +751,7 @@ const VISUALIZE_HANDLERS = {
     });
   },
   [SET_CURRENT_TIME_ISO]: (state, action) => {
-    return ({...state, currentTime: action.currentTime});
+    return ({...state, currentDateTime: action.currentDateTime});
   },
   [CLICK_TOGGLE_PANEL]: (state, action) => {
     // TODO: deepcopy With Immutable.js or something like that

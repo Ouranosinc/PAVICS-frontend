@@ -28,12 +28,6 @@ class OLComponent extends React.Component {
     this.popup = null;
   }
 
-  changeCurrentTime = (time) => {
-    this.source.updateParams({
-      TIME: time
-    });
-  };
-
   // Returns base layers list
   getMapBaseLayersList () {
     if (this.baseLayers != null) {
@@ -252,12 +246,12 @@ class OLComponent extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.currentTime && nextProps.currentTime !== this.props.currentTime) {
+    if (nextProps.currentDateTime && nextProps.currentDateTime !== this.props.currentDateTime) {
       if(this.source){
         this.source.updateParams({
-          TIME: nextProps.currentTime
+          TIME: nextProps.currentDateTime
         });
-        console.log('change time');
+        console.log('Openlayers time changed ' + nextProps.currentDateTime);
       }
     }
   }

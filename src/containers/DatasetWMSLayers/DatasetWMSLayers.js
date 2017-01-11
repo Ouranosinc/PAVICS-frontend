@@ -3,6 +3,7 @@ import Panel, {PanelHeader} from './../../components/Panel';
 import DatasetWMSLayersList from '../../components/DatasetWMSLayersList';
 import DatasetWMSLayer from '../../components/DatasetWMSLayer';
 import * as constants from './../../constants';
+
 export class DatasetWMSLayers extends React.Component {
   static propTypes = {
     clickTogglePanel: React.PropTypes.func.isRequired,
@@ -31,8 +32,10 @@ export class DatasetWMSLayers extends React.Component {
     // date = this.props.selectedWMSLayers.nearestTimeIso
     this.props.openWmsLayer(layer);
     this.props.fetchWMSLayerDetails(url, layer);
-    this.props.fetchWMSLayerTimesteps(url, layer, '2005-12-07T12:00:00.000Z');
-    // this.props.fetchWMSLayerTimesteps(url, layer, '1966-01-01T00:00:00.000Z');
+    // this.props.fetchWMSLayerTimesteps(url, layer, this.props.selectedWMSLayerDetails.data.nearestTimeIso);
+    this.props.fetchWMSLayerTimesteps(url, layer, '1966-01-01T00:00:00.000Z');
+    this.props.setCurrentDateTime(this.props.selectedWMSLayerDetails.data.nearestTimeIso);
+    this.props.selectLoadWms(url, layer, this.props.selectedWMSLayerDetails.data.nearestTimeIso, '', 'default-scalar/div-RdYlBu', 0.4);
   }
 
   _onLoadWMSLayer (start, end, style, opacity) {
@@ -51,13 +54,13 @@ export class DatasetWMSLayers extends React.Component {
             layers={this.props.selectedWMSLayers.items}
             onSelectLayer={this._onSelectDatasetWMSLayer}
             currentLayer={this.props.currentOpenedWMSLayer} />
-          {
+          { /*
             (this.props.currentOpenedWMSLayer.length)
-              ? <DatasetWMSLayer setCurrentTime={this.props.setCurrentTime}
+              ? <DatasetWMSLayer setCurrentDateTime={this.props.setCurrentDateTime}
                                  selectedWMSLayerDetails={this.props.selectedWMSLayerDetails}
                                  onLoadWMSLayer={this._onLoadWMSLayer} />
               : null
-          }
+          */}
         </div>;
     } else {
       MainComponent =
