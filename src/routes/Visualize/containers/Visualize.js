@@ -43,9 +43,11 @@ import {
   fetchCatalogDatasets,
   fetchDatasetWMSLayers,
   fetchWMSLayerDetails,
+  fetchWMSLayerTimesteps,
   fetchClimateIndicators,
   fetchPlotlyData
 } from '../modules/Visualize';
+
 class Visualize extends React.Component {
   static propTypes = {
     fetchFacets: React.PropTypes.func.isRequired,
@@ -131,6 +133,7 @@ const mapActionCreators = {
   fetchCatalogDatasets,
   fetchDatasetWMSLayers,
   fetchWMSLayerDetails,
+  fetchWMSLayerTimesteps,
   fetchClimateIndicators,
   fetchPlotlyData
 };

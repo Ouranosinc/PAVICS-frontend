@@ -34,6 +34,9 @@ const FETCH_DATASET_WMS_LAYERS_SUCCESS = 'Visualize.FETCH_DATASET_WMS_LAYERS_SUC
 const FETCH_WMS_LAYER_DETAILS_REQUEST = 'Visualize.FETCH_WMS_LAYER_DETAILS_REQUEST';
 const FETCH_WMS_LAYER_DETAILS_FAILURE = 'Visualize.FETCH_WMS_LAYER_DETAILS_FAILURE';
 const FETCH_WMS_LAYER_DETAILS_SUCCESS = 'Visualize.FETCH_WMS_LAYER_DETAILS_SUCCESS';
+const FETCH_WMS_LAYER_TIMESTEPS_REQUEST = 'Visualize.FETCH_WMS_LAYER_TIMESTEPS_REQUEST';
+const FETCH_WMS_LAYER_TIMESTEPS_FAILURE = 'Visualize.FETCH_WMS_LAYER_TIMESTEPS_FAILURE';
+const FETCH_WMS_LAYER_TIMESTEPS_SUCCESS = 'Visualize.FETCH_WMS_LAYER_TIMESTEPS_SUCCESS';
 // ------------------------------------
 // Actions
 // ------------------------------------
@@ -299,7 +302,7 @@ export function receiveDatasetWMSLayers (layers) {
 export function requestWMSLayerDetails (layer, url) {
   return {
     type: FETCH_WMS_LAYER_DETAILS_REQUEST,
-    selectedWMSLayer: {
+    selectedWMSLayerDetails: {
       requestedAt: Date.now(),
       layer: layer,
       wmsUrl: url,
@@ -311,7 +314,7 @@ export function requestWMSLayerDetails (layer, url) {
 export function receiveWMSLayerDetailsFailure (error) {
   return {
     type: FETCH_WMS_LAYER_DETAILS_FAILURE,
-    selectedWMSLayer: {
+    selectedWMSLayerDetails: {
       receivedAt: Date.now(),
       isFetching: false,
       data: {},
@@ -322,7 +325,42 @@ export function receiveWMSLayerDetailsFailure (error) {
 export function receiveWMSLayerDetails (data) {
   return {
     type: FETCH_WMS_LAYER_DETAILS_SUCCESS,
-    selectedWMSLayer: {
+    selectedWMSLayerDetails: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      data: data,
+      error: null
+    }
+  };
+}
+export function requestWMSLayerTimesteps (layer, url, day) {
+  return {
+    type: FETCH_WMS_LAYER_TIMESTEPS_REQUEST,
+    selectedWMSLayerTimesteps: {
+      requestedAt: Date.now(),
+      layer: layer,
+      wmsUrl: url,
+      day: day,
+      isFetching: true,
+      data: {}
+    }
+  };
+}
+export function receiveWMSLayerTimestepsFailure (error) {
+  return {
+    type: FETCH_WMS_LAYER_TIMESTEPS_FAILURE,
+    selectedWMSLayerTimesteps: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      data: {},
+      error: error
+    }
+  };
+}
+export function receiveWMSLayerTimesteps (data) {
+  return {
+    type: FETCH_WMS_LAYER_TIMESTEPS_SUCCESS,
+    selectedWMSLayerTimesteps: {
       receivedAt: Date.now(),
       isFetching: false,
       data: data,
@@ -410,7 +448,7 @@ export function fetchCatalogDatasets () {
 export function fetchDatasetWMSLayers (url, dataset) {
   return function (dispatch) {
     dispatch(requestDatasetWMSLayers());
-    dataset = 'outputs/ouranos/subdaily/aet/pcp/aet_pcp_1970.nc'; // TODO, Dynamically use datasetid
+    // dataset = 'outputs/ouranos/subdaily/aet/pcp/aet_pcp_1970.nc'; // TODO, Dynamically use datasetid
     return fetch(`/api/wms/dataset/layers?url=${url}&dataset=${dataset}`)
       .then(response => response.json())
       .then(json =>
@@ -431,6 +469,19 @@ export function fetchWMSLayerDetails (url, layer) {
       )
       .catch(error =>
         dispatch(receiveWMSLayerDetailsFailure(error))
+      );
+  };
+}
+export function fetchWMSLayerTimesteps (url, layer, day) {
+  return function (dispatch) {
+    dispatch(requestWMSLayerTimesteps());
+    return fetch(`${url}?request=GetMetadata&item=timesteps&day=${day}&layerName=${layer}`)
+      .then(response => response.json())
+      .then(json =>
+        dispatch(receiveWMSLayerTimesteps(json))
+      )
+      .catch(error =>
+        dispatch(receiveWMSLayerTimestepsFailure(error))
       );
   };
 }
@@ -751,13 +802,22 @@ const VISUALIZE_HANDLERS = {
     return ({...state, selectedWMSLayers: action.selectedWMSLayers});
   },
   [FETCH_WMS_LAYER_DETAILS_REQUEST]: (state, action) => {
-    return ({...state, selectedWMSLayer: action.selectedWMSLayer});
+    return ({...state, selectedWMSLayerDetails: action.selectedWMSLayerDetails});
   },
   [FETCH_WMS_LAYER_DETAILS_FAILURE]: (state, action) => {
-    return ({...state, selectedWMSLayer: action.selectedWMSLayer});
+    return ({...state, selectedWMSLayerDetails: action.selectedWMSLayerDetails});
   },
   [FETCH_WMS_LAYER_DETAILS_SUCCESS]: (state, action) => {
-    return ({...state, selectedWMSLayer: action.selectedWMSLayer});
+    return ({...state, selectedWMSLayerDetails: action.selectedWMSLayerDetails});
+  },
+  [FETCH_WMS_LAYER_TIMESTEPS_REQUEST]: (state, action) => {
+    return ({...state, selectedWMSLayerTimesteps: action.selectedWMSLayerTimesteps});
+  },
+  [FETCH_WMS_LAYER_TIMESTEPS_FAILURE]: (state, action) => {
+    return ({...state, selectedWMSLayerTimesteps: action.selectedWMSLayerTimesteps});
+  },
+  [FETCH_WMS_LAYER_TIMESTEPS_SUCCESS]: (state, action) => {
+    return ({...state, selectedWMSLayerTimesteps: action.selectedWMSLayerTimesteps});
   }
 };
 const PLATFORM_HANDLERS = {

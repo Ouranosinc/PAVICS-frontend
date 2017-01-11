@@ -6,10 +6,12 @@ import Slider  from 'rc-slider';
 import { Button, Col, ControlLabel, Form, FormControl, FormGroup, Glyphicon } from 'react-bootstrap'
 import Loader from '../../components/Loader';
 
-const DIVIDER = 1000;
+const gap = 1000;
 
 export class TimeSlider extends React.Component {
   static propTypes = {
+    // selectedWMSLayerDetails: React.PropTypes.object.isRequired,
+    // selectedWMSLayerTimesteps: React.PropTypes.object.isRequired,
     monthsRange: React.PropTypes.bool.isRequired,
     yearsRange: React.PropTypes.bool.isRequired,
   };
@@ -29,29 +31,116 @@ export class TimeSlider extends React.Component {
       current: '1960-05-01',
       stepLength: 10,
       stepGranularity: 'minute',
-      stepSpeed: 1
+      stepSpeed: 1,
+      firstYear: 1900,
+      lastYear: 2020,
+      marksYears: {
+        1900: '1900',
+        1940: '1940',
+        1980: '1980',
+        2020: '2020'
+      }
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.selectedWMSLayerDetails && nextProps.selectedWMSLayerDetails.data && (nextProps.selectedWMSLayerDetails.data !== this.props.selectedWMSLayerDetails.data)) {
+      this.changeYearRange(nextProps.selectedWMSLayerDetails.data);
+    }
+
+    if (nextProps.selectedWMSLayerTimesteps && nextProps.selectedWMSLayerTimesteps.data && (nextProps.selectedWMSLayerTimesteps.data !== this.props.selectedWMSLayerTimesteps.data)) {
+      this.changeTimesteps(nextProps.selectedWMSLayerTimesteps.data)
+    }
+  }
+
+  changeYearRange(selectedWMSLayerDetailsData) {
+    let yearArr = [],
+        firstYear = 1900,
+        lastYear = 2000,
+        marksYears = {};
+    for(let year in selectedWMSLayerDetailsData.datesWithData){
+      yearArr.push(year);
+    }
+    yearArr.sort();
+    firstYear = parseInt(yearArr[0]);
+    lastYear = parseInt(yearArr[yearArr.length-1]);
+    if(yearArr <= 10){
+      yearArr.forEach((year) => {
+        marksYears[year] = year;
+      })
+    }else {
+      marksYears[firstYear] = firstYear;
+
+      // Find appropriate year gap between marks (5-10-25-100)
+      let distance = lastYear - firstYear;
+      let gap = 0;
+      if(distance <= 200){
+        if(distance <= 75){
+          if(distance <= 40){
+            gap = 5;
+          }else{
+            gap = 10;
+          }
+        }else{
+          gap = 25;
+        }
+      }else{
+        gap = 100;
+      }
+
+      // Find first multiple
+      let found = false;
+      let i = 0;
+      let firstMultiple = 0;
+      while(!found){
+        let test = firstYear + i;
+        let test2 = test % gap;
+        if(((firstYear + i )% gap) === 0){
+          found = true;
+          firstMultiple = firstYear + i;
+        }
+        i++;
+      }
+
+      // Add marks in between extremities
+      let j = firstMultiple;
+      while(j < lastYear){
+        marksYears[j] = j;
+        j = j+gap;
+      }
+
+      console.log('gap: ' + gap);
+
+      marksYears[lastYear] = lastYear;
+    }
+    this.setState({
+      firstYear: firstYear,
+      lastYear: lastYear,
+      marksYears: marksYears
+    });
+    console.log('layer details arrived!!');
+    console.log('datesWithData: ' + selectedWMSLayerDetailsData.datesWithData);
+  }
+
+  changeTimesteps(selectedWMSLayerTimestepsData){
+    // TODO TIMESTEPS FOR HOURS/MINUTES
+    console.log('timesteps arrived!!');
+  }
 
   render() {
     let marksMonths = {};
-    marksMonths[new Date(2016, 1, 1).valueOf() / DIVIDER] = 'Jan';
-    marksMonths[new Date(2016, 2, 1).valueOf() / DIVIDER] = 'Feb';
-    marksMonths[new Date(2016, 3, 1).valueOf() / DIVIDER] = 'Mar';
-    marksMonths[new Date(2016, 4, 1).valueOf() / DIVIDER] = 'Apr';
-    marksMonths[new Date(2016, 5, 1).valueOf() / DIVIDER] = 'May';
-    marksMonths[new Date(2016, 6, 1).valueOf() / DIVIDER] = 'Jun';
-    marksMonths[new Date(2016, 7, 1).valueOf() / DIVIDER] = 'Jul';
-    marksMonths[new Date(2016, 8, 1).valueOf() / DIVIDER] = 'Aug';
-    marksMonths[new Date(2016, 9, 1).valueOf() / DIVIDER] = 'Sept';
-    marksMonths[new Date(2016, 10, 1).valueOf() / DIVIDER] = 'Oct';
-    marksMonths[new Date(2016, 11, 1).valueOf() / DIVIDER] = 'Nov';
-    marksMonths[new Date(2016, 12, 1).valueOf() / DIVIDER] = 'Dec';
-    let marksYears = {
-      1960: '1960',
-      1985: '1985'
-    };
+    marksMonths[new Date(2016, 1, 1).valueOf() / gap] = 'Jan';
+    marksMonths[new Date(2016, 2, 1).valueOf() / gap] = 'Feb';
+    marksMonths[new Date(2016, 3, 1).valueOf() / gap] = 'Mar';
+    marksMonths[new Date(2016, 4, 1).valueOf() / gap] = 'Apr';
+    marksMonths[new Date(2016, 5, 1).valueOf() / gap] = 'May';
+    marksMonths[new Date(2016, 6, 1).valueOf() / gap] = 'Jun';
+    marksMonths[new Date(2016, 7, 1).valueOf() / gap] = 'Jul';
+    marksMonths[new Date(2016, 8, 1).valueOf() / gap] = 'Aug';
+    marksMonths[new Date(2016, 9, 1).valueOf() / gap] = 'Sept';
+    marksMonths[new Date(2016, 10, 1).valueOf() / gap] = 'Oct';
+    marksMonths[new Date(2016, 11, 1).valueOf() / gap] = 'Nov';
+    marksMonths[new Date(2016, 12, 1).valueOf() / gap] = 'Dec';
     return(
       <div className={classes['TimeSlider']}>
         <Form className={classes['CurrentDateTime']} inline>
@@ -93,23 +182,23 @@ export class TimeSlider extends React.Component {
             return ((date.getMonth() === 0)? "12": date.getMonth()) +"/" + date.getDate();
           }}
                   className={classes['SliderMonths']}
-                  min={new Date(2016, 1, 1).valueOf()/DIVIDER}
-                  max={new Date(2016, 12, 31).valueOf()/DIVIDER}
+                  min={new Date(2016, 1, 1).valueOf()/gap}
+                  max={new Date(2016, 12, 31).valueOf()/gap}
                   marks={marksMonths}
                   included={false}
-                  range={this.props.monthsRange}
-                  defaultValue={[5, 8]}
+                  range={false}
+                  defaultValue={new Date(2016, 1, 1).valueOf()/gap}
                   onChange={this._onChangedMonthSlider}
           />
         </Col>
         <Col sm={12}>
           <Slider className={classes['SliderYears']}
-                  min={1960}
-                  max={1985}
-                  marks={marksYears}
-                  range={this.props.yearsRange}
+                  min={this.state.firstYear}
+                  max={this.state.lastYear}
+                  marks={this.state.marksYears}
+                  range={false}
                   included={false}
-                  defaultValue={[1960, 1968]}
+                  defaultValue={1960}
                   onChange={this._onChangedYearSlider}
           />
         </Col>
@@ -183,15 +272,15 @@ export class TimeSlider extends React.Component {
     if(values[0]){
       //Datetime range
       let dates = [
-        new Date(values[0] * DIVIDER),
-        new Date(values[1] * DIVIDER)
+        new Date(values[0] * gap),
+        new Date(values[1] * gap)
       ];
       console.log("[" +
         (((dates[0].getMonth() === 0)? "12": dates[0].getMonth()) +"/" + dates[0].getDate()) + ", " +
         (((dates[1].getMonth() === 0)? "12": dates[1].getMonth()) +"/" + dates[1].getDate()) + "]");
     }else{
       // Only one
-      let date = new Date(value * DIVIDER);
+      let date = new Date(values * gap);
       console.log(((date.getMonth() === 0)? "12": date.getMonth()) +"/" + date.getDate());
     }
 

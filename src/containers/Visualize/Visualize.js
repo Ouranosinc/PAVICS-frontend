@@ -7,6 +7,8 @@ import DatasetDetails from '../../components/DatasetDetails';
 import {Monitor} from './../';
 // Containers
 import {DatasetWMSLayers, SearchCatalog} from '../../containers';
+import * as constants from './../../constants';
+
 class Visualize extends React.Component {
   static propTypes = {
     fetchFacets: React.PropTypes.func.isRequired,
@@ -18,7 +20,18 @@ class Visualize extends React.Component {
   constructor (props) {
     super(props);
     console.log(props);
+    let wmsUrl = 'http://outarde.crim.ca:8084/ncWMS2/wms';
+    // let wmsUrl = 'http://outarde.crim.ca:8083/thredds/wms/birdhouse/flyingpigeon/ncout-d149d317-b67f-11e6-acaf-fa163ee00329.nc';
+    let dataset = 'outputs/flyingpigeon/ncout-ffc3a3eb-b7db-11e6-acaf-fa163ee00329.nc';
+    // let dataset = 'outputs/data/ncep/cfsr/pr/pr_1hr_cfsr_reanalysis_197912.nc';
     this.props.fetchFacets();
+    this.props.openDatasetWmsLayers(dataset);
+    this.props.fetchDatasetWMSLayers(wmsUrl, dataset);
+    this.props.clickTogglePanel(constants.PANEL_DATASET_DETAILS, false);
+    this.props.clickTogglePanel(constants.PANEL_DATASET_WMS_LAYERS, true);
+    let layer = dataset + '/pr'; // this.props.currentOpenedWMSLayer;
+    // Not loading correctly
+    // this.props.selectLoadWms(wmsUrl, layer, "2005-12-07T12:00:00.000Z", "", 'boxfill/occam', 0.4);
   }
 
   render () {
@@ -32,10 +45,19 @@ class Visualize extends React.Component {
             <div className={classes.panel}>
               <TimeSlider {...this.props} monthsRange={false} yearsRange={false} />
             </div>
+            <div className={classes.panel}>
+              <SearchCatalog {...this.props} />
+            </div>
+            <div className={classes.panel}>
+              <Monitor {...this.props} />
+            </div>
           </div>
           <div className={classes.right}>
             <div className={classes.panel}>
               <DatasetDetails {...this.props} />
+            </div>
+            <div className={classes.panel}>
+              <DatasetWMSLayers {...this.props} />
             </div>
           </div>
         </div>

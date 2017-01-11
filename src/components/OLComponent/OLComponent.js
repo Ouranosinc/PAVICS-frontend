@@ -27,6 +27,12 @@ class OLComponent extends React.Component {
     this.popup = null;
   }
 
+  changeCurrentTime = (time) => {
+    this.source.updateParams({
+      TIME: time
+    });
+  };
+
   // Returns base layers list
   getMapBaseLayersList () {
     if (this.baseLayers != null) {
@@ -308,8 +314,11 @@ class OLComponent extends React.Component {
         'TRANSPARENT': 'TRUE',
         'STYLES': this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].style,
         'LAYERS': this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].name,
-        'COLORSCALERANGE': [-0.00004458, 0.0009362],
-        'NUMCOLORBANDS': 250,
+        'EPSG': '4326',
+        'COLORSCALERANGE': '0.0000004000,0.00006000',
+        'NUMCOLORBANDS': '10',
+        'LOGSCALE': false,
+        'crossOrigin': 'anonymous',
         // 'ABOVEMAXCOLOR': '0x000000',
         // 'BELOWMINCOLOR': '0x000000',
         'BGCOLOR': 'transparent',

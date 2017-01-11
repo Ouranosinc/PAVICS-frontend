@@ -25,7 +25,9 @@ export class DatasetWMSLayer extends Component {
 
   _loadWmsLayer(){
     //TODO: Submit dynamically the form
-    this.props.onLoadWMSLayer("1970-12-31T18:00:00.000Z", "", 0.4, 'default-scalar/div-RdYlBu');
+    // this.props.onLoadWMSLayer("2005-12-07T12:00:00.000Z", "", 'boxfill/occam', 0.4);
+    // this.props.onLoadWMSLayer("2005-12-07T12:00:00.000Z", "", 'default-scalar/div-RdYlBu', 0.4);
+    this.props.onLoadWMSLayer('1979-12-07T00:00:00.000Z', "", 'default-scalar/div-RdYlBu', 0.4);
   }
 
   _handleDateTimeRangeEvents(event, picker){

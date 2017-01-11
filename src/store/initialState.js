@@ -40,21 +40,19 @@ const initialState = {
       items: [],
       error: null
     },
-    selectedWMSLayer: {
-      layerDetails: {
+    selectedWMSLayerDetails: {
         requestedAt: null,
         receivedAt: null,
         isFetching: false,
         data: {},
         error: null
-      },
-      timesteps: {
-        requestedAt: null,
-        receivedAt: null,
-        isFetching: false,
-        data: {},
-        error: null
-      }
+    },
+    selectedWMSLayerTimesteps: {
+      requestedAt: null,
+      receivedAt: null,
+      isFetching: false,
+      data: {},
+      error: null
     },
     facets: {
       requestedAt: null,
