@@ -47,7 +47,7 @@ class Visualize extends React.Component {
               <SearchCatalog {...this.props} />
             </div>
             <div className={classes.panel}>
-              <Monitor {...this.props} />
+              {/*<Monitor {...this.props} />*/}
             </div>
           </div>
           <div className={classes.right}>

@@ -32,10 +32,14 @@ export class DatasetWMSLayers extends React.Component {
     // date = this.props.selectedWMSLayers.nearestTimeIso
     this.props.openWmsLayer(layer);
     this.props.fetchWMSLayerDetails(url, layer);
-    // this.props.fetchWMSLayerTimesteps(url, layer, this.props.selectedWMSLayerDetails.data.nearestTimeIso);
-    this.props.fetchWMSLayerTimesteps(url, layer, '1966-01-01T00:00:00.000Z');
-    this.props.setCurrentDateTime(this.props.selectedWMSLayerDetails.data.nearestTimeIso);
-    this.props.selectLoadWms(url, layer, this.props.selectedWMSLayerDetails.data.nearestTimeIso, '', 'default-scalar/div-RdYlBu', 0.4);
+
+    // let date = this.props.selectedWMSLayerDetails.data.nearestTimeIso;
+    let date = "1966-01-01T00:00:00.000Z";
+    // let date = "1995-12-07T12:00:00.000Z";
+
+    this.props.fetchWMSLayerTimesteps(url, layer, date);
+    this.props.setCurrentDateTime(date);
+    this.props.selectLoadWms(url, layer, date, '', 'default-scalar/div-RdYlBu', 0.4);
   }
 
   _onLoadWMSLayer (start, end, style, opacity) {

@@ -126,7 +126,9 @@ export class TimeSlider extends React.Component {
 
       marksYears[lastYear] = lastYear;
     }
+    //TODO SET CURRENTDATE AND CURRENTMONTHDAY CORRECTLY
     this.setState({
+      currentDate: `${firstYear}-01-01`,
       currentYear: firstYear,
       firstYear: firstYear,
       lastYear: lastYear,
@@ -248,7 +250,7 @@ export class TimeSlider extends React.Component {
             Granularity:
           </ControlLabel>
           <FormGroup className={classes['InlineFormGroup']}>
-            <FormControl componentClass="select" placeholder="Granularity Level" onChange={this._onChangedStepGranularity}>
+            <FormControl disabled componentClass="select" placeholder="Granularity Level" onChange={this._onChangedStepGranularity}>
               <option value="">Choose</option>
               <option value="minute">minutes</option>
               <option value="hour">hours</option>
@@ -338,11 +340,14 @@ export class TimeSlider extends React.Component {
   }
 
   _onChangedCurrentDate (event) {
-    this.setState({ currentDate: event.target.value });
-    console.log('Changed current datetime: ' + event.target.value);
-    // TODO: Complete
-    // TODO: Validate user input with allowed time steps & available data
-    // Actually the input could be informational only
+    this.setState({currentDate: event.target.value});
+    if(event.target.value.length === 10){
+      console.log('Changed manually current datetime: ' + event.target.value);
+      this.setState({
+        currentYear: event.target.value.substring(0,4),
+        currentMonthDay: event.target.value.substring(5,10)
+      }, () => this.changeCurrentDateTime());
+    }
   }
 
   _onChangedStepLength (event) {
@@ -428,12 +433,6 @@ export class TimeSlider extends React.Component {
     let date = new Date(this.props.currentDateTime);
     date.setHours(date.getHours() - 6); // TODO: Dynamise added hours
     this.dispatchCurrentDateTime(date.toISOString());
-    /*this.setState( {
-      currentDate: dateStringified.substring(0, 10),
-      currentMonthDay: dateStringified.substring(5, 10),
-      currentTime: dateStringified.substring(11, 24),
-      currentYear: dateStringified.substring(0, 4)
-    }, () => this.changeCurrentDateTime());*/
   }
 
   oneStepForward(){
