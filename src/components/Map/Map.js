@@ -66,9 +66,11 @@ class Map extends React.Component {
   }
 
   changeTime = (time) => {
+    this.source.setTileLoadFunction(this.source.getTileLoadFunction());
     this.source.updateParams({
       TIME: time
     });
+    this.source.changed();
   };
 
   render () {

@@ -252,6 +252,8 @@ class OLComponent extends React.Component {
           TIME: nextProps.currentDateTime
         });
         console.log('Openlayers time changed ' + nextProps.currentDateTime);
+        this.source.setTileLoadFunction(this.source.getTileLoadFunction());
+        this.source.changed();
       }
     }
   }
