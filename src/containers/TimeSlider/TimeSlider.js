@@ -13,11 +13,10 @@ const PAUSE_ACTION = 'pause';
 const PLAY_ACTION = 'play';
 const STEP_BACKWARD_ACTION = 'step-backward';
 const STEP_FORWARD_ACTION = 'step-forward';
+const MONTH_VALUE = 'month';
 
 export class TimeSlider extends React.Component {
   static propTypes = {
-    // selectedWMSLayerDetails: React.PropTypes.object.isRequired,
-    // selectedWMSLayerTimesteps: React.PropTypes.object.isRequired,
     monthsRange: React.PropTypes.bool.isRequired,
     yearsRange: React.PropTypes.bool.isRequired,
   };
@@ -37,11 +36,15 @@ export class TimeSlider extends React.Component {
     this.state = {
       currentDate: props.currentDateTime.substring(0, 10),
       currentMonthDay: '01-01',
-      currentYear: 1900,
       currentTime: props.currentDateTime.substring(11, 24),
+      currentYear: 1900,
+      firstDay: 1,
+      firstMonth: 1,
       firstYear: 1900,
-      isPlaying: false,
+      lastDay: 31,
       lastYear: 2020,
+      lastMonth: 12,
+      isPlaying: false,
       marksYears: {
         1900: '1900',
         1940: '1940',
@@ -57,7 +60,7 @@ export class TimeSlider extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.selectedWMSLayerDetails && nextProps.selectedWMSLayerDetails.data && (nextProps.selectedWMSLayerDetails.data !== this.props.selectedWMSLayerDetails.data)) {
-      this.changeYearRange(nextProps.selectedWMSLayerDetails.data);
+      this.changeGlobalRange(nextProps.selectedWMSLayerDetails.data);
     }
 
     //TODO DISABLE SOME MONTHS/YEARS IF NO DATA
@@ -67,11 +70,12 @@ export class TimeSlider extends React.Component {
     }
   }
 
-  changeYearRange(selectedWMSLayerDetailsData) {
-    let yearArr = [],
-        firstYear = 1900,
-        lastYear = 2000,
-        marksYears = {};
+  changeGlobalRange(selectedWMSLayerDetailsData) {
+    let yearArr = [];
+    let firstYear = this.state.firstYear;
+    let lastYear = this.state.lastYear;
+    let marksYears = {};
+
     for(let year in selectedWMSLayerDetailsData.datesWithData){
       yearArr.push(year);
     }
@@ -108,8 +112,6 @@ export class TimeSlider extends React.Component {
       let i = 0;
       let firstMultiple = 0;
       while(!found){
-        let test = firstYear + i;
-        let test2 = test % gap;
         if(((firstYear + i )% gap) === 0){
           found = true;
           firstMultiple = firstYear + i;
@@ -139,10 +141,12 @@ export class TimeSlider extends React.Component {
   changeTimesteps(selectedWMSLayerTimestepsData){
     //CALCULATE TIME STEP
     // TODO TIMESTEPS FOR HOURS/MINUTES
-    this.setState({
-      timesteps: selectedWMSLayerTimestepsData.timesteps
-    });
     console.log('timesteps arrived!!');
+    this.setState({
+      timesteps: selectedWMSLayerTimestepsData.timesteps,
+      currentTime: selectedWMSLayerTimestepsData.timesteps[0]
+    });
+    console.log(`current time is now ${selectedWMSLayerTimestepsData.timesteps[0]}`);
   }
 
   changeCurrentDateTime(){

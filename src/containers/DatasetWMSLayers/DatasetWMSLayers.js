@@ -34,8 +34,9 @@ export class DatasetWMSLayers extends React.Component {
     this.props.fetchWMSLayerDetails(url, layer);
 
     // let date = this.props.selectedWMSLayerDetails.data.nearestTimeIso;
-    // let date = "1966-01-01T00:00:00.000Z";
-    let date = "1995-12-07T12:00:00.000Z";
+    // let date = '1966-01-01T00:00:00.000Z';
+    // let date = '1995-12-07T12:00:00.000Z';
+    let date = '2006-01-01T12:00:00.000Z';
 
     this.props.fetchWMSLayerTimesteps(url, layer, date);
     this.props.setCurrentDateTime(date);

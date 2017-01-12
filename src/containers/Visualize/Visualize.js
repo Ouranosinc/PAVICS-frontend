@@ -22,7 +22,8 @@ class Visualize extends React.Component {
     console.log(props);
     let wmsUrl = 'http://outarde.crim.ca:8084/ncWMS2/wms';
     // let wmsUrl = 'http://outarde.crim.ca:8083/thredds/wms/birdhouse/flyingpigeon/ncout-d149d317-b67f-11e6-acaf-fa163ee00329.nc';
-    let dataset = 'outputs/flyingpigeon/ncout-ffc3a3eb-b7db-11e6-acaf-fa163ee00329.nc';
+    let dataset = 'outputs/data/CMIP5/CCCMA/CanESM2/rcp85/day/atmos/r1i1p1/pr/pr_day_CanESM2_rcp85_r1i1p1_20060101-21001231.nc'
+    // let dataset = 'outputs/flyingpigeon/ncout-ffc3a3eb-b7db-11e6-acaf-fa163ee00329.nc';
     // let dataset = 'outputs/data/ouranos/subdaily/aet/pcp/aet_pcp_1966.nc';
 
     this.props.fetchFacets();
