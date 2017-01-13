@@ -6,6 +6,12 @@ class Header extends React.Component {
     goToSection: React.PropTypes.func.isRequired,
     chooseStep: React.PropTypes.func.isRequired
   };
+  search = () => {
+    this.props.goToSection(constants.PLATFORM_SECTION_SEARCH_DATASETS);
+  };
+  experience = () => {
+    this.props.goToSection(constants.PLATFORM_SECTION_EXPERIENCE_MANAGEMENT);
+  };
   monitor = () => {
     this.props.goToSection(constants.PLATFORM_SECTION_MONITOR);
   };
@@ -13,11 +19,8 @@ class Header extends React.Component {
     this.props.chooseStep(constants.WORKFLOW_STEP_PROCESS);
     this.props.goToSection(constants.PLATFORM_SECTION_WORKFLOWS);
   };
-  visualize = () => {
-    this.props.goToSection(constants.PLATFORM_SECTION_VISUALIZE);
-  };
-  olcomponent = () => {
-    this.props.goToSection(constants.PLATFORM_SECTION_OLCOMPONENT);
+  account = () => {
+    this.props.goToSection(constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT);
   };
   render () {
     return (
@@ -25,10 +28,11 @@ class Header extends React.Component {
         <Row className="schow-grid">
           <Col md={4} mdOffset={4}>
             <Nav bsStyle="pills" justified>
+              <NavItem onClick={this.search}>Search datasets</NavItem>
+              <NavItem onClick={this.experience}>Experience Management</NavItem>
               <NavItem onClick={this.workflows}>Workflow Wizard</NavItem>
               <NavItem onClick={this.monitor}>Workboard</NavItem>
-              <NavItem onClick={this.visualize}>Visualize</NavItem>
-              <NavItem onClick={this.olcomponent}>Visualize 2</NavItem>
+              <NavItem onClick={this.account}>Account Management</NavItem>
             </Nav>
           </Col>
         </Row>

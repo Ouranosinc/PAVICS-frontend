@@ -1,17 +1,39 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {WorkflowWizard, Monitor, Visualize} from './../../../containers';
-import Header from './../../../components/Header';
 import * as actionCreators from './../modules/Pavics';
 import * as constants from './../../../constants';
-import Map from './../../../components/Map';
+import DatasetDetails from './../../../components/DatasetDetails';
+import {
+  AccountManagement,
+  DatasetWMSLayers,
+  ExperienceManagement,
+  SearchCatalog,
+  WorkflowWizard,
+  Monitor,
+  Visualize } from './../../../containers';
+import { SectionalPanel } from './../../../components/SectionalPanel';
+
 class Pavics extends React.Component {
   static propTypes = {
+    chooseStep: React.PropTypes.func.isRequired,
+    goToSection: React.PropTypes.func.isRequired,
     platform: React.PropTypes.object.isRequired
   };
 
   makeSection () {
     switch (this.props.platform.section) {
+      case constants.PLATFORM_SECTION_SEARCH_DATASETS:
+        return (
+          <div>
+            <SearchCatalog {...this.props} />
+            <DatasetDetails {...this.props} />
+            <DatasetWMSLayers {...this.props} />
+          </div>
+        );
+      case constants.PLATFORM_SECTION_EXPERIENCE_MANAGEMENT:
+        return (
+          <ExperienceManagement />
+        );
       case constants.PLATFORM_SECTION_WORKFLOWS:
         return (
           <WorkflowWizard {...this.props} />
@@ -20,22 +42,25 @@ class Pavics extends React.Component {
         return (
           <Monitor {...this.props} />
         );
-      case constants.PLATFORM_SECTION_VISUALIZE:
+      case constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT:
         return (
-          <Visualize {...this.props} />
+          <AccountManagement {...this.props} />
         );
-      case constants.PLATFORM_SECTION_OLCOMPONENT:
-        return (
-          <Map />
-        );
+      default:
+        return null;
     }
   }
 
   render () {
     return (
       <div>
-        <Header {...this.props} />
-        {this.makeSection()}
+        <Visualize {...this.props} />
+        <SectionalPanel
+          section={this.props.platform.section}
+          goToSection={this.props.goToSection}
+          chooseStep={this.props.chooseStep}
+          showContent={this.makeSection() !== null}
+          currentContent={this.makeSection()} />
       </div>
     );
   }

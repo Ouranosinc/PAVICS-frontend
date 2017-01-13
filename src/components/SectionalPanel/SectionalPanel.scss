@@ -1,0 +1,74 @@
+$bgc: rgba(0,0,0,0.7);
+
+.SectionalPanel{
+}
+
+.Shown{
+  position: fixed;
+  right: 0;
+  top: 0;
+  display: inline-flex;
+  height: 100%;
+  width: 30%;
+}
+
+.Hidden{
+  position: fixed;
+  right: 0;
+  top: 0;
+  display: inline-flex;
+  height: 275px;
+  width: 45px;
+}
+
+
+.SectionalMenu{
+  float:left;
+  /*background-color: rgba(255,255,255,0.7);*/
+  width: 45px;
+  height: 275px;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+
+  .activeRoute {
+    font-weight: bold;
+    text-decoration: underline;
+  }
+
+  nav {
+    width: 100%;
+    height: 100%;
+    > a {
+      font-size: 25px;
+      padding: 10px 10px;
+    }
+    a {
+      width: 100%;
+      display: block;
+      text-decoration: none;
+      color: white;
+      cursor: pointer;
+      font-weight: 500;
+      transition: none;
+      &:hover {
+        background: $bgc;
+      }
+      &.active{
+        background: $bgc;
+      }
+    }
+  }
+}
+
+.SectionalContent {
+  width: 100%;
+  height: 100%;
+
+  .ShownContent{
+    height: 100%;
+    background-color: $bgc;
+  }
+
+  .HiddenContent{
+    display: none;
+  }
+}

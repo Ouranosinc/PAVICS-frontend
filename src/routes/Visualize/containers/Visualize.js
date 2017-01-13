@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import classes from './Visualize.scss';
+import classes from './ExperienceManagement.scss';
 // TODO: Fix, we should only import containers here
 import OLComponent from '../../../components/OLComponent';
 import DatasetDetails from '../../../components/DatasetDetails';

@@ -12,7 +12,7 @@ const initialState = {
     }
   },
   platform: {
-    section: constants.PLATFORM_SECTION_WORKFLOWS
+    section: ''
   },
   monitor: {
     jobs: []

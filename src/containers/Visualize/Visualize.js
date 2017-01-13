@@ -44,21 +44,21 @@ class Visualize extends React.Component {
             <div className={classes.panel}>
               <TimeSlider {...this.props} monthsRange={false} yearsRange={false} />
             </div>
-            <div className={classes.panel}>
+            {/*<div className={classes.panel}>
               <SearchCatalog {...this.props} />
             </div>
             <div className={classes.panel}>
-              {/*<Monitor {...this.props} />*/}
-            </div>
+              <Monitor {...this.props} />
+            </div>*/}
           </div>
-          <div className={classes.right}>
+          {/*<div className={classes.right}>
             <div className={classes.panel}>
               <DatasetDetails {...this.props} />
             </div>
             <div className={classes.panel}>
               <DatasetWMSLayers {...this.props} />
             </div>
-          </div>
+          </div>*/}
         </div>
       </div>
     );
