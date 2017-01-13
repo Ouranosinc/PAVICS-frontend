@@ -2,11 +2,8 @@ import React from 'react';
 import classes from './Visualize.scss';
 // TODO: Fix, we should only import containers here
 import OLComponent from '../../components/OLComponent';
+import PieMenu from '../../components/PieMenu';
 import TimeSlider from '../../containers/TimeSlider';
-import DatasetDetails from '../../components/DatasetDetails';
-import {Monitor} from './../';
-// Containers
-import {DatasetWMSLayers, SearchCatalog} from '../../containers';
 import * as constants from './../../constants';
 
 class Visualize extends React.Component {
@@ -43,6 +40,7 @@ class Visualize extends React.Component {
           <div className={classes.left}>
             <div className={classes.panel}>
               <TimeSlider {...this.props} monthsRange={false} yearsRange={false} />
+              <PieMenu />
             </div>
             {/*<div className={classes.panel}>
               <SearchCatalog {...this.props} />

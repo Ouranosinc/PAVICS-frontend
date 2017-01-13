@@ -295,7 +295,7 @@ class OLComponent extends React.Component {
   render () {
     return (
       <div className={classes['OLComponent']}>
-        <div id="map" className="map">
+        <div id="map" className="map" style={{'width': '100%', 'height': '100%', 'position': 'fixed'}}>
           <div id="popup" className="ol-popup"></div>
         </div>
       </div>
