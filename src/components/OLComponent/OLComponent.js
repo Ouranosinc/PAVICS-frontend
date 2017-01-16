@@ -14,7 +14,7 @@ class OLComponent extends React.Component {
     dataset: React.PropTypes.object,
     loadedWmsDatasets: React.PropTypes.array.isRequired,
     layer: React.PropTypes.object.isRequired
-  }
+  };
 
   constructor (props) {
     super(props);
@@ -170,6 +170,7 @@ class OLComponent extends React.Component {
       zoom: 4
     });
     let map = new ol.Map({
+      controls: [],
       layers: [this.baseLayers, this.overlayLayers],
       target: 'map',
       renderer: 'canvas',
@@ -180,11 +181,11 @@ class OLComponent extends React.Component {
       projection: 'EPSG:4326',
       target: document.getElementById('mouseCoordinates')
     });
-    map.addControl(mousePosition);
+    // map.addControl(mousePosition);
     let layerSwitcher = new ol.control.LayerSwitcher({
       tipLabel: 'Legend' // Optional label for button
     });
-    map.addControl(layerSwitcher);
+    // map.addControl(layerSwitcher);
     this.map = map;
   }
 
