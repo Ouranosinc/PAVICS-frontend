@@ -1,17 +1,11 @@
 .TimeSlider {
   height:200px;
   width: 100%;
-  left: 100px;
   bottom: 0;
-
-  /* TEMP */
   text-align: left;
-  opacity: 0.8;
+  opacity: 0.99;
   padding: 5px;
-  background-color: #ffffff;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+  background-color: rgba(0,0,0,.7);
 
   .CurrentDateTime{
 

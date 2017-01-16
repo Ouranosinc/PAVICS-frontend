@@ -68,7 +68,7 @@ class Visualize extends React.Component {
                 <TimeSlider {...this.props} monthsRange={false} yearsRange={false} />
               </div> : null
             }
-            {/*(this.state.mapPanelStatus[CHART_PANEL])
+            {(this.state.mapPanelStatus[CHART_PANEL])
               ? <div className={classes.panel}>
                 <PlotlyWrapper
                   panelControls={this.props.panelControls}
@@ -76,7 +76,7 @@ class Visualize extends React.Component {
                   layout={this.props.plotlyData.layout}
                   fetchPlotlyData={this.props.fetchPlotlyData}
                 />
-              </div> : null*/
+              </div> : null
             }
           </div>
         </div>
