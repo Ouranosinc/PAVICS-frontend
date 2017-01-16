@@ -1,6 +1,6 @@
 import React from 'react';
 import classes from './SectionalPanel.scss';
-import { Glyphicon } from 'react-bootstrap';
+import { Glyphicon, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import * as constants from './../../constants';
 
 class SectionalMenu extends React.Component {
@@ -45,31 +45,44 @@ class SectionalMenu extends React.Component {
       this.props.goToSection('');
     }
   };
+
+  tooltip (label) {
+    return (<Tooltip id="tooltip">{label}</Tooltip>);
+  }
   render () {
     return (
       <div className={classes['SectionalMenu']}>
         <nav>
-          <a onClick={this.search} title="Search Datasets"
-            className={(this.props.section === constants.PLATFORM_SECTION_SEARCH_DATASETS) ? classes['active'] : ''}>
-            <Glyphicon glyph="music" />
-          </a>
-          <a onClick={this.experience} title="Experience Management"
-            className={(this.props.section === constants.PLATFORM_SECTION_EXPERIENCE_MANAGEMENT) ? classes['active'] : ''}>
-            <Glyphicon glyph="book" />
-          </a>
-          <a onClick={this.workflows} title="Workflow Wizard"
-            className={(this.props.section === constants.PLATFORM_SECTION_WORKFLOWS) ? classes['active'] : ''}>
-            <Glyphicon glyph="th-list" />
-          </a>
-          <a onClick={this.monitor} title="Workboard"
-            className={(this.props.section === constants.PLATFORM_SECTION_MONITOR) ? classes['active'] : ''}>
-            <Glyphicon glyph="tasks" />
-          </a>
-          <a onClick={this.account}
-            title="Account Management"
-            className={(this.props.section === constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT) ? classes['active'] : ''}>
-            <Glyphicon glyph="user" />
-          </a>
+          <OverlayTrigger placement="left" overlay={this.tooltip('Search Datasets')} delay={10}>
+            <a onClick={this.search} title="Search Datasets"
+              className={(this.props.section === constants.PLATFORM_SECTION_SEARCH_DATASETS) ? classes['active'] : ''}>
+              <Glyphicon glyph="music" />
+            </a>
+          </OverlayTrigger>
+          <OverlayTrigger placement="left" overlay={this.tooltip('Experience Management')} delay={10}>
+            <a onClick={this.experience} title="Experience Management"
+              className={(this.props.section === constants.PLATFORM_SECTION_EXPERIENCE_MANAGEMENT) ? classes['active'] : ''}>
+              <Glyphicon glyph="book" />
+            </a>
+          </OverlayTrigger>
+          <OverlayTrigger placement="left" overlay={this.tooltip('Workflow Wizard')} delay={10}>
+            <a onClick={this.workflows} title="Workflow Wizard"
+              className={(this.props.section === constants.PLATFORM_SECTION_WORKFLOWS) ? classes['active'] : ''}>
+              <Glyphicon glyph="th-list" />
+            </a>
+          </OverlayTrigger>
+          <OverlayTrigger placement="left" overlay={this.tooltip('Workboard')} delay={10}>
+            <a onClick={this.monitor} title="Workboard"
+              className={(this.props.section === constants.PLATFORM_SECTION_MONITOR) ? classes['active'] : ''}>
+              <Glyphicon glyph="tasks" />
+            </a>
+          </OverlayTrigger>
+          <OverlayTrigger placement="left" overlay={this.tooltip('Account Management')} delay={10}>
+            <a onClick={this.account} title="Account Management"
+              className={(this.props.section === constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT) ? classes['active'] : ''}>
+              <Glyphicon glyph="user" />
+            </a>
+          </OverlayTrigger>
         </nav>
       </div>
     );
