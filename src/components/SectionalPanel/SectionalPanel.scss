@@ -10,6 +10,9 @@ $bgc: rgba(0,0,0,0.7);
   display: inline-flex;
   height: 100%;
   width: 30%;
+  transition-property: all;
+  transition-duration: .5s;
+  transition-timing-function: ease-in;
 }
 
 .Hidden{
@@ -19,6 +22,9 @@ $bgc: rgba(0,0,0,0.7);
   display: inline-flex;
   height: 275px;
   width: 45px;
+  transition-property: all;
+  transition-duration: .5s;
+  transition-timing-function: ease-out;
 }
 
 
@@ -62,13 +68,16 @@ $bgc: rgba(0,0,0,0.7);
 .SectionalContent {
   width: 100%;
   height: 100%;
+  background-color: $bgc;
 
   .ShownContent{
     height: 100%;
-    background-color: $bgc;
+    /*transition-property: all;
+    transition-duration: .8s;
+    transition-timing-function: cubic-bezier(0, 1, 0.5, 1);*/
   }
 
   .HiddenContent{
-    display: none;
+    width: 0;
   }
 }
