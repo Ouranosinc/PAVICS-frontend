@@ -54,6 +54,7 @@ class SectionalMenu extends React.Component {
   tooltip (label) {
     return (<Tooltip id="tooltip">{label}</Tooltip>);
   }
+
   render () {
     return (
       <div className={classes['SectionalMenu']}>
@@ -61,7 +62,7 @@ class SectionalMenu extends React.Component {
           <OverlayTrigger placement="left" overlay={this.tooltip('Search Datasets')} delay={10}>
             <a onClick={this.search} title="Search Datasets"
               className={(this.props.section === constants.PLATFORM_SECTION_SEARCH_DATASETS) ? classes['active'] : ''}>
-              <SearchIcon color={white} tooltip="Backup" />
+              <SearchIcon color={white} />
             </a>
           </OverlayTrigger>
           <OverlayTrigger placement="left" overlay={this.tooltip('Experience Management')} delay={10}>

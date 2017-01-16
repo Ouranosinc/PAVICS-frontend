@@ -1,10 +1,10 @@
 import React from 'react';
-import Plotly from 'plotly.js';
 import { Glyphicon } from 'react-bootstrap';
 import classes from './PieMenu.scss';
 import AccessTimeIcon from 'material-ui/svg-icons/device/access-time';
 import InsertChartIcon from 'material-ui/svg-icons/editor/insert-chart';
 import LayersIcon from 'material-ui/svg-icons/maps/layers';
+import MenuIcon from 'material-ui/svg-icons/navigation/menu';
 import MyLocationIcon from 'material-ui/svg-icons/maps/my-location';
 import {white} from 'material-ui/styles/colors';
 
@@ -14,91 +14,82 @@ const customSvgStyle = {
   'padding': '20px 15px 0 0'
 };
 
-class PieMenu extends React.Component {
-  static propTypes = {
+export const CHART_PANEL = 'CHART_PANEL';
+export const LAYER_SWITCHER_PANEL = 'LAYER_SWITCHER_PANEL';
+export const MAP_PANEL = 'MAP_PANEL';
+export const MAP_CONTROLS_PANEL = 'MAP_CONTROLS_PANEL';
+export const TIME_SLIDER_PANEL = 'TIME_SLIDER_PANEL';
 
+export class PieMenu extends React.Component {
+  static propTypes = {
+    mapPanelStatus: React.PropTypes.object.isRequired,
+    onToggleMapPanel: React.PropTypes.func.isRequired
   };
 
-  constructor (props){
+  constructor (props) {
     super(props);
-    /*this.state = {
-      data: [{
-        values: [20, 20, 20, 20, 20],
-        labels: ['A', 'B', 'C', 'D', 'E'],
-        'marker': {
-          'colors': [
-            'rgb(146, 123, 21)',
-            'rgb(177, 180, 34)',
-            'rgb(206, 206, 40)',
-            'rgb(175, 51, 21)',
-            'rgb(35, 36, 21)'
-          ]
-        },
-        type: 'pie',
-        hoverinfo: 'text',
-        textinfo: 'text'
-      }],
-      layout: {
-        showlegend: false,
-        height: 300,
-        width: 300,
-        paper_bgcolor: 'rgba(0,0,0,0)',
-        plot_bgcolor: 'rgba(0,0,0,0)'
-      }
-    };
-    this._bindRef = this._bindRef.bind(this);*/
     this._onClick = this._onClick.bind(this);
-  }
-
-  componentDidMount () {
-    /*Plotly.plot(this.container, this.state.data, this.state.layout, {displayModeBar: false});*/
-  }
-
-  componentDidUpdate () {
-    /*this.container.data = this.state.data;
-    this.container.layout = this.state.layout;
-    Plotly.redraw(this.container);
-    Plotly.Plots.resize(this.container);
-    this.container.on('plotly_click', this._onClick);*/
+    this._toggleMapPanel = this._toggleMapPanel.bind(this);
+    this._toggleMapControlsPanel = this._toggleMapControlsPanel.bind(this);
+    this._toggleLayerSwitcherPanel = this._toggleLayerSwitcherPanel.bind(this);
+    this._toggleChartPanel = this._toggleChartPanel.bind(this);
+    this._toggleTimeSliderPanel = this._toggleTimeSliderPanel.bind(this);
   }
 
   _onClick (event) {
     console.log(event);
   }
 
-  _bindRef (node) {
-    this.container = node;
+  _toggleMapPanel () {
+    this.props.onToggleMapPanel(MAP_PANEL);
+  }
+
+  _toggleMapControlsPanel () {
+    this.props.onToggleMapPanel(MAP_CONTROLS_PANEL);
+  }
+
+  _toggleLayerSwitcherPanel () {
+    this.props.onToggleMapPanel(LAYER_SWITCHER_PANEL);
+  }
+
+  _toggleChartPanel () {
+    this.props.onToggleMapPanel(CHART_PANEL);
+  }
+
+  _toggleTimeSliderPanel () {
+    this.props.onToggleMapPanel(TIME_SLIDER_PANEL);
   }
 
   render () {
     return (
       <div className={classes['PieMenu']}>
-        {/*<div id="plotly" ref={this._bindRef}></div>*/}
         <nav className={classes['radialnav']}>
-          <a href="#" className='ellipsis'><i className="fa fa-bars"></i></a>
+          {/*<a href="#" className='ellipsis'>
+            <MenuIcon color={white} />
+          </a>*/}
           <ul className={classes['menu']}>
-            <li data-submenu="home">
-              <a href="#">
+            <li>
+              <a href="#" onClick={this._toggleMapPanel} className={this.props.mapPanelStatus[MAP_PANEL] ? classes['IsOpen'] : ''}>
                 <Glyphicon className={classes['CustomGlyphIcon']} glyph="globe" />
               </a>
             </li>
-            <li data-submenu="home">
-              <a href="#">
+            <li>
+              <a href="#" onClick={this._toggleMapControlsPanel} className={this.props.mapPanelStatus[MAP_CONTROLS_PANEL] ? classes['IsOpen'] : ''}>
                 <MyLocationIcon color={white} style={customSvgStyle} />
               </a>
             </li>
-            <li data-submenu="home">
-              <a href="#">
+            <li>
+              <a href="#" onClick={this._toggleLayerSwitcherPanel} className={this.props.mapPanelStatus[LAYER_SWITCHER_PANEL] ? classes['IsOpen'] : ''}>
                 <LayersIcon color={white} style={customSvgStyle} />
               </a>
             </li>
-            <li data-submenu="home">
-              <a href="#">
+            <li>
+              <a href="#" onClick={this._toggleChartPanel} className={this.props.mapPanelStatus[CHART_PANEL] ? classes['IsOpen'] : ''}>
                 <InsertChartIcon color={white} style={customSvgStyle} />
               </a>
             </li>
-            <li data-submenu="home">
-              <a href="#">
+            <li>
+              <a href="#" onClick={this._toggleTimeSliderPanel} className={this.props.mapPanelStatus[TIME_SLIDER_PANEL] ? classes['IsOpen'] : ''}>
                 <AccessTimeIcon color={white} style={customSvgStyle} />
               </a>
             </li>
@@ -108,4 +99,3 @@ class PieMenu extends React.Component {
     );
   }
 }
-export default PieMenu;

@@ -14,7 +14,7 @@
   }
 
   .panel {
-    margin: 5px;
+    /*margin: 5px;*/
   }
 
   .left
@@ -38,6 +38,16 @@
       clear: right;
     }
   }
+
+  /*.bottom {
+    max-width: 100%;
+    float: bottom;
+    margin: 15px;
+    .panel {
+      float: bottom;
+      clear: right;
+    }
+  }*/
 
   .frontComponents{
     word-break: normal;

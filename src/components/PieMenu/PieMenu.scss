@@ -5,7 +5,10 @@
 }
 .CustomGlyphIcon{
   font-size: 50px;
-  padding: 20px 15px 0 0;
+  padding: 20px 0 0 0;
+}
+.IsOpen{
+  background-color: rgba(0,0,0,1) !important
 }
 
 .radialnav {
@@ -28,7 +31,7 @@
   background: #2980b9;
   color: white;
   text-align: center;
-  box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.44);
+  /*box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.44);*/
   -webkit-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
 }
@@ -106,6 +109,7 @@
 }
 .menu > li:nth-of-type(4) > a, .submenu > li:nth-of-type(4) > a {
   background-color: #4aa3df;
+  /*background-color: rgba(255, 255, 255, 0.3);*/
 }
 .menu > li:nth-of-type(5), .submenu > li:nth-of-type(5) {
   -moz-transform: rotate(140deg) skew(50deg);
@@ -153,6 +157,8 @@
   -moz-transition: opacity 0.3s, color 0.3s;
   transition: opacity 0.3s, color 0.3s;
   background-color: #3498db;
+  /*background-color: rgba(255, 255, 255, 0.2);*/
+  /*box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);*/
 }
 .menu > li a i, .submenu > li a i {
   padding: 20px 15px 0 0;
@@ -162,5 +168,5 @@
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
-  border: 5px solid rgba(255, 255, 255, .1);
+  border: 7px solid rgba(255, 255, 255, 1);
 }

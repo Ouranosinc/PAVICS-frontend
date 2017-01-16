@@ -1,2 +1,2 @@
-import PieMenu from './PieMenu'
-export default PieMenu
+import PieMenu from './PieMenu';
+export default PieMenu;
