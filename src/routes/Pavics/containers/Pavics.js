@@ -1,5 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import * as actionCreators from './../modules/Pavics';
 import * as constants from './../../../constants';
 import DatasetDetails from './../../../components/DatasetDetails';
@@ -53,15 +54,17 @@ class Pavics extends React.Component {
 
   render () {
     return (
-      <div>
-        <Visualize {...this.props} />
-        <SectionalPanel
-          section={this.props.platform.section}
-          goToSection={this.props.goToSection}
-          chooseStep={this.props.chooseStep}
-          showContent={this.makeSection() !== null}
-          currentContent={this.makeSection()} />
-      </div>
+      <MuiThemeProvider>
+        <div>
+          <Visualize {...this.props} />
+          <SectionalPanel
+            section={this.props.platform.section}
+            goToSection={this.props.goToSection}
+            chooseStep={this.props.chooseStep}
+            showContent={this.makeSection() !== null}
+            currentContent={this.makeSection()} />
+        </div>
+      </MuiThemeProvider>
     );
   }
 }
