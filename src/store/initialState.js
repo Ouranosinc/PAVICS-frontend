@@ -12,7 +12,7 @@ const initialState = {
     }
   },
   platform: {
-    section: constants.PLATFORM_SECTION_WORKFLOWS
+    section: ''
   },
   monitor: {
     jobs: []
@@ -24,6 +24,7 @@ const initialState = {
     currentOpenedDataset: '',
     currentOpenedDatasetWMSFile: '',
     currentOpenedWMSLayer: '',
+    currentDateTime: '1900-01-01T00:00:00.000Z',
     loadedWmsDatasets: [],
     selectedFacets: [],
     selectedDatasets: {
@@ -40,21 +41,19 @@ const initialState = {
       items: [],
       error: null
     },
-    selectedWMSLayer: {
-      layerDetails: {
+    selectedWMSLayerDetails: {
         requestedAt: null,
         receivedAt: null,
         isFetching: false,
         data: {},
         error: null
-      },
-      timesteps: {
-        requestedAt: null,
-        receivedAt: null,
-        isFetching: false,
-        data: {},
-        error: null
-      }
+    },
+    selectedWMSLayerTimesteps: {
+      requestedAt: null,
+      receivedAt: null,
+      isFetching: false,
+      data: {},
+      error: null
     },
     facets: {
       requestedAt: null,

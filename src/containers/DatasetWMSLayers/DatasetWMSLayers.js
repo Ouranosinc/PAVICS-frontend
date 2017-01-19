@@ -3,6 +3,7 @@ import Panel, {PanelHeader} from './../../components/Panel';
 import DatasetWMSLayersList from '../../components/DatasetWMSLayersList';
 import DatasetWMSLayer from '../../components/DatasetWMSLayer';
 import * as constants from './../../constants';
+
 export class DatasetWMSLayers extends React.Component {
   static propTypes = {
     clickTogglePanel: React.PropTypes.func.isRequired,
@@ -24,14 +25,28 @@ export class DatasetWMSLayers extends React.Component {
   }
 
   _onSelectDatasetWMSLayer (url, layer) {
+    // TODO: Déplacer cet appel bien plus haut dans le flow (sélection du dataset initial après la rechercher)
+    // dataset  = this.props.selectedWMSLayers.items[0].dataset
+    // wmsUrl  = this.props.selectedWMSLayers.items[0].wmsUrl
+    //TODO: Add default(first) date info in this.props.selectedWMSLayers
+    // date = this.props.selectedWMSLayers.nearestTimeIso
     this.props.openWmsLayer(layer);
     this.props.fetchWMSLayerDetails(url, layer);
+
+    // let date = this.props.selectedWMSLayerDetails.data.nearestTimeIso;
+    // let date = '1966-01-01T00:00:00.000Z';
+    let date = '1850-01-17T12:00:00.000Z';
+    // let date = '2006-01-01T12:00:00.000Z';
+
+    this.props.fetchWMSLayerTimesteps(url, layer, date);
+    this.props.setCurrentDateTime(date);
+    this.props.selectLoadWms(url, layer, date, '', 'default-scalar/div-RdYlBu', 0.4);
   }
 
   _onLoadWMSLayer (start, end, style, opacity) {
-    let url = 'http://132.217.140.31:8080/ncWMS2/wms';
+    let url = 'http://outarde.crim.ca:8084/ncWMS2/wms'; // 'http://132.217.140.31:8080/ncWMS2/wms';
     let layer = this.props.currentOpenedWMSLayer;
-    this.props.selectLoadWms(url, layer, start, end, opacity, style);
+    this.props.selectLoadWms(url, layer, start, end, style, opacity);
   }
 
   _mainComponent () {
@@ -44,11 +59,13 @@ export class DatasetWMSLayers extends React.Component {
             layers={this.props.selectedWMSLayers.items}
             onSelectLayer={this._onSelectDatasetWMSLayer}
             currentLayer={this.props.currentOpenedWMSLayer} />
-          {
+          { /*
             (this.props.currentOpenedWMSLayer.length)
-              ? <DatasetWMSLayer onLoadWMSLayer={this._onLoadWMSLayer} />
+              ? <DatasetWMSLayer setCurrentDateTime={this.props.setCurrentDateTime}
+                                 selectedWMSLayerDetails={this.props.selectedWMSLayerDetails}
+                                 onLoadWMSLayer={this._onLoadWMSLayer} />
               : null
-          }
+          */}
         </div>;
     } else {
       MainComponent =

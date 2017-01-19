@@ -7,7 +7,9 @@ import classes from './DatasetWMSLayer.scss'
 
 export class DatasetWMSLayer extends Component {
   static propTypes = {
-    onLoadWMSLayer: PropTypes.func.isRequired
+    onLoadWMSLayer: PropTypes.func.isRequired,
+    setCurrentDateTime: PropTypes.func.isRequired,
+    selectedWMSLayerDetails: PropTypes.object.isRequired
   };
 
   constructor(props) {
@@ -25,7 +27,9 @@ export class DatasetWMSLayer extends Component {
 
   _loadWmsLayer(){
     //TODO: Submit dynamically the form
-    this.props.onLoadWMSLayer("1970-12-31T18:00:00.000Z", "", 0.4, 'default-scalar/div-RdYlBu');
+    // this.props.onLoadWMSLayer("2005-12-07T12:00:00.000Z", "", 'boxfill/occam', 0.4);
+    this.props.setCurrentDateTime(this.props.selectedWMSLayerDetails.data.nearestTimeIso);
+    this.props.onLoadWMSLayer(this.props.selectedWMSLayerDetails.data.nearestTimeIso, '', 'default-scalar/div-RdYlBu', 0.4);
   }
 
   _handleDateTimeRangeEvents(event, picker){

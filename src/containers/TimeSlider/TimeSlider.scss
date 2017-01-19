@@ -1,0 +1,28 @@
+.TimeSlider {
+  height:200px;
+  width: 100%;
+  bottom: 0;
+  text-align: left;
+  opacity: 0.99;
+  padding: 5px;
+  background-color: rgba(0,0,0,.7);
+
+  .CurrentDateTime{
+
+  }
+
+  .SliderMonths{
+    margin-top: 10px;
+  }
+  .SliderYears{
+    margin-top: 20px;
+  }
+
+  .StepControls{
+    margin-top: 80px;
+  }
+
+  .InlineFormGroup {
+    margin: 0 3px;
+  }
+}

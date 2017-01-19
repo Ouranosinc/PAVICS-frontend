@@ -17,6 +17,11 @@
     margin: 0;
     padding: 0;
     height: 100%;
+    background-color: black;
+  }
+
+  .btn, .input-group-btn .btn {
+    padding: 8px 15px;
   }
 
   *,
