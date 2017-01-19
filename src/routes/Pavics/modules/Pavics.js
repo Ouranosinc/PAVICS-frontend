@@ -436,7 +436,7 @@ export function fetchCatalogDatasets () {
   return function (dispatch, getState) {
     dispatch(requestCatalogDatasets());
     // Get current added facets by querying store
-    let facets = getState().visualize.selectedFacets;
+    let facets = getState().pavics.visualize.selectedFacets;
     let constraints = '';
     facets.forEach(function (facet, i) {
       constraints += `${(i > 0) ? ',' : ''}${facet.key}:${facet.value}`;
