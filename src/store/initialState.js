@@ -69,7 +69,14 @@ const initialState = {
       items: [],
       error: null
     },
-    datasets: {
+    esgfDatasets: {
+      requestedAt: null,
+      receivedAt: null,
+      isFetching: false,
+      items: [],
+      error: null
+    },
+    pavicsDatasets: {
       requestedAt: null,
       receivedAt: null,
       isFetching: false,

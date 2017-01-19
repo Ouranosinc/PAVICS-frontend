@@ -4,7 +4,7 @@ import request from 'koa-request';
 import url from 'url';
 import Utils from './../Utils';
 
-module.exports.getDatasets = function * list (next) {
+module.exports.getExternalDatasets = function * list (next) {
   let constraints = '';
   if (this.method !== 'GET') return yield next;
   if (this.request.query.constraints) {
@@ -29,6 +29,44 @@ module.exports.getDatasets = function * list (next) {
     };
     let responseJson = yield request(optionsJson);
     let datasets = JSON.parse(responseJson.body);
+    this.body = datasets.sort(function (a, b) {
+      if (a.id < b.id) {
+        return -1;
+      }
+      if (a.id > b.id) {
+        return 1;
+      }
+      return 0;
+    });
+  } else {
+    this.body = [];
+  }
+};
+
+module.exports.getDatasets = function * list (next) {
+  let constraints = '';
+  if (this.method !== 'GET') return yield next;
+  if (this.request.query.constraints) {
+    constraints = `constraints=${this.request.query.constraints}`;
+    console.log('Found contraints: ' + constraints);
+  }
+  if (this.request.query.facets) {
+    console.log(this.request.query.facets);
+  }
+  let query = `${config.pavics_pywps_path}${constraints}`;
+  console.log(`Querying: ${query}`);
+  var optionsWPS = {
+    url: query
+  };
+  let responseWPS = yield request(optionsWPS);
+  let xmlToJson = yield Utils.parseXMLThunk(responseWPS.body);
+  let wpsOutput = Utils.extractWPSOutputPath(xmlToJson);
+  if (wpsOutput.length) {
+    var optionsJson = {
+      url: wpsOutput
+    };
+    let responseJson = yield request(optionsJson);
+    let datasets = JSON.parse(responseJson.body).response.docs;
     this.body = datasets.sort(function (a, b) {
       if (a.id < b.id) {
         return -1;

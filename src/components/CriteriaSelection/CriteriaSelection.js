@@ -9,7 +9,8 @@ class CriteriaSelection extends React.Component {
     selectedFacets: React.PropTypes.array.isRequired,
     addFacetKeyValue: React.PropTypes.func.isRequired,
     removeFacetKeyValue: React.PropTypes.func.isRequired,
-    fetchCatalogDatasets: React.PropTypes.func.isRequired,
+    fetchEsgfDatasets: React.PropTypes.func.isRequired,
+    fetchPavicsDatasets: React.PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -28,7 +29,8 @@ class CriteriaSelection extends React.Component {
     else {
       this.props.removeFacetKeyValue(this.props.criteriaName, event.target.value);
     }
-    this.props.fetchCatalogDatasets();
+    // this.props.fetchEsgfDatasets();
+    this.props.fetchPavicsDatasets();
   }
 
   _formatRows() {

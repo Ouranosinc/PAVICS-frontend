@@ -18,13 +18,18 @@ export class SearchCatalog extends React.Component {
     requestFacets: React.PropTypes.func.isRequired,
     receiveFacetsFailure: React.PropTypes.func.isRequired,
     receiveFacets: React.PropTypes.func.isRequired,
-    requestCatalogDatasets: React.PropTypes.func.isRequired,
-    receiveCatalogDatasetsFailure: React.PropTypes.func.isRequired,
-    receiveCatalogDatasets: React.PropTypes.func.isRequired,
+    requestEsgfDatasets: React.PropTypes.func.isRequired,
+    receiveEsgfDatasetsFailure: React.PropTypes.func.isRequired,
+    receiveEsgfDatasets: React.PropTypes.func.isRequired,
+    requestPavicsDatasets: React.PropTypes.func.isRequired,
+    receivePavicsDatasetsFailure: React.PropTypes.func.isRequired,
+    receivePavicsDatasets: React.PropTypes.func.isRequired,
     fetchFacets: React.PropTypes.func.isRequired,
     fetchDataset: React.PropTypes.func.isRequired,
-    fetchCatalogDatasets: React.PropTypes.func.isRequired,
-    datasets: React.PropTypes.object.isRequired,
+    fetchEsgfDatasets: React.PropTypes.func.isRequired,
+    fetchPavicsDatasets: React.PropTypes.func.isRequired,
+    esgfDatasets: React.PropTypes.object.isRequired,
+    pavicsDatasets: React.PropTypes.object.isRequired,
     facets: React.PropTypes.object.isRequired,
     selectedFacets: React.PropTypes.array.isRequired,
     currentSelectedKey: React.PropTypes.string.isRequired,
@@ -58,14 +63,14 @@ export class SearchCatalog extends React.Component {
       this.props.addFacetKeyValue(this.props.currentSelectedKey, this.props.currentSelectedValue);
       this.props.selectFacetKey('');
       // TODO: Auto-fetch on onAddFacet() ?
-      this.props.fetchCatalogDatasets();
+      this.props.fetchEsgfDatasets();
     }
   }
 
   _onRemoveFacet (key, value) {
     this.props.removeFacetKeyValue(key, value);
     // TODO: Auto-fetch on onRemoveFacet() ?
-    this.props.fetchCatalogDatasets();
+    this.props.fetchEsgfDatasets();
   }
 
   // posterity
@@ -84,7 +89,7 @@ export class SearchCatalog extends React.Component {
   }
 
   _onSearchCatalog (event) {
-    this.props.fetchCatalogDatasets();
+    this.props.fetchEsgfDatasets();
   }
 
   _onOpenPanel () {
@@ -139,7 +144,8 @@ export class SearchCatalog extends React.Component {
                       selectedFacets={this.props.selectedFacets}
                       addFacetKeyValue={this.props.addFacetKeyValue}
                       removeFacetKeyValue={this.props.removeFacetKeyValue}
-                      fetchCatalogDatasets={this.props.fetchCatalogDatasets} />
+                      fetchPavicsDatasets={this.props.fetchPavicsDatasets}
+                      fetchEsgfDatasets={this.props.fetchEsgfDatasets} />
                   </div>;
                 })
               }
@@ -155,7 +161,8 @@ export class SearchCatalog extends React.Component {
                       selectedFacets={this.props.selectedFacets}
                       addFacetKeyValue={this.props.addFacetKeyValue}
                       removeFacetKeyValue={this.props.removeFacetKeyValue}
-                      fetchCatalogDatasets={this.props.fetchCatalogDatasets} />
+                      fetchPavicsDatasets={this.props.fetchPavicsDatasets}
+                      fetchEsgfDatasets={this.props.fetchEsgfDatasets} />
                   </div>
                 )
                   : null

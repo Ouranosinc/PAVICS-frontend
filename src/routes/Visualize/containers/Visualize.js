@@ -40,7 +40,8 @@ import {
   // Async
   fetchFacets,
   fetchDataset,
-  fetchCatalogDatasets,
+  fetchEsgfDatasets,
+  fetchPavicsDatasets,
   fetchDatasetWMSLayers,
   fetchWMSLayerDetails,
   fetchWMSLayerTimesteps,
@@ -130,7 +131,8 @@ const mapActionCreators = {
   // Async
   fetchFacets,
   fetchDataset,
-  fetchCatalogDatasets,
+  fetchEsgfDatasets,
+  fetchPavicsDatasets,
   fetchDatasetWMSLayers,
   fetchWMSLayerDetails,
   fetchWMSLayerTimesteps,

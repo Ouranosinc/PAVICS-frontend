@@ -10,7 +10,7 @@ export class SearchCatalogResults extends React.Component {
     openDatasetDetails: React.PropTypes.func.isRequired,
     fetchDataset: React.PropTypes.func.isRequired,
     currentOpenedDataset: React.PropTypes.string.isRequired,
-    datasets: React.PropTypes.object.isRequired
+    esgfDatasets: React.PropTypes.object.isRequired
   }
 
   constructor (props) {
@@ -37,15 +37,15 @@ export class SearchCatalogResults extends React.Component {
   render () {
     // console.log("render SearchCatalogResults");
     let mainComponent;
-    if (this.props.datasets.isFetching) {
+    if (this.props.esgfDatasets.isFetching) {
       mainComponent = <Loader name="datasets" />;
     } else {
-      if (this.props.datasets.items.length) {
+      if (this.props.esgfDatasets.items.length) {
         mainComponent =
           <div>
-            <div>Found <strong>{this.props.datasets.items.length}</strong> results</div>
+            <div>Found <strong>{this.props.esgfDatasets.items.length}</strong> results</div>
             <div className={classes['DatasetTable']}>
-              {this.props.datasets.items.map((x, i) =>
+              {this.props.esgfDatasets.items.map((x, i) =>
                 <div className={classes['DatasetRow']} key={i + 1}>
                   <div
                     className={
@@ -79,7 +79,7 @@ export class SearchCatalogResults extends React.Component {
             </div>
           </div>;
       } else {
-        if (this.props.datasets.receivedAt) {
+        if (this.props.esgfDatasets.receivedAt) {
           mainComponent = <div>No results.</div>;
         } else {
           mainComponent = <div></div>;
