@@ -9,7 +9,6 @@ import * as constants from './../../constants';
 import {MenuItem, DropdownButton} from 'react-bootstrap';
 export class SearchCatalog extends React.Component {
   static propTypes = {
-    /* Helps Webstorm to auto-complete function calls and enforce React Props Validation*/
     clickTogglePanel: React.PropTypes.func.isRequired,
     selectFacetKey: React.PropTypes.func.isRequired,
     selectFacetValue: React.PropTypes.func.isRequired,
@@ -47,25 +46,23 @@ export class SearchCatalog extends React.Component {
     this.currentSelectedKey = '';
     this.currentSelectedValue = '';
     this.currentFacetValues = [];
-    // This way we can remove "me" from component and always use "this",
-    // but it must be done for all components methods with callbacks...
-    this._onAddFacet = this._onAddFacet.bind(this);
+    // this._onAddFacet = this._onAddFacet.bind(this);
     this._onRemoveFacet = this._onRemoveFacet.bind(this);
     this._onSelectedKey = this._onSelectedKey.bind(this);
-    this._onSelectedValue = this._onSelectedValue.bind(this);
-    this._onSearchCatalog = this._onSearchCatalog.bind(this);
+    // this._onSelectedValue = this._onSelectedValue.bind(this);
+    // this._onSearchCatalog = this._onSearchCatalog.bind(this);
     this._onOpenPanel = this._onOpenPanel.bind(this);
     this._togglePanel = this._togglePanel.bind(this);
   }
 
-  _onAddFacet (event) {
-    if (this.props.currentSelectedKey.length && this.props.currentSelectedValue.length) {
-      this.props.addFacetKeyValue(this.props.currentSelectedKey, this.props.currentSelectedValue);
-      this.props.selectFacetKey('');
-      // TODO: Auto-fetch on onAddFacet() ?
-      this.props.fetchEsgfDatasets();
-    }
-  }
+  // _onAddFacet (event) {
+  //   if (this.props.currentSelectedKey.length && this.props.currentSelectedValue.length) {
+  //     this.props.addFacetKeyValue(this.props.currentSelectedKey, this.props.currentSelectedValue);
+  //     this.props.selectFacetKey('');
+  //     // TODO: Auto-fetch on onAddFacet() ?
+  //     this.props.fetchEsgfDatasets();
+  //   }
+  // }
 
   _onRemoveFacet (key, value) {
     this.props.removeFacetKeyValue(key, value);
@@ -84,13 +81,13 @@ export class SearchCatalog extends React.Component {
     }
   }
 
-  _onSelectedValue (event) {
-    this.props.selectFacetValue(event.target.value);
-  }
+  // _onSelectedValue (event) {
+  //   this.props.selectFacetValue(event.target.value);
+  // }
 
-  _onSearchCatalog (event) {
-    this.props.fetchEsgfDatasets();
-  }
+  // _onSearchCatalog (event) {
+  //   this.props.fetchEsgfDatasets();
+  // }
 
   _onOpenPanel () {
     this.props.clickTogglePanel(constants.PANEL_SEARCH_CATALOG, true);

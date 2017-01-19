@@ -37,47 +37,57 @@ export class SearchCatalogResults extends React.Component {
   render () {
     // console.log("render SearchCatalogResults");
     let mainComponent;
-    if (this.props.esgfDatasets.isFetching) {
+    if (this.props.esgfDatasets.isFetching || this.props.pavicsDatasets.isFetching) {
       mainComponent = <Loader name="datasets" />;
     } else {
-      if (this.props.esgfDatasets.items.length) {
+      if (this.props.pavicsDatasets.items.length) {
         mainComponent =
           <div>
-            <div>Found <strong>{this.props.esgfDatasets.items.length}</strong> results</div>
+            <div>Found <strong>{this.props.pavicsDatasets.items.length}</strong> results</div>
             <div className={classes['DatasetTable']}>
-              {this.props.esgfDatasets.items.map((x, i) =>
+              {this.props.pavicsDatasets.items.map((x, i) =>
                 <div className={classes['DatasetRow']} key={i + 1}>
-                  <div
-                    className={
-                      x.id === this.props.currentOpenedDataset
-                        ? classes['DatasetRowSelected']
-                        : classes['DatasetRowNotSelected']
-                    }>
-                    <a href="#" onClick={() => this._onOpenDataset(x.id, x.url[0])}
+                  <div>
+                    <a href="#" onClick={() => this._onOpenDataset(x.dataset_id, x.url[0])}
                       className={classes['DatasetRowExpandButton']}>
-                      <i className="glyphicon glyphicon-folder-open" />
+                      <i className="glyphicon glyphicon-folder-open" /> {x.dataset_id}
                     </a>
-                    <a href="#" onClick={() => this._onOpenDataset(x.id, x.url[0])}
-                      className={classes['DatasetRowTitle']}> {x.id}</a>
-                    {/*<a href="#" onClick={() => this._onSelectDataset(x.id)} className={classes['DatasetRowSelectButton']}>
-                     <i className="glyphicon glyphicon-ok"></i>
-                     </a>*/}
-                    {x.id === this.props.currentOpenedDataset ? <div className={classes['DatasetRowDetails']}>
-                      <div>
-                        <small><strong>Number of files: </strong>{x.number_of_files}</small>
-                      </div>
-                      <div>
-                        <small><strong>Size: </strong>{x.size}</small>
-                      </div>
-                      <div>
-                        <small><strong>Number of aggregations: </strong>{ x.number_of_aggregations }</small>
-                      </div>
-                    </div> : null}
                   </div>
+                  <br />
                 </div>
               )}
             </div>
           </div>;
+      } else if (this.props.esgfDatasets.items.length) {
+        mainComponent = <div className={classes['DatasetRow']} key={i + 1}>
+          <div
+            className={
+              x.id === this.props.currentOpenedDataset
+                ? classes['DatasetRowSelected']
+                : classes['DatasetRowNotSelected']
+            }>
+            <a href="#" onClick={() => this._onOpenDataset(x.id, x.url[0])}
+               className={classes['DatasetRowExpandButton']}>
+              <i className="glyphicon glyphicon-folder-open" />
+            </a>
+            <a href="#" onClick={() => this._onOpenDataset(x.id, x.url[0])}
+               className={classes['DatasetRowTitle']}> {x.id}</a>
+            {/*<a href="#" onClick={() => this._onSelectDataset(x.id)} className={classes['DatasetRowSelectButton']}>
+             <i className="glyphicon glyphicon-ok"></i>
+             </a>*/}
+            {x.id === this.props.currentOpenedDataset ? <div className={classes['DatasetRowDetails']}>
+              <div>
+                <small><strong>Number of files: </strong>{x.number_of_files}</small>
+              </div>
+              <div>
+                <small><strong>Size: </strong>{x.size}</small>
+              </div>
+              <div>
+                <small><strong>Number of aggregations: </strong>{ x.number_of_aggregations }</small>
+              </div>
+            </div> : null}
+          </div>
+        </div>
       } else {
         if (this.props.esgfDatasets.receivedAt) {
           mainComponent = <div>No results.</div>;
