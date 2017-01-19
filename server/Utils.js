@@ -1,5 +1,15 @@
 import {parseString} from 'xml2js';
 var Utils = (function () {
+  var urlEncode = function (params) {
+    let str = [];
+    console.log(params);
+    for (var param in params) {
+      if (Object.prototype.hasOwnProperty.call(params, param)) {
+        str.push(encodeURIComponent(param) + '=' + encodeURIComponent(params[param]));
+      }
+    }
+    return str.join(';');
+  };
   var parseXMLAsync = function (response, callback) {
     parseString(response, function (err, result) {
       if (err) {
@@ -9,6 +19,9 @@ var Utils = (function () {
     });
   };
   return {
+    urlEncode: function (params) {
+      urlEncode(params);
+    },
     extractWPSOutputPath: function (result) {
       let outputPath = '';
       if (result['wps:ExecuteResponse']['wps:Status'][0]['wps:ProcessSucceeded'].length) {

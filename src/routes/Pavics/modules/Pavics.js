@@ -432,6 +432,29 @@ export function fetchDataset (url) {
      ) */
   };
 }
+
+// FETCH OUR DATASETS 2.0 RHL 2017-01-19
+export function fetchDatasets () {
+  return function (dispatch, getState) {
+    dispatch(requestCatalogDatasets());
+    // Get current added facets by querying store
+    let facets = getState().pavics.visualize.selectedFacets;
+    let constraints = '';
+    facets.forEach(function (facet, i) {
+      constraints += `${(i > 0) ? ',' : ''}${facet.key}:${facet.value}`;
+    });
+    console.log(getState().visualize);
+    return fetch(`/api/datasets?constraints=${constraints}`)
+      .then(response => response.json())
+      .then(json =>
+        dispatch(receiveCatalogDatasets(json))
+      )
+      .catch(error =>
+        dispatch(receiveCatalogDatasetsFailure(error))
+      );
+  };
+}
+
 export function fetchCatalogDatasets () {
   return function (dispatch, getState) {
     dispatch(requestCatalogDatasets());
@@ -452,6 +475,7 @@ export function fetchCatalogDatasets () {
       );
   };
 }
+
 export function fetchDatasetWMSLayers (url, dataset) {
   return function (dispatch) {
     dispatch(requestDatasetWMSLayers());

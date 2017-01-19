@@ -25,6 +25,8 @@ export class DatasetDetails extends React.Component {
    this.props.selectLoadWms(url, this.props.selectedDatasets.items[0].id, name)
    } */
   _onOpenDatasetWmsLayers (url, dataset) {
+    url = 'http://outarde.crim.ca:8084/ncWMS2/wms';
+    dataset = 'outputs/flyingpigeon/ncout-ffc3a3eb-b7db-11e6-acaf-fa163ee00329.nc';
     this.props.openDatasetWmsLayers(dataset);
     this.props.fetchDatasetWMSLayers(url, dataset);
     this.props.clickTogglePanel(constants.PANEL_DATASET_DETAILS, false);

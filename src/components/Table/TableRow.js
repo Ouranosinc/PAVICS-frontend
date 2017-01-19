@@ -9,7 +9,7 @@ class TableRow extends React.Component {
     return (
       <tr className={this.props.selected ? 'selected' : ''}>
         {
-          this.props.fields.map((value, i) => <td className="{'yolo'}" key={i}>{value}</td>)
+          this.props.fields.map((value, i) => <td key={i}>{value}</td>)
         }
       </tr>
     );

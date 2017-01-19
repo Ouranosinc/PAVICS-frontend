@@ -64,7 +64,7 @@ function getServicesFromXmlCatalog (catalogJson, query) {
   // TODO: WMS SERVICE IS HARDCODED AT THIS POINT
   services.push({
     type: 'WMS',
-    baseUrl: 'http://132.217.140.31:8080'
+    baseUrl: 'http://outarde.crim.ca:8084'
   });
   return services;
 }
@@ -135,10 +135,10 @@ function getDatasetsFromXmlCatalog (catalogJson, baseServices) {
   return datasets;
 }
 
-function extractDatasetFromXmlCatalog(catalogJson, query) {
+function extractDatasetFromXmlCatalog (catalogJson, query) {
   let services = getServicesFromXmlCatalog(catalogJson, query);
   // Sort by type
-  services = services.sort(function(a, b) {
+  services = services.sort(function (a, b) {
     if (a.type < b.type) {
       return -1;
     }
