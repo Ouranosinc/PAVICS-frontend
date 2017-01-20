@@ -1,14 +1,12 @@
 import React from 'react';
 import {Card, CardHeader, CardActions, CardText} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
 export default class WpsProcessSelector extends React.Component {
   static propTypes = {
     processes: React.PropTypes.array.isRequired,
     chooseProcess: React.PropTypes.func.isRequired,
     fetchProcessInputs: React.PropTypes.func.isRequired,
-    selectedProvider: React.PropTypes.string.isRequired,
-    getLastStep: React.PropTypes.func.isRequired
+    selectedProvider: React.PropTypes.string.isRequired
   }
 
   makeChooseProcessCallback (process) {
@@ -42,7 +40,6 @@ export default class WpsProcessSelector extends React.Component {
             })
           }
         </div>
-        <RaisedButton label="Back" onClick={this.props.getLastStep} />
       </div>
     );
   }

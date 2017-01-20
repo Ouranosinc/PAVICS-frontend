@@ -1,9 +1,10 @@
 import React from 'react';
 import {Form, FormGroup, Col, FormControl} from 'react-bootstrap';
 import {ExecuteButton} from './../../components/WorkflowWizard';
-import classes from './WorkflowWizard.scss';
-import * as constants from './../../constants';
-class ProcessForm extends React.Component {
+import Paper from 'material-ui/Paper';
+import classes from '../WorkflowWizard/WorkflowWizard.scss';
+import * as constants from '../../constants';
+export default class WpsProcessForm extends React.Component {
   static propTypes = {
     selectedProcess: React.PropTypes.object.isRequired,
     selectedProcessInputs: React.PropTypes.array.isRequired,
@@ -46,26 +47,27 @@ class ProcessForm extends React.Component {
 
   render () {
     return (
-      <Form horizontal>
-        {
-          this.props.selectedProcessInputs.map((elem, i) => {
-            return (
-              <FormGroup key={i}>
-                <Col sm={2}>{elem.title}</Col>
-                <Col sm={10}>
-                  {this.makeInput(elem)}
-                </Col>
-              </FormGroup>
-            );
-          })
-        }
-        <FormGroup>
-          <Col smOffset={2} sm={10}>
-            <ExecuteButton executeProcess={this.execute} />
-          </Col>
-        </FormGroup>
-      </Form>
+      <Paper zDepth={2}>
+        <Form horizontal>
+          {
+            this.props.selectedProcessInputs.map((elem, i) => {
+              return (
+                <FormGroup key={i}>
+                  <Col sm={2}>{elem.title}</Col>
+                  <Col sm={10}>
+                    {this.makeInput(elem)}
+                  </Col>
+                </FormGroup>
+              );
+            })
+          }
+          <FormGroup>
+            <Col smOffset={2} sm={10}>
+              <ExecuteButton executeProcess={this.execute} />
+            </Col>
+          </FormGroup>
+        </Form>
+      </Paper>
     );
   }
 }
-export default ProcessForm;

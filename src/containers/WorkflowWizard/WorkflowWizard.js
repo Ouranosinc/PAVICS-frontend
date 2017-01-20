@@ -1,13 +1,9 @@
 import React from 'react';
-import {ProcessDetails, ProcessForm} from './../../components/WorkflowWizard';
 import WorkflowWizardStepper from './../../components/WorkflowWizard';
-import {Panel, Grid, Row, Col} from 'react-bootstrap';
-import * as constants from './../../constants';
-class WorkflowWizard extends React.Component {
+export default class WorkflowWizard extends React.Component {
   static propTypes = {
     processes: React.PropTypes.array.isRequired,
     chooseProcess: React.PropTypes.func.isRequired,
-    currentStep: React.PropTypes.string.isRequired, // duplicated for now because changing method
     stepIndex: React.PropTypes.number.isRequired,
     selectedProcess: React.PropTypes.object.isRequired,
     selectedProvider: React.PropTypes.string.isRequired,
@@ -32,57 +28,6 @@ class WorkflowWizard extends React.Component {
     }
   }
 
-  makeSection () {
-    switch (this.props.currentStep) {
-      case constants.WORKFLOW_STEP_PROCESS:
-        return (
-          <div>not supposed to be used anymore</div>
-        );
-      case constants.WORKFLOW_STEP_INPUTS:
-        return (
-          <Grid>
-            <Row>
-              <Col md={4}>
-                <Panel header="Workflow Detail">
-                  <ProcessDetails
-                    selectedProcess={this.props.selectedProcess}
-                  />
-                </Panel>
-              </Col>
-              <Col md={8}>
-                <Panel header="Choose Inputs">
-                  {
-                    this.props.selectedProcessInputs.length === 0
-                      ? null
-                      : <ProcessForm
-                        goToSection={this.props.goToSection}
-                        executeProcess={this.props.executeProcess}
-                        handleSelectedProcessValueChange={this.props.handleSelectedProcessValueChange}
-                        selectedProcess={this.props.selectedProcess}
-                        selectedProcessInputs={this.props.selectedProcessInputs}
-                        selectedProcessValues={this.props.selectedProcessValues}
-                        selectedProvider={this.props.selectedProvider} />
-                  }
-                </Panel>
-              </Col>
-            </Row>
-          </Grid>
-        );
-    }
-  }
-
-  renderOld () {
-    return (
-      <Grid>
-        <Row>
-          <Col md={8} mdOffset={2}>
-            {this.makeSection()}
-          </Col>
-        </Row>
-      </Grid>
-    );
-  }
-
   render () {
     return <WorkflowWizardStepper
       stepIndex={this.props.stepIndex}
@@ -92,8 +37,13 @@ class WorkflowWizard extends React.Component {
       selectWpsProvider={this.props.selectWpsProvider}
       providers={this.props.providers}
       selectedProvider={this.props.selectedProvider}
-      getLastStep={this.props.getLastStep} />;
+      getLastStep={this.props.getLastStep}
+      selectedProcess={this.props.selectedProcess}
+      selectedProcessValues={this.props.selectedProcessValues}
+      selectedProcessInputs={this.props.selectedProcessInputs}
+      goToSection={this.props.goToSection}
+      executeProcess={this.props.executeProcess}
+      handleSelectedProcessValueChange={this.props.handleSelectedProcessValueChange} />;
   }
 }
-export default WorkflowWizard;
 
