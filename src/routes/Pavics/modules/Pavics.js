@@ -496,7 +496,7 @@ export function fetchWMSLayerTimesteps (url, layer, day) {
 }
 function setSelectedProcess (process) {
   // TODO remove the boilerplate when api provides the identifier
-  // TODO uplicated in WpsProcessSelector to make executing easier
+  // TODO uplicated in WpsProviderSelector to make executing easier
   let processIdentifier;
   if (process.identifier) {
     processIdentifier = process.identifier;
@@ -563,6 +563,11 @@ export function chooseStep (step) {
   return {
     type: constants.WORKFLOW_CHANGE_STEP,
     step: step
+  };
+}
+export function getLastStep () {
+  return {
+    type: constants.WORKFLOW_GET_LAST_STEP
   };
 }
 function setLayer (layer) {
@@ -664,11 +669,7 @@ export function executeProcess (provider, process, inputValues) {
 }
 const WORKFLOW_WIZARD_HANDLERS = {
   [constants.WORKFLOW_SET_WPS_PROVIDER]: (state, action) => {
-    return Object.assign({}, state, {
-      providers: Object.assign({}, state.providers, {
-        selectedProvider: action.provider
-      })
-    });
+    return {...state, selectedProvider: action.provider, stepIndex: (state.stepIndex + 1)};
   },
   [constants.WORKFLOW_CHOOSE_PROCESS]: (state, action) => {
     return {...state, selectedProcess: action.process};
@@ -685,6 +686,9 @@ const WORKFLOW_WIZARD_HANDLERS = {
   },
   [constants.WORKFLOW_CHANGE_STEP]: (state, action) => {
     return {...state, currentStep: action.step};
+  },
+  [constants.WORKFLOW_GET_LAST_STEP]: (state, action) => {
+    return {...state, stepIndex: (state.stepIndex - 1)};
   },
   [constants.WORKFLOW_SET_PROCESSES]: (state, action) => {
     return {...state, processes: action.processes};

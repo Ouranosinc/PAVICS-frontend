@@ -1,10 +1,10 @@
-import WpsProcessSelector from '../WpsProcessSelector/WpsProcessSelector';
 import ProcessDetails from './ProcessDetails';
 import ExecuteButton from './ExecuteButton';
 import ProcessForm from './ProcessForm';
+import WorkflowWizardStepper from './WorkflowWizardStepper';
 export {
-  WpsProcessSelector,
   ProcessDetails,
   ExecuteButton,
   ProcessForm
 };
+export default WorkflowWizardStepper;

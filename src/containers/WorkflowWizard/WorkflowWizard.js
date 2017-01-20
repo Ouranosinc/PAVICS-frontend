@@ -1,29 +1,42 @@
 import React from 'react';
 import {ProcessDetails, ProcessForm} from './../../components/WorkflowWizard';
-import WpsProcessSelector from './../../components/WpsProcessSelector';
+import WorkflowWizardStepper from './../../components/WorkflowWizard';
 import {Panel, Grid, Row, Col} from 'react-bootstrap';
 import * as constants from './../../constants';
 class WorkflowWizard extends React.Component {
   static propTypes = {
     processes: React.PropTypes.array.isRequired,
     chooseProcess: React.PropTypes.func.isRequired,
-    currentStep: React.PropTypes.string.isRequired,
+    currentStep: React.PropTypes.string.isRequired, // duplicated for now because changing method
+    stepIndex: React.PropTypes.number.isRequired,
     selectedProcess: React.PropTypes.object.isRequired,
+    selectedProvider: React.PropTypes.string.isRequired,
     selectedProcessInputs: React.PropTypes.array.isRequired,
     selectedProcessValues: React.PropTypes.object.isRequired,
     executeProcess: React.PropTypes.func.isRequired,
     handleSelectedProcessValueChange: React.PropTypes.func.isRequired,
+    fetchProviders: React.PropTypes.func.isRequired,
+    fetchProcesses: React.PropTypes.func.isRequired,
+    fetchProcessInputs: React.PropTypes.func.isRequired,
+    selectWpsProvider: React.PropTypes.func.isRequired,
     providers: React.PropTypes.object.isRequired,
-    goToSection: React.PropTypes.func.isRequired
+    goToSection: React.PropTypes.func.isRequired,
+    getLastStep: React.PropTypes.func.isRequired
+  }
+
+  constructor (props) {
+    super(props);
+    this.props.fetchProviders();
+    if (this.props.selectedProvider) {
+      this.props.fetchProcesses(this.props.selectedProvider);
+    }
   }
 
   makeSection () {
     switch (this.props.currentStep) {
       case constants.WORKFLOW_STEP_PROCESS:
         return (
-          <Panel header="Choose workflow">
-            <WpsProcessSelector {...this.props} />
-          </Panel>
+          <div>not supposed to be used anymore</div>
         );
       case constants.WORKFLOW_STEP_INPUTS:
         return (
@@ -48,7 +61,7 @@ class WorkflowWizard extends React.Component {
                         selectedProcess={this.props.selectedProcess}
                         selectedProcessInputs={this.props.selectedProcessInputs}
                         selectedProcessValues={this.props.selectedProcessValues}
-                        selectedProvider={this.props.providers.selectedProvider} />
+                        selectedProvider={this.props.selectedProvider} />
                   }
                 </Panel>
               </Col>
@@ -58,7 +71,7 @@ class WorkflowWizard extends React.Component {
     }
   }
 
-  render () {
+  renderOld () {
     return (
       <Grid>
         <Row>
@@ -68,6 +81,18 @@ class WorkflowWizard extends React.Component {
         </Row>
       </Grid>
     );
+  }
+
+  render () {
+    return <WorkflowWizardStepper
+      stepIndex={this.props.stepIndex}
+      processes={this.props.processes}
+      chooseProcess={this.props.chooseProcess}
+      fetchProcessInputs={this.props.fetchProcessInputs}
+      selectWpsProvider={this.props.selectWpsProvider}
+      providers={this.props.providers}
+      selectedProvider={this.props.selectedProvider}
+      getLastStep={this.props.getLastStep} />;
   }
 }
 export default WorkflowWizard;
