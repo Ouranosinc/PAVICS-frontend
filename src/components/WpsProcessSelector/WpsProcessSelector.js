@@ -1,7 +1,9 @@
 import React from 'react';
 import {Nav, NavItem} from 'react-bootstrap';
-import classes from './WorkflowWizard.scss';
-class ProcessSelector extends React.Component {
+import classes from '../WorkflowWizard/WorkflowWizard.scss';
+import {Card, CardHeader, CardActions, CardText} from 'material-ui/Card';
+import FlatButton from 'material-ui/FlatButton';
+class WpsProcessSelector extends React.Component {
   static propTypes = {
     processes: React.PropTypes.array.isRequired,
     chooseProcess: React.PropTypes.func.isRequired,
@@ -52,14 +54,20 @@ class ProcessSelector extends React.Component {
         </Nav>
         {this.props.processes.map((process, i) => {
           return (
-            <div className={classes.clickable} onClick={this.makeChooseProcessCallback(process)} key={i}>
-              <h3>{process.title}</h3>
-              <p>{process.description}</p>
-            </div>
+            <Card>
+              <CardHeader
+                title={process.title} />
+              <CardText>{process.description}</CardText>
+              <CardActions>
+                <FlatButton
+                  label="Execute Process"
+                  onClick={this.makeChooseProcessCallback(process)} />
+              </CardActions>
+            </Card>
           );
         })}
       </div>
     );
   }
 }
-export default ProcessSelector;
+export default WpsProcessSelector;

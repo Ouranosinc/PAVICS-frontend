@@ -1,5 +1,6 @@
 import React from 'react';
-import {ProcessSelector, ProcessDetails, ProcessForm} from './../../components/WorkflowWizard';
+import {ProcessDetails, ProcessForm} from './../../components/WorkflowWizard';
+import WpsProcessSelector from './../../components/WpsProcessSelector';
 import {Panel, Grid, Row, Col} from 'react-bootstrap';
 import * as constants from './../../constants';
 class WorkflowWizard extends React.Component {
@@ -21,7 +22,7 @@ class WorkflowWizard extends React.Component {
       case constants.WORKFLOW_STEP_PROCESS:
         return (
           <Panel header="Choose workflow">
-            <ProcessSelector {...this.props} />
+            <WpsProcessSelector {...this.props} />
           </Panel>
         );
       case constants.WORKFLOW_STEP_INPUTS:
