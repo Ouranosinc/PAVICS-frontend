@@ -7,6 +7,8 @@ import SearchCatalogResults from './../../containers/SearchCatalogResults';
 import CriteriaSelection from './../../components/CriteriaSelection';
 import * as constants from './../../constants';
 import {MenuItem, DropdownButton} from 'react-bootstrap';
+import Paper from 'material-ui/Paper';
+
 export class SearchCatalog extends React.Component {
   static propTypes = {
     clickTogglePanel: React.PropTypes.func.isRequired,
@@ -216,10 +218,10 @@ export class SearchCatalog extends React.Component {
     return (
       this.props.panelControls[constants.PANEL_SEARCH_CATALOG].show
         ? (
-        <Panel>
+        <Paper style={{ margin: 20 }} zDepth={2}>
           {this._mainComponent()}
           <SearchCatalogResults {...this.props} />
-        </Panel>
+        </Paper>
       )
         : <Panel><ToggleButton icon="glyphicon-search" onClick={this._onOpenPanel} /></Panel>
     );

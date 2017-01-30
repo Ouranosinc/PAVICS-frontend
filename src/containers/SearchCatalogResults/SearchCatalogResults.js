@@ -4,6 +4,24 @@ import classes from './SearchCatalogResults.scss';
 import * as constants from './../../constants';
 import Loader from '../../components/Loader';
 import { Button, Glyphicon } from 'react-bootstrap';
+
+import {List, ListItem} from 'material-ui/List';
+import ActionInfo from 'material-ui/svg-icons/action/info';
+import Checkbox from 'material-ui/Checkbox';
+import Subheader from 'material-ui/Subheader';
+import Avatar from 'material-ui/Avatar';
+import FileFolder from 'material-ui/svg-icons/file/folder';
+import IconMenu from 'material-ui/IconMenu';
+import MenuItem from 'material-ui/MenuItem';
+import {grey400, darkBlack, lightBlack} from 'material-ui/styles/colors';
+import IconButton from 'material-ui/IconButton';
+import Download from 'material-ui/svg-icons/file/file-download';
+import ShoppingCart from 'material-ui/svg-icons/action/add-shopping-cart';
+import PersonAdd from 'material-ui/svg-icons/social/person-add';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import ContentInbox from 'material-ui/svg-icons/content/inbox';
+import ContentDrafts from 'material-ui/svg-icons/content/drafts';
+
 export class SearchCatalogResults extends React.Component {
   static propTypes = {
     clickTogglePanel: React.PropTypes.func.isRequired,
@@ -13,6 +31,10 @@ export class SearchCatalogResults extends React.Component {
     currentOpenedDataset: React.PropTypes.string.isRequired,
     esgfDatasets: React.PropTypes.object.isRequired
   }
+
+  state = {
+    open: false,
+  };
 
   constructor (props) {
     super(props);
@@ -54,30 +76,48 @@ export class SearchCatalogResults extends React.Component {
     } else {
       if (this.props.pavicsDatasets.items.length) {
         mainComponent =
-          <div>
-            <div>Found <strong>{this.props.pavicsDatasets.items.length}</strong> results</div>
-            <div className={classes['DatasetTable']}>
-              {this.props.pavicsDatasets.items.map((x, i) =>
-                <div className={classes['DatasetRow']} key={i + 1}>
-                  <div>
-                    <Button onClick={() => this._onAddPavicsDatasetToProject(x)}>
-                      <Glyphicon glyph="plus" />
-                    </Button>
-                    {x.dataset_id}
-                    {/*<a href="#" onClick={() => this._onOpenPavicsDataset(x)}
-                      className={classes['DatasetRowExpandButton']}>
-                      <i className="glyphicon glyphicon-folder-open" /> {x.dataset_id}
-                    </a>*/}
-                    <span>
-                      <small><strong>Variable: </strong>{x.variable_long_name[0]}</small><br/>
-                      <small><strong>Experiment: </strong>{x.experiment}</small><br/>
-                      <small><strong>Institute: </strong>{x.institute}</small><br/>
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>;
+          <List>
+            <Subheader inset={true}>Found <strong>{this.props.pavicsDatasets.items.length}</strong> results</Subheader>
+            {this.props.pavicsDatasets.items.map((x, i) =>
+              <ListItem
+                leftCheckbox={<Checkbox />}
+                tooltip="yolo"
+                rightIconButton={
+                  <IconMenu iconButtonElement={
+                    <IconButton
+                      touch={true}
+                      tooltip={<div>
+                        <strong>Dataset ID: </strong>{x.dataset_id}<br />
+                        <strong>Subject: </strong>{x.subject}<br />
+                        <strong>Category: </strong>{x.category}<br />
+                        <strong>Experiment: </strong>{x.experiment}<br />
+                        <strong>Variable: </strong>{x.variable.join(', ')}<br />
+                        <strong>Project: </strong>{x.project}<br />
+                        <strong>Institute: </strong>{x.institute}<br />
+                        <strong>Model: </strong>{x.model}<br />
+                        <strong>Units: </strong>{x.units.join(', ')}<br />
+                        <strong>Frequency: </strong>{x.frequency}<br />
+                        <strong>Content type: </strong>{x.content_type}<br />
+                      </div>}
+                      tooltipPosition="bottom-left">
+                      <MoreVertIcon color={grey400} />
+                      {/*<ActionInfo color={grey400} />*/}
+                    </IconButton>}>
+                  <MenuItem primaryText="Add to favorites (TODO)" leftIcon={<ShoppingCart />} />
+                  <MenuItem primaryText="Share (TODO)" leftIcon={<PersonAdd />} />
+                  <MenuItem primaryText="Download" leftIcon={<Download href={x.urls[0]} />} />
+                </IconMenu>}
+                primaryText={x.dataset_id}
+                secondaryText={
+                  <p>
+                    <span style={{color: darkBlack}}>{x.variable_long_name[0]}</span><br />
+                    <strong>Keywords: </strong>{x.keywords.join(', ')}
+                  </p>
+                }
+                secondaryTextLines={2}
+              />
+            )}
+          </List>;
       } else if (this.props.esgfDatasets.items.length) {
         mainComponent = <div className={classes['DatasetRow']} key={i + 1}>
           <div
