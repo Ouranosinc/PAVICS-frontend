@@ -1,7 +1,12 @@
 import * as constants from './../constants';
 const initialState = {
   workflowWizard: {
-    selectedProcess: {},
+    selectedProcess: {
+      url: '',
+      identifier: '',
+      description: '',
+      title: ''
+    },
     stepIndex: 0,
     selectedProcessInputs: [],
     selectedProcessValues: {},
