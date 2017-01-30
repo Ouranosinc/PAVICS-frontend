@@ -73,7 +73,9 @@ const mapStateToProps = (state) => {
   return {
     processes: state.pavics.workflowWizard.processes,
     currentStep: state.pavics.workflowWizard.currentStep,
+    stepIndex: state.pavics.workflowWizard.stepIndex,
     selectedProcess: state.pavics.workflowWizard.selectedProcess,
+    selectedProvider: state.pavics.workflowWizard.selectedProvider,
     selectedProcessInputs: state.pavics.workflowWizard.selectedProcessInputs,
     selectedProcessValues: state.pavics.workflowWizard.selectedProcessValues,
     providers: state.pavics.workflowWizard.providers,

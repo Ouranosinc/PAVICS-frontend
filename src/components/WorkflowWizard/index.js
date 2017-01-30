@@ -1,10 +1,6 @@
-import ProcessSelector from './ProcessSelector';
-import ProcessDetails from './ProcessDetails';
 import ExecuteButton from './ExecuteButton';
-import ProcessForm from './ProcessForm';
+import WorkflowWizardStepper from './WorkflowWizardStepper';
 export {
-  ProcessSelector,
-  ProcessDetails,
-  ExecuteButton,
-  ProcessForm
+  ExecuteButton
 };
+export default WorkflowWizardStepper;
