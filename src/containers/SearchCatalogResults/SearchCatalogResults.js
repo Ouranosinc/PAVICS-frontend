@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import classes from './SearchCatalogResults.scss';
 import * as constants from './../../constants';
 import Loader from '../../components/Loader';
+import { Button, Glyphicon } from 'react-bootstrap';
 export class SearchCatalogResults extends React.Component {
   static propTypes = {
     clickTogglePanel: React.PropTypes.func.isRequired,
@@ -17,6 +18,8 @@ export class SearchCatalogResults extends React.Component {
     super(props);
     this._onOpenDataset = this._onOpenDataset.bind(this);
     this._onSelectDataset = this._onSelectDataset.bind(this);
+    this._onOpenPavicsDataset = this._onOpenPavicsDataset.bind(this);
+    this._onAddPavicsDatasetToProject = this._onAddPavicsDatasetToProject.bind(this);
   }
 
   _onOpenDataset (id, url) {
@@ -34,6 +37,15 @@ export class SearchCatalogResults extends React.Component {
   _onSelectDataset (id) {
   }
 
+  _onOpenPavicsDataset (dataset) {
+    // alert(dataset);
+    this.props.openDatasetDetails(dataset.dataset_id);
+  }
+
+  _onAddPavicsDatasetToProject (dataset) {
+    alert(dataset);
+  }
+
   render () {
     // console.log("render SearchCatalogResults");
     let mainComponent;
@@ -48,12 +60,20 @@ export class SearchCatalogResults extends React.Component {
               {this.props.pavicsDatasets.items.map((x, i) =>
                 <div className={classes['DatasetRow']} key={i + 1}>
                   <div>
-                    <a href="#" onClick={() => this._onOpenDataset(x.dataset_id, x.url[0])}
+                    <Button onClick={() => this._onAddPavicsDatasetToProject(x)}>
+                      <Glyphicon glyph="plus" />
+                    </Button>
+                    {x.dataset_id}
+                    {/*<a href="#" onClick={() => this._onOpenPavicsDataset(x)}
                       className={classes['DatasetRowExpandButton']}>
                       <i className="glyphicon glyphicon-folder-open" /> {x.dataset_id}
-                    </a>
+                    </a>*/}
+                    <span>
+                      <small><strong>Variable: </strong>{x.variable_long_name[0]}</small><br/>
+                      <small><strong>Experiment: </strong>{x.experiment}</small><br/>
+                      <small><strong>Institute: </strong>{x.institute}</small><br/>
+                    </span>
                   </div>
-                  <br />
                 </div>
               )}
             </div>
