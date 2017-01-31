@@ -2,11 +2,18 @@ import React from 'react';
 import classes from './Visualize.scss';
 // TODO: Fix, we should only import containers here
 import OLComponent from '../../components/OLComponent';
-import { PieMenu, CHART_PANEL, LAYER_SWITCHER_PANEL, MAP_PANEL, MAP_CONTROLS_PANEL, TIME_SLIDER_PANEL } from '../../components/PieMenu/PieMenu';
+import {
+  PieMenu,
+  CHART_PANEL,
+  LAYER_SWITCHER_PANEL,
+  MAP_PANEL,
+  MAP_CONTROLS_PANEL,
+  TIME_SLIDER_PANEL
+} from '../../components/PieMenu/PieMenu';
 import TimeSlider from '../../containers/TimeSlider';
+import LayerSwitcherContainer from '../../Containers/LayerSwitcherContainer';
 import PlotlyWrapper from '../../components/PlotlyWrapper';
 import * as constants from './../../constants';
-
 class Visualize extends React.Component {
   static propTypes = {
     fetchFacets: React.PropTypes.func.isRequired,
@@ -33,7 +40,6 @@ class Visualize extends React.Component {
     this.state = {
       mapPanelStatus: mapPanelStatus
     };
-
     this.props.fetchFacets();
     this.props.openDatasetWmsLayers(dataset);
     this.props.fetchDatasetWMSLayers(wmsUrl, dataset);
@@ -76,6 +82,11 @@ class Visualize extends React.Component {
                   layout={this.props.plotlyData.layout}
                   fetchPlotlyData={this.props.fetchPlotlyData}
                 />
+              </div> : null
+            }
+            {(this.state.mapPanelStatus[LAYER_SWITCHER_PANEL])
+              ? <div className={classes.panel}>
+                <LayerSwitcherContainer />
               </div> : null
             }
           </div>
