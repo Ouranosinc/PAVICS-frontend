@@ -27,8 +27,6 @@ class Pavics extends React.Component {
         return (
           <div>
             <SearchCatalog {...this.props} />
-            <DatasetDetails {...this.props} />
-            <DatasetWMSLayers {...this.props} />
           </div>
         );
       case constants.PLATFORM_SECTION_EXPERIENCE_MANAGEMENT:
@@ -45,7 +43,11 @@ class Pavics extends React.Component {
         );
       case constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT:
         return (
-          <AccountManagement {...this.props} />
+          <div>
+            <AccountManagement {...this.props} />
+            <DatasetDetails {...this.props} />
+            <DatasetWMSLayers {...this.props} />
+          </div>
         );
       default:
         return null;

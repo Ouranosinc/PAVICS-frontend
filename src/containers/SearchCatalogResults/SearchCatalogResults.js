@@ -50,7 +50,7 @@ export class SearchCatalogResults extends React.Component {
           this.checkedDatasets.push(dataset); // Preventing duplicates
         }
       } else {
-        if (index < -1){
+        if (index < -1) {
           this.checkedDatasets.splice(index, 1);
         }
       }
@@ -58,7 +58,6 @@ export class SearchCatalogResults extends React.Component {
   }
 
   _onAddCheckedDatasetsToProject (dataset) {
-
     alert(dataset);
   }
 
