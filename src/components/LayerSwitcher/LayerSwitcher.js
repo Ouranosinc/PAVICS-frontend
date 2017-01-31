@@ -8,16 +8,21 @@ import Paper from 'material-ui/Paper';
 export default class LayerSwitcher extends React.Component {
   static propTypes = {
     publicShapeFiles: React.PropTypes.array.isRequired,
+    baseMaps: React.PropTypes.array.isRequired,
     removeShapeFile: React.PropTypes.func.isRequired,
-    setShapeFile: React.PropTypes.func.isRequired
+    setShapeFile: React.PropTypes.func.isRequired,
+    removeBaseMap: React.PropTypes.func.isRequired,
+    setBaseMap: React.PropTypes.func.isRequired
   };
 
   constructor () {
     super();
     this.state = {
-      selectedShapeFile: ''
+      selectedShapeFile: '',
+      selectedBaseMap: ''
     };
     this.setSelectedShapeFile = this.setSelectedShapeFile.bind(this);
+    this.setSelectedBaseMap = this.setSelectedBaseMap.bind(this);
   }
 
   setSelectedShapeFile (event, value) {
@@ -25,12 +30,31 @@ export default class LayerSwitcher extends React.Component {
     if (this.state.selectedShapeFile === value) {
       this.props.removeShapeFile(value);
       this.setState({
-        selectedShapeFile: ''
+        selectedShapeFile: '',
+        selectedBaseMap: this.state.selectedBaseMap
       });
     } else {
       this.props.setShapeFile(value);
       this.setState({
-        selectedShapeFile: value
+        selectedShapeFile: value,
+        selectedBaseMap: this.state.selectedBaseMap
+      });
+    }
+  }
+
+  setSelectedBaseMap (event, value) {
+    console.log('radio clicked:', event);
+    if (this.state.selectedBaseMap === value) {
+      this.props.removeBaseMap(value);
+      this.setState({
+        selectedShapeFile: this.state.selectedShapeFile,
+        selectedBaseMap: ''
+      });
+    } else {
+      this.props.setBaseMap(value);
+      this.setState({
+        selectedShapeFile: this.state.selectedShapeFile,
+        selectedBaseMap: value
       });
     }
   }
@@ -44,10 +68,31 @@ export default class LayerSwitcher extends React.Component {
           key={i}
           leftCheckbox={
             <RadioButtonGroup
-              name="selectShapeFile"
+              name="selectedShapeFile"
               valueSelected={this.state.selectedShapeFile}
               onChange={this.setSelectedShapeFile}>
               <RadioButton value={shapeFile} />
+            </RadioButtonGroup>
+          }
+        />
+      );
+    });
+    return items;
+  }
+
+  makeNestedBaseMaps () {
+    let items = [];
+    this.props.baseMaps.map((map, i) => {
+      items.push(
+        <ListItem
+          primaryText={map}
+          key={i}
+          leftCheckbox={
+            <RadioButtonGroup
+              name="selectedBaseMap"
+              valueSelected={this.state.selectedBaseMap}
+              onChange={this.setSelectedBaseMap}>
+              <RadioButton value={map} />
             </RadioButtonGroup>
           }
         />
@@ -64,6 +109,18 @@ export default class LayerSwitcher extends React.Component {
           primaryTogglesNestedList
           primaryText="Public"
           nestedItems={this.makeNestedPublicShapeFiles()} />
+      </List>
+    );
+  }
+
+  makeBaseMapsList () {
+    return (
+      <List className={classes['layers']}>
+        <ListItem
+          initiallyOpen
+          primaryTogglesNestedList
+          primaryText="Bing"
+          nestedItems={this.makeNestedBaseMaps()} />
       </List>
     );
   }
@@ -93,6 +150,7 @@ export default class LayerSwitcher extends React.Component {
               label="Base Maps">
               <Paper zDepth={2}>
                 <h2>Base Maps</h2>
+                {this.makeBaseMapsList()}
               </Paper>
             </Tab>
           </Tabs>

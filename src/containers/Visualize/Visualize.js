@@ -20,7 +20,8 @@ class Visualize extends React.Component {
     fetchPlotlyData: React.PropTypes.func.isRequired,
     panelControls: React.PropTypes.object.isRequired,
     plotlyData: React.PropTypes.object.isRequired,
-    publicShapeFiles: React.PropTypes.array.isRequired
+    publicShapeFiles: React.PropTypes.array.isRequired,
+    baseMaps: React.PropTypes.array.isRequired
   }
 
   constructor (props) {
@@ -99,6 +100,7 @@ class Visualize extends React.Component {
               ? <div className={classes.panel}>
                 <LayerSwitcherContainer
                   OLComponentReference={this.state.OLComponentReference}
+                  baseMaps={this.props.baseMaps}
                   publicShapeFiles={this.props.publicShapeFiles} />
               </div> : null
             }

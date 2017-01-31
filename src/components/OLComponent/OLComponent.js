@@ -46,10 +46,7 @@ class OLComponent extends React.Component {
 
   // Add backgrounnd layer (use once)
   initBackgroundLayer () {
-    this.addBingLayer('Aerial', this.getMapBaseLayersList(), 'Aerial');
-    // let wmsUrl = 'http://demo.boundlessgeo.com/geoserver/wms';
-    // let wmsParams = {'LAYERS': 'topp:states', 'TILED': true};
-    // this.addTileWMSLayer('topp:states', this.getMapOverlayList(), wmsUrl, wmsParams);
+    // this.addBingLayer('Aerial', this.getMapBaseLayersList(), 'Aerial');
   }
 
   removeLayer (layers, title) {
@@ -129,8 +126,8 @@ class OLComponent extends React.Component {
     }
   }
 
-  addBingLayer (title, layers, bingStyle) {
-    layers.push(new ol.layer.Tile({
+  addBingLayer (title, bingStyle) {
+    let layer = new ol.layer.Tile({
       visible: true,
       preload: Infinity,
       source: new ol.source.BingMaps({
@@ -140,7 +137,16 @@ class OLComponent extends React.Component {
         // "no photos at this zoom level" tiles
         // maxZoom: 19
       })
-    }));
+    });
+    this.map.addLayer(layer);
+    this.layers[title] = layer;
+  }
+
+  getLayer (title) {
+    if (this.layers[title] !== undefined) {
+      return this.layers[title];
+    }
+    return null;
   }
 
   makeWMSlayer (title, url, time, styles, layerName) {

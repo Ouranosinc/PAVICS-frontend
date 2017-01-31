@@ -100,7 +100,8 @@ const mapStateToProps = (state) => {
     panelControls: state.pavics.visualize.panelControls,
     plotlyData: state.pavics.visualize.plotlyData,
     layer: state.pavics.visualize.layer,
-    publicShapeFiles: state.pavics.visualize.publicShapeFiles
+    publicShapeFiles: state.pavics.visualize.publicShapeFiles,
+    baseMaps: state.pavics.visualize.baseMaps
   };
 };
 export default connect(mapStateToProps, mapActionCreators)(Pavics);

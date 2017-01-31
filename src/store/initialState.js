@@ -34,7 +34,9 @@ const initialState = {
         }
       }
     ],
-    baseMaps: [],
+    baseMaps: [
+      'Aerial'
+    ],
     layer: {},
     currentOpenedDataset: '',
     currentOpenedDatasetWMSFile: '',
