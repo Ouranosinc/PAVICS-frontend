@@ -138,7 +138,7 @@ class OLComponent extends React.Component {
         // maxZoom: 19
       })
     });
-    this.map.addLayer(layer);
+    this.map.getLayers().insertAt(-1, layer);
     this.layers[title] = layer;
   }
 
