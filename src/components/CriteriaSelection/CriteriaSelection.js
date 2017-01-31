@@ -31,8 +31,9 @@ class CriteriaSelection extends React.Component {
     };
   }
 
-  _handleRequestDelete () {
-    alert('You clicked the delete button.');
+  _onRemoveFacet (facet) {
+    this.props.removeFacetKeyValue(facet.key, facet.value);
+    this.props.fetchPavicsDatasets();
   }
 
   _onSelectRow (event) {
@@ -68,10 +69,6 @@ class CriteriaSelection extends React.Component {
   }
 
   render () {
-    let headers = [
-      this.props.criteriaName,
-      <SearchInput onChangeCb={this._onInputChange} />,
-    ];
     return (
       <div className="col-md-6 col-lg-6">
         <List>
@@ -82,47 +79,46 @@ class CriteriaSelection extends React.Component {
               transition: 'transform 500ms cubic-bezier(0.23, 1, 0.32, 1) 0ms, opacity 500ms cubic-bezier(0.23, 1, 0.32, 1) 0ms',
               boxShadow: 'rgba(0, 0, 0, 0.117647) 0px 1px 6px, rgba(0, 0, 0, 0.117647) 0px 1px 4px',
               borderRadius: '2px'}}
-            primaryText="Model"
+            primaryText={this.props.criteriaName.toLowerCase().replace(/\b[a-z]/g, function (letter) {
+              return letter.toUpperCase();
+            })}
             leftIcon={<AddFilter />}
             initiallyOpen={false}
             primaryTogglesNestedList={true}
             nestedItems={[
-              <ListItem
-                key={1}
-                primaryText="Starred"
-                leftCheckbox={<Checkbox />}
-              />,
-              <ListItem
-                key={2}
-                primaryText="Sent Mail"
-                leftCheckbox={<Checkbox />}
-              />,
-              <ListItem
-                key={3}
-                primaryText="Inbox"
-                leftCheckbox={<Checkbox />}
-              />
+              this._formatRows().map((row, i) => {
+                let checked = false;
+                this.props.selectedFacets.map(x => {
+                  if (x.value === row[0]) {
+                    checked = true;
+                  }
+                });
+                return (
+                  <ListItem
+                    key={i}
+                    primaryText={row}
+                    leftCheckbox={<Checkbox value={row} checked={checked} onCheck={this._onSelectRow} />}
+                  />
+                );
+              }),
             ]}
           />
         </List>
-        <Chip
-          onRequestDelete={this._handleRequestDelete}
-          style={{marginBottom: '5px', width: '100%'}}
-          labelStyle={{width: '95%'}}>
-          Model XyZ
-        </Chip>
-        <Chip
-          onRequestDelete={this._handleRequestDelete}
-          style={{marginBottom: '5px', width: '45%'}}
-          labelStyle={{width: '95%'}}>
-          Model XyZ fdf  fds fsd  fds gr
-        </Chip>
-        <Chip
-          onRequestDelete={this._handleRequestDelete}
-          style={{marginBottom: '5px', width: '45%'}}
-          labelStyle={{width: '95%'}}>
-          Model XyZ fdsf
-        </Chip>
+        <div>
+          {
+            this.props.selectedFacets.map((x, i) =>
+              x.key === this.props.criteriaName
+                ? <Chip
+                    key={i + 1}
+                    onRequestDelete={() => this._onRemoveFacet(x)}
+                    style={{marginBottom: '5px', width: '100%'}}
+                    labelStyle={{width: '95%'}}>
+                  {x.value}
+                </Chip>
+                : null
+            )
+          }
+        </div>
       </div>
     /* <div>
         <Table>
