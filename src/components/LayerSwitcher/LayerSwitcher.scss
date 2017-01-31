@@ -1,5 +1,5 @@
 .LayerSwitcher {
-  h2 {
+  h2, h3 {
     margin: 0;
     padding: 20px 10px 10px;
   }
@@ -12,5 +12,8 @@
   background-color: rgba(0,0,0,.7);
   .Tabs {
     width: 500px;
+    .layers {
+      padding-left: 40px;
+    }
   }
 }

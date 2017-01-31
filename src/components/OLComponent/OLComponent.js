@@ -47,9 +47,9 @@ class OLComponent extends React.Component {
   // Add backgrounnd layer (use once)
   initBackgroundLayer () {
     this.addBingLayer('Aerial', this.getMapBaseLayersList(), 'Aerial');
-    // let wmsUrl = "http://demo.boundlessgeo.com/geoserver/wms"
-    // let wmsParams = {'LAYERS': 'topp:states', 'TILED': true}
-    // this.addTileWMSLayer('topp:states', this.getMapOverlayList(), wmsUrl, wmsParams)
+    let wmsUrl = 'http://demo.boundlessgeo.com/geoserver/wms';
+    let wmsParams = {'LAYERS': 'topp:states', 'TILED': true};
+    this.addTileWMSLayer('topp:states', this.getMapOverlayList(), wmsUrl, wmsParams);
   }
 
   removeLayer (layers, title) {

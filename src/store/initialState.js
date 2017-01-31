@@ -24,6 +24,17 @@ const initialState = {
     jobs: []
   },
   visualize: {
+    publicShapeFiles: [
+      {
+        title: 'topp:states',
+        wmsUrl: 'http://demo.boundlessgeo.com/geoserver/wms',
+        wmsParams: {
+          'LAYERS': 'topp:states',
+          'TILED': true
+        }
+      }
+    ],
+    baseMaps: [],
     layer: {},
     currentOpenedDataset: '',
     currentOpenedDatasetWMSFile: '',

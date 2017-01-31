@@ -19,7 +19,8 @@ class Visualize extends React.Component {
     fetchFacets: React.PropTypes.func.isRequired,
     fetchPlotlyData: React.PropTypes.func.isRequired,
     panelControls: React.PropTypes.object.isRequired,
-    plotlyData: React.PropTypes.object.isRequired
+    plotlyData: React.PropTypes.object.isRequired,
+    publicShapeFiles: React.PropTypes.array.isRequired
   }
 
   constructor (props) {
@@ -86,7 +87,8 @@ class Visualize extends React.Component {
             }
             {(this.state.mapPanelStatus[LAYER_SWITCHER_PANEL])
               ? <div className={classes.panel}>
-                <LayerSwitcherContainer />
+                <LayerSwitcherContainer
+                  publicShapeFiles={this.props.publicShapeFiles} />
               </div> : null
             }
           </div>
