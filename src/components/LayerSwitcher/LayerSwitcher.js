@@ -34,6 +34,7 @@ export default class LayerSwitcher extends React.Component {
         selectedBaseMap: this.state.selectedBaseMap
       });
     } else {
+      this.props.removeShapeFile(this.state.selectedShapeFile);
       this.props.setShapeFile(value);
       this.setState({
         selectedShapeFile: value,
@@ -51,6 +52,7 @@ export default class LayerSwitcher extends React.Component {
         selectedBaseMap: ''
       });
     } else {
+      this.props.removeBaseMap(this.state.selectedBaseMap);
       this.props.setBaseMap(value);
       this.setState({
         selectedShapeFile: this.state.selectedShapeFile,

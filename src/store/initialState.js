@@ -35,7 +35,9 @@ const initialState = {
       }
     ],
     baseMaps: [
-      'Aerial'
+      'Aerial',
+      'Road',
+      'AerialWithLabels'
     ],
     layer: {},
     currentOpenedDataset: '',
