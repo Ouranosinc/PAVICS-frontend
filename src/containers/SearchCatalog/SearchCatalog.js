@@ -6,8 +6,21 @@ import Loader from './../../components/Loader';
 import SearchCatalogResults from './../../containers/SearchCatalogResults';
 import CriteriaSelection from './../../components/CriteriaSelection';
 import * as constants from './../../constants';
-import {MenuItem, DropdownButton} from 'react-bootstrap';
+// import {MenuItem, DropdownButton} from 'react-bootstrap';
 import Paper from 'material-ui/Paper';
+import IconMenu from 'material-ui/IconMenu';
+import IconButton from 'material-ui/IconButton';
+import NavigationExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more';
+import MenuItem from 'material-ui/MenuItem';
+import Checkbox from 'material-ui/Checkbox';
+import Chip from 'material-ui/Chip';
+import {List, ListItem} from 'material-ui/List';
+import ActionGrade from 'material-ui/svg-icons/action/grade';
+import ContentInbox from 'material-ui/svg-icons/content/inbox';
+import ContentDrafts from 'material-ui/svg-icons/content/drafts';
+import ContentSend from 'material-ui/svg-icons/content/send';
+import Subheader from 'material-ui/Subheader';
+import Toggle from 'material-ui/Toggle';
 
 export class SearchCatalog extends React.Component {
   static propTypes = {
@@ -36,6 +49,22 @@ export class SearchCatalog extends React.Component {
     currentSelectedKey: React.PropTypes.string.isRequired,
     currentSelectedValue: React.PropTypes.string.isRequired,
     panelControls: React.PropTypes.object.isRequired
+  };
+
+  state = {
+    open: false,
+  };
+
+  handleToggle = () => {
+    this.setState({
+      open: !this.state.open
+    });
+  };
+
+  handleNestedListToggle = (item) => {
+    this.setState({
+      open: item.state.open
+    });
   };
 
   constructor (props) {
@@ -91,6 +120,10 @@ export class SearchCatalog extends React.Component {
   //   this.props.fetchEsgfDatasets();
   // }
 
+  _handleRequestDelete() {
+    alert('You clicked the delete button.');
+  }
+
   _onOpenPanel () {
     this.props.clickTogglePanel(constants.PANEL_SEARCH_CATALOG, true);
   }
@@ -110,6 +143,66 @@ export class SearchCatalog extends React.Component {
           ? <div>No Facets (yet)</div>
           : (
           <div className="container">
+            <List style={{width: '50%'}}>
+              <ListItem
+                nestedListStyle={{
+                  position: 'absolute', zIndex: '9999', width: '300px', maxHeight: '150px', overflowY: 'scroll', opacity: '1',
+                  background: 'white', transform: 'scaleY(1)', transformOrigin: 'left top 0px',
+                  transition: 'transform 500ms cubic-bezier(0.23, 1, 0.32, 1) 0ms, opacity 500ms cubic-bezier(0.23, 1, 0.32, 1) 0ms',
+                  boxShadow: 'rgba(0, 0, 0, 0.117647) 0px 1px 6px, rgba(0, 0, 0, 0.117647) 0px 1px 4px',
+                  borderRadius: '2px'}}
+                primaryText="Model"
+                leftIcon={<ContentInbox />}
+                initiallyOpen={true}
+                primaryTogglesNestedList={true}
+                nestedItems={[
+                  <ListItem
+                    key={1}
+                    primaryText="Starred"
+                    leftCheckbox={<Checkbox />}
+                  />,
+                  <ListItem
+                    key={2}
+                    primaryText="Sent Mail"
+                    leftCheckbox={<Checkbox />}
+                  />,
+                  <ListItem
+                    key={3}
+                    primaryText="Inbox"
+                    leftCheckbox={<Checkbox />}
+                  />
+                ]}
+              />
+            </List>
+            <Chip
+              onRequestDelete={this._handleRequestDelete}
+              style={{width: '50%'}}
+              labelStyle={{width: '95%'}}>
+              Model XyZ
+            </Chip>
+            <Chip
+              onRequestDelete={this._handleRequestDelete}>
+              Model XyZ fdf  fds fsd  fds
+            </Chip>
+            <Chip
+              onRequestDelete={this._handleRequestDelete}>
+              Model XyZ fdsf
+            </Chip>
+            <IconMenu
+              iconButtonElement={
+                <IconButton touch={true}>
+                  <NavigationExpandMoreIcon />
+                </IconButton>
+              }
+              multiple
+              value={[1,2,3,4,5]}
+              listStyle={{ width: '350px' }}>
+              <MenuItem value="1" leftIcon={null} leftCheckbox={<Checkbox />} primaryText="Download" />
+              <MenuItem value="2" checked primaryText="More Info" />
+              <MenuItem value="3" checked primaryText="More Info" />
+              <MenuItem value="4" checked primaryText="More Info" />
+              <MenuItem value="5" checked primaryText="More Info" />
+            </IconMenu>
             <div className="row">
               <div className="col-md-9">
                 <PanelHeader
@@ -120,7 +213,7 @@ export class SearchCatalog extends React.Component {
                 </PanelHeader>
               </div>
               <div className="col-md-3">
-                <DropdownButton title="Choose a facet" id="facetKey">
+                {/*<DropdownButton title="Choose a facet" id="facetKey">
                   {
                     this.props.facets.items.map((x, i) => {
                       return (this.recommendedKeys.includes(x.key))
@@ -128,7 +221,7 @@ export class SearchCatalog extends React.Component {
                         : <MenuItem key={i} eventKey={x.key} onSelect={this._onSelectedKey}>{x.key}</MenuItem>;
                     })
                   }
-                </DropdownButton>
+                </DropdownButton>*/}
               </div>
             </div>
             <div className="row">
