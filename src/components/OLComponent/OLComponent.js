@@ -161,7 +161,7 @@ class OLComponent extends React.Component {
       source: this.source
     });
     this.map.addLayer(layer);
-    this.layers.push(layer)
+    this.layers.push(layer);
   };
 
   initMap () {
@@ -246,9 +246,9 @@ class OLComponent extends React.Component {
     // this.map = null//
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps (nextProps) {
     if (nextProps.currentDateTime && nextProps.currentDateTime !== this.props.currentDateTime) {
-      if(this.source){
+      if (this.source) {
         this.source.updateParams({
           TIME: nextProps.currentDateTime
         });
@@ -258,7 +258,6 @@ class OLComponent extends React.Component {
       }
     }
   }
-
 
   componentDidUpdate (prevProps, prevState) {
     if (this.props.layer && this.props.layer.title) {

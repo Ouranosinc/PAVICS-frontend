@@ -46,11 +46,11 @@ const initialState = {
       error: null
     },
     selectedWMSLayerDetails: {
-        requestedAt: null,
-        receivedAt: null,
-        isFetching: false,
-        data: {},
-        error: null
+      requestedAt: null,
+      receivedAt: null,
+      isFetching: false,
+      data: {},
+      error: null
     },
     selectedWMSLayerTimesteps: {
       requestedAt: null,
