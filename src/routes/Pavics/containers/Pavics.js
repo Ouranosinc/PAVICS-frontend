@@ -31,7 +31,7 @@ class Pavics extends React.Component {
         );
       case constants.PLATFORM_SECTION_EXPERIENCE_MANAGEMENT:
         return (
-          <ExperienceManagement />
+          <ExperienceManagement {...this.props} />
         );
       case constants.PLATFORM_SECTION_WORKFLOWS:
         return (

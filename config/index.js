@@ -23,12 +23,12 @@ const config = {
   // PAVICS Configs
   // ----------------------------------
   //pavics_birdhouse_path: 'http://132.217.140.45:8080/ncWMS2/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0',
-  pavics_birdhouse_path: 'http://outarde.crim.ca:8080/ncWMS2/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0',
+  pavics_birdhouse_path: 'http://hirondelle.crim.ca:8080/ncWMS2/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0',
   pavics_esg_search_path: process.env.PAVICS_ESG_SEARCH_PATH || 'http://pcmdi.llnl.gov/esg-search/search',
-  pavics_solr_path: process.env.PAVICS_SOLR_PATH || 'http://outarde.crim.ca:8091',
-  pavics_pywps_path: 'http://outarde.crim.ca:8086/pywps?service=WPS&request=execute&version=1.0.0&identifier=pavicsearch&DataInputs=',
+  pavics_solr_path: process.env.PAVICS_SOLR_PATH || 'http://hirondelle.crim.ca:8091',
+  pavics_pywps_path: 'http://hirondelle.crim.ca:8086/pywps?service=WPS&request=execute&version=1.0.0&identifier=pavicsearch&DataInputs=',
   pavics_wpsconsumer_search_path: serverURL + '/wps/pavicsearch',
-  pavics_phoenix_path: process.env.PAVICS_PHOENIX_PATH || 'https://outarde.crim.ca:8443',
+  pavics_phoenix_path: process.env.PAVICS_PHOENIX_PATH || 'https://hirondelle.crim.ca:8443',
   // ----------------------------------
   // Project Structure
   // ----------------------------------

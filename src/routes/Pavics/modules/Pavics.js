@@ -2,8 +2,10 @@ import initialState from './../../../store/initialState';
 import * as constants from './../../../constants';
 
 // SYNC
+const ADD_DATASETS_TO_PROJECTS = 'Visualize.ADD_DATASETS_TO_PROJECTS';
 const ADD_FACET_KEY_VALUE_PAIR = 'Visualize.ADD_FACET_KEY_VALUE_PAIR';
 const REMOVE_FACET_KEY_VALUE_PAIR = 'Visualize.REMOVE_FACET_KEY_VALUE_PAIR';
+const REMOVE_ALL_FACET_KEY_VALUE = 'Visualize.REMOVE_ALL_FACET_KEY_VALUE';
 const OPEN_DATASET_DETAILS = 'Visualize.OPEN_DATASET_DETAILS';
 const CLOSE_DATASET_DETAILS = 'Visualize.CLOSE_DATASET_DETAILS';
 const OPEN_DATASET_WMS_LAYERS = 'Visualize.OPEN_DATASET_WMS_LAYERS';
@@ -42,6 +44,12 @@ const FETCH_WMS_LAYER_TIMESTEPS_SUCCESS = 'Visualize.FETCH_WMS_LAYER_TIMESTEPS_S
 // ------------------------------------
 // Actions
 // ------------------------------------
+export function addDatasetsToProject (datasets) {
+  return {
+    type: ADD_DATASETS_TO_PROJECTS,
+    datasets: datasets
+  };
+}
 export function addFacetKeyValue (key, value) {
   return {
     type: ADD_FACET_KEY_VALUE_PAIR,
@@ -54,6 +62,11 @@ export function removeFacetKeyValue (key, value) {
     type: REMOVE_FACET_KEY_VALUE_PAIR,
     key: key,
     value: value
+  };
+}
+export function removeAllFacetKeyValue () {
+  return {
+    type: REMOVE_ALL_FACET_KEY_VALUE
   };
 }
 export function openDatasetDetails (id) {
@@ -757,6 +770,10 @@ const VISUALIZE_HANDLERS = {
   [constants.SET_WMS_LAYER]: (state, action) => {
     return {...state, layer: action.layer};
   },
+  [ADD_DATASETS_TO_PROJECTS]: (state, action) => {
+    let newDatasets = state.currentProjectDatasets.concat(action.datasets);
+    return ({...state, currentProjectDatasets: newDatasets});
+  },
   [ADD_FACET_KEY_VALUE_PAIR]: (state, action) => {
     let facets = state.selectedFacets.concat({key: action.key, value: action.value});
     facets.sort(function (a, b) {
@@ -777,6 +794,9 @@ const VISUALIZE_HANDLERS = {
       selectedFacets.splice(index, 1);
     }
     return ({...state, selectedFacets: selectedFacets});
+  },
+  [REMOVE_ALL_FACET_KEY_VALUE]: (state, action) => {
+    return ({...state, selectedFacets: []});
   },
   [OPEN_DATASET_DETAILS]: (state, action) => {
     return ({...state, currentOpenedDataset: action.id});
