@@ -47,15 +47,16 @@ class OLComponent extends React.Component {
   // Add backgrounnd layer (use once)
   initBackgroundLayer () {
     this.addBingLayer('Aerial', this.getMapBaseLayersList(), 'Aerial');
-    let wmsUrl = 'http://demo.boundlessgeo.com/geoserver/wms';
-    let wmsParams = {'LAYERS': 'topp:states', 'TILED': true};
-    this.addTileWMSLayer('topp:states', this.getMapOverlayList(), wmsUrl, wmsParams);
+    // let wmsUrl = 'http://demo.boundlessgeo.com/geoserver/wms';
+    // let wmsParams = {'LAYERS': 'topp:states', 'TILED': true};
+    // this.addTileWMSLayer('topp:states', this.getMapOverlayList(), wmsUrl, wmsParams);
   }
 
   removeLayer (layers, title) {
     let layer;
     for (layer in layers) {
       if (layers.hasOwnProperty(layer)) {
+        console.log('layer:', layer);
         if (title === layer.get('title')) {
           console.log('addTileWMSLayer: First Remove layer ' + layer.get('title'));
           this.map.removeLayer(layer);
@@ -72,13 +73,16 @@ class OLComponent extends React.Component {
    @param serverType Server's type
    */
   addTileWMSLayer (title, layers, wmsUrl, wmsParams, extent, serverType, visible = true) {
-    let layer = this.getTileWMSLayer(title,
+    let layer = this.getTileWMSLayer(
+      title,
       wmsUrl,
       wmsParams,
       extent,
       serverType,
-      visible);
-    layers.push(layer);
+      visible
+    );
+    this.layers[title] = layer;
+    this.map.addLayer(layer);
     console.log('addTileWMSLayer: Add layer ' + layer.get('title'));
     return layer;
   }
@@ -98,6 +102,9 @@ class OLComponent extends React.Component {
     serverType = '',
     visible = true
   ) {
+    if (this.layers[title] !== undefined) {
+      return this.layers[title];
+    }
     this.source = new ol.source.TileWMS(
       {
         url: wmsUrl,
