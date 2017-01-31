@@ -18,7 +18,6 @@ function makePostRequest (url, data, callable, params) {
   };
   xhr.open('POST', url);
   xhr.setRequestHeader('accept', 'text/html');
-  xhr.setRequestHeader('rejectUnauthorized', 'false');
   xhr.send(data);
 }
 export default class WpsProcessForm extends React.Component {
