@@ -1,7 +1,12 @@
 import React from 'react'
-import Table, {TableHeader, SelectableTableRow} from '../../components/Table'
-import tableClasses from './../../components/Table/Table.scss'
-import SearchInput from './SearchInput'
+import Table, {TableHeader, SelectableTableRow} from '../../components/Table';
+import tableClasses from './../../components/Table/Table.scss';
+import Checkbox from 'material-ui/Checkbox';
+import Chip from 'material-ui/Chip';
+import {List, ListItem} from 'material-ui/List';
+import AddFilter from 'material-ui/svg-icons/image/add-to-photos';
+import SearchInput from './SearchInput';
+
 class CriteriaSelection extends React.Component {
   static propTypes = {
     criteriaName: React.PropTypes.string.isRequired,
@@ -13,16 +18,24 @@ class CriteriaSelection extends React.Component {
     fetchPavicsDatasets: React.PropTypes.func.isRequired
   };
 
-  constructor(props) {
+  state = {
+    open: false
+  };
+
+  constructor (props) {
     super(props);
     this._onSelectRow = this._onSelectRow.bind(this);
     this._onInputChange = this._onInputChange.bind(this);
     this.state = {
-      inputContent: ""
+      inputContent: ''
     };
   }
 
-  _onSelectRow(event) {
+  _handleRequestDelete () {
+    alert('You clicked the delete button.');
+  }
+
+  _onSelectRow (event) {
     if (event.target.checked) {
       this.props.addFacetKeyValue(this.props.criteriaName, event.target.value);
     }
@@ -33,7 +46,7 @@ class CriteriaSelection extends React.Component {
     this.props.fetchPavicsDatasets();
   }
 
-  _formatRows() {
+  _formatRows () {
     let vars = [];
     if (this.state.inputContent.length > 0) {
       vars = this.props.variables.values.filter((value) => {
@@ -49,18 +62,69 @@ class CriteriaSelection extends React.Component {
     });
   }
 
-  _onInputChange(event) {
+  _onInputChange (event) {
     var value = event.target.value;
     this.setState({inputContent: value});
   }
 
-  render() {
+  render () {
     let headers = [
       this.props.criteriaName,
-      <SearchInput onChangeCb={this._onInputChange}/>,
+      <SearchInput onChangeCb={this._onInputChange} />,
     ];
     return (
-      <div>
+      <div className="col-md-6 col-lg-6">
+        <List>
+          <ListItem
+            nestedListStyle={{
+              position: 'absolute', zIndex: '9999', width: '100%', maxHeight: '150px', overflowY: 'scroll', opacity: '1',
+              background: 'white', transform: 'scaleY(1)', transformOrigin: 'left top 0px',
+              transition: 'transform 500ms cubic-bezier(0.23, 1, 0.32, 1) 0ms, opacity 500ms cubic-bezier(0.23, 1, 0.32, 1) 0ms',
+              boxShadow: 'rgba(0, 0, 0, 0.117647) 0px 1px 6px, rgba(0, 0, 0, 0.117647) 0px 1px 4px',
+              borderRadius: '2px'}}
+            primaryText="Model"
+            leftIcon={<AddFilter />}
+            initiallyOpen={false}
+            primaryTogglesNestedList={true}
+            nestedItems={[
+              <ListItem
+                key={1}
+                primaryText="Starred"
+                leftCheckbox={<Checkbox />}
+              />,
+              <ListItem
+                key={2}
+                primaryText="Sent Mail"
+                leftCheckbox={<Checkbox />}
+              />,
+              <ListItem
+                key={3}
+                primaryText="Inbox"
+                leftCheckbox={<Checkbox />}
+              />
+            ]}
+          />
+        </List>
+        <Chip
+          onRequestDelete={this._handleRequestDelete}
+          style={{marginBottom: '5px', width: '100%'}}
+          labelStyle={{width: '95%'}}>
+          Model XyZ
+        </Chip>
+        <Chip
+          onRequestDelete={this._handleRequestDelete}
+          style={{marginBottom: '5px', width: '45%'}}
+          labelStyle={{width: '95%'}}>
+          Model XyZ fdf  fds fsd  fds gr
+        </Chip>
+        <Chip
+          onRequestDelete={this._handleRequestDelete}
+          style={{marginBottom: '5px', width: '45%'}}
+          labelStyle={{width: '95%'}}>
+          Model XyZ fdsf
+        </Chip>
+      </div>
+    /* <div>
         <Table>
           <TableHeader fields={headers}/>
           <tbody className={tableClasses['overflowable']}>
@@ -84,9 +148,8 @@ class CriteriaSelection extends React.Component {
           }
           </tbody>
         </Table>
-      </div>
-
+      </div>*/
     );
   }
 }
-export default CriteriaSelection
+export default CriteriaSelection;
