@@ -71,6 +71,7 @@ export class SearchCatalog extends React.Component {
       ]
     });
     this.props.removeAllFacetKeyValue();
+    this.props.fetchPavicsDatasets();
   }
 
   _mainComponent () {

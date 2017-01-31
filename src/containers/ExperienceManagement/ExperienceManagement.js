@@ -3,10 +3,8 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import classes from './ExperienceManagement.scss';
 import {List, ListItem} from 'material-ui/List';
-import ActionGrade from 'material-ui/svg-icons/action/grade';
-import ContentInbox from 'material-ui/svg-icons/content/inbox';
-import ContentDrafts from 'material-ui/svg-icons/content/drafts';
-import ContentSend from 'material-ui/svg-icons/content/send';
+import Folder from 'material-ui/svg-icons/file/folder-open';
+import File from 'material-ui/svg-icons/editor/insert-drive-file';
 import Subheader from 'material-ui/Subheader';
 import Paper from 'material-ui/Paper';
 
@@ -35,38 +33,31 @@ export class ExperienceManagement extends React.Component {
         <Paper>
           <List>
             <Subheader>Project datasets</Subheader>
-            <ListItem primaryText="Sent mail" leftIcon={<ContentSend />} />
-            <ListItem primaryText="Drafts" leftIcon={<ContentDrafts />} />
+            {this.props.currentProjectDatasets.map((dataset, i) => {
+              return (
+                <ListItem
+                  key={i}
+                  primaryText="Inbox"
+                  leftIcon={<Folder />}
+                  initiallyOpen={false}
+                />
+              );
+            })}
             <ListItem
               primaryText="Inbox"
-              leftIcon={<ContentInbox />}
-              initiallyOpen={true}
+              leftIcon={<Folder />}
+              initiallyOpen={false}
               primaryTogglesNestedList={true}
-              nestedItems={[
-                <ListItem
-                  key={1}
-                  primaryText="Starred"
-                  leftIcon={<ActionGrade />}
-                />,
-                <ListItem
-                  key={2}
-                  primaryText="Sent Mail"
-                  leftIcon={<ContentSend />}
-                  disabled={true}
-                  nestedItems={[
-                    <ListItem key={1} primaryText="Drafts" leftIcon={<ContentDrafts />} />,
-                  ]}
-                />,
-                <ListItem
-                  key={3}
-                  primaryText="Inbox"
-                  leftIcon={<ContentInbox />}
-                  open={this.state.open}
-                  onNestedListToggle={this.handleNestedListToggle}
-                  nestedItems={[
-                    <ListItem key={1} primaryText="Drafts" leftIcon={<ContentDrafts />} />,
-                  ]}
-                />,
+              nestedItems={[/*
+                this.props.currentProjectDatasets.map((dataset, i) => {
+                  return (
+                    <ListItem
+                      key={i}
+                      primaryText={dataset.dataset_id}
+                      leftIcon={<File />}
+                    />
+                  );
+                }),*/
               ]}
             />
           </List>
