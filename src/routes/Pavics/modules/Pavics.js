@@ -2,8 +2,6 @@ import initialState from './../../../store/initialState';
 import * as constants from './../../../constants';
 
 // SYNC
-const SELECT_FACET_KEY = 'Visualize.SELECT_FACET_KEY';
-const SELECT_FACET_VALUE = 'Visualize.SELECT_FACET_VALUE';
 const ADD_FACET_KEY_VALUE_PAIR = 'Visualize.ADD_FACET_KEY_VALUE_PAIR';
 const REMOVE_FACET_KEY_VALUE_PAIR = 'Visualize.REMOVE_FACET_KEY_VALUE_PAIR';
 const OPEN_DATASET_DETAILS = 'Visualize.OPEN_DATASET_DETAILS';
@@ -44,19 +42,6 @@ const FETCH_WMS_LAYER_TIMESTEPS_SUCCESS = 'Visualize.FETCH_WMS_LAYER_TIMESTEPS_S
 // ------------------------------------
 // Actions
 // ------------------------------------
-export function selectFacetKey (key) {
-  return {
-    type: SELECT_FACET_KEY,
-    key: key,
-    value: ''
-  };
-}
-export function selectFacetValue (value) {
-  return {
-    type: SELECT_FACET_VALUE,
-    value: value
-  };
-}
 export function addFacetKeyValue (key, value) {
   return {
     type: ADD_FACET_KEY_VALUE_PAIR,
@@ -771,12 +756,6 @@ const WORKFLOW_WIZARD_HANDLERS = {
 const VISUALIZE_HANDLERS = {
   [constants.SET_WMS_LAYER]: (state, action) => {
     return {...state, layer: action.layer};
-  },
-  [SELECT_FACET_KEY]: (state, action) => {
-    return ({...state, currentSelectedKey: action.key, currentSelectedValue: action.value});
-  },
-  [SELECT_FACET_VALUE]: (state, action) => {
-    return ({...state, currentSelectedValue: action.value});
   },
   [ADD_FACET_KEY_VALUE_PAIR]: (state, action) => {
     let facets = state.selectedFacets.concat({key: action.key, value: action.value});

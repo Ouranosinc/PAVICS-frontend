@@ -81,8 +81,6 @@ const mapStateToProps = (state) => {
     providers: state.pavics.workflowWizard.providers,
     platform: state.pavics.platform,
     monitor: state.pavics.monitor,
-    currentSelectedKey: state.pavics.visualize.currentSelectedKey,
-    currentSelectedValue: state.pavics.visualize.currentSelectedValue,
     currentOpenedDataset: state.pavics.visualize.currentOpenedDataset,
     currentOpenedDatasetWMSFile: state.pavics.visualize.currentOpenedDatasetWMSFile,
     currentOpenedWMSLayer: state.pavics.visualize.currentOpenedWMSLayer,

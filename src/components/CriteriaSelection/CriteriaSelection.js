@@ -1,11 +1,9 @@
-import React from 'react'
-import Table, {TableHeader, SelectableTableRow} from '../../components/Table';
-import tableClasses from './../../components/Table/Table.scss';
+import React from 'react';
 import Checkbox from 'material-ui/Checkbox';
 import Chip from 'material-ui/Chip';
 import {List, ListItem} from 'material-ui/List';
 import AddFilter from 'material-ui/svg-icons/image/add-to-photos';
-import SearchInput from './SearchInput';
+import { Col } from 'react-bootstrap';
 
 class CriteriaSelection extends React.Component {
   static propTypes = {
@@ -39,11 +37,9 @@ class CriteriaSelection extends React.Component {
   _onSelectRow (event) {
     if (event.target.checked) {
       this.props.addFacetKeyValue(this.props.criteriaName, event.target.value);
-    }
-    else {
+    } else {
       this.props.removeFacetKeyValue(this.props.criteriaName, event.target.value);
     }
-    // this.props.fetchEsgfDatasets();
     this.props.fetchPavicsDatasets();
   }
 
@@ -70,7 +66,7 @@ class CriteriaSelection extends React.Component {
 
   render () {
     return (
-      <div className="col-md-6 col-lg-6">
+      <Col sm={12} md={6} lg={6}>
         <List>
           <ListItem
             nestedListStyle={{
@@ -108,43 +104,15 @@ class CriteriaSelection extends React.Component {
           {
             this.props.selectedFacets.map((x, i) =>
               x.key === this.props.criteriaName
-                ? <Chip
-                    key={i + 1}
-                    onRequestDelete={() => this._onRemoveFacet(x)}
-                    style={{marginBottom: '5px', width: '100%'}}
-                    labelStyle={{width: '95%'}}>
+                ? <Chip key={i + 1} onRequestDelete={() => this._onRemoveFacet(x)}
+                  style={{marginBottom: '5px', width: '100%'}} labelStyle={{width: '95%'}}>
                   {x.value}
                 </Chip>
                 : null
             )
           }
         </div>
-      </div>
-    /* <div>
-        <Table>
-          <TableHeader fields={headers}/>
-          <tbody className={tableClasses['overflowable']}>
-          {
-            this._formatRows().map((row, i) => {
-              let checked = false;
-              this.props.selectedFacets.map(x => {
-                if (x.value === row[0]) {
-                  checked = true;
-                }
-              });
-              return (
-                <SelectableTableRow
-                  key={i}
-                  checked={checked}
-                  value={row[0]}
-                  onChangeCb={this._onSelectRow}
-                  fields={row}/>
-              );
-            })
-          }
-          </tbody>
-        </Table>
-      </div>*/
+      </Col>
     );
   }
 }

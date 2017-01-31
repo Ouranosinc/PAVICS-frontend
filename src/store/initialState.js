@@ -25,8 +25,6 @@ const initialState = {
   },
   visualize: {
     layer: {},
-    currentSelectedKey: constants.DEFAULT_SELECTED_KEY,
-    currentSelectedValue: '',
     currentOpenedDataset: '',
     currentOpenedDatasetWMSFile: '',
     currentOpenedWMSLayer: '',

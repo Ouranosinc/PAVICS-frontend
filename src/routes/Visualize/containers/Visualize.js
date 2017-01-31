@@ -140,8 +140,6 @@ const mapActionCreators = {
   fetchPlotlyData
 };
 const mapStateToProps = (state) => ({
-  currentSelectedKey: state.visualize.currentSelectedKey,
-  currentSelectedValue: state.visualize.currentSelectedValue,
   currentOpenedDataset: state.visualize.currentOpenedDataset,
   currentOpenedDatasetWMSFile: state.visualize.currentOpenedDatasetWMSFile,
   currentOpenedWMSLayer: state.visualize.currentOpenedWMSLayer,

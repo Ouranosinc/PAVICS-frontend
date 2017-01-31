@@ -1,15 +1,13 @@
 import React from 'react';
-import {connect} from 'react-redux';
-import Panel, {ToggleButton, PanelHeader} from './../../components/Panel';
-import FacetLabel from './../../components/FacetLabel';
 import Loader from './../../components/Loader';
 import SearchCatalogResults from './../../containers/SearchCatalogResults';
 import CriteriaSelection from './../../components/CriteriaSelection';
-import * as constants from './../../constants';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import Paper from 'material-ui/Paper';
 import { Row, Col } from 'react-bootstrap';
+import Subheader from 'material-ui/Subheader';
+import {List} from 'material-ui/List';
 
 export class SearchCatalog extends React.Component {
   static propTypes = {
@@ -35,8 +33,6 @@ export class SearchCatalog extends React.Component {
     pavicsDatasets: React.PropTypes.object.isRequired,
     facets: React.PropTypes.object.isRequired,
     selectedFacets: React.PropTypes.array.isRequired,
-    currentSelectedKey: React.PropTypes.string.isRequired,
-    currentSelectedValue: React.PropTypes.string.isRequired,
     panelControls: React.PropTypes.object.isRequired
   };
 
@@ -70,25 +66,31 @@ export class SearchCatalog extends React.Component {
     } else {
       mainComponent = (
         this.props.facets.items.length === 0
-          ? <div>No Facet found</div>
+          ? <Paper style={{ marginTop: 20 }}>
+              <List>
+                <Subheader>No facets found.</Subheader>
+              </List>
+            </Paper>
           : (
           <div className="container">
             <Row>
-              <SelectField
-                style={{float: 'right'}}
-                floatingLabelText="Choose a facet"
-                value={this.state.selectedKey}
-                onChange={(event, index, value) => this._onAddCriteriaKey(value)}>
-                {
-                  this.props.facets.items.map((x, i) => {
-                    return (this.state.criteriaKeys.includes(x.key))
-                      ? null
-                      : <MenuItem key={i} value={x.key} primaryText={x.key} />;
-                  })
-                }
-              </SelectField>
+              <Col sm={12} md={6} lg={6} style={{float: 'right'}}>
+                <SelectField
+                  style={{width: '100%'}}
+                  floatingLabelText="Add additional criteria"
+                  value={this.state.selectedKey}
+                  onChange={(event, index, value) => this._onAddCriteriaKey(value)}>
+                  {
+                    this.props.facets.items.map((x, i) => {
+                      return (this.state.criteriaKeys.includes(x.key))
+                        ? null
+                        : <MenuItem key={i} value={x.key} primaryText={x.key} />;
+                    })
+                  }
+                </SelectField>
+              </Col>
             </Row>
-            <Row>
+            <Row style={{marginBottom: 15}}>
               {
                 this.state.criteriaKeys.map((facetKey, i) => {
                   return <CriteriaSelection
@@ -114,10 +116,12 @@ export class SearchCatalog extends React.Component {
 
   render () {
     return (
-      <Paper style={{ margin: 20 }} zDepth={2}>
-        {this._mainComponent()}
+      <div style={{ margin: 20 }}>
+        <Paper>
+          {this._mainComponent()}
+        </Paper>
         <SearchCatalogResults {...this.props} />
-      </Paper>
+      </div>
     );
   }
 }
