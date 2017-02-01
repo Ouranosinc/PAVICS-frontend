@@ -18,7 +18,6 @@ function makePostRequest (url, data, callable, params) {
   };
   xhr.open('POST', url);
   xhr.setRequestHeader('accept', 'text/html');
-  xhr.setRequestHeader('rejectUnauthorized', 'false');
   xhr.send(data);
 }
 export default class WpsProcessForm extends React.Component {
@@ -39,7 +38,7 @@ export default class WpsProcessForm extends React.Component {
     // ugly hack to workaround making one extra trip to the backend
     // we already have had to put strange __start__ and __end__ inputs to work nicely with phoenix
     let formData = new FormData(document.querySelector('#process-form'));
-    let url = `https://outarde.crim.ca:8443/processes/execute?wps=${this.props.selectedProvider}&process=${this.props.selectedProcess.identifier}`;
+    let url = `${__PAVICS_PHOENIX_PATH__}/processes/execute?wps=${this.props.selectedProvider}&process=${this.props.selectedProcess.identifier}`;
     // let url = `/phoenix/execute?wps=${this.props.selectedProvider}&process=${this.props.selectedProcess.identifier}`;
     makePostRequest(url, formData, (res) => {
       console.log(res);
