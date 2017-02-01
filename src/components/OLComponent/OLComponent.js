@@ -1,6 +1,7 @@
 import React from 'react';
 import classes from './OLComponent.scss';
 import ol from 'openlayers';
+import Dialog from 'material-ui/Dialog';
 // _ol3-layerswitcher.js needs ol as global (...)
 window.ol = ol;
 require('ol3-layerswitcher/src/ol3-layerswitcher.js');
@@ -8,6 +9,8 @@ require('openlayers/css/ol.css');
 require('ol3-layerswitcher/src/ol3-layerswitcher.css');
 // Couldn't figure out the bug when importing inner component css file but it works from node_modules
 let G_BING_API_KEY = 'AtXX65CBBfZXBxm6oMyf_5idMAMI7W6a5GuZ5acVcrYi6lCQayiiBz7_aMHB7JR7';
+const INDEX_BASE_MAP = -10;
+const INDEX_SELECTED_REGIONS = 1000;
 class OLComponent extends React.Component {
   static propTypes = {
     capabilities: React.PropTypes.object,
@@ -25,7 +28,12 @@ class OLComponent extends React.Component {
     this.overlayLayers = new ol.layer.Group({'title': 'Overlays', 'opacity': 1.0, 'visible': true, 'zIndex': 1});
     this.view = null;
     this.tmpLayer = null;
-    this.popup = null;
+    this.state = {
+      dialogContent: '',
+      dialogOpened: false
+    };
+    this.handleMapClick = this.handleMapClick.bind(this);
+    this.handleClose = this.handleClose.bind(this);
   }
 
   // Returns base layers list
@@ -138,7 +146,7 @@ class OLComponent extends React.Component {
         // maxZoom: 19
       })
     });
-    this.map.getLayers().insertAt(-1, layer);
+    this.map.getLayers().insertAt(INDEX_BASE_MAP, layer);
     this.layers[title] = layer;
   }
 
@@ -189,16 +197,6 @@ class OLComponent extends React.Component {
       renderer: 'canvas',
       view: this.view
     });
-    let mousePosition = new ol.control.MousePosition({
-      coordinateFormat: ol.coordinate.createStringXY(6),
-      projection: 'EPSG:4326',
-      target: document.getElementById('mouseCoordinates')
-    });
-    // map.addControl(mousePosition);
-    let layerSwitcher = new ol.control.LayerSwitcher({
-      tipLabel: 'Legend' // Optional label for button
-    });
-    // map.addControl(layerSwitcher);
     this.map = map;
   }
 
@@ -248,9 +246,82 @@ class OLComponent extends React.Component {
     }
   }
 
+  createVectorLayer (nameId) {
+    let source = new ol.source.Vector({
+      format: new ol.format.GeoJSON()
+    });
+    let fill = new ol.style.Fill({
+      color: 'rgba(0,255,255,0.5)'
+    });
+    let stroke = new ol.style.Stroke({
+      color: 'rgba(255,255,255,0.5)'
+    });
+    let style = new ol.style.Style({
+      fill: fill,
+      stroke: stroke
+    });
+    let layer = new ol.layer.Vector({
+      source: source,
+      style: style
+    });
+    layer.set('nameId', nameId);
+    return layer;
+  }
+
+  handleMapClick (event) {
+    let coordinates = this.map.getCoordinateFromPixel(event.pixel);
+    let converted = ol.proj.transform(coordinates, 'EPSG:3857', 'EPSG:4326');
+    console.log('coordinate:', converted);
+    let tl = ol.coordinate.add(coordinates, [-10e-6, -10e-6]);
+    let br = ol.coordinate.add(coordinates, [10e-6, 10e-6]);
+    let minX;
+    let maxX;
+    if (tl[0] < br[0]) {
+      minX = tl[0];
+      maxX = br[0];
+    } else {
+      minX = br[0];
+      maxX = tl[0];
+    }
+    let minY;
+    let maxY;
+    if (tl[1] < br[1]) {
+      minY = tl[1];
+      maxY = br[1];
+    } else {
+      minY = br[1];
+      maxY = tl[1];
+    }
+    let extent = [minX, minY, maxX, maxY];
+    let url = __PAVICS_GEOSERVER_PATH__ + '/wfs?service=WFS&' +
+      'version=1.1.0&request=GetFeature&typename=WATERSHEDS:BV_N1_S&' +
+      'outputFormat=application/json&srsname=EPSG:3857&' +
+      'bbox=' + extent.join(',') + ',EPSG:3857';
+    fetch(url)
+      .then(response => {
+        return response.json();
+      })
+      .then((response) => {
+        let id = response.features[0].id;
+        console.log(id);
+        let content = `lat: ${converted[0]}, lon: ${converted[1]}, feature id: ${id}`;
+        let format = new ol.format.GeoJSON();
+        let features = format.readFeatures(response, {featureProjection: 'EPSG:3857'});
+        this.layers['selectedRegions'].getSource().addFeatures(features);
+        this.setState({
+          dialogContent: content,
+          dialogOpened: true
+        });
+      });
+  }
+
   componentDidMount () {
     this.initBackgroundLayer();
     this.initMap();
+    this.map.addEventListener('click', this.handleMapClick);
+    let layer = this.createVectorLayer('selectedRegions');
+    this.map.getLayers().insertAt(INDEX_SELECTED_REGIONS, layer);
+    this.layers['selectedRegions'] = layer;
   }
 
   componentWillUnmount () {
@@ -301,8 +372,14 @@ class OLComponent extends React.Component {
       }
       this.tmpLayer = this.addTileWMSLayer(wmsName, this.getMapOverlayList(), wmsUrl, wmsParams);
       this.layersCount = this.props.loadedWmsDatasets.length;
-    } else {
     }
+  }
+
+  handleClose () {
+    this.setState({
+      dialogContent: '',
+      dialogOpened: false
+    });
   }
 
   render () {
@@ -311,6 +388,13 @@ class OLComponent extends React.Component {
         <div id="map" className="map" style={{'width': '100%', 'height': '100%', 'position': 'fixed'}}>
           <div id="popup" className="ol-popup"></div>
         </div>
+        <Dialog
+          title="Coordinates"
+          modal={false}
+          onRequestClose={this.handleClose}
+          open={this.state.dialogOpened}>
+          {this.state.dialogContent}
+        </Dialog>
       </div>
     );
   }
