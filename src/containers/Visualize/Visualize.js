@@ -96,14 +96,12 @@ class Visualize extends React.Component {
                 />
               </div> : null
             }
-            {(this.state.mapPanelStatus[LAYER_SWITCHER_PANEL])
-              ? <div className={classes.panel}>
-                <LayerSwitcherContainer
-                  OLComponentReference={this.state.OLComponentReference}
-                  baseMaps={this.props.baseMaps}
-                  publicShapeFiles={this.props.publicShapeFiles} />
-              </div> : null
-            }
+            <div className={this.state.mapPanelStatus[LAYER_SWITCHER_PANEL] ? classes['panel'] : classes['hidden']}>
+              <LayerSwitcherContainer
+                OLComponentReference={this.state.OLComponentReference}
+                baseMaps={this.props.baseMaps}
+                publicShapeFiles={this.props.publicShapeFiles} />
+            </div>
           </div>
         </div>
       </div>

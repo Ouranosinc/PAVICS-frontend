@@ -12,6 +12,21 @@ export default class LayerSwitcherContainer extends React.Component {
     this.displayBaseMap = this.displayBaseMap.bind(this);
     this.removeShapeFile = this.removeShapeFile.bind(this);
     this.removeBaseMap = this.removeBaseMap.bind(this);
+    this.setLayerSwitcherReference = this.setLayerSwitcherReference.bind(this);
+    this.state = {
+      layerSwitcherReference: null
+    };
+    this.initiated = false;
+  }
+  componentDidUpdate () {
+    if (
+      this.props.OLComponentReference !== {} &&
+      this.state.layerSwitcherReference !== null &&
+      !this.initiated
+    ) {
+      this.state.layerSwitcherReference.setSelectedBaseMap(null, 'Aerial');
+      this.initiated = true;
+    }
   }
   displayShapeFile (shapeFile) {
     console.log('displaying shape file', shapeFile);
@@ -42,9 +57,15 @@ export default class LayerSwitcherContainer extends React.Component {
     let layer = this.props.OLComponentReference.getLayer(map);
     this.props.OLComponentReference.map.removeLayer(layer);
   }
+  setLayerSwitcherReference (ref) {
+    this.setState({
+      layerSwitcherReference: ref
+    });
+  }
   render () {
     return (
       <LayerSwitcher
+        ref={this.setLayerSwitcherReference}
         baseMaps={this.props.baseMaps}
         publicShapeFiles={this.props.publicShapeFiles}
         setBaseMap={this.displayBaseMap}

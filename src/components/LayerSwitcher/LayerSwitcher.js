@@ -34,7 +34,11 @@ export default class LayerSwitcher extends React.Component {
         selectedBaseMap: this.state.selectedBaseMap
       });
     } else {
-      this.props.removeShapeFile(this.state.selectedShapeFile);
+      // when setting baseMap from outside (on mounting visualize) we don't want to remove a null base map
+      // it's not so bad if we do, but I am paranoid
+      if (this.state.selectedBaseMap !== '') {
+        this.props.removeShapeFile(this.state.selectedShapeFile);
+      }
       this.props.setShapeFile(value);
       this.setState({
         selectedShapeFile: value,
