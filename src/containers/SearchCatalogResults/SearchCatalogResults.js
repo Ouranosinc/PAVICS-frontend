@@ -126,9 +126,9 @@ export class SearchCatalogResults extends React.Component {
                           tooltipPosition="bottom-left">
                           <MoreVertIcon color={grey400} />
                         </IconButton>}>
-                        <MenuItem primaryText="Add to favorites (TODO)" leftIcon={<ShoppingCart />} />
-                        <MenuItem primaryText="Share (TODO)" leftIcon={<PersonAdd />} />
-                        <MenuItem primaryText="Download" leftIcon={<Download href={x.urls[0]} />} />
+                        <MenuItem primaryText="Add to favorites (TODO)" onTouchTap={(event) => alert('add to favorites')} leftIcon={<ShoppingCart />} />
+                        <MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share')} leftIcon={<PersonAdd />} />
+                        <MenuItem primaryText="Download (TODO?)" onTouchTap={(event) => alert('download')} leftIcon={<Download />} />
                       </IconMenu>
                     }
                   />

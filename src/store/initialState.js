@@ -32,6 +32,7 @@ const initialState = {
     loadedWmsDatasets: [],
     selectedFacets: [],
     currentProjectDatasets: [],
+    currentVisualizedDatasetLayers: [],
     selectedDatasets: {
       requestedAt: null,
       receivedAt: null,

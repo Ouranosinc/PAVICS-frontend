@@ -2,6 +2,7 @@ import initialState from './../../../store/initialState';
 import * as constants from './../../../constants';
 
 // SYNC
+const ADD_DATASET_LAYERS_TO_VISUALIZE = 'Visualize.ADD_DATASET_LAYERS_TO_VISUALIZE';
 const ADD_DATASETS_TO_PROJECTS = 'Visualize.ADD_DATASETS_TO_PROJECTS';
 const ADD_FACET_KEY_VALUE_PAIR = 'Visualize.ADD_FACET_KEY_VALUE_PAIR';
 const REMOVE_FACET_KEY_VALUE_PAIR = 'Visualize.REMOVE_FACET_KEY_VALUE_PAIR';
@@ -47,6 +48,12 @@ const FETCH_WMS_LAYER_TIMESTEPS_SUCCESS = 'Visualize.FETCH_WMS_LAYER_TIMESTEPS_S
 export function addDatasetsToProject (datasets) {
   return {
     type: ADD_DATASETS_TO_PROJECTS,
+    datasets: datasets
+  };
+}
+export function addDatasetLayersToVisualize (datasets) {
+  return {
+    type: ADD_DATASET_LAYERS_TO_VISUALIZE,
     datasets: datasets
   };
 }
@@ -773,6 +780,10 @@ const VISUALIZE_HANDLERS = {
   [ADD_DATASETS_TO_PROJECTS]: (state, action) => {
     let newDatasets = state.currentProjectDatasets.concat(action.datasets);
     return ({...state, currentProjectDatasets: newDatasets});
+  },
+  [ADD_DATASET_LAYERS_TO_VISUALIZE]: (state, action) => {
+    let newDatasetLayers = state.currentVisualizedDatasetLayers.concat(action.datasets);
+    return ({...state, currentVisualizedDatasetLayers: newDatasetLayers});
   },
   [ADD_FACET_KEY_VALUE_PAIR]: (state, action) => {
     let facets = state.selectedFacets.concat({key: action.key, value: action.value});
