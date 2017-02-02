@@ -1,28 +1,28 @@
-import React, { Component, PropTypes } from 'react'
-import classes from './Loader.scss'
-
-var me;
+import React, { Component, PropTypes } from 'react';
+import classes from './Loader.scss';
+import RefreshIndicator from 'material-ui/RefreshIndicator';
 
 export class Loader extends Component {
   static propTypes = {
-    name : PropTypes.string.isRequired
+    name: PropTypes.string.isRequired
   };
 
-  constructor(props) {
+  constructor (props) {
     super(props);
-    me = this;
   }
-
 
   render () {
     return (
       <div className={classes['Loader']}>
-        <img src="images/loading.gif" width="50" height="50" alt="Loading" />
-        <span> Loading { this.props.name }...</span>
-        <br />
+        <RefreshIndicator
+          size={40}
+          left={0}
+          top={0}
+          status="loading"
+          style={{display: 'inline-block', position: 'relative'}} />
       </div>
-    )
+    );
   }
 }
 
-export default Loader
+export default Loader;

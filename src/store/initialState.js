@@ -25,14 +25,14 @@ const initialState = {
   },
   visualize: {
     layer: {},
-    currentSelectedKey: constants.DEFAULT_SELECTED_KEY,
-    currentSelectedValue: '',
     currentOpenedDataset: '',
     currentOpenedDatasetWMSFile: '',
     currentOpenedWMSLayer: '',
     currentDateTime: '1900-01-01T00:00:00.000Z',
     loadedWmsDatasets: [],
     selectedFacets: [],
+    currentProjectDatasets: [],
+    currentVisualizedDatasetLayers: [],
     selectedDatasets: {
       requestedAt: null,
       receivedAt: null,
@@ -75,7 +75,14 @@ const initialState = {
       items: [],
       error: null
     },
-    datasets: {
+    esgfDatasets: {
+      requestedAt: null,
+      receivedAt: null,
+      isFetching: false,
+      items: [],
+      error: null
+    },
+    pavicsDatasets: {
       requestedAt: null,
       receivedAt: null,
       isFetching: false,

@@ -1,7 +1,10 @@
-import React from 'react'
-import Table, {TableHeader, SelectableTableRow} from '../../components/Table'
-import tableClasses from './../../components/Table/Table.scss'
-import SearchInput from './SearchInput'
+import React from 'react';
+import Checkbox from 'material-ui/Checkbox';
+import Chip from 'material-ui/Chip';
+import {List, ListItem} from 'material-ui/List';
+import AddFilter from 'material-ui/svg-icons/image/add-to-photos';
+import { Col } from 'react-bootstrap';
+
 class CriteriaSelection extends React.Component {
   static propTypes = {
     criteriaName: React.PropTypes.string.isRequired,
@@ -9,29 +12,38 @@ class CriteriaSelection extends React.Component {
     selectedFacets: React.PropTypes.array.isRequired,
     addFacetKeyValue: React.PropTypes.func.isRequired,
     removeFacetKeyValue: React.PropTypes.func.isRequired,
-    fetchCatalogDatasets: React.PropTypes.func.isRequired,
+    fetchEsgfDatasets: React.PropTypes.func.isRequired,
+    fetchPavicsDatasets: React.PropTypes.func.isRequired
   };
 
-  constructor(props) {
+  state = {
+    open: false
+  };
+
+  constructor (props) {
     super(props);
     this._onSelectRow = this._onSelectRow.bind(this);
     this._onInputChange = this._onInputChange.bind(this);
     this.state = {
-      inputContent: ""
+      inputContent: ''
     };
   }
 
-  _onSelectRow(event) {
-    if (event.target.checked) {
-      this.props.addFacetKeyValue(this.props.criteriaName, event.target.value);
-    }
-    else {
-      this.props.removeFacetKeyValue(this.props.criteriaName, event.target.value);
-    }
-    this.props.fetchCatalogDatasets();
+  _onRemoveFacet (facet) {
+    this.props.removeFacetKeyValue(facet.key, facet.value);
+    this.props.fetchPavicsDatasets();
   }
 
-  _formatRows() {
+  _onSelectRow (event) {
+    if (event.target.checked) {
+      this.props.addFacetKeyValue(this.props.criteriaName, event.target.value);
+    } else {
+      this.props.removeFacetKeyValue(this.props.criteriaName, event.target.value);
+    }
+    this.props.fetchPavicsDatasets();
+  }
+
+  _formatRows () {
     let vars = [];
     if (this.state.inputContent.length > 0) {
       vars = this.props.variables.values.filter((value) => {
@@ -47,44 +59,61 @@ class CriteriaSelection extends React.Component {
     });
   }
 
-  _onInputChange(event) {
+  _onInputChange (event) {
     var value = event.target.value;
     this.setState({inputContent: value});
   }
 
-  render() {
-    let headers = [
-      this.props.criteriaName,
-      <SearchInput onChangeCb={this._onInputChange}/>,
-    ];
+  render () {
     return (
-      <div>
-        <Table>
-          <TableHeader fields={headers}/>
-          <tbody className={tableClasses['overflowable']}>
+      <Col sm={12} md={6} lg={6}>
+        <List>
+          <ListItem
+            nestedListStyle={{
+              position: 'absolute', zIndex: '9999', width: '100%', maxHeight: '150px', overflowY: 'scroll', opacity: '1',
+              background: 'white', transform: 'scaleY(1)', transformOrigin: 'left top 0px',
+              transition: 'transform 500ms cubic-bezier(0.23, 1, 0.32, 1) 0ms, opacity 500ms cubic-bezier(0.23, 1, 0.32, 1) 0ms',
+              boxShadow: 'rgba(0, 0, 0, 0.117647) 0px 1px 6px, rgba(0, 0, 0, 0.117647) 0px 1px 4px',
+              borderRadius: '2px'}}
+            primaryText={this.props.criteriaName.toLowerCase().replace(/\b[a-z]/g, function (letter) {
+              return letter.toUpperCase();
+            })}
+            leftIcon={<AddFilter />}
+            initiallyOpen={false}
+            primaryTogglesNestedList={true}
+            nestedItems={[
+              this._formatRows().map((row, i) => {
+                let checked = false;
+                this.props.selectedFacets.map(x => {
+                  if (x.value === row[0]) {
+                    checked = true;
+                  }
+                });
+                return (
+                  <ListItem
+                    key={i}
+                    primaryText={row}
+                    leftCheckbox={<Checkbox value={row} checked={checked} onCheck={this._onSelectRow} />}
+                  />
+                );
+              }),
+            ]}
+          />
+        </List>
+        <div>
           {
-            this._formatRows().map((row, i) => {
-              let checked = false;
-              this.props.selectedFacets.map(x => {
-                if (x.value === row[0]) {
-                  checked = true;
-                }
-              });
-              return (
-                <SelectableTableRow
-                  key={i}
-                  checked={checked}
-                  value={row[0]}
-                  onChangeCb={this._onSelectRow}
-                  fields={row}/>
-              );
-            })
+            this.props.selectedFacets.map((x, i) =>
+              x.key === this.props.criteriaName
+                ? <Chip key={i + 1} onRequestDelete={() => this._onRemoveFacet(x)}
+                  style={{marginBottom: '5px', width: '100%'}} labelStyle={{width: '95%'}}>
+                  {x.value}
+                </Chip>
+                : null
+            )
           }
-          </tbody>
-        </Table>
-      </div>
-
+        </div>
+      </Col>
     );
   }
 }
-export default CriteriaSelection
+export default CriteriaSelection;

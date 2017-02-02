@@ -40,7 +40,8 @@ import {
   // Async
   fetchFacets,
   fetchDataset,
-  fetchCatalogDatasets,
+  fetchEsgfDatasets,
+  fetchPavicsDatasets,
   fetchDatasetWMSLayers,
   fetchWMSLayerDetails,
   fetchWMSLayerTimesteps,
@@ -130,7 +131,8 @@ const mapActionCreators = {
   // Async
   fetchFacets,
   fetchDataset,
-  fetchCatalogDatasets,
+  fetchEsgfDatasets,
+  fetchPavicsDatasets,
   fetchDatasetWMSLayers,
   fetchWMSLayerDetails,
   fetchWMSLayerTimesteps,
@@ -138,8 +140,6 @@ const mapActionCreators = {
   fetchPlotlyData
 };
 const mapStateToProps = (state) => ({
-  currentSelectedKey: state.visualize.currentSelectedKey,
-  currentSelectedValue: state.visualize.currentSelectedValue,
   currentOpenedDataset: state.visualize.currentOpenedDataset,
   currentOpenedDatasetWMSFile: state.visualize.currentOpenedDatasetWMSFile,
   currentOpenedWMSLayer: state.visualize.currentOpenedWMSLayer,

@@ -27,13 +27,11 @@ class Pavics extends React.Component {
         return (
           <div>
             <SearchCatalog {...this.props} />
-            <DatasetDetails {...this.props} />
-            <DatasetWMSLayers {...this.props} />
           </div>
         );
       case constants.PLATFORM_SECTION_EXPERIENCE_MANAGEMENT:
         return (
-          <ExperienceManagement />
+          <ExperienceManagement {...this.props} />
         );
       case constants.PLATFORM_SECTION_WORKFLOWS:
         return (
@@ -45,7 +43,11 @@ class Pavics extends React.Component {
         );
       case constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT:
         return (
-          <AccountManagement {...this.props} />
+          <div>
+            <AccountManagement {...this.props} />
+            <DatasetDetails {...this.props} />
+            <DatasetWMSLayers {...this.props} />
+          </div>
         );
       default:
         return null;
@@ -81,8 +83,6 @@ const mapStateToProps = (state) => {
     providers: state.pavics.workflowWizard.providers,
     platform: state.pavics.platform,
     monitor: state.pavics.monitor,
-    currentSelectedKey: state.pavics.visualize.currentSelectedKey,
-    currentSelectedValue: state.pavics.visualize.currentSelectedValue,
     currentOpenedDataset: state.pavics.visualize.currentOpenedDataset,
     currentOpenedDatasetWMSFile: state.pavics.visualize.currentOpenedDatasetWMSFile,
     currentOpenedWMSLayer: state.pavics.visualize.currentOpenedWMSLayer,
@@ -93,12 +93,15 @@ const mapStateToProps = (state) => {
     selectedWMSLayerDetails: state.pavics.visualize.selectedWMSLayerDetails,
     selectedWMSLayerTimesteps: state.pavics.visualize.selectedWMSLayerTimesteps,
     currentDateTime: state.pavics.visualize.currentDateTime,
-    datasets: state.pavics.visualize.datasets,
+    esgfDatasets: state.pavics.visualize.esgfDatasets,
+    pavicsDatasets: state.pavics.visualize.pavicsDatasets,
     facets: state.pavics.visualize.facets,
     climateIndicators: state.pavics.visualize.climateIndicators,
     panelControls: state.pavics.visualize.panelControls,
     plotlyData: state.pavics.visualize.plotlyData,
-    layer: state.pavics.visualize.layer
+    layer: state.pavics.visualize.layer,
+    currentProjectDatasets: state.pavics.visualize.currentProjectDatasets,
+    currentVisualizedDatasetLayers: state.pavics.visualize.currentVisualizedDatasetLayers
   };
 };
 export default connect(mapStateToProps, mapActionCreators)(Pavics);

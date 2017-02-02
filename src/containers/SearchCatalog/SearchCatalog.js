@@ -1,99 +1,77 @@
 import React from 'react';
-import {connect} from 'react-redux';
-import Panel, {ToggleButton, PanelHeader} from './../../components/Panel';
-import FacetLabel from './../../components/FacetLabel';
 import Loader from './../../components/Loader';
 import SearchCatalogResults from './../../containers/SearchCatalogResults';
 import CriteriaSelection from './../../components/CriteriaSelection';
-import * as constants from './../../constants';
-import {MenuItem, DropdownButton} from 'react-bootstrap';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
+import Paper from 'material-ui/Paper';
+import { Row, Col } from 'react-bootstrap';
+import Subheader from 'material-ui/Subheader';
+import {List} from 'material-ui/List';
+import RaisedButton from 'material-ui/RaisedButton';
+
 export class SearchCatalog extends React.Component {
   static propTypes = {
-    /* Helps Webstorm to auto-complete function calls and enforce React Props Validation*/
     clickTogglePanel: React.PropTypes.func.isRequired,
-    selectFacetKey: React.PropTypes.func.isRequired,
-    selectFacetValue: React.PropTypes.func.isRequired,
+    addDatasetsToProject: React.PropTypes.func.isRequired,
     addFacetKeyValue: React.PropTypes.func.isRequired,
     removeFacetKeyValue: React.PropTypes.func.isRequired,
+    removeAllFacetKeyValue: React.PropTypes.func.isRequired,
     requestFacets: React.PropTypes.func.isRequired,
     receiveFacetsFailure: React.PropTypes.func.isRequired,
     receiveFacets: React.PropTypes.func.isRequired,
-    requestCatalogDatasets: React.PropTypes.func.isRequired,
-    receiveCatalogDatasetsFailure: React.PropTypes.func.isRequired,
-    receiveCatalogDatasets: React.PropTypes.func.isRequired,
+    requestEsgfDatasets: React.PropTypes.func.isRequired,
+    receiveEsgfDatasetsFailure: React.PropTypes.func.isRequired,
+    receiveEsgfDatasets: React.PropTypes.func.isRequired,
+    requestPavicsDatasets: React.PropTypes.func.isRequired,
+    receivePavicsDatasetsFailure: React.PropTypes.func.isRequired,
+    receivePavicsDatasets: React.PropTypes.func.isRequired,
     fetchFacets: React.PropTypes.func.isRequired,
     fetchDataset: React.PropTypes.func.isRequired,
-    fetchCatalogDatasets: React.PropTypes.func.isRequired,
-    datasets: React.PropTypes.object.isRequired,
+    fetchEsgfDatasets: React.PropTypes.func.isRequired,
+    fetchPavicsDatasets: React.PropTypes.func.isRequired,
+    esgfDatasets: React.PropTypes.object.isRequired,
+    pavicsDatasets: React.PropTypes.object.isRequired,
     facets: React.PropTypes.object.isRequired,
     selectedFacets: React.PropTypes.array.isRequired,
-    currentSelectedKey: React.PropTypes.string.isRequired,
-    currentSelectedValue: React.PropTypes.string.isRequired,
     panelControls: React.PropTypes.object.isRequired
+  };
+
+  state = {
+    selectedKey: '',
+    criteriaKeys: [
+      'project',
+      'model',
+      'variable',
+      'frequency'
+    ]
   };
 
   constructor (props) {
     super(props);
-    this.recommendedKeys = [
-      'project',
-      'model',
-      'variable'
-    ];
-    this.currentSelectedKey = '';
-    this.currentSelectedValue = '';
-    this.currentFacetValues = [];
-    // This way we can remove "me" from component and always use "this",
-    // but it must be done for all components methods with callbacks...
-    this._onAddFacet = this._onAddFacet.bind(this);
-    this._onRemoveFacet = this._onRemoveFacet.bind(this);
-    this._onSelectedKey = this._onSelectedKey.bind(this);
-    this._onSelectedValue = this._onSelectedValue.bind(this);
-    this._onSearchCatalog = this._onSearchCatalog.bind(this);
-    this._onOpenPanel = this._onOpenPanel.bind(this);
-    this._togglePanel = this._togglePanel.bind(this);
+    this._onAddCriteriaKey = this._onAddCriteriaKey.bind(this);
+    this._ResetCriterias = this._ResetCriterias.bind(this);
   }
 
-  _onAddFacet (event) {
-    if (this.props.currentSelectedKey.length && this.props.currentSelectedValue.length) {
-      this.props.addFacetKeyValue(this.props.currentSelectedKey, this.props.currentSelectedValue);
-      this.props.selectFacetKey('');
-      // TODO: Auto-fetch on onAddFacet() ?
-      this.props.fetchCatalogDatasets();
-    }
+  _onAddCriteriaKey (value) {
+    let arr = JSON.parse(JSON.stringify(this.state.criteriaKeys));
+    arr.push(value);
+    this.setState({
+      criteriaKeys: arr
+    });
   }
 
-  _onRemoveFacet (key, value) {
-    this.props.removeFacetKeyValue(key, value);
-    // TODO: Auto-fetch on onRemoveFacet() ?
-    this.props.fetchCatalogDatasets();
-  }
-
-  // posterity
-  _onSelectedKey (eventKey) {
-    this.props.selectFacetKey(eventKey);
-    let facet = this.props.facets.items.find(x => x.key === eventKey);
-    if (facet) {
-      this.currentFacetValues = facet.values;
-    } else {
-      this.currentFacetValues = [];
-    }
-  }
-
-  _onSelectedValue (event) {
-    this.props.selectFacetValue(event.target.value);
-  }
-
-  _onSearchCatalog (event) {
-    this.props.fetchCatalogDatasets();
-  }
-
-  _onOpenPanel () {
-    this.props.clickTogglePanel(constants.PANEL_SEARCH_CATALOG, true);
-  }
-
-  _togglePanel () {
-    let newState = !this.props.panelControls[constants.PANEL_SEARCH_CATALOG].show;
-    this.props.clickTogglePanel(constants.PANEL_SEARCH_CATALOG, newState);
+  _ResetCriterias () {
+    this.setState({
+      criteriaKeys: [
+        'project',
+        'model',
+        'variable',
+        'frequency'
+      ]
+    });
+    this.props.removeAllFacetKeyValue();
+    this.props.fetchPavicsDatasets();
   }
 
   _mainComponent () {
@@ -102,105 +80,61 @@ export class SearchCatalog extends React.Component {
       mainComponent = <Loader name="facets" />;
     } else {
       mainComponent = (
-        this.props.facets.items.length === 0
-          ? <div>No Facets (yet)</div>
+        (this.props.facets.items.length === 0) ?
+          <Paper style={{ marginTop: 20 }}>
+            <List>
+              <Subheader>No facets found.</Subheader>
+            </List>
+          </Paper>
           : (
-          <div className="container">
-            <div className="row">
-              <div className="col-md-9">
-                <PanelHeader
-                  panelIsActive={this.props.panelControls[constants.PANEL_SEARCH_CATALOG].show}
-                  onClick={this._togglePanel}
-                  icon="glyphicon-search">
-                  Filter Catalogs by Facets
-                </PanelHeader>
-              </div>
-              <div className="col-md-3">
-                <DropdownButton title="Choose a facet" id="facetKey">
+          <div>
+            <Paper>
+              <div className="container">
+                <Row>
+                  <Col sm={12} md={6} lg={6} style={{float: 'right'}}>
+                    <SelectField
+                      style={{width: '100%'}}
+                      floatingLabelText="Add additional criteria"
+                      value={this.state.selectedKey}
+                      onChange={(event, index, value) => this._onAddCriteriaKey(value)}>
+                      {
+                        this.props.facets.items.map((x, i) => {
+                          return (this.state.criteriaKeys.includes(x.key))
+                            ? null
+                            : <MenuItem key={i} value={x.key} primaryText={x.key} />;
+                        })
+                      }
+                    </SelectField>
+                  </Col>
+                </Row>
+                <Row style={{marginBottom: 15}}>
                   {
-                    this.props.facets.items.map((x, i) => {
-                      return (this.recommendedKeys.includes(x.key))
-                        ? null
-                        : <MenuItem key={i} eventKey={x.key} onSelect={this._onSelectedKey}>{x.key}</MenuItem>;
+                    this.state.criteriaKeys.map((facetKey, i) => {
+                      return <CriteriaSelection
+                        key={i}
+                        criteriaName={facetKey}
+                        variables={this.props.facets.items.find((x) => {
+                          return x.key === facetKey;
+                        })}
+                        selectedFacets={this.props.selectedFacets}
+                        addFacetKeyValue={this.props.addFacetKeyValue}
+                        removeFacetKeyValue={this.props.removeFacetKeyValue}
+                        fetchPavicsDatasets={this.props.fetchPavicsDatasets}
+                        fetchEsgfDatasets={this.props.fetchEsgfDatasets} />;
                     })
                   }
-                </DropdownButton>
+                </Row>
               </div>
-            </div>
-            <div className="row">
-              {
-                this.recommendedKeys.map((facetKey, i) => {
-                  return <div className="col-md-3" key={i}>
-                    <CriteriaSelection
-                      criteriaName={facetKey}
-                      variables={this.props.facets.items.find((x) => {
-                        return x.key === facetKey;
-                      })}
-                      selectedFacets={this.props.selectedFacets}
-                      addFacetKeyValue={this.props.addFacetKeyValue}
-                      removeFacetKeyValue={this.props.removeFacetKeyValue}
-                      fetchCatalogDatasets={this.props.fetchCatalogDatasets} />
-                  </div>;
-                })
-              }
-              {
-                (this.props.currentSelectedKey.length > 0)
-                  ? (
-                  <div className="col-md-3">
-                    <CriteriaSelection
-                      criteriaName={this.props.currentSelectedKey}
-                      variables={this.props.facets.items.find((x) => {
-                        return x.key === this.props.currentSelectedKey;
-                      })}
-                      selectedFacets={this.props.selectedFacets}
-                      addFacetKeyValue={this.props.addFacetKeyValue}
-                      removeFacetKeyValue={this.props.removeFacetKeyValue}
-                      fetchCatalogDatasets={this.props.fetchCatalogDatasets} />
-                  </div>
-                )
-                  : null
-              }
-            </div>
-            <div className="row">
-              {
-                this.recommendedKeys.map((facetKey, i) => {
-                  return (this.props.selectedFacets.length)
-                    ? (
-                    <div className="col-md-3" key={i}>
-                      <label>Facets:</label>
-                      <div>
-                        {
-                          this.props.selectedFacets.map((x, i) =>
-                            x.key === facetKey
-                              ? <FacetLabel key={i + 1} facet={x} onRemoveFacet={this._onRemoveFacet} />
-                              : null
-                          )
-                        }
-                      </div>
-                    </div>
-                  )
-                    : null;
-                })
-              }
-              {
-                this.props.selectedFacets.length
-                  ? (
-                  <div className="col-md-3">
-                    <label>Facets:</label>
-                    <div>
-                      {
-                        this.props.selectedFacets.map((x, i) =>
-                          !this.recommendedKeys.includes(x.key)
-                            ? <FacetLabel key={i + 1} facet={x} onRemoveFacet={this._onRemoveFacet} />
-                            : null
-                        )
-                      }
-                    </div>
-                  </div>
-                )
-                  : null
-              }
-            </div>
+            </Paper>
+            <RaisedButton
+              onClick={this._ResetCriterias}
+              label="Reset"
+              style={{marginTop: 20}} />
+            <RaisedButton
+              disabled={true}
+              label="Save search criteria(s) (TODO)"
+              style={{marginTop: 20, marginLeft: 20}} />
+            <SearchCatalogResults {...this.props} />
           </div>
         )
       );
@@ -210,14 +144,9 @@ export class SearchCatalog extends React.Component {
 
   render () {
     return (
-      this.props.panelControls[constants.PANEL_SEARCH_CATALOG].show
-        ? (
-        <Panel>
-          {this._mainComponent()}
-          <SearchCatalogResults {...this.props} />
-        </Panel>
-      )
-        : <Panel><ToggleButton icon="glyphicon-search" onClick={this._onOpenPanel} /></Panel>
+      <div style={{ margin: 20 }}>
+        {this._mainComponent()}
+      </div>
     );
   }
 }
