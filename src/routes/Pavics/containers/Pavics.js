@@ -101,7 +101,9 @@ const mapStateToProps = (state) => {
     plotlyData: state.pavics.visualize.plotlyData,
     layer: state.pavics.visualize.layer,
     currentProjectDatasets: state.pavics.visualize.currentProjectDatasets,
-    currentVisualizedDatasetLayers: state.pavics.visualize.currentVisualizedDatasetLayers
+    currentVisualizedDatasetLayers: state.pavics.visualize.currentVisualizedDatasetLayers,
+    publicShapeFiles: state.pavics.visualize.publicShapeFiles,
+    baseMaps: state.pavics.visualize.baseMaps
   };
 };
 export default connect(mapStateToProps, mapActionCreators)(Pavics);
