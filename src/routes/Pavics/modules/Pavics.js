@@ -1,5 +1,6 @@
 import initialState from './../../../store/initialState';
 import * as constants from './../../../constants';
+import ol from 'openlayers';
 // SYNC
 const ADD_FACET_KEY_VALUE_PAIR = 'Visualize.ADD_FACET_KEY_VALUE_PAIR';
 const REMOVE_FACET_KEY_VALUE_PAIR = 'Visualize.REMOVE_FACET_KEY_VALUE_PAIR';
@@ -626,6 +627,37 @@ export function selectBasemap (basemap) {
     dispatch(setSelectedBasemap(basemap));
   };
 }
+export function fetchShapefiles () {
+  const parser = new ol.format.WMSCapabilities();
+  return dispatch => {
+    return fetch(`${__PAVICS_GEOSERVER_PATH__}/wms?request=GetCapabilities`)
+      .then(response => response.text())
+      .then(text => {
+        return parser.read(text);
+      })
+      .then(json => {
+        let shapefiles = [];
+        json.Capability.Layer.Layer.map(layer => {
+          shapefiles.push({
+            title: layer.Title,
+            wmsUrl: `${__PAVICS_GEOSERVER_PATH__}/wms`,
+            wmsParams: {
+              LAYERS: layer.Name,
+              TILED: true,
+              FORMAT: 'image/png'
+            }
+          });
+        });
+        dispatch(setShapefiles(shapefiles));
+      });
+  };
+}
+function setShapefiles (shapefiles) {
+  return {
+    type: constants.SET_SHAPEFILES,
+    publicShapeFiles: shapefiles
+  };
+}
 function setSelectedShapefile (shapefile) {
   return {
     type: constants.SET_SELECTED_SHAPEFILE,
@@ -774,6 +806,9 @@ const WORKFLOW_WIZARD_HANDLERS = {
 const VISUALIZE_HANDLERS = {
   [constants.SET_WMS_LAYER]: (state, action) => {
     return {...state, layer: action.layer};
+  },
+  [constants.SET_SHAPEFILES]: (state, action) => {
+    return {...state, publicShapeFiles: action.publicShapeFiles};
   },
   [constants.SET_SELECTED_SHAPEFILE]: (state, action) => {
     return {...state, selectedShapefile: action.shapefile};

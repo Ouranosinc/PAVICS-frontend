@@ -4,6 +4,7 @@ export default class LayerSwitcherContainer extends React.Component {
   static propTypes = {
     selectShapefile: React.PropTypes.func.isRequired,
     selectBasemap: React.PropTypes.func.isRequired,
+    fetchShapefiles: React.PropTypes.func.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
     selectedBasemap: React.PropTypes.string.isRequired,
     publicShapeFiles: React.PropTypes.array.isRequired,
@@ -22,6 +23,10 @@ export default class LayerSwitcherContainer extends React.Component {
       layerSwitcherReference: null
     };
     this.initiated = false;
+  }
+
+  componentDidMount () {
+    this.props.fetchShapefiles();
   }
 
   componentDidUpdate () {

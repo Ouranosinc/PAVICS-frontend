@@ -16,6 +16,7 @@ import PlotlyWrapper from '../../components/PlotlyWrapper';
 import * as constants from './../../constants';
 class Visualize extends React.Component {
   static propTypes = {
+    fetchShapefiles: React.PropTypes.func.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
     selectedBasemap: React.PropTypes.string.isRequired,
     selectShapefile: React.PropTypes.func.isRequired,
@@ -102,6 +103,7 @@ class Visualize extends React.Component {
             }
             <div className={this.state.mapPanelStatus[LAYER_SWITCHER_PANEL] ? classes['panel'] : classes['hidden']}>
               <LayerSwitcherContainer
+                fetchShapefiles={this.props.fetchShapefiles}
                 selectedBasemap={this.props.selectedBasemap}
                 selectedShapefile={this.props.selectedShapefile}
                 selectShapefile={this.props.selectShapefile}
