@@ -24,6 +24,8 @@ const initialState = {
     jobs: []
   },
   visualize: {
+    selectedShapefile: {},
+    selectedBasemap: '',
     publicShapeFiles: [
       {
         title: 'topp:states',

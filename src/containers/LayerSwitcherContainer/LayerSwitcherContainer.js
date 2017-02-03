@@ -2,6 +2,10 @@ import React from 'react';
 import LayerSwitcher from './../../components/LayerSwitcher';
 export default class LayerSwitcherContainer extends React.Component {
   static propTypes = {
+    selectShapefile: React.PropTypes.func.isRequired,
+    selectBasemap: React.PropTypes.func.isRequired,
+    selectedShapefile: React.PropTypes.object.isRequired,
+    selectedBasemap: React.PropTypes.string.isRequired,
     publicShapeFiles: React.PropTypes.array.isRequired,
     baseMaps: React.PropTypes.array.isRequired,
     OLComponentReference: React.PropTypes.object.isRequired
@@ -29,7 +33,7 @@ export default class LayerSwitcherContainer extends React.Component {
     }
   }
   displayShapeFile (shapeFile) {
-    console.log('displaying shape file', shapeFile);
+    this.props.selectShapefile(shapeFile);
     this.props.OLComponentReference.addTileWMSLayer(
       shapeFile.title,
       this.props.OLComponentReference.getMapOverlayList(),
@@ -38,7 +42,7 @@ export default class LayerSwitcherContainer extends React.Component {
     );
   }
   removeShapeFile (shapeFile) {
-    console.log('removing shape file', shapeFile);
+    this.props.selectShapefile({});
     let layer = this.props.OLComponentReference.getTileWMSLayer(
       shapeFile.title,
       shapeFile.wmsUrl,
@@ -49,11 +53,11 @@ export default class LayerSwitcherContainer extends React.Component {
     );
   }
   displayBaseMap (map) {
-    console.log('display base map:', map);
+    this.props.selectBasemap(map);
     this.props.OLComponentReference.addBingLayer(map, map);
   }
   removeBaseMap (map) {
-    console.log('removing base map', map);
+    this.props.selectBasemap('');
     let layer = this.props.OLComponentReference.getLayer(map);
     this.props.OLComponentReference.map.removeLayer(layer);
   }
@@ -65,6 +69,8 @@ export default class LayerSwitcherContainer extends React.Component {
   render () {
     return (
       <LayerSwitcher
+        selectedBasemap={this.props.selectedBasemap}
+        selectedShapefile={this.props.selectedShapefile}
         ref={this.setLayerSwitcherReference}
         baseMaps={this.props.baseMaps}
         publicShapeFiles={this.props.publicShapeFiles}

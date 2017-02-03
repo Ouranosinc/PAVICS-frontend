@@ -1,6 +1,5 @@
 import initialState from './../../../store/initialState';
 import * as constants from './../../../constants';
-
 // SYNC
 const ADD_FACET_KEY_VALUE_PAIR = 'Visualize.ADD_FACET_KEY_VALUE_PAIR';
 const REMOVE_FACET_KEY_VALUE_PAIR = 'Visualize.REMOVE_FACET_KEY_VALUE_PAIR';
@@ -452,7 +451,6 @@ export function fetchDataset (url) {
      ) */
   };
 }
-
 // OUR PAVICS DATASETS CATALOG 2.0
 export function fetchPavicsDatasets () {
   return function (dispatch, getState) {
@@ -474,7 +472,6 @@ export function fetchPavicsDatasets () {
       );
   };
 }
-
 // EXTERNAL ESGF CATALOG
 export function fetchEsgfDatasets () {
   return function (dispatch, getState) {
@@ -496,7 +493,6 @@ export function fetchEsgfDatasets () {
       );
   };
 }
-
 export function fetchDatasetWMSLayers (url, dataset) {
   return function (dispatch) {
     dispatch(requestDatasetWMSLayers());
@@ -531,12 +527,12 @@ export function fetchWMSLayerTimesteps (url, layer, day) {
       .then(response => response.json())
       .then(json =>
         dispatch(receiveWMSLayerTimesteps(json))
-      )
-      // TODO FIX THIS HAPPEN FOR NO REASON
-      /*.catch(error => {
-        console.log(error);
-        dispatch(receiveWMSLayerTimestepsFailure(error));
-      });*/
+      );
+    // TODO FIX THIS HAPPEN FOR NO REASON
+    /* .catch(error => {
+     console.log(error);
+     dispatch(receiveWMSLayerTimestepsFailure(error));
+     }); */
   };
 }
 function setSelectedProcess (process) {
@@ -618,6 +614,28 @@ export function getLastStep () {
 export function getNextStep () {
   return {
     type: constants.WORKFLOW_GET_NEXT_STEP
+  };
+}
+export function selectShapefile (shapefile) {
+  return dispatch => {
+    dispatch(setSelectedShapefile(shapefile));
+  };
+}
+export function selectBasemap (basemap) {
+  return dispatch => {
+    dispatch(setSelectedBasemap(basemap));
+  };
+}
+function setSelectedShapefile (shapefile) {
+  return {
+    type: constants.SET_SELECTED_SHAPEFILE,
+    shapefile: shapefile
+  };
+}
+function setSelectedBasemap (basemap) {
+  return {
+    type: constants.SET_SELECTED_BASEMAP,
+    basemap: basemap
   };
 }
 function setLayer (layer) {
@@ -756,6 +774,12 @@ const WORKFLOW_WIZARD_HANDLERS = {
 const VISUALIZE_HANDLERS = {
   [constants.SET_WMS_LAYER]: (state, action) => {
     return {...state, layer: action.layer};
+  },
+  [constants.SET_SELECTED_SHAPEFILE]: (state, action) => {
+    return {...state, selectedShapefile: action.shapefile};
+  },
+  [constants.SET_SELECTED_BASEMAP]: (state, action) => {
+    return {...state, selectedBasemap: action.basemap};
   },
   [ADD_FACET_KEY_VALUE_PAIR]: (state, action) => {
     let facets = state.selectedFacets.concat({key: action.key, value: action.value});
