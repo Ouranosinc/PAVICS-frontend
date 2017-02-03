@@ -5,8 +5,11 @@ import {Tabs, Tab} from 'material-ui/Tabs';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import FontIcon from 'material-ui/FontIcon';
 import Paper from 'material-ui/Paper';
+import ol from 'openlayers';
 export default class LayerSwitcher extends React.Component {
   static propTypes = {
+    currentVisualizedDatasetLayers: React.PropTypes.array.isRequired,
+    selectedDatasetLayer: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
     selectedBasemap: React.PropTypes.string.isRequired,
     publicShapeFiles: React.PropTypes.array.isRequired,
@@ -14,13 +17,16 @@ export default class LayerSwitcher extends React.Component {
     removeShapeFile: React.PropTypes.func.isRequired,
     setShapeFile: React.PropTypes.func.isRequired,
     removeBaseMap: React.PropTypes.func.isRequired,
-    setBaseMap: React.PropTypes.func.isRequired
+    setBaseMap: React.PropTypes.func.isRequired,
+    removeDatasetLayer: React.PropTypes.func.isRequired,
+    setDatasetLayer: React.PropTypes.func.isRequired
   };
 
   constructor () {
     super();
     this.setSelectedShapefile = this.setSelectedShapefile.bind(this);
     this.setSelectedBaseMap = this.setSelectedBaseMap.bind(this);
+    this.setSelectedDatasetLayer = this.setSelectedDatasetLayer.bind(this);
   }
 
   setSelectedShapefile (event, value) {
@@ -43,25 +49,13 @@ export default class LayerSwitcher extends React.Component {
     }
   }
 
-  makeNestedBaseMaps () {
-    let items = [];
-    this.props.baseMaps.map((map, i) => {
-      items.push(
-        <ListItem
-          primaryText={map}
-          key={i}
-          leftCheckbox={
-            <RadioButtonGroup
-              name="selectedBaseMap"
-              valueSelected={this.props.selectedBasemap}
-              onChange={this.setSelectedBaseMap}>
-              <RadioButton value={map} />
-            </RadioButtonGroup>
-          }
-        />
-      );
-    });
-    return items;
+  setSelectedDatasetLayer (event, value) {
+    if (this.props.selectedDatasetLayer === value) {
+      this.props.removeDatasetLayer(value);
+    } else {
+      this.props.removeDatasetLayer(this.props.selectedDatasetLayer);
+      this.props.setDatasetLayer(value);
+    }
   }
 
   makeShapefileList () {
@@ -100,7 +94,48 @@ export default class LayerSwitcher extends React.Component {
           initiallyOpen
           primaryTogglesNestedList
           primaryText="Bing"
-          nestedItems={this.makeNestedBaseMaps()} />
+          nestedItems={
+            this.props.baseMaps.map((map, i) => {
+              return (
+                <ListItem
+                  primaryText={map}
+                  key={i}
+                  leftCheckbox={
+                    <RadioButtonGroup
+                      name="selectedBaseMap"
+                      valueSelected={this.props.selectedBasemap}
+                      onChange={this.setSelectedBaseMap}>
+                      <RadioButton value={map} />
+                    </RadioButtonGroup>
+                  }
+                />
+              );
+            })
+          } />
+      </List>
+    );
+  }
+
+  makeDatasetsList () {
+    return (
+      <List>
+        {
+          this.props.currentVisualizedDatasetLayers.map((dataset, i) => {
+            return (
+              <ListItem
+                key={i}
+                primaryText={dataset.dataset_id}
+                leftCheckbox={
+                  <RadioButtonGroup
+                    name="selectedDatasetLayer"
+                    valueSelected={this.props.selectedDatasetLayer}
+                    onChange={this.setSelectedDatasetLayer}>
+                    <RadioButton value={dataset} />
+                  </RadioButtonGroup>
+                } />
+            );
+          })
+        }
       </List>
     );
   }
@@ -115,6 +150,7 @@ export default class LayerSwitcher extends React.Component {
               label="Datasets">
               <Paper zDepth={2}>
                 <h2>Datasets</h2>
+                {this.makeDatasetsList()}
               </Paper>
             </Tab>
             <Tab

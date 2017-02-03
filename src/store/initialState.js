@@ -41,6 +41,7 @@ const initialState = {
     selectedFacets: [],
     currentProjectDatasets: [],
     currentVisualizedDatasetLayers: [],
+    selectedDatasetLayer: {},
     selectedDatasets: {
       requestedAt: null,
       receivedAt: null,

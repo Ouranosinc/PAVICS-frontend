@@ -5,10 +5,12 @@ export default class LayerSwitcherContainer extends React.Component {
     selectShapefile: React.PropTypes.func.isRequired,
     selectBasemap: React.PropTypes.func.isRequired,
     fetchShapefiles: React.PropTypes.func.isRequired,
+    selectedDatasetLayer: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
     selectedBasemap: React.PropTypes.string.isRequired,
     publicShapeFiles: React.PropTypes.array.isRequired,
     baseMaps: React.PropTypes.array.isRequired,
+    currentVisualizedDatasetLayers: React.PropTypes.array.isRequired,
     OLComponentReference: React.PropTypes.object.isRequired
   };
 
@@ -79,9 +81,21 @@ export default class LayerSwitcherContainer extends React.Component {
     });
   }
 
+  displayDatasetLayer (dataset) {
+    console.log('setting dataset layer:', dataset);
+  }
+
+  removeDatasetLayer (dataset) {
+    console.log('removing dataset layer:', dataset);
+  }
+
   render () {
     return (
       <LayerSwitcher
+        selectedDatasetLayer={this.props.selectedDatasetLayer}
+        setDatasetLayer={this.displayDatasetLayer}
+        removeDatasetLayer={this.removeDatasetLayer}
+        currentVisualizedDatasetLayers={this.props.currentVisualizedDatasetLayers}
         selectedBasemap={this.props.selectedBasemap}
         selectedShapefile={this.props.selectedShapefile}
         ref={this.setLayerSwitcherReference}
