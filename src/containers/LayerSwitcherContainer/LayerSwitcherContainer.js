@@ -44,7 +44,6 @@ export default class LayerSwitcherContainer extends React.Component {
     this.props.selectShapefile(shapeFile);
     this.props.OLComponentReference.addTileWMSLayer(
       shapeFile.title,
-      this.props.OLComponentReference.getMapOverlayList(),
       shapeFile.wmsUrl,
       shapeFile.wmsParams
     );
