@@ -10,6 +10,7 @@ export default class LayerSwitcherContainer extends React.Component {
     baseMaps: React.PropTypes.array.isRequired,
     OLComponentReference: React.PropTypes.object.isRequired
   };
+
   constructor () {
     super();
     this.displayShapeFile = this.displayShapeFile.bind(this);
@@ -22,16 +23,17 @@ export default class LayerSwitcherContainer extends React.Component {
     };
     this.initiated = false;
   }
+
   componentDidUpdate () {
     if (
       this.props.OLComponentReference !== {} &&
-      this.state.layerSwitcherReference !== null &&
-      !this.initiated
+      this.state.layerSwitcherReference !== null && !this.initiated
     ) {
       this.state.layerSwitcherReference.setSelectedBaseMap(null, 'Aerial');
       this.initiated = true;
     }
   }
+
   displayShapeFile (shapeFile) {
     this.props.OLComponentReference.layers['selectedRegions'].getSource().clear();
     this.props.selectShapefile(shapeFile);
@@ -42,6 +44,7 @@ export default class LayerSwitcherContainer extends React.Component {
       shapeFile.wmsParams
     );
   }
+
   removeShapeFile (shapeFile) {
     this.props.OLComponentReference.layers['selectedRegions'].getSource().clear();
     this.props.selectShapefile({});
@@ -54,20 +57,24 @@ export default class LayerSwitcherContainer extends React.Component {
       layer
     );
   }
+
   displayBaseMap (map) {
     this.props.selectBasemap(map);
     this.props.OLComponentReference.addBingLayer(map, map);
   }
+
   removeBaseMap (map) {
     this.props.selectBasemap('');
     let layer = this.props.OLComponentReference.getLayer(map);
     this.props.OLComponentReference.map.removeLayer(layer);
   }
+
   setLayerSwitcherReference (ref) {
     this.setState({
       layerSwitcherReference: ref
     });
   }
+
   render () {
     return (
       <LayerSwitcher
