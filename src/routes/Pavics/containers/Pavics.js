@@ -31,7 +31,7 @@ class Pavics extends React.Component {
         );
       case constants.PLATFORM_SECTION_EXPERIENCE_MANAGEMENT:
         return (
-          <ExperienceManagement />
+          <ExperienceManagement {...this.props} />
         );
       case constants.PLATFORM_SECTION_WORKFLOWS:
         return (
@@ -103,7 +103,9 @@ const mapStateToProps = (state) => {
     publicShapeFiles: state.pavics.visualize.publicShapeFiles,
     baseMaps: state.pavics.visualize.baseMaps,
     selectedShapefile: state.pavics.visualize.selectedShapefile,
-    selectedBasemap: state.pavics.visualize.selectedBasemap
+    selectedBasemap: state.pavics.visualize.selectedBasemap,
+    currentProjectDatasets: state.pavics.visualize.currentProjectDatasets,
+    currentVisualizedDatasetLayers: state.pavics.visualize.currentVisualizedDatasetLayers
   };
 };
 export default connect(mapStateToProps, mapActionCreators)(Pavics);

@@ -1,10 +1,6 @@
 import React from 'react';
-import {connect} from 'react-redux';
-import classes from './SearchCatalogResults.scss';
-import * as constants from './../../constants';
 import Loader from '../../components/Loader';
-import { Button, Glyphicon } from 'react-bootstrap';
-
+import {Alert} from 'react-bootstrap';
 import {List, ListItem} from 'material-ui/List';
 import Checkbox from 'material-ui/Checkbox';
 import Subheader from 'material-ui/Subheader';
@@ -22,6 +18,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 export class SearchCatalogResults extends React.Component {
   static propTypes = {
     clickTogglePanel: React.PropTypes.func.isRequired,
+    addDatasetsToProject: React.PropTypes.func.isRequired,
     closeDatasetDetails: React.PropTypes.func.isRequired,
     openDatasetDetails: React.PropTypes.func.isRequired,
     fetchDataset: React.PropTypes.func.isRequired,
@@ -29,10 +26,9 @@ export class SearchCatalogResults extends React.Component {
     esgfDatasets: React.PropTypes.object.isRequired
   }
 
-  checkedDatasets = [];
-
   state = {
-    open: false,
+    checkedDatasets: [],
+    confirm: false
   };
 
   constructor (props) {
@@ -42,23 +38,37 @@ export class SearchCatalogResults extends React.Component {
   }
 
   _onCheckedDataset (event) {
-    let dataset = this.props.pavicsDatasets.items.find( x => x.dataset_id === event.target.value);
-    let index = this.props.pavicsDatasets.items.indexOf( x => x.dataset_id === event.target.value);
+    let dataset = this.props.pavicsDatasets.items.find(x => x.dataset_id === event.target.value);
+    let index = this.state.checkedDatasets.findIndex(x => x.dataset_id === event.target.value);
+    let oldDatasets = this.state.checkedDatasets;
     if (dataset) {
       if (event.target.checked) {
         if (index === -1) {
-          this.checkedDatasets.push(dataset); // Preventing duplicates
+          this.setState({
+            checkedDatasets: oldDatasets.concat([dataset]),
+            confirm: false
+          });
         }
       } else {
-        if (index < -1) {
-          this.checkedDatasets.splice(index, 1);
+        if (index > -1) {
+          oldDatasets.splice(index, 1);
+          this.setState({
+            checkedDatasets: oldDatasets
+          });
         }
+        this.setState({
+          confirm: false
+        });
       }
     }
   }
 
-  _onAddCheckedDatasetsToProject (dataset) {
-    alert(dataset);
+  _onAddCheckedDatasetsToProject () {
+    this.props.addDatasetsToProject(this.state.checkedDatasets);
+    this.setState({
+      checkedDatasets: [],
+      confirm: true
+    });
   }
 
   render () {
@@ -71,6 +81,14 @@ export class SearchCatalogResults extends React.Component {
         </Paper>;
     } else {
       if (this.props.pavicsDatasets.items.length) {
+        let confirmation = null;
+        if (this.state.confirm) {
+          confirmation =
+            <Alert bsStyle="info" style={{marginTop: 20}}>
+              Datasets added to current project with success.
+            </Alert>;
+        }
+
         mainComponent =
           <div>
             <Paper style={{ marginTop: 20 }}>
@@ -108,16 +126,21 @@ export class SearchCatalogResults extends React.Component {
                           tooltipPosition="bottom-left">
                           <MoreVertIcon color={grey400} />
                         </IconButton>}>
-                        <MenuItem primaryText="Add to favorites (TODO)" leftIcon={<ShoppingCart />} />
-                        <MenuItem primaryText="Share (TODO)" leftIcon={<PersonAdd />} />
-                        <MenuItem primaryText="Download" leftIcon={<Download href={x.urls[0]} />} />
+                        <MenuItem primaryText="Add to favorites (TODO)" onTouchTap={(event) => alert('add to favorites')} leftIcon={<ShoppingCart />} />
+                        <MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share')} leftIcon={<PersonAdd />} />
+                        <MenuItem primaryText="Download (TODO?)" onTouchTap={(event) => alert('download')} leftIcon={<Download />} />
                       </IconMenu>
                     }
                   />
                 )}
               </List>
             </Paper>
-            <RaisedButton label="Add selection(s) to project" style={{marginTop: '20px'}} />
+            <RaisedButton
+              disabled={!this.state.checkedDatasets.length}
+              onClick={this._onAddCheckedDatasetsToProject}
+              label="Add selection(s) to project"
+              style={{marginTop: '20px'}} />
+            {confirmation}
           </div>;
       } else {
         if (this.props.pavicsDatasets.receivedAt) {

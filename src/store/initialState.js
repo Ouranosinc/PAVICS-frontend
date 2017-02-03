@@ -39,6 +39,8 @@ const initialState = {
     currentDateTime: '1900-01-01T00:00:00.000Z',
     loadedWmsDatasets: [],
     selectedFacets: [],
+    currentProjectDatasets: [],
+    currentVisualizedDatasetLayers: [],
     selectedDatasets: {
       requestedAt: null,
       receivedAt: null,

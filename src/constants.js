@@ -30,7 +30,3 @@ export const PANEL_DATASET_WMS_LAYERS = 'Visualize.DatasetWMSLayers';
 export const PANEL_CLIMATE_INDICATORS = 'Visualize.ClimateIndicators';
 export const PANEL_PLOTLY = 'Visualize.Plotly';
 export const DEFAULT_SELECTED_KEY = 'frequency';
-export const SET_WMS_LAYER = 'Visualize.SET_WMS_LAYER';
-export const SET_SHAPEFILES = 'Visualize.SET_SHAPEFILES';
-export const SET_SELECTED_SHAPEFILE = 'Visualize.SET_SELECTED_SHAPEFILE';
-export const SET_SELECTED_BASEMAP = 'Visualize.SET_SELECTED_BASEMAP';
