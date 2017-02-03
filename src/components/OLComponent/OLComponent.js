@@ -13,6 +13,7 @@ const INDEX_BASE_MAP = -10;
 const INDEX_SELECTED_REGIONS = 1000;
 class OLComponent extends React.Component {
   static propTypes = {
+    selectedShapefile: React.PropTypes.object.isRequired,
     capabilities: React.PropTypes.object,
     dataset: React.PropTypes.object,
     loadedWmsDatasets: React.PropTypes.array.isRequired,
@@ -294,7 +295,7 @@ class OLComponent extends React.Component {
     }
     let extent = [minX, minY, maxX, maxY];
     let url = __PAVICS_GEOSERVER_PATH__ + '/wfs?service=WFS&' +
-      'version=1.1.0&request=GetFeature&typename=WATERSHEDS:BV_N1_S&' +
+      `version=1.1.0&request=GetFeature&typename=${this.props.selectedShapefile.wmsParams.LAYERS}&` +
       'outputFormat=application/json&srsname=EPSG:3857&' +
       'bbox=' + extent.join(',') + ',EPSG:3857';
     fetch(url)

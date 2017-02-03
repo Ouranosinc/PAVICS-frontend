@@ -33,6 +33,7 @@ export default class LayerSwitcherContainer extends React.Component {
     }
   }
   displayShapeFile (shapeFile) {
+    this.props.OLComponentReference.layers['selectedRegions'].getSource().clear();
     this.props.selectShapefile(shapeFile);
     this.props.OLComponentReference.addTileWMSLayer(
       shapeFile.title,
@@ -42,6 +43,7 @@ export default class LayerSwitcherContainer extends React.Component {
     );
   }
   removeShapeFile (shapeFile) {
+    this.props.OLComponentReference.layers['selectedRegions'].getSource().clear();
     this.props.selectShapefile({});
     let layer = this.props.OLComponentReference.getTileWMSLayer(
       shapeFile.title,
