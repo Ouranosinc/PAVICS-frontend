@@ -19,7 +19,8 @@ export default class LayerSwitcher extends React.Component {
     removeBaseMap: React.PropTypes.func.isRequired,
     setBaseMap: React.PropTypes.func.isRequired,
     removeDatasetLayer: React.PropTypes.func.isRequired,
-    setDatasetLayer: React.PropTypes.func.isRequired
+    setDatasetLayer: React.PropTypes.func.isRequired,
+    selectBasemap: React.PropTypes.func.isRequired
   };
 
   constructor () {
@@ -41,12 +42,7 @@ export default class LayerSwitcher extends React.Component {
   }
 
   setSelectedBaseMap (event, value) {
-    if (this.props.selectedBasemap === value) {
-      this.props.removeBaseMap(value);
-    } else {
-      this.props.removeBaseMap(this.props.selectedBasemap);
-      this.props.setBaseMap(value);
-    }
+    this.props.selectBasemap(value);
   }
 
   setSelectedDatasetLayer (event, value) {

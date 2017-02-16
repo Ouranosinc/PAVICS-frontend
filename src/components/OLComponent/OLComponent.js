@@ -12,7 +12,8 @@ class OLComponent extends React.Component {
     capabilities: React.PropTypes.object,
     dataset: React.PropTypes.object,
     loadedWmsDatasets: React.PropTypes.array.isRequired,
-    layer: React.PropTypes.object.isRequired
+    layer: React.PropTypes.object.isRequired,
+    selectedBasemap: React.PropTypes.string.isRequired
   };
 
   constructor (props) {
@@ -269,6 +270,12 @@ class OLComponent extends React.Component {
   }
 
   componentDidUpdate (prevProps, prevState) {
+    if (prevProps.selectedBasemap !== this.props.selectedBasemap) {
+      console.log('change base map:', this.props.selectedBasemap);
+      let layer = this.getLayer(prevProps.selectedBasemap);
+      this.map.removeLayer(layer);
+      this.addBingLayer(this.props.selectedBasemap, this.props.selectedBasemap);
+    }
     if (this.props.layer && this.props.layer.title) {
       let layer = this.props.layer;
       console.log('making wms layer', layer);

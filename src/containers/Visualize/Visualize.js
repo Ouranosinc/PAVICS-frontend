@@ -11,7 +11,7 @@ import {
   TIME_SLIDER_PANEL
 } from '../../components/PieMenu/PieMenu';
 import TimeSlider from '../../containers/TimeSlider';
-import LayerSwitcherContainer from '../../Containers/LayerSwitcherContainer';
+import LayerSwitcherContainer from '../../containers/LayerSwitcherContainer';
 import PlotlyWrapper from '../../components/PlotlyWrapper';
 import * as constants from './../../constants';
 class Visualize extends React.Component {

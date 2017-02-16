@@ -17,9 +17,7 @@ export default class LayerSwitcherContainer extends React.Component {
   constructor () {
     super();
     this.displayShapeFile = this.displayShapeFile.bind(this);
-    this.displayBaseMap = this.displayBaseMap.bind(this);
     this.removeShapeFile = this.removeShapeFile.bind(this);
-    this.removeBaseMap = this.removeBaseMap.bind(this);
     this.setLayerSwitcherReference = this.setLayerSwitcherReference.bind(this);
     this.state = {
       layerSwitcherReference: null
@@ -64,17 +62,6 @@ export default class LayerSwitcherContainer extends React.Component {
     );
   }
 
-  displayBaseMap (map) {
-    this.props.selectBasemap(map);
-    this.props.OLComponentReference.addBingLayer(map, map);
-  }
-
-  removeBaseMap (map) {
-    this.props.selectBasemap('');
-    let layer = this.props.OLComponentReference.getLayer(map);
-    this.props.OLComponentReference.map.removeLayer(layer);
-  }
-
   setLayerSwitcherReference (ref) {
     this.setState({
       layerSwitcherReference: ref
@@ -92,6 +79,7 @@ export default class LayerSwitcherContainer extends React.Component {
   render () {
     return (
       <LayerSwitcher
+        selectBasemap={this.props.selectBasemap}
         selectedDatasetLayer={this.props.selectedDatasetLayer}
         setDatasetLayer={this.displayDatasetLayer}
         removeDatasetLayer={this.removeDatasetLayer}
