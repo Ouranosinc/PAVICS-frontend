@@ -276,6 +276,24 @@ class OLComponent extends React.Component {
       this.map.removeLayer(layer);
       this.addBingLayer(this.props.selectedBasemap, this.props.selectedBasemap);
     }
+    if (prevProps.selectedShapefile !== this.props.selectedShapefile) {
+      let shapefile = this.props.selectedShapefile;
+      console.log('change shapefile:', shapefile);
+      this.layers['selectedRegions'].getSource().clear();
+      let layer = this.getTileWMSLayer(
+        prevProps.selectedShapefile.title,
+        prevProps.selectedShapefile.wmsUrl,
+        prevProps.selectedShapefile.wmsParams
+      );
+      this.map.removeLayer(
+        layer
+      );
+      this.addTileWMSLayer(
+        shapefile.title,
+        shapefile.wmsUrl,
+        shapefile.wmsParams
+      );
+    }
     if (this.props.layer && this.props.layer.title) {
       let layer = this.props.layer;
       console.log('making wms layer', layer);

@@ -102,6 +102,7 @@ const mapStateToProps = (state) => {
     layer: state.pavics.visualize.layer,
     publicShapeFiles: state.pavics.visualize.publicShapeFiles,
     baseMaps: state.pavics.visualize.baseMaps,
+    selectedDatasetLayer: state.pavics.visualize.selectedDatasetLayer,
     selectedShapefile: state.pavics.visualize.selectedShapefile,
     selectedBasemap: state.pavics.visualize.selectedBasemap,
     currentProjectDatasets: state.pavics.visualize.currentProjectDatasets,

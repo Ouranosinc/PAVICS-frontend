@@ -11,11 +11,13 @@ import {
   TIME_SLIDER_PANEL
 } from '../../components/PieMenu/PieMenu';
 import TimeSlider from '../../containers/TimeSlider';
-import LayerSwitcherContainer from '../../containers/LayerSwitcherContainer';
+import LayerSwitcher from '../../components/LayerSwitcher';
 import PlotlyWrapper from '../../components/PlotlyWrapper';
 import * as constants from './../../constants';
 class Visualize extends React.Component {
   static propTypes = {
+    fetchWMSLayerDetails: React.PropTypes.func.isRequired,
+    selectLoadWms: React.PropTypes.func.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
     currentVisualizedDatasetLayers: React.PropTypes.array.isRequired,
     fetchShapefiles: React.PropTypes.func.isRequired,
@@ -29,7 +31,7 @@ class Visualize extends React.Component {
     plotlyData: React.PropTypes.object.isRequired,
     publicShapeFiles: React.PropTypes.array.isRequired,
     baseMaps: React.PropTypes.array.isRequired
-  }
+  };
 
   constructor (props) {
     super(props);
@@ -104,17 +106,19 @@ class Visualize extends React.Component {
               </div> : null
             }
             <div className={this.state.mapPanelStatus[LAYER_SWITCHER_PANEL] ? classes['panel'] : classes['hidden']}>
-              <LayerSwitcherContainer
-                selectedDatasetLayer={this.props.selectedDatasetLayer}
-                currentVisualizedDatasetLayers={this.props.currentVisualizedDatasetLayers}
+              <LayerSwitcher
                 fetchShapefiles={this.props.fetchShapefiles}
-                selectedBasemap={this.props.selectedBasemap}
-                selectedShapefile={this.props.selectedShapefile}
+                openWmsLayer={this.props.openWmsLayer}
+                fetchWMSLayerDetails={this.props.fetchWMSLayerDetails}
+                selectLoadWms={this.props.selectLoadWms}
                 selectShapefile={this.props.selectShapefile}
                 selectBasemap={this.props.selectBasemap}
-                OLComponentReference={this.state.OLComponentReference}
-                baseMaps={this.props.baseMaps}
-                publicShapeFiles={this.props.publicShapeFiles} />
+                currentVisualizedDatasetLayers={this.props.currentVisualizedDatasetLayers}
+                selectedDatasetLayer={this.props.selectedDatasetLayer}
+                selectedShapefile={this.props.selectedShapefile}
+                selectedBasemap={this.props.selectedBasemap}
+                publicShapeFiles={this.props.publicShapeFiles}
+                baseMaps={this.props.baseMaps} />
             </div>
           </div>
         </div>

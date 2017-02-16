@@ -5,22 +5,20 @@ import {Tabs, Tab} from 'material-ui/Tabs';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import FontIcon from 'material-ui/FontIcon';
 import Paper from 'material-ui/Paper';
-import ol from 'openlayers';
 export default class LayerSwitcher extends React.Component {
   static propTypes = {
+    fetchShapefiles: React.PropTypes.func.isRequired,
+    openWmsLayer: React.PropTypes.func.isRequired,
+    fetchWMSLayerDetails: React.PropTypes.func.isRequired,
+    selectLoadWms: React.PropTypes.func.isRequired,
+    selectShapefile: React.PropTypes.func.isRequired,
+    selectBasemap: React.PropTypes.func.isRequired,
     currentVisualizedDatasetLayers: React.PropTypes.array.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
     selectedBasemap: React.PropTypes.string.isRequired,
     publicShapeFiles: React.PropTypes.array.isRequired,
-    baseMaps: React.PropTypes.array.isRequired,
-    removeShapeFile: React.PropTypes.func.isRequired,
-    setShapeFile: React.PropTypes.func.isRequired,
-    removeBaseMap: React.PropTypes.func.isRequired,
-    setBaseMap: React.PropTypes.func.isRequired,
-    removeDatasetLayer: React.PropTypes.func.isRequired,
-    setDatasetLayer: React.PropTypes.func.isRequired,
-    selectBasemap: React.PropTypes.func.isRequired
+    baseMaps: React.PropTypes.array.isRequired
   };
 
   constructor () {
@@ -30,15 +28,13 @@ export default class LayerSwitcher extends React.Component {
     this.setSelectedDatasetLayer = this.setSelectedDatasetLayer.bind(this);
   }
 
+  componentDidMount() {
+    this.props.fetchShapefiles();
+    this.setSelectedBaseMap(null, 'Aerial');
+  }
+
   setSelectedShapefile (event, value) {
-    if (this.props.selectedShapefile === value) {
-      this.props.removeShapeFile(value);
-    } else {
-      if (this.props.selectedShapefile !== {}) {
-        this.props.removeShapeFile(this.props.selectedShapefile);
-      }
-      this.props.setShapeFile(value);
-    }
+    this.props.selectShapefile(value);
   }
 
   setSelectedBaseMap (event, value) {
@@ -46,12 +42,15 @@ export default class LayerSwitcher extends React.Component {
   }
 
   setSelectedDatasetLayer (event, value) {
-    if (this.props.selectedDatasetLayer === value) {
-      this.props.removeDatasetLayer(value);
-    } else {
-      this.props.removeDatasetLayer(this.props.selectedDatasetLayer);
-      this.props.setDatasetLayer(value);
-    }
+    let url = value.wms_url;
+    let index = url.indexOf('DATASET=');
+    let dataset = url.substr(index + 8);
+    let layer = `${dataset}/${value.variable[0]}`;
+    let date = '2006-01-01T00:00:00.000Z';
+    let wmsURL = 'http://outarde.crim.ca:8080/ncWMS2/';
+    this.props.openWmsLayer(layer);
+    this.props.fetchWMSLayerDetails(wmsURL, layer);
+    this.props.selectLoadWms(wmsURL, layer, date, '', 'default-scalar/div-RdYlBu', 0.4);
   }
 
   makeShapefileList () {
