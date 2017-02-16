@@ -2,17 +2,13 @@ import React from 'react';
 import classes from './OLComponent.scss';
 import ol from 'openlayers';
 import Dialog from 'material-ui/Dialog';
-// _ol3-layerswitcher.js needs ol as global (...)
-window.ol = ol;
-require('ol3-layerswitcher/src/ol3-layerswitcher.js');
-require('openlayers/css/ol.css');
-require('ol3-layerswitcher/src/ol3-layerswitcher.css');
 // Couldn't figure out the bug when importing inner component css file but it works from node_modules
 let G_BING_API_KEY = 'AtXX65CBBfZXBxm6oMyf_5idMAMI7W6a5GuZ5acVcrYi6lCQayiiBz7_aMHB7JR7';
 const INDEX_BASE_MAP = -10;
 const INDEX_SELECTED_REGIONS = 1000;
 class OLComponent extends React.Component {
   static propTypes = {
+    selectedShapefile: React.PropTypes.object.isRequired,
     capabilities: React.PropTypes.object,
     dataset: React.PropTypes.object,
     loadedWmsDatasets: React.PropTypes.array.isRequired,
@@ -24,8 +20,6 @@ class OLComponent extends React.Component {
     this.layersCount = 0;
     this.layers = [];
     this.map = null;
-    this.baseLayers = new ol.layer.Group({'title': 'Base maps', 'opacity': 1.0, 'visible': true, 'zIndex': 0});
-    this.overlayLayers = new ol.layer.Group({'title': 'Overlays', 'opacity': 1.0, 'visible': true, 'zIndex': 1});
     this.view = null;
     this.tmpLayer = null;
     this.state = {
@@ -34,27 +28,6 @@ class OLComponent extends React.Component {
     };
     this.handleMapClick = this.handleMapClick.bind(this);
     this.handleClose = this.handleClose.bind(this);
-  }
-
-  // Returns base layers list
-  getMapBaseLayersList () {
-    if (this.baseLayers != null) {
-      return this.baseLayers.getLayers();
-    }
-    return [];
-  }
-
-  // Returns overlay layers list
-  getMapOverlayList () {
-    if (this.overlayLayers != null) {
-      return this.overlayLayers.getLayers();
-    }
-    return [];
-  }
-
-  // Add backgrounnd layer (use once)
-  initBackgroundLayer () {
-    // this.addBingLayer('Aerial', this.getMapBaseLayersList(), 'Aerial');
   }
 
   removeLayer (layers, title) {
@@ -77,7 +50,7 @@ class OLComponent extends React.Component {
    @param extent region extent to load
    @param serverType Server's type
    */
-  addTileWMSLayer (title, layers, wmsUrl, wmsParams, extent, serverType, visible = true) {
+  addTileWMSLayer (title, wmsUrl, wmsParams, extent, serverType, visible = true) {
     let layer = this.getTileWMSLayer(
       title,
       wmsUrl,
@@ -190,60 +163,13 @@ class OLComponent extends React.Component {
       center: [-10997148, 8569099],
       zoom: 4
     });
-    let map = new ol.Map({
+    this.map = new ol.Map({
       controls: [],
-      layers: [this.baseLayers, this.overlayLayers],
+      layers: [],
       target: 'map',
       renderer: 'canvas',
       view: this.view
     });
-    this.map = map;
-  }
-
-  /** Returns view resolution */
-  getCurrentResolution () {
-    if (this.view != null) {
-      return this.view.getResolution();
-    }
-    return -1;
-  }
-
-  /** Sets view resolution */
-  setCurrentResolution (resolution) {
-    if (this.view != null) {
-      this.view.setResolution(resolution);
-    }
-  }
-
-  /** Returns current view center */
-  getCurrentCenter () {
-    if (this.view != null) {
-      return this.view.getCenter();
-    }
-    return [];
-  }
-
-  /** Sets current view center */
-  setCurrentCenter (center) {
-    if (this.view != null) {
-      this.view.setCenter(center);
-    }
-    return [];
-  }
-
-  /** Returns current projection */
-  getCurrentProjection () {
-    if (this.view != null) {
-      return this.view.getProjection();
-    }
-    return '';
-  }
-
-  /** Sets current projection */
-  setCurrentProjection (epsgString) {
-    if (this.view != null) {
-      this.view.setProjection(epsgString);
-    }
   }
 
   createVectorLayer (nameId) {
@@ -294,7 +220,7 @@ class OLComponent extends React.Component {
     }
     let extent = [minX, minY, maxX, maxY];
     let url = __PAVICS_GEOSERVER_PATH__ + '/wfs?service=WFS&' +
-      'version=1.1.0&request=GetFeature&typename=WATERSHEDS:BV_N1_S&' +
+      `version=1.1.0&request=GetFeature&typename=${this.props.selectedShapefile.wmsParams.LAYERS}&` +
       'outputFormat=application/json&srsname=EPSG:3857&' +
       'bbox=' + extent.join(',') + ',EPSG:3857';
     fetch(url)
@@ -316,7 +242,6 @@ class OLComponent extends React.Component {
   }
 
   componentDidMount () {
-    this.initBackgroundLayer();
     this.initMap();
     this.map.addEventListener('click', this.handleMapClick);
     let layer = this.createVectorLayer('selectedRegions');
@@ -370,7 +295,7 @@ class OLComponent extends React.Component {
         // this.tmpLayer.setVisible(false)
         this.map.removeLayer(this.tmpLayer);
       }
-      this.tmpLayer = this.addTileWMSLayer(wmsName, this.getMapOverlayList(), wmsUrl, wmsParams);
+      this.tmpLayer = this.addTileWMSLayer(wmsName, wmsUrl, wmsParams);
       this.layersCount = this.props.loadedWmsDatasets.length;
     }
   }

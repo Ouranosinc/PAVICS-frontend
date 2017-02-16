@@ -11,11 +11,18 @@ import {
   TIME_SLIDER_PANEL
 } from '../../components/PieMenu/PieMenu';
 import TimeSlider from '../../containers/TimeSlider';
-import LayerSwitcherContainer from '../../Containers/LayerSwitcherContainer';
+import LayerSwitcherContainer from '../../containers/LayerSwitcherContainer';
 import PlotlyWrapper from '../../components/PlotlyWrapper';
 import * as constants from './../../constants';
 class Visualize extends React.Component {
   static propTypes = {
+    selectedDatasetLayer: React.PropTypes.object.isRequired,
+    currentVisualizedDatasetLayers: React.PropTypes.array.isRequired,
+    fetchShapefiles: React.PropTypes.func.isRequired,
+    selectedShapefile: React.PropTypes.object.isRequired,
+    selectedBasemap: React.PropTypes.string.isRequired,
+    selectShapefile: React.PropTypes.func.isRequired,
+    selectBasemap: React.PropTypes.func.isRequired,
     fetchFacets: React.PropTypes.func.isRequired,
     fetchPlotlyData: React.PropTypes.func.isRequired,
     panelControls: React.PropTypes.object.isRequired,
@@ -98,6 +105,13 @@ class Visualize extends React.Component {
             }
             <div className={this.state.mapPanelStatus[LAYER_SWITCHER_PANEL] ? classes['panel'] : classes['hidden']}>
               <LayerSwitcherContainer
+                selectedDatasetLayer={this.props.selectedDatasetLayer}
+                currentVisualizedDatasetLayers={this.props.currentVisualizedDatasetLayers}
+                fetchShapefiles={this.props.fetchShapefiles}
+                selectedBasemap={this.props.selectedBasemap}
+                selectedShapefile={this.props.selectedShapefile}
+                selectShapefile={this.props.selectShapefile}
+                selectBasemap={this.props.selectBasemap}
                 OLComponentReference={this.state.OLComponentReference}
                 baseMaps={this.props.baseMaps}
                 publicShapeFiles={this.props.publicShapeFiles} />

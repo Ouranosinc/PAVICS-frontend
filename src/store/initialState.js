@@ -24,61 +24,9 @@ const initialState = {
     jobs: []
   },
   visualize: {
-    publicShapeFiles: [
-      {
-        title: 'topp:states',
-        wmsUrl: 'http://demo.boundlessgeo.com/geoserver/wms',
-        wmsParams: {
-          LAYERS: 'topp:states',
-          TILED: true
-        }
-      },
-      {
-        title: 'WATERSHEDS:BV_N1_S',
-        wmsUrl: 'http://outarde.crim.ca:8087/geoserver/wms',
-        wmsParams: {
-          LAYERS: 'WATERSHEDS:BV_N1_S',
-          TILED: true,
-          FORMAT: 'image/png'
-        }
-      },
-      {
-        title: 'WATERSHEDS:BV_N2_S',
-        wmsUrl: 'http://outarde.crim.ca:8087/geoserver/wms',
-        wmsParams: {
-          LAYERS: 'WATERSHEDS:BV_N2_S',
-          TILED: true,
-          FORMAT: 'image/png'
-        }
-      },
-      {
-        title: 'WATERSHEDS:BV_N3_S',
-        wmsUrl: 'http://outarde.crim.ca:8087/geoserver/wms',
-        wmsParams: {
-          LAYERS: 'WATERSHEDS:BV_N3_S',
-          TILED: true,
-          FORMAT: 'image/png'
-        }
-      },
-      {
-        title: 'ADMINBOUNDARIES:canada_admin_boundaries',
-        wmsUrl: 'http://outarde.crim.ca:8087/geoserver/wms',
-        wmsParams: {
-          LAYERS: 'ADMINBOUNDARIES:canada_admin_boundaries',
-          TILED: true,
-          FORMAT: 'image/png'
-        }
-      },
-      {
-        title: 'opengeo:countries',
-        wmsUrl: 'http://outarde.crim.ca:8087/geoserver/wms',
-        wmsParams: {
-          LAYERS: 'opengeo:countries',
-          TILED: true,
-          FORMAT: 'image/png'
-        }
-      }
-    ],
+    selectedShapefile: {},
+    selectedBasemap: '',
+    publicShapeFiles: [],
     baseMaps: [
       'Aerial',
       'Road',
@@ -93,6 +41,7 @@ const initialState = {
     selectedFacets: [],
     currentProjectDatasets: [],
     currentVisualizedDatasetLayers: [],
+    selectedDatasetLayer: {},
     selectedDatasets: {
       requestedAt: null,
       receivedAt: null,

@@ -28,6 +28,7 @@ const config = {
   pavics_solr_path: process.env.PAVICS_SOLR_PATH || 'http://hirondelle.crim.ca:8091',
   pavics_pywps_path: 'http://hirondelle.crim.ca:8086/pywps?service=WPS&request=execute&version=1.0.0&identifier=pavicsearch&DataInputs=',
   pavics_wpsconsumer_search_path: serverURL + '/wps/pavicsearch',
+  pavics_phoenix_path: process.env.PAVICS_PHOENIX_PATH || 'https://outarde.crim.ca:8443',
   pavics_geoserver_path: process.env.PAVICS_GEOSERVER_PATH || 'http://outarde.crim.ca:8087/geoserver',
   // ----------------------------------
   // Project Structure

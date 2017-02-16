@@ -1,7 +1,11 @@
 import initialState from './../../../store/initialState';
 import * as constants from './../../../constants';
-
+import ol from 'openlayers';
 // SYNC
+const SET_WMS_LAYER = 'Visualize.SET_WMS_LAYER';
+const SET_SHAPEFILES = 'Visualize.SET_SHAPEFILES';
+const SET_SELECTED_SHAPEFILE = 'Visualize.SET_SELECTED_SHAPEFILE';
+const SET_SELECTED_BASEMAP = 'Visualize.SET_SELECTED_BASEMAP';
 const ADD_DATASET_LAYERS_TO_VISUALIZE = 'Visualize.ADD_DATASET_LAYERS_TO_VISUALIZE';
 const ADD_DATASETS_TO_PROJECTS = 'Visualize.ADD_DATASETS_TO_PROJECTS';
 const ADD_FACET_KEY_VALUE_PAIR = 'Visualize.ADD_FACET_KEY_VALUE_PAIR';
@@ -472,7 +476,6 @@ export function fetchDataset (url) {
      ) */
   };
 }
-
 // OUR PAVICS DATASETS CATALOG 2.0
 export function fetchPavicsDatasets () {
   return function (dispatch, getState) {
@@ -494,7 +497,6 @@ export function fetchPavicsDatasets () {
       );
   };
 }
-
 // EXTERNAL ESGF CATALOG
 export function fetchEsgfDatasets () {
   return function (dispatch, getState) {
@@ -516,7 +518,6 @@ export function fetchEsgfDatasets () {
       );
   };
 }
-
 export function fetchDatasetWMSLayers (url, dataset) {
   return function (dispatch) {
     dispatch(requestDatasetWMSLayers());
@@ -551,12 +552,12 @@ export function fetchWMSLayerTimesteps (url, layer, day) {
       .then(response => response.json())
       .then(json =>
         dispatch(receiveWMSLayerTimesteps(json))
-      )
-      // TODO FIX THIS HAPPEN FOR NO REASON
-      /*.catch(error => {
-        console.log(error);
-        dispatch(receiveWMSLayerTimestepsFailure(error));
-      });*/
+      );
+    // TODO FIX THIS HAPPEN FOR NO REASON
+    /* .catch(error => {
+     console.log(error);
+     dispatch(receiveWMSLayerTimestepsFailure(error));
+     }); */
   };
 }
 function setSelectedProcess (process) {
@@ -640,9 +641,62 @@ export function getNextStep () {
     type: constants.WORKFLOW_GET_NEXT_STEP
   };
 }
+export function selectShapefile (shapefile) {
+  return dispatch => {
+    dispatch(setSelectedShapefile(shapefile));
+  };
+}
+export function selectBasemap (basemap) {
+  return dispatch => {
+    dispatch(setSelectedBasemap(basemap));
+  };
+}
+export function fetchShapefiles () {
+  const parser = new ol.format.WMSCapabilities();
+  return dispatch => {
+    return fetch(`${__PAVICS_GEOSERVER_PATH__}/wms?request=GetCapabilities`)
+      .then(response => response.text())
+      .then(text => {
+        return parser.read(text);
+      })
+      .then(json => {
+        let shapefiles = [];
+        json.Capability.Layer.Layer.map(layer => {
+          shapefiles.push({
+            title: layer.Title,
+            wmsUrl: `${__PAVICS_GEOSERVER_PATH__}/wms`,
+            wmsParams: {
+              LAYERS: layer.Name,
+              TILED: true,
+              FORMAT: 'image/png'
+            }
+          });
+        });
+        dispatch(setShapefiles(shapefiles));
+      });
+  };
+}
+function setShapefiles (shapefiles) {
+  return {
+    type: SET_SHAPEFILES,
+    publicShapeFiles: shapefiles
+  };
+}
+function setSelectedShapefile (shapefile) {
+  return {
+    type: SET_SELECTED_SHAPEFILE,
+    shapefile: shapefile
+  };
+}
+function setSelectedBasemap (basemap) {
+  return {
+    type: SET_SELECTED_BASEMAP,
+    basemap: basemap
+  };
+}
 function setLayer (layer) {
   return {
-    type: constants.SET_WMS_LAYER,
+    type: SET_WMS_LAYER,
     layer: layer
   };
 }
@@ -774,8 +828,17 @@ const WORKFLOW_WIZARD_HANDLERS = {
   }
 };
 const VISUALIZE_HANDLERS = {
-  [constants.SET_WMS_LAYER]: (state, action) => {
+  [SET_WMS_LAYER]: (state, action) => {
     return {...state, layer: action.layer};
+  },
+  [SET_SHAPEFILES]: (state, action) => {
+    return {...state, publicShapeFiles: action.publicShapeFiles};
+  },
+  [SET_SELECTED_SHAPEFILE]: (state, action) => {
+    return {...state, selectedShapefile: action.shapefile};
+  },
+  [SET_SELECTED_BASEMAP]: (state, action) => {
+    return {...state, selectedBasemap: action.basemap};
   },
   [ADD_DATASETS_TO_PROJECTS]: (state, action) => {
     let newDatasets = state.currentProjectDatasets.concat(action.datasets);
