@@ -16,10 +16,13 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import Folder from 'material-ui/svg-icons/file/folder';
 import FolderSpecial from 'material-ui/svg-icons/notification/folder-special';
 import File from 'material-ui/svg-icons/editor/insert-drive-file';
+import AddedCriterias from 'material-ui/svg-icons/image/add-to-photos';
+import Relaunch from 'material-ui/svg-icons/action/youtube-searched-for';
 
 export class ExperienceManagement extends React.Component {
   static propTypes = {
     currentProjectDatasets: React.PropTypes.array.isRequired,
+    currentProjectSearchCriterias: React.PropTypes.array.isRequired,
     currentVisualizedDatasetLayers: React.PropTypes.array.isRequired,
     addDatasetLayersToVisualize: React.PropTypes.func.isRequired
   }
@@ -31,6 +34,7 @@ export class ExperienceManagement extends React.Component {
   constructor (props) {
     super(props);
     this._onVisualizeLayer = this._onVisualizeLayer.bind(this);
+    this._onRelaunchSearch = this._onRelaunchSearch.bind(this);
   }
 
   handleNestedListToggle = (item) => {
@@ -43,6 +47,10 @@ export class ExperienceManagement extends React.Component {
     dataset['wms_url'] = currentWmsUrl;
     dataset['currentWmsIndex'] = i;
     this.props.addDatasetLayersToVisualize([dataset]);
+  }
+
+  _onRelaunchSearch (index) {
+    alert(index);
   }
 
   render () {
@@ -76,7 +84,7 @@ export class ExperienceManagement extends React.Component {
                       let fileName = wmsUrl.substr(wmsUrl.lastIndexOf(text) + text.length);
                       let nestedIcon = <File />;
                       let disabledNestedVisualize = false;
-                      if (this.props.currentVisualizedDatasetLayers.find( x => x.wms_url ===  wmsUrl)) {
+                      if (this.props.currentVisualizedDatasetLayers.find(x => x.wms_url ===  wmsUrl)) {
                         nestedIcon = <Visualize />;
                         disabledNestedVisualize = true;
                       }
@@ -105,6 +113,46 @@ export class ExperienceManagement extends React.Component {
                       );
                     })
                   ]}
+                />
+              );
+            })}
+          </List>
+        </Paper>
+
+        <Paper style={{marginTop: 20}}>
+          <List>
+            <Subheader>Project search criterias</Subheader>
+            {this.props.currentProjectSearchCriterias.map((search, index) => {
+              return (
+                <ListItem
+                  key={index}
+                  primaryText={search.name}
+                  secondaryText={
+                    <p>
+                      <strong>Facets: </strong>
+                      <span>
+                        {
+                          search.criterias.map((criteria) => {
+                            return <span>{criteria.key + '=' + criteria.value + ', '}</span>;
+                          })
+                        }
+                      </span>
+                    </p>
+                  }
+                  secondaryTextLines={2}
+                  leftIcon={<AddedCriterias />}
+                  rightIconButton={
+                    <IconMenu iconButtonElement={
+                      <IconButton
+                        touch={true}
+                        tooltip="Actions"
+                        tooltipPosition="bottom-left">
+                        <MoreVertIcon color={grey400} />
+                      </IconButton>}>
+                      <MenuItem primaryText="Relaunch search (TODO)" onTouchTap={(event) => { this._onRelaunchSearch(index); }} leftIcon={<Relaunch />} />
+                      <MenuItem primaryText="Remove (TODO)" onTouchTap={(event) => alert('remove ' + search.name)} leftIcon={<Remove />} />
+                    </IconMenu>
+                  }
                 />
               );
             })}

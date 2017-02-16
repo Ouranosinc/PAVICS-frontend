@@ -9,10 +9,14 @@ import { Row, Col } from 'react-bootstrap';
 import Subheader from 'material-ui/Subheader';
 import {List} from 'material-ui/List';
 import RaisedButton from 'material-ui/RaisedButton';
+import TextField from 'material-ui/TextField';
+import RefreshIcon from 'material-ui/svg-icons/navigation/refresh';
+import SaveIcon from 'material-ui/svg-icons/content/save';
 
 export class SearchCatalog extends React.Component {
   static propTypes = {
     clickTogglePanel: React.PropTypes.func.isRequired,
+    addSearchCriteriasToProject: React.PropTypes.func.isRequired,
     addDatasetsToProject: React.PropTypes.func.isRequired,
     addFacetKeyValue: React.PropTypes.func.isRequired,
     removeFacetKeyValue: React.PropTypes.func.isRequired,
@@ -38,6 +42,7 @@ export class SearchCatalog extends React.Component {
   };
 
   state = {
+    searchCriteriasName: '',
     selectedKey: '',
     criteriaKeys: [
       'project',
@@ -51,6 +56,8 @@ export class SearchCatalog extends React.Component {
     super(props);
     this._onAddCriteriaKey = this._onAddCriteriaKey.bind(this);
     this._ResetCriterias = this._ResetCriterias.bind(this);
+    this._SaveCriterias = this._SaveCriterias.bind(this);
+    this._onSetSearchCriteriasName = this._onSetSearchCriteriasName.bind(this);
   }
 
   _onAddCriteriaKey (value) {
@@ -58,6 +65,12 @@ export class SearchCatalog extends React.Component {
     arr.push(value);
     this.setState({
       criteriaKeys: arr
+    });
+  }
+
+  _onSetSearchCriteriasName (value) {
+    this.setState({
+      searchCriteriasName: value
     });
   }
 
@@ -72,6 +85,14 @@ export class SearchCatalog extends React.Component {
     });
     this.props.removeAllFacetKeyValue();
     this.props.fetchPavicsDatasets();
+  }
+
+  _SaveCriterias () {
+    this.props.addSearchCriteriasToProject({
+      name: this.state.searchCriteriasName,
+      date: new Date(),
+      criterias: this.props.selectedFacets
+    });
   }
 
   _mainComponent () {
@@ -124,15 +145,22 @@ export class SearchCatalog extends React.Component {
                     })
                   }
                 </Row>
+                <TextField
+                  hintText="Define a name"
+                  fullWidth={true}
+                  onChange={(event, value) => this._onSetSearchCriteriasName(value)}
+                  floatingLabelText="Search Criteria(s) Name" />
               </div>
             </Paper>
             <RaisedButton
-              onClick={this._ResetCriterias}
-              label="Reset"
+              onClick={this._SaveCriterias}
+              label="Save search criteria(s)"
+              icon={<SaveIcon />}
               style={{marginTop: 20}} />
             <RaisedButton
-              disabled={true}
-              label="Save search criteria(s) (TODO)"
+              onClick={this._ResetCriterias}
+              label="Reset"
+              icon={<RefreshIcon />}
               style={{marginTop: 20, marginLeft: 20}} />
             <SearchCatalogResults {...this.props} />
           </div>

@@ -7,6 +7,7 @@ const SET_SHAPEFILES = 'Visualize.SET_SHAPEFILES';
 const SET_SELECTED_SHAPEFILE = 'Visualize.SET_SELECTED_SHAPEFILE';
 const SET_SELECTED_BASEMAP = 'Visualize.SET_SELECTED_BASEMAP';
 const ADD_DATASET_LAYERS_TO_VISUALIZE = 'Visualize.ADD_DATASET_LAYERS_TO_VISUALIZE';
+const ADD_SEARCH_CRITERIAS_TO_PROJECTS = 'Visualize.ADD_SEARCH_CRITERIAS_TO_PROJECTS';
 const ADD_DATASETS_TO_PROJECTS = 'Visualize.ADD_DATASETS_TO_PROJECTS';
 const ADD_FACET_KEY_VALUE_PAIR = 'Visualize.ADD_FACET_KEY_VALUE_PAIR';
 const REMOVE_FACET_KEY_VALUE_PAIR = 'Visualize.REMOVE_FACET_KEY_VALUE_PAIR';
@@ -49,6 +50,12 @@ const FETCH_WMS_LAYER_TIMESTEPS_SUCCESS = 'Visualize.FETCH_WMS_LAYER_TIMESTEPS_S
 // ------------------------------------
 // Actions
 // ------------------------------------
+export function addSearchCriteriasToProject (searchCriterias) {
+  return {
+    type: ADD_SEARCH_CRITERIAS_TO_PROJECTS,
+    searchCriterias: searchCriterias
+  };
+}
 export function addDatasetsToProject (datasets) {
   return {
     type: ADD_DATASETS_TO_PROJECTS,
@@ -839,6 +846,10 @@ const VISUALIZE_HANDLERS = {
   },
   [SET_SELECTED_BASEMAP]: (state, action) => {
     return {...state, selectedBasemap: action.basemap};
+  },
+  [ADD_SEARCH_CRITERIAS_TO_PROJECTS]: (state, action) => {
+    let newSearchCriterias = state.currentProjectSearchCriterias.concat(action.searchCriterias);
+    return ({...state, currentProjectSearchCriterias: newSearchCriterias});
   },
   [ADD_DATASETS_TO_PROJECTS]: (state, action) => {
     let newDatasets = state.currentProjectDatasets.concat(action.datasets);
