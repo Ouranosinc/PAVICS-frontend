@@ -62,7 +62,7 @@ export class TimeSlider extends React.Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps (nextProps) {
     if (nextProps.selectedWMSLayerDetails && nextProps.selectedWMSLayerDetails.data && (nextProps.selectedWMSLayerDetails.data !== this.props.selectedWMSLayerDetails.data)) {
       this.changeGlobalRange(nextProps.selectedWMSLayerDetails.data);
     }

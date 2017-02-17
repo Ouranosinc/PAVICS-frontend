@@ -8,6 +8,8 @@ const SET_SELECTED_SHAPEFILE = 'Visualize.SET_SELECTED_SHAPEFILE';
 const SET_SELECTED_BASEMAP = 'Visualize.SET_SELECTED_BASEMAP';
 const SET_SELECTED_DATASET_LAYER = 'Visualize.SET_SELECTED_DATASET_LAYER';
 const ADD_DATASET_LAYERS_TO_VISUALIZE = 'Visualize.ADD_DATASET_LAYERS_TO_VISUALIZE';
+const ADD_SEARCH_CRITERIAS_TO_PROJECTS = 'Visualize.ADD_SEARCH_CRITERIAS_TO_PROJECTS';
+const REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS = 'Visualize.REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS'
 const ADD_DATASETS_TO_PROJECTS = 'Visualize.ADD_DATASETS_TO_PROJECTS';
 const ADD_FACET_KEY_VALUE_PAIR = 'Visualize.ADD_FACET_KEY_VALUE_PAIR';
 const REMOVE_FACET_KEY_VALUE_PAIR = 'Visualize.REMOVE_FACET_KEY_VALUE_PAIR';
@@ -19,6 +21,7 @@ const OPEN_WMS_LAYER = 'Visualize.OPEN_WMS_LAYER';
 const SELECT_LOAD_WMS = 'Visualize.SELECT_LOAD_WMS';
 const CLICK_TOGGLE_PANEL = 'Visualize.CLICK_TOGGLE_PANEL';
 const SET_CURRENT_TIME_ISO = 'Visualize.SET_CURRENT_TIME_ISO';
+const RESTORE_PAVICS_DATASETS = 'Visualize.RESTORE_PAVICS_DATASETS';
 // ASYNC
 const FETCH_PLOTLY_DATA_REQUEST = 'Visualize.FETCH_PLOTLY_DATA_REQUEST';
 const FETCH_PLOTLY_DATA_FAILURE = 'Visualize.FETCH_PLOTLY_DATA_FAILURE';
@@ -50,6 +53,18 @@ const FETCH_WMS_LAYER_TIMESTEPS_SUCCESS = 'Visualize.FETCH_WMS_LAYER_TIMESTEPS_S
 // ------------------------------------
 // Actions
 // ------------------------------------
+export function addSearchCriteriasToProject (searchCriterias) {
+  return {
+    type: ADD_SEARCH_CRITERIAS_TO_PROJECTS,
+    searchCriterias: searchCriterias
+  };
+}
+export function removeSearchCriteriasFromProject (searchCriteria) {
+  return {
+    type: REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS,
+    searchCriteria: searchCriteria
+  };
+}
 export function addDatasetsToProject (datasets) {
   return {
     type: ADD_DATASETS_TO_PROJECTS,
@@ -255,12 +270,25 @@ export function receiveDataset (dataset) {
     }
   };
 }
+export function restorePavicsDatasets (searchCriteria) {
+  return {
+    type: RESTORE_PAVICS_DATASETS,
+    pavicsDatasets: {
+      requestedAt: searchCriteria.date,
+      receivedAt: searchCriteria.date,
+      archive: true,
+      isFetching: false,
+      items: searchCriteria.results
+    }
+  };
+}
 export function requestPavicsDatasets () {
   return {
     type: FETCH_PAVICS_DATASETS_REQUEST,
     pavicsDatasets: {
       requestedAt: Date.now(),
       isFetching: true,
+      archive: false,
       items: []
     }
   };
@@ -271,6 +299,7 @@ export function receivePavicsDatasetsFailure (error) {
     pavicsDatasets: {
       receivedAt: Date.now(),
       isFetching: false,
+      archive: false,
       items: [],
       error: error
     }
@@ -282,6 +311,7 @@ export function receivePavicsDatasets (datasets) {
     pavicsDatasets: {
       receivedAt: Date.now(),
       isFetching: false,
+      archive: false,
       items: datasets,
       error: null
     }
@@ -852,6 +882,16 @@ const VISUALIZE_HANDLERS = {
   [SET_SELECTED_BASEMAP]: (state, action) => {
     return {...state, selectedBasemap: action.basemap};
   },
+  [ADD_SEARCH_CRITERIAS_TO_PROJECTS]: (state, action) => {
+    let newSearchCriterias = state.currentProjectSearchCriterias.concat(action.searchCriterias);
+    return ({...state, currentProjectSearchCriterias: newSearchCriterias});
+  },
+  [REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS]: (state, action) => {
+    let newSearchCriterias = state.currentProjectSearchCriterias.slice();
+    let index = state.currentProjectSearchCriterias.findIndex(x => x === action.searchCriteria);
+    newSearchCriterias.splice(index, 1);
+    return ({...state, currentProjectSearchCriterias: newSearchCriterias});
+  },
   [SET_SELECTED_DATASET_LAYER]: (state, action) => {
     return {...state, selectedDatasetLayer: action.layer};
   },
@@ -969,6 +1009,9 @@ const VISUALIZE_HANDLERS = {
     return ({...state, pavicsDatasets: action.pavicsDatasets});
   },
   [FETCH_PAVICS_DATASETS_FAILURE]: (state, action) => {
+    return ({...state, pavicsDatasets: action.pavicsDatasets});
+  },
+  [RESTORE_PAVICS_DATASETS]: (state, action) => {
     return ({...state, pavicsDatasets: action.pavicsDatasets});
   },
   [FETCH_PAVICS_DATASETS_SUCCESS]: (state, action) => {
