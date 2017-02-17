@@ -10,11 +10,15 @@ import { Row, Col } from 'react-bootstrap';
 import Subheader from 'material-ui/Subheader';
 import {List} from 'material-ui/List';
 import RaisedButton from 'material-ui/RaisedButton';
+import TextField from 'material-ui/TextField';
+import RefreshIcon from 'material-ui/svg-icons/navigation/refresh';
+import SaveIcon from 'material-ui/svg-icons/content/save';
 
 export class SearchCatalog extends React.Component {
   static propTypes = {
     currentProjectSearchCriterias: React.PropTypes.array.isRequired,
     clickTogglePanel: React.PropTypes.func.isRequired,
+    addSearchCriteriasToProject: React.PropTypes.func.isRequired,
     addDatasetsToProject: React.PropTypes.func.isRequired,
     addFacetKeyValue: React.PropTypes.func.isRequired,
     removeFacetKeyValue: React.PropTypes.func.isRequired,
@@ -63,6 +67,7 @@ export class SearchCatalog extends React.Component {
   }
 
   _onChangeSearchType (value) {
+    alert('TODO: refetch Catalog API with type=' + value);
     this.setState({
       type: value
     });
@@ -77,6 +82,7 @@ export class SearchCatalog extends React.Component {
     searchCriteria.criterias.forEach((criteria) => {
       this.props.addFacetKeyValue(criteria.key, criteria.value);
     });
+    this._onSetSearchCriteriasName = this._onSetSearchCriteriasName.bind(this);
   }
 
   _onAddCriteriaKey (value) {
@@ -86,6 +92,12 @@ export class SearchCatalog extends React.Component {
       criteriaKeys: arr,
       confirmation: null,
       searchCriteriasName: ''
+    });
+  }
+
+  _onSetSearchCriteriasName (value) {
+    this.setState({
+      searchCriteriasName: value
     });
   }
 
@@ -170,7 +182,7 @@ export class SearchCatalog extends React.Component {
                     <SelectField
                       style={{width: '95%'}}
                       value={this.state.type}
-                      floatingLabelText="Type"
+                      floatingLabelText="Type (TODO)"
                       onChange={(event, index, value) => this._onChangeSearchType(value)}>
                       <MenuItem value="dataset" primaryText="Dataset" />
                       <MenuItem value="file" primaryText="File" />

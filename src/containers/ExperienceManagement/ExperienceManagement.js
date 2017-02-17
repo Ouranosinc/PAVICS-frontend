@@ -25,6 +25,7 @@ import Restore from 'material-ui/svg-icons/action/restore-page';
 export class ExperienceManagement extends React.Component {
   static propTypes = {
     currentProjectDatasets: React.PropTypes.array.isRequired,
+    currentProjectSearchCriterias: React.PropTypes.array.isRequired,
     currentVisualizedDatasetLayers: React.PropTypes.array.isRequired,
     addDatasetLayersToVisualize: React.PropTypes.func.isRequired,
     removeSearchCriteriasFromProject: React.PropTypes.func.isRequired,
@@ -112,7 +113,7 @@ export class ExperienceManagement extends React.Component {
                       let fileName = wmsUrl.substr(wmsUrl.lastIndexOf(text) + text.length);
                       let nestedIcon = <File />;
                       let disabledNestedVisualize = false;
-                      if (this.props.currentVisualizedDatasetLayers.find( x => x.wms_url ===  wmsUrl)) {
+                      if (this.props.currentVisualizedDatasetLayers.find(x => x.wms_url ===  wmsUrl)) {
                         nestedIcon = <Visualize />;
                         disabledNestedVisualize = true;
                       }

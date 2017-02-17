@@ -14,6 +14,7 @@ import ShoppingCart from 'material-ui/svg-icons/action/add-shopping-cart';
 import PersonAdd from 'material-ui/svg-icons/social/person-add';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import RaisedButton from 'material-ui/RaisedButton';
+import AddIcon from 'material-ui/svg-icons/content/add-box';
 
 export class SearchCatalogResults extends React.Component {
   static propTypes = {
@@ -145,7 +146,8 @@ export class SearchCatalogResults extends React.Component {
             <RaisedButton
               disabled={!this.state.checkedDatasets.length}
               onClick={this._onAddCheckedDatasetsToProject}
-              label="Add selection(s) to project"
+              icon={<AddIcon />}
+              label="Add selection(s)"
               style={{marginTop: '20px'}} />
             {confirmation}
           </div>;
