@@ -13,7 +13,8 @@
     "__DEBUG__"    : false,
     "__COVERAGE__" : false,
     "__BASENAME__" : false,
-    "__PAVICS_PHOENIX_PATH__" : false
+    "__PAVICS_PHOENIX_PATH__" : false,
+    "__PAVICS_GEOSERVER_PATH__" : false
   },
   "rules": {
     "semi" : [2, "always"],

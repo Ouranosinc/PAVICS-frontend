@@ -4,7 +4,7 @@ import ExperienceManagement from './ExperienceManagement';
 import SearchCatalog from './SearchCatalog';
 import SearchCatalogResults from './SearchCatalogResults';
 import TimeSlider from './TimeSlider';
-import {ClimateIndicators, MapNavBar, Visualize} from './Visualize';
+import {ClimateIndicators, Visualize} from './Visualize';
 import WorkflowWizard from './WorkflowWizard';
 import Monitor from './Monitor';
 
@@ -15,7 +15,6 @@ export {
   SearchCatalog,
   SearchCatalogResults,
   ClimateIndicators,
-  MapNavBar,
   Monitor,
   TimeSlider,
   Visualize,
