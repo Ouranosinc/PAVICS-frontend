@@ -2,6 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import classes from './ExperienceManagement.scss';
+import * as constants from './../../constants';
 import {List, ListItem} from 'material-ui/List';
 import {grey400, darkBlack} from 'material-ui/styles/colors';
 import Subheader from 'material-ui/Subheader';
@@ -16,13 +17,23 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import Folder from 'material-ui/svg-icons/file/folder';
 import FolderSpecial from 'material-ui/svg-icons/notification/folder-special';
 import File from 'material-ui/svg-icons/editor/insert-drive-file';
+import AddedCriterias from 'material-ui/svg-icons/image/add-to-photos';
+import Relaunch from 'material-ui/svg-icons/action/youtube-searched-for';
+import Rename from 'material-ui/svg-icons/image/edit';
+import Restore from 'material-ui/svg-icons/action/restore-page';
 
 export class ExperienceManagement extends React.Component {
   static propTypes = {
     currentProjectDatasets: React.PropTypes.array.isRequired,
     currentVisualizedDatasetLayers: React.PropTypes.array.isRequired,
-    addDatasetLayersToVisualize: React.PropTypes.func.isRequired
-  }
+    addDatasetLayersToVisualize: React.PropTypes.func.isRequired,
+    removeSearchCriteriasFromProject: React.PropTypes.func.isRequired,
+    goToSection: React.PropTypes.func.isRequired,
+    addFacetKeyValue: React.PropTypes.func.isRequired,
+    removeAllFacetKeyValue: React.PropTypes.func.isRequired,
+    fetchPavicsDatasets: React.PropTypes.func.isRequired,
+    restorePavicsDatasets: React.PropTypes.func.isRequired
+  };
 
   state = {
     open: false
@@ -31,6 +42,9 @@ export class ExperienceManagement extends React.Component {
   constructor (props) {
     super(props);
     this._onVisualizeLayer = this._onVisualizeLayer.bind(this);
+    this._onRelaunchSearch = this._onRelaunchSearch.bind(this);
+    this._onRestoreSearchCriteria = this._onRestoreSearchCriteria.bind(this);
+    this._onRemoveSearchCriteria = this._onRemoveSearchCriteria.bind(this);
   }
 
   handleNestedListToggle = (item) => {
@@ -45,12 +59,34 @@ export class ExperienceManagement extends React.Component {
     this.props.addDatasetLayersToVisualize([dataset]);
   }
 
+  onReloadSearchCriteria (searchCriteria) {
+    this.props.goToSection(constants.PLATFORM_SECTION_SEARCH_DATASETS);
+    this.props.removeAllFacetKeyValue();
+    searchCriteria.criterias.forEach((criteria) => {
+      this.props.addFacetKeyValue(criteria.key, criteria.value);
+    });
+  }
+
+  _onRelaunchSearch (searchCriteria) {
+    this.onReloadSearchCriteria(searchCriteria);
+    this.props.fetchPavicsDatasets();
+  }
+
+  _onRestoreSearchCriteria (searchCriteria) {
+    this.onReloadSearchCriteria(searchCriteria);
+    this.props.restorePavicsDatasets(searchCriteria);
+  }
+
+  _onRemoveSearchCriteria (searchCriteria) {
+    this.props.removeSearchCriteriasFromProject(searchCriteria);
+  }
+
   render () {
     return (
       <div className={classes['ExperienceManagement']} style={{ margin: 20 }}>
         <Paper>
           <List>
-            <Subheader>Project datasets</Subheader>
+            <Subheader>Current project dataset(s)</Subheader>
             {this.props.currentProjectDatasets.map((dataset, i) => {
               let folderIcon = <Folder />;
               if (this.props.currentVisualizedDatasetLayers.find(x => x.dataset_id === dataset.dataset_id)) {
@@ -105,6 +141,49 @@ export class ExperienceManagement extends React.Component {
                       );
                     })
                   ]}
+                />
+              );
+            })}
+          </List>
+        </Paper>
+
+        <Paper style={{marginTop: 20}}>
+          <List>
+            <Subheader>Manage search criteria(s)</Subheader>
+            {this.props.currentProjectSearchCriterias.map((search, index) => {
+              return (
+                <ListItem
+                  key={index}
+                  primaryText={search.name}
+                  secondaryText={
+                    <p>
+                      <span style={{color: darkBlack}}>{search.results.length} results on {search.date.toString()}</span><br />
+                      <strong>Facets: </strong>
+                      <span>
+                        {
+                          search.criterias.map((criteria, i) => {
+                            return <span>{criteria.key + '=' + criteria.value + ((i + 1 === search.criterias.length) ? '' : ', ')}</span>;
+                          })
+                        }
+                      </span>
+                    </p>
+                  }
+                  secondaryTextLines={2}
+                  leftIcon={<AddedCriterias />}
+                  rightIconButton={
+                    <IconMenu iconButtonElement={
+                      <IconButton
+                        touch={true}
+                        tooltip="Actions"
+                        tooltipPosition="bottom-left">
+                        <MoreVertIcon color={grey400} />
+                      </IconButton>}>
+                      <MenuItem primaryText="Rename (TODO)" onTouchTap={(event) => alert('rename ' + search.name)} leftIcon={<Rename />} />
+                      <MenuItem primaryText="Restore results" onTouchTap={(event) => this._onRestoreSearchCriteria(search)} leftIcon={<Restore />} />
+                      <MenuItem primaryText="Relaunch search" onTouchTap={(event) => this._onRelaunchSearch(search)} leftIcon={<Relaunch />} />
+                      <MenuItem primaryText="Remove" onTouchTap={(event) => this._onRemoveSearchCriteria(search)} leftIcon={<Remove />} />
+                    </IconMenu>
+                  }
                 />
               );
             })}
