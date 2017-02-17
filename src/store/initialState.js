@@ -24,6 +24,14 @@ const initialState = {
     jobs: []
   },
   visualize: {
+    selectedShapefile: {},
+    selectedBasemap: '',
+    publicShapeFiles: [],
+    baseMaps: [
+      'Aerial',
+      'Road',
+      'AerialWithLabels'
+    ],
     layer: {},
     currentOpenedDataset: '',
     currentOpenedDatasetWMSFile: '',
@@ -33,6 +41,7 @@ const initialState = {
     selectedFacets: [],
     currentProjectDatasets: [],
     currentVisualizedDatasetLayers: [],
+    selectedDatasetLayer: {},
     selectedDatasets: {
       requestedAt: null,
       receivedAt: null,
@@ -48,11 +57,11 @@ const initialState = {
       error: null
     },
     selectedWMSLayerDetails: {
-        requestedAt: null,
-        receivedAt: null,
-        isFetching: false,
-        data: {},
-        error: null
+      requestedAt: null,
+      receivedAt: null,
+      isFetching: false,
+      data: {},
+      error: null
     },
     selectedWMSLayerTimesteps: {
       requestedAt: null,

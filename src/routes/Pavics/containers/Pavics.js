@@ -100,6 +100,11 @@ const mapStateToProps = (state) => {
     panelControls: state.pavics.visualize.panelControls,
     plotlyData: state.pavics.visualize.plotlyData,
     layer: state.pavics.visualize.layer,
+    publicShapeFiles: state.pavics.visualize.publicShapeFiles,
+    baseMaps: state.pavics.visualize.baseMaps,
+    selectedDatasetLayer: state.pavics.visualize.selectedDatasetLayer,
+    selectedShapefile: state.pavics.visualize.selectedShapefile,
+    selectedBasemap: state.pavics.visualize.selectedBasemap,
     currentProjectDatasets: state.pavics.visualize.currentProjectDatasets,
     currentVisualizedDatasetLayers: state.pavics.visualize.currentVisualizedDatasetLayers
   };

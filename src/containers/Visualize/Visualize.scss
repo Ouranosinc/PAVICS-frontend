@@ -1,8 +1,11 @@
 .Visualize {
   position: relative;
 
-  .mapContainer
-  {
+  .hidden {
+    display: none;
+  }
+
+  .mapContainer {
     z-index: 0;
     padding: 0 !important;
     margin: 0 !important;
@@ -17,8 +20,7 @@
     margin: 3px 3px 0 3px;
   }
 
-  .left
-  {
+  .left {
     max-width: 50%;
     float: left;
     .panel {
@@ -27,8 +29,7 @@
     }
   }
 
-  .right
-  {
+  .right {
     max-width: 42%;
     float: right;
     margin: 15px;
@@ -48,17 +49,17 @@
     }
   }*/
 
-  .frontComponents{
+  .frontComponents {
     word-break: normal;
     opacity: (0.8);
 
-    .topLeftComponents{
+    .topLeftComponents {
       position: fixed;
       z-index: 1000;
       top: 110px;
       left: 0;
     }
-    .topRightComponents{
+    .topRightComponents {
       position: fixed;
       z-index: 1000;
       top: 110px;

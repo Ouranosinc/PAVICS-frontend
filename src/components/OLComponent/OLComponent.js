@@ -1,15 +1,22 @@
 import React from 'react';
 import classes from './OLComponent.scss';
 import ol from 'openlayers';
-// _ol3-layerswitcher.js needs ol as global (...)
-window.ol = ol;
-require('ol3-layerswitcher/src/ol3-layerswitcher.js');
-require('openlayers/css/ol.css');
-require('ol3-layerswitcher/src/ol3-layerswitcher.css');
+import Dialog from 'material-ui/Dialog';
 // Couldn't figure out the bug when importing inner component css file but it works from node_modules
 let G_BING_API_KEY = 'AtXX65CBBfZXBxm6oMyf_5idMAMI7W6a5GuZ5acVcrYi6lCQayiiBz7_aMHB7JR7';
+const INDEX_BASE_MAP = -10;
+const INDEX_DATASET_LAYER = 1;
+const INDEX_SHAPEFILE = 10;
+const INDEX_SELECTED_REGIONS = 100;
+const LAYER_SELECTED_REGIONS = 'selectedRegions';
+const LAYER_DATASET = 'dataset_layer';
+// not exactly sure if the selected regions index is working
+// when base map is at 1 it shadows the selected regions
 class OLComponent extends React.Component {
   static propTypes = {
+    selectedDatasetLayer: React.PropTypes.object.isRequired,
+    selectedShapefile: React.PropTypes.object.isRequired,
+    selectedBasemap: React.PropTypes.string.isRequired,
     capabilities: React.PropTypes.object,
     dataset: React.PropTypes.object,
     loadedWmsDatasets: React.PropTypes.array.isRequired,
@@ -18,112 +25,38 @@ class OLComponent extends React.Component {
 
   constructor (props) {
     super(props);
-    this.layersCount = 0;
     this.layers = [];
     this.map = null;
-    this.baseLayers = new ol.layer.Group({'title': 'Base maps', 'opacity': 1.0, 'visible': true, 'zIndex': 0});
-    this.overlayLayers = new ol.layer.Group({'title': 'Overlays', 'opacity': 1.0, 'visible': true, 'zIndex': 1});
     this.view = null;
-    this.tmpLayer = null;
-    this.popup = null;
+    this.state = {
+      dialogContent: '',
+      dialogOpened: false
+    };
+    this.handleMapClick = this.handleMapClick.bind(this);
+    this.handleClose = this.handleClose.bind(this);
   }
 
-  // Returns base layers list
-  getMapBaseLayersList () {
-    if (this.baseLayers != null) {
-      return this.baseLayers.getLayers();
-    }
-    return [];
-  }
-
-  // Returns overlay layers list
-  getMapOverlayList () {
-    if (this.overlayLayers != null) {
-      return this.overlayLayers.getLayers();
-    }
-    return [];
-  }
-
-  // Add backgrounnd layer (use once)
-  initBackgroundLayer () {
-    this.addBingLayer('Aerial', this.getMapBaseLayersList(), 'Aerial');
-    // let wmsUrl = "http://demo.boundlessgeo.com/geoserver/wms"
-    // let wmsParams = {'LAYERS': 'topp:states', 'TILED': true}
-    // this.addTileWMSLayer('topp:states', this.getMapOverlayList(), wmsUrl, wmsParams)
-  }
-
-  removeLayer (layers, title) {
-    let layer;
-    for (layer in layers) {
-      if (layers.hasOwnProperty(layer)) {
-        if (title === layer.get('title')) {
-          console.log('addTileWMSLayer: First Remove layer ' + layer.get('title'));
-          this.map.removeLayer(layer);
-        }
-      }
-    }
-  }
-
-  /*! \brief Adds a layer to a layers list
-   @param layers layers input list
-   @param wmsUrl wms url
-   @param wmsParams parameters associated to the wms
-   @param extent region extent to load
-   @param serverType Server's type
-   */
-  addTileWMSLayer (title, layers, wmsUrl, wmsParams, extent, serverType, visible = true) {
-    let layer = this.getTileWMSLayer(title,
-      wmsUrl,
-      wmsParams,
-      extent,
-      serverType,
-      visible);
-    layers.push(layer);
-    console.log('addTileWMSLayer: Add layer ' + layer.get('title'));
-    return layer;
-  }
-
-  /*! \brief Returns a ol3 layer to a layers list
-   @param layers layers input list
-   @param wmsUrl wms url
-   @param wmsParams parameters associated to the wms
-   @param extent region extent to load
-   @param serverType Server's type
-   */
-  getTileWMSLayer (
-    title,
-    wmsUrl,
-    wmsParams,
-    extent,
-    serverType = '',
-    visible = true
-  ) {
-    this.source = new ol.source.TileWMS(
+  addTileWMSLayer (position, title, wmsUrl, wmsParams, extent, serverType, visible = true) {
+    let source = new ol.source.TileWMS({
+      url: wmsUrl,
+      params: wmsParams,
+      serverType: serverType
+    });
+    let layer = new ol.layer.Tile(
       {
-        url: wmsUrl,
-        params: wmsParams,
-        serverType: serverType
+        visible: visible,
+        title: title,
+        opacity: 0.4, // TODO: Set opacity dynamically
+        source: source,
+        extent: extent
       });
-    if (extent === undefined) {
-      return new ol.layer.Tile(
-        {
-          visible: visible,
-          title: title,
-          opacity: 0.4, // TODO: Set opacity dynamically
-          source: this.source
-        });
-    } else {
-      return new ol.layer.Tile(
-        {
-          title: title,
-          extent: extent,
-          source: this.source
-        });
-    }
+    this.layers[title] = layer;
+    this.map.getLayers().insertAt(position, layer);
+    console.log('addTileWMSLayer:', layer);
   }
 
-  addBingLayer (title, layers, bingStyle) {
-    layers.push(new ol.layer.Tile({
+  addBingLayer (title, bingStyle) {
+    let layer = new ol.layer.Tile({
       visible: true,
       preload: Infinity,
       source: new ol.source.BingMaps({
@@ -133,111 +66,108 @@ class OLComponent extends React.Component {
         // "no photos at this zoom level" tiles
         // maxZoom: 19
       })
-    }));
+    });
+    this.map.getLayers().insertAt(INDEX_BASE_MAP, layer);
+    this.layers[title] = layer;
   }
 
-  makeWMSlayer (title, url, time, styles, layerName) {
-    this.source = new ol.source.TileWMS({
-      url: url,
-      params: {
-        TIME: time,
-        FORMAT: 'image/png',
-        TILED: true,
-        STYLES: styles,
-        LAYERS: layerName,
-        TRANSPARENT: 'TRUE',
-        VERSION: '1.3.0',
-        EPSG: '4326',
-        COLORSCALERANGE: '0.0000004000,0.00006000',
-        NUMCOLORBANDS: '10',
-        LOGSCALE: false,
-        crossOrigin: 'anonymous'
-      }
-    });
-    let layer = new ol.layer.Tile({
-      visible: true,
-      opacity: 0.7,
-      title: title,
-      source: this.source
-    });
-    this.map.addLayer(layer);
-    this.layers.push(layer)
-  };
+  getLayer (title) {
+    if (this.layers[title] !== undefined) {
+      return this.layers[title];
+    }
+    return null;
+  }
 
   initMap () {
     this.view = new ol.View({
       center: [-10997148, 8569099],
       zoom: 4
     });
-    let map = new ol.Map({
+    this.map = new ol.Map({
       controls: [],
-      layers: [this.baseLayers, this.overlayLayers],
+      layers: [],
       target: 'map',
       renderer: 'canvas',
       view: this.view
     });
-    let mousePosition = new ol.control.MousePosition({
-      coordinateFormat: ol.coordinate.createStringXY(6),
-      projection: 'EPSG:4326',
-      target: document.getElementById('mouseCoordinates')
+  }
+
+  createVectorLayer (nameId) {
+    let source = new ol.source.Vector({
+      format: new ol.format.GeoJSON()
     });
-    // map.addControl(mousePosition);
-    let layerSwitcher = new ol.control.LayerSwitcher({
-      tipLabel: 'Legend' // Optional label for button
+    let fill = new ol.style.Fill({
+      color: 'rgba(0,255,255,0.5)'
     });
-    // map.addControl(layerSwitcher);
-    this.map = map;
+    let stroke = new ol.style.Stroke({
+      color: 'rgba(255,255,255,0.5)'
+    });
+    let style = new ol.style.Style({
+      fill: fill,
+      stroke: stroke
+    });
+    let layer = new ol.layer.Vector({
+      source: source,
+      style: style,
+      opacity: 1
+    });
+    layer.set('nameId', nameId);
+    return layer;
   }
 
-  /** Returns view resolution */
-  getCurrentResolution () {
-    if (this.view != null) {
-      return this.view.getResolution();
+  handleMapClick (event) {
+    let coordinates = this.map.getCoordinateFromPixel(event.pixel);
+    let converted = ol.proj.transform(coordinates, 'EPSG:3857', 'EPSG:4326');
+    console.log('coordinate:', converted);
+    let tl = ol.coordinate.add(coordinates, [-10e-6, -10e-6]);
+    let br = ol.coordinate.add(coordinates, [10e-6, 10e-6]);
+    let minX;
+    let maxX;
+    if (tl[0] < br[0]) {
+      minX = tl[0];
+      maxX = br[0];
+    } else {
+      minX = br[0];
+      maxX = tl[0];
     }
-    return -1;
-  }
-
-  /** Sets view resolution */
-  setCurrentResolution (resolution) {
-    if (this.view != null) {
-      this.view.setResolution(resolution);
+    let minY;
+    let maxY;
+    if (tl[1] < br[1]) {
+      minY = tl[1];
+      maxY = br[1];
+    } else {
+      minY = br[1];
+      maxY = tl[1];
     }
-  }
-
-  /** Returns current view center */
-  getCurrentCenter () {
-    if (this.view != null) {
-      return this.view.getCenter();
-    }
-    return [];
-  }
-
-  /** Sets current view center */
-  setCurrentCenter (center) {
-    if (this.view != null) {
-      this.view.setCenter(center);
-    }
-    return [];
-  }
-
-  /** Returns current projection */
-  getCurrentProjection () {
-    if (this.view != null) {
-      return this.view.getProjection();
-    }
-    return '';
-  }
-
-  /** Sets current projection */
-  setCurrentProjection (epsgString) {
-    if (this.view != null) {
-      this.view.setProjection(epsgString);
-    }
+    let extent = [minX, minY, maxX, maxY];
+    let url = __PAVICS_GEOSERVER_PATH__ + '/wfs?service=WFS&' +
+      `version=1.1.0&request=GetFeature&typename=${this.props.selectedShapefile.wmsParams.LAYERS}&` +
+      'outputFormat=application/json&srsname=EPSG:3857&' +
+      'bbox=' + extent.join(',') + ',EPSG:3857';
+    fetch(url)
+      .then(response => {
+        return response.json();
+      })
+      .then((response) => {
+        let id = response.features[0].id;
+        console.log(id);
+        let content = `lat: ${converted[0]}, lon: ${converted[1]}, feature id: ${id}`;
+        let format = new ol.format.GeoJSON();
+        let features = format.readFeatures(response, {featureProjection: 'EPSG:3857'});
+        this.layers[LAYER_SELECTED_REGIONS].getSource().addFeatures(features);
+        this.setState({
+          dialogContent: content,
+          dialogOpened: true
+        });
+      });
   }
 
   componentDidMount () {
-    this.initBackgroundLayer();
     this.initMap();
+    this.map.addEventListener('click', this.handleMapClick);
+    let layer = this.createVectorLayer(LAYER_SELECTED_REGIONS);
+    this.map.getLayers().insertAt(INDEX_SELECTED_REGIONS, layer);
+    this.layers[LAYER_SELECTED_REGIONS] = layer;
   }
 
   componentWillUnmount () {
@@ -246,9 +176,9 @@ class OLComponent extends React.Component {
     // this.map = null//
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps (nextProps) {
     if (nextProps.currentDateTime && nextProps.currentDateTime !== this.props.currentDateTime) {
-      if(this.source){
+      if (this.source) {
         this.source.updateParams({
           TIME: nextProps.currentDateTime
         });
@@ -259,38 +189,94 @@ class OLComponent extends React.Component {
     }
   }
 
+  setBasemap (prevProps) {
+    console.log('change base map:', this.props.selectedBasemap);
+    let layer = this.getLayer(prevProps.selectedBasemap);
+    this.map.removeLayer(layer);
+    this.addBingLayer(this.props.selectedBasemap, this.props.selectedBasemap);
+  }
+
+  setShapefile (prevProps) {
+    let shapefile = this.props.selectedShapefile;
+    console.log('change shapefile:', shapefile);
+    this.layers[LAYER_SELECTED_REGIONS].getSource().clear();
+    this.map.removeLayer(this.layers[prevProps.selectedShapefile.title]);
+    this.addTileWMSLayer(
+      INDEX_SHAPEFILE,
+      shapefile.title,
+      shapefile.wmsUrl,
+      shapefile.wmsParams
+    );
+  }
+
+  findDimension (dimensions, dimensionName) {
+    for (let i = 0; i < dimensions.length; i++) {
+      if (dimensions[i]['name'] === dimensionName) {
+        return dimensions[i];
+      }
+    }
+  }
+
+  setDatasetLayer (prevProps) {
+    console.log('setting new dataset layer', this.props.selectedDatasetLayer);
+    let wmsUrl = this.props.selectedDatasetLayer.wms_url;
+    let parser = new ol.format.WMSCapabilities();
+    let capabilities = {};
+    fetch(wmsUrl)
+      .then(response => {
+        return response.text();
+      })
+      .then(text => {
+        capabilities = parser.read(text);
+        console.log('wms capabilities:', capabilities);
+        let url = capabilities['Service']['OnlineResource'];
+        // very nesting
+        let layer = capabilities['Capability']['Layer']['Layer'][0]['Layer'][0];
+        let layerName = layer['Name'];
+        let timeDimension = this.findDimension(layer['Dimension'], 'time');
+        let wmsParams = {
+          'TRANSPARENT': 'TRUE',
+          'STYLES': 'default',
+          'LAYERS': layerName,
+          'EPSG': '4326',
+          'COLORSCALERANGE': '0.0000004000,0.00006000',
+          'NUMCOLORBANDS': '10',
+          'LOGSCALE': false,
+          'crossOrigin': 'anonymous',
+          'BGCOLOR': 'transparent',
+          'TIME': timeDimension['default'],
+          'SRS': 'EPSG:4326'
+        };
+        this.map.removeLayer(this.layers[LAYER_DATASET]);
+        this.addTileWMSLayer(INDEX_DATASET_LAYER, LAYER_DATASET, url, wmsParams);
+      });
+
+  }
 
   componentDidUpdate (prevProps, prevState) {
-    if (this.props.layer && this.props.layer.title) {
-      let layer = this.props.layer;
-      console.log('making wms layer', layer);
-      this.makeWMSlayer(layer.title, layer.url, layer.time, layer.style, layer.name);
+    if (this.props.selectedBasemap !== prevProps.selectedBasemap) {
+      this.setBasemap(prevProps);
     }
-    if (this.props.loadedWmsDatasets.length && this.layersCount !== this.props.loadedWmsDatasets.length) {
-      let wmsUrl = this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].url;
-      let wmsName = this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].name;
-      // TODO: Do we need to dynamically set style + palette
-      let wmsParams = {
-        'TRANSPARENT': 'TRUE',
-        'STYLES': this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].style,
-        'LAYERS': this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].name,
-        'EPSG': '4326',
-        'COLORSCALERANGE': '0.0000004000,0.00006000',
-        'NUMCOLORBANDS': '10',
-        'LOGSCALE': false,
-        'crossOrigin': 'anonymous',
-        'BGCOLOR': 'transparent',
-        'TIME': this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].start,
-        'SRS': 'EPSG:4326'
-      };
-      if (this.tmpLayer) {
-        // this.tmpLayer.setVisible(false)
-        this.map.removeLayer(this.tmpLayer);
+    if (this.props.selectedShapefile !== prevProps.selectedShapefile) {
+      this.setShapefile(prevProps);
+    }
+    if (this.props.selectedDatasetLayer !== prevProps.selectedDatasetLayer) {
+      console.log(this.props.selectedDatasetLayer);
+      if (Object.keys(this.props.selectedDatasetLayer).length === 0 && this.props.selectedDatasetLayer.constructor === Object) {
+        console.log('removing dataset layer');
+        this.map.removeLayer(this.layers[LAYER_DATASET]);
       }
-      this.tmpLayer = this.addTileWMSLayer(wmsName, this.getMapOverlayList(), wmsUrl, wmsParams);
-      this.layersCount = this.props.loadedWmsDatasets.length;
-    } else {
+      else {
+        this.setDatasetLayer(prevProps);
+      }
     }
+  }
+
+  handleClose () {
+    this.setState({
+      dialogContent: '',
+      dialogOpened: false
+    });
   }
 
   render () {
@@ -299,6 +285,13 @@ class OLComponent extends React.Component {
         <div id="map" className="map" style={{'width': '100%', 'height': '100%', 'position': 'fixed'}}>
           <div id="popup" className="ol-popup"></div>
         </div>
+        <Dialog
+          title="Coordinates"
+          modal={false}
+          onRequestClose={this.handleClose}
+          open={this.state.dialogOpened}>
+          {this.state.dialogContent}
+        </Dialog>
       </div>
     );
   }
