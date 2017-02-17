@@ -8,7 +8,7 @@ import Loader from '../../components/Loader';
 import Paper from 'material-ui/Paper';
 
 /* Constants */
-const DIVIDER = 1000;
+const DIVIDER = 100000;
 /* Step controls actions */
 const FAST_BACKWARD_ACTION = 'fast-backward';
 const FAST_FORWARD_ACTION = 'fast-forward';
@@ -75,8 +75,8 @@ export class TimeSlider extends React.Component {
       let layerName = layer['Name'];
       let date = layer['Dimension'][0].values.split('/')[0];
       // TODO MAKE THIS WORK!!!
-      // this.props.fetchWMSLayerDetails(url, layerName);
-      // this.props.fetchWMSLayerTimesteps(url, layerName, date);
+      this.props.fetchWMSLayerDetails(url, layerName);
+      this.props.fetchWMSLayerTimesteps(url, layerName, date);
     }
 
     if (nextProps.selectedWMSLayerDetails && nextProps.selectedWMSLayerDetails.data && (nextProps.selectedWMSLayerDetails.data !== this.props.selectedWMSLayerDetails.data)) {

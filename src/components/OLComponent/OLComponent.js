@@ -21,7 +21,7 @@ class OLComponent extends React.Component {
     dataset: React.PropTypes.object,
     loadedWmsDatasets: React.PropTypes.array.isRequired,
     layer: React.PropTypes.object.isRequired,
-    setSelectedDatasetCapabilities: React.PropTypes.func.isRequired,
+    receivedDatasetCapabilities: React.PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -231,7 +231,6 @@ class OLComponent extends React.Component {
         console.log('wms capabilities:', capabilities);
         let url = capabilities['Service']['OnlineResource'];
         // very nesting
-        this.props.setSelectedDatasetCapabilities(capabilities);
         let layer = capabilities['Capability']['Layer']['Layer'][0]['Layer'][0];
         let layerName = layer['Name'];
         let timeDimension = this.findDimension(layer['Dimension'], 'time');
@@ -254,6 +253,7 @@ class OLComponent extends React.Component {
           params: wmsParams
         });
         this.addTileWMSLayer(INDEX_DATASET_LAYER, LAYER_DATASET, this.datasetSource);
+        this.props.receivedDatasetCapabilities(capabilities);
       });
   }
 

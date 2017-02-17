@@ -688,6 +688,11 @@ export function selectDatasetLayer (layer) {
     dispatch(setSelectedDatasetLayer(layer));
   };
 }
+export function receivedDatasetCapabilities (capabilities) {
+  return dispatch => {
+    dispatch(setSelectedDatasetCapabilities(capabilities));
+  };
+}
 export function fetchShapefiles () {
   const parser = new ol.format.WMSCapabilities();
   return dispatch => {
