@@ -4,7 +4,9 @@ import ol from 'openlayers';
 import Dialog from 'material-ui/Dialog';
 // Couldn't figure out the bug when importing inner component css file but it works from node_modules
 let G_BING_API_KEY = 'AtXX65CBBfZXBxm6oMyf_5idMAMI7W6a5GuZ5acVcrYi6lCQayiiBz7_aMHB7JR7';
-const INDEX_BASE_MAP = -10;
+const INDEX_BASE_MAP = 1;
+const INDEX_DATASET_LAYER = 10;
+const INDEX_SHAPEFILE = 100;
 const INDEX_SELECTED_REGIONS = 1000;
 class OLComponent extends React.Component {
   static propTypes = {
@@ -19,11 +21,9 @@ class OLComponent extends React.Component {
 
   constructor (props) {
     super(props);
-    this.layersCount = 0;
     this.layers = [];
     this.map = null;
     this.view = null;
-    this.tmpLayer = null;
     this.state = {
       dialogContent: '',
       dialogOpened: false
@@ -32,26 +32,6 @@ class OLComponent extends React.Component {
     this.handleClose = this.handleClose.bind(this);
   }
 
-  removeLayer (layers, title) {
-    let layer;
-    for (layer in layers) {
-      if (layers.hasOwnProperty(layer)) {
-        console.log('layer:', layer);
-        if (title === layer.get('title')) {
-          console.log('addTileWMSLayer: First Remove layer ' + layer.get('title'));
-          this.map.removeLayer(layer);
-        }
-      }
-    }
-  }
-
-  /*! \brief Adds a layer to a layers list
-   @param layers layers input list
-   @param wmsUrl wms url
-   @param wmsParams parameters associated to the wms
-   @param extent region extent to load
-   @param serverType Server's type
-   */
   addTileWMSLayer (title, wmsUrl, wmsParams, extent, serverType, visible = true) {
     let source = new ol.source.TileWMS({
       url: wmsUrl,
@@ -68,49 +48,7 @@ class OLComponent extends React.Component {
       });
     this.layers[title] = layer;
     this.map.addLayer(layer);
-    console.log('addTileWMSLayer:', layer.get('title'));
-  }
-
-  /*! \brief Returns a ol3 layer to a layers list
-   @param layers layers input list
-   @param wmsUrl wms url
-   @param wmsParams parameters associated to the wms
-   @param extent region extent to load
-   @param serverType Server's type
-   */
-  getTileWMSLayer (
-    title,
-    wmsUrl,
-    wmsParams,
-    extent,
-    serverType = '',
-    visible = true
-  ) {
-    if (this.layers[title] !== undefined) {
-      return this.layers[title];
-    }
-    this.source = new ol.source.TileWMS(
-      {
-        url: wmsUrl,
-        params: wmsParams,
-        serverType: serverType
-      });
-    if (extent === undefined) {
-      return new ol.layer.Tile(
-        {
-          visible: visible,
-          title: title,
-          opacity: 0.4, // TODO: Set opacity dynamically
-          source: this.source
-        });
-    } else {
-      return new ol.layer.Tile(
-        {
-          title: title,
-          extent: extent,
-          source: this.source
-        });
-    }
+    console.log('addTileWMSLayer:', layer);
   }
 
   addBingLayer (title, bingStyle) {
@@ -135,34 +73,6 @@ class OLComponent extends React.Component {
     }
     return null;
   }
-
-  makeWMSlayer (title, url, time, styles, layerName) {
-    this.source = new ol.source.TileWMS({
-      url: url,
-      params: {
-        TIME: time,
-        FORMAT: 'image/png',
-        TILED: true,
-        STYLES: styles,
-        LAYERS: layerName,
-        TRANSPARENT: 'TRUE',
-        VERSION: '1.3.0',
-        EPSG: '4326',
-        COLORSCALERANGE: '0.0000004000,0.00006000',
-        NUMCOLORBANDS: '10',
-        LOGSCALE: false,
-        crossOrigin: 'anonymous'
-      }
-    });
-    let layer = new ol.layer.Tile({
-      visible: true,
-      opacity: 0.7,
-      title: title,
-      source: this.source
-    });
-    this.map.addLayer(layer);
-    this.layers.push(layer);
-  };
 
   initMap () {
     this.view = new ol.View({
