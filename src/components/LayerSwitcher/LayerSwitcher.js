@@ -5,6 +5,7 @@ import {Tabs, Tab} from 'material-ui/Tabs';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import FontIcon from 'material-ui/FontIcon';
 import Paper from 'material-ui/Paper';
+import RaisedButton from 'material-ui/RaisedButton';
 export default class LayerSwitcher extends React.Component {
   static propTypes = {
     fetchShapefiles: React.PropTypes.func.isRequired,
@@ -41,6 +42,14 @@ export default class LayerSwitcher extends React.Component {
 
   setSelectedDatasetLayer (event, value) {
     this.props.selectDatasetLayer(value);
+  }
+
+  resetShapefile () {
+    this.props.selectShapefile({});
+  }
+
+  resetDatasetLayer () {
+    this.props.selectDatasetLayer({});
   }
 
   makeShapefileList () {
@@ -134,7 +143,14 @@ export default class LayerSwitcher extends React.Component {
               icon={<FontIcon className="material-icons">satellite</FontIcon>}
               label="Datasets">
               <Paper zDepth={2}>
-                <h2>Datasets</h2>
+                <div style={{width:'75%', display: 'inline-block'}}>
+                  <h2>Datasets</h2>
+                </div>
+                <div style={{width:'25%', display: 'inline-block'}}>
+                  <RaisedButton
+                    onClick={this.resetDatasetLayer.bind(this)}
+                    label="Reset" />
+                </div>
                 {this.makeDatasetsList()}
               </Paper>
             </Tab>
@@ -142,7 +158,14 @@ export default class LayerSwitcher extends React.Component {
               icon={<FontIcon className="material-icons">local_library</FontIcon>}
               label="Shape Files">
               <Paper zDepth={2}>
-                <h2>Shape Files</h2>
+                <div style={{width:'75%', display: 'inline-block'}}>
+                  <h2>Shape Files</h2>
+                </div>
+                <div style={{width:'25%', display: 'inline-block'}}>
+                  <RaisedButton
+                    onClick={this.resetShapefile.bind(this)}
+                    label="Reset" />
+                </div>
                 {this.makeShapefileList()}
               </Paper>
             </Tab>

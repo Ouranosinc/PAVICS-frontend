@@ -261,7 +261,14 @@ class OLComponent extends React.Component {
       this.setShapefile(prevProps);
     }
     if (this.props.selectedDatasetLayer !== prevProps.selectedDatasetLayer) {
-      this.setDatasetLayer(prevProps);
+      console.log(this.props.selectedDatasetLayer);
+      if (Object.keys(this.props.selectedDatasetLayer).length === 0 && this.props.selectedDatasetLayer.constructor === Object) {
+        console.log('removing dataset layer');
+        this.map.removeLayer(this.layers[LAYER_DATASET]);
+      }
+      else {
+        this.setDatasetLayer(prevProps);
+      }
     }
   }
 
