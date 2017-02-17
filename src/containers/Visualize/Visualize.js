@@ -52,7 +52,7 @@ class Visualize extends React.Component {
       mapPanelStatus: mapPanelStatus,
       OLComponentReference: {}
     };
-    // this.props.fetchFacets();
+    this.props.fetchFacets();
     // this.props.openDatasetWmsLayers(dataset);
     // this.props.fetchDatasetWMSLayers(wmsUrl, dataset);
     // this.props.clickTogglePanel(constants.PANEL_DATASET_DETAILS, false);

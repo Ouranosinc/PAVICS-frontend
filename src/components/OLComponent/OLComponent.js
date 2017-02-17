@@ -199,7 +199,7 @@ class OLComponent extends React.Component {
     this.map.removeLayer(this.layers[prevProps.selectedShapefile.title]);
     let source = new ol.source.TileWMS({
       url: shapefile.wmsUrl,
-      serverType: shapefile.wmsParams
+      params: shapefile.wmsParams
     });
     this.addTileWMSLayer(
       INDEX_SHAPEFILE,
