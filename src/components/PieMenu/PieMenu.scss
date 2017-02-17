@@ -28,7 +28,7 @@
   width: 60px;
   height: 60px;
   border-radius: 100%;
-  background: #2980b9;
+  background: #00A9B7;
   color: white;
   text-align: center;
   /*box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.44);*/
@@ -43,7 +43,7 @@
 }
 .radialnav .ellipsis:active, .radialnav .ellipsis:hover {
   box-shadow: 0px 4px 7px 0px rgba(0, 0, 0, 0.44);
-  background: #2e8ece;
+  background: #00A9B7;
 }
 .radialnav a {
   color: white;
@@ -51,7 +51,7 @@
 }
 .radialnav.active .ellipsis {
   box-shadow: 0px 4px 7px 0px rgba(0, 0, 0, 0.44);
-  background: #2e8ece;
+  background: #00A9B7;
 }
 .radialnav.active .menu {
   pointer-events: auto;
@@ -93,7 +93,7 @@
   transform: rotate(35deg) skew(50deg);
 }
 .menu > li:nth-of-type(2) > a, .submenu > li:nth-of-type(2) > a {
-  background-color: #4aa3df;
+  background-color: #00C5DB;
 }
 .menu > li:nth-of-type(3), .submenu > li:nth-of-type(3) {
   -moz-transform: rotate(70deg) skew(50deg);
@@ -108,7 +108,7 @@
   transform: rotate(105deg) skew(50deg);
 }
 .menu > li:nth-of-type(4) > a, .submenu > li:nth-of-type(4) > a {
-  background-color: #4aa3df;
+  background-color: #00C5DB;
   /*background-color: rgba(255, 255, 255, 0.3);*/
 }
 .menu > li:nth-of-type(5), .submenu > li:nth-of-type(5) {
@@ -156,7 +156,7 @@
   -webkit-transition: opacity 0.3s, color 0.3s;
   -moz-transition: opacity 0.3s, color 0.3s;
   transition: opacity 0.3s, color 0.3s;
-  background-color: #3498db;
+  background-color: #00A9B7;
   /*background-color: rgba(255, 255, 255, 0.2);*/
   /*box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);*/
 }

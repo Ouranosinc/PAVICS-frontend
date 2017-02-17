@@ -26,6 +26,7 @@ class OLComponent extends React.Component {
   constructor (props) {
     super(props);
     this.layers = [];
+    this.datasetSource = null;
     this.map = null;
     this.view = null;
     this.state = {
@@ -36,12 +37,7 @@ class OLComponent extends React.Component {
     this.handleClose = this.handleClose.bind(this);
   }
 
-  addTileWMSLayer (position, title, wmsUrl, wmsParams, extent, serverType, visible = true) {
-    let source = new ol.source.TileWMS({
-      url: wmsUrl,
-      params: wmsParams,
-      serverType: serverType
-    });
+  addTileWMSLayer (position, title, source, extent, visible = true) {
     let layer = new ol.layer.Tile(
       {
         visible: visible,
@@ -178,13 +174,13 @@ class OLComponent extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.currentDateTime && nextProps.currentDateTime !== this.props.currentDateTime) {
-      if (this.source) {
-        this.source.updateParams({
+      if (this.datasetSource) {
+        this.datasetSource.updateParams({
           TIME: nextProps.currentDateTime
         });
         console.log('Openlayers time changed ' + nextProps.currentDateTime);
-        this.source.setTileLoadFunction(this.source.getTileLoadFunction());
-        this.source.changed();
+        this.datasetSource.setTileLoadFunction(this.datasetSource.getTileLoadFunction());
+        this.datasetSource.changed();
       }
     }
   }
@@ -201,11 +197,14 @@ class OLComponent extends React.Component {
     console.log('change shapefile:', shapefile);
     this.layers[LAYER_SELECTED_REGIONS].getSource().clear();
     this.map.removeLayer(this.layers[prevProps.selectedShapefile.title]);
+    let source = new ol.source.TileWMS({
+      url: shapefile.wmsUrl,
+      serverType: shapefile.wmsParams
+    });
     this.addTileWMSLayer(
       INDEX_SHAPEFILE,
       shapefile.title,
-      shapefile.wmsUrl,
-      shapefile.wmsParams
+      source
     );
   }
 
@@ -248,9 +247,12 @@ class OLComponent extends React.Component {
           'SRS': 'EPSG:4326'
         };
         this.map.removeLayer(this.layers[LAYER_DATASET]);
-        this.addTileWMSLayer(INDEX_DATASET_LAYER, LAYER_DATASET, url, wmsParams);
+        this.datasetSource = new ol.source.TileWMS({
+          url: url,
+          params: wmsParams
+        });
+        this.addTileWMSLayer(INDEX_DATASET_LAYER, LAYER_DATASET, this.datasetSource);
       });
-
   }
 
   componentDidUpdate (prevProps, prevState) {
