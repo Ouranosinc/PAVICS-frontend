@@ -4,10 +4,14 @@ import ol from 'openlayers';
 import Dialog from 'material-ui/Dialog';
 // Couldn't figure out the bug when importing inner component css file but it works from node_modules
 let G_BING_API_KEY = 'AtXX65CBBfZXBxm6oMyf_5idMAMI7W6a5GuZ5acVcrYi6lCQayiiBz7_aMHB7JR7';
-const INDEX_BASE_MAP = 1;
-const INDEX_DATASET_LAYER = 10;
-const INDEX_SHAPEFILE = 100;
-const INDEX_SELECTED_REGIONS = 1000;
+const INDEX_BASE_MAP = -10;
+const INDEX_DATASET_LAYER = 1;
+const INDEX_SHAPEFILE = 10;
+const INDEX_SELECTED_REGIONS = 100;
+const LAYER_SELECTED_REGIONS = 'selectedRegions';
+const LAYER_DATASET = 'dataset_layer';
+// not exactly sure if the selected regions index is working
+// when base map is at 1 it shadows the selected regions
 class OLComponent extends React.Component {
   static propTypes = {
     selectedDatasetLayer: React.PropTypes.object.isRequired,
@@ -32,7 +36,7 @@ class OLComponent extends React.Component {
     this.handleClose = this.handleClose.bind(this);
   }
 
-  addTileWMSLayer (title, wmsUrl, wmsParams, extent, serverType, visible = true) {
+  addTileWMSLayer (position, title, wmsUrl, wmsParams, extent, serverType, visible = true) {
     let source = new ol.source.TileWMS({
       url: wmsUrl,
       params: wmsParams,
@@ -47,7 +51,7 @@ class OLComponent extends React.Component {
         extent: extent
       });
     this.layers[title] = layer;
-    this.map.addLayer(layer);
+    this.map.getLayers().insertAt(position, layer);
     console.log('addTileWMSLayer:', layer);
   }
 
@@ -104,7 +108,8 @@ class OLComponent extends React.Component {
     });
     let layer = new ol.layer.Vector({
       source: source,
-      style: style
+      style: style,
+      opacity: 1
     });
     layer.set('nameId', nameId);
     return layer;
@@ -149,7 +154,7 @@ class OLComponent extends React.Component {
         let content = `lat: ${converted[0]}, lon: ${converted[1]}, feature id: ${id}`;
         let format = new ol.format.GeoJSON();
         let features = format.readFeatures(response, {featureProjection: 'EPSG:3857'});
-        this.layers['selectedRegions'].getSource().addFeatures(features);
+        this.layers[LAYER_SELECTED_REGIONS].getSource().addFeatures(features);
         this.setState({
           dialogContent: content,
           dialogOpened: true
@@ -160,9 +165,9 @@ class OLComponent extends React.Component {
   componentDidMount () {
     this.initMap();
     this.map.addEventListener('click', this.handleMapClick);
-    let layer = this.createVectorLayer('selectedRegions');
+    let layer = this.createVectorLayer(LAYER_SELECTED_REGIONS);
     this.map.getLayers().insertAt(INDEX_SELECTED_REGIONS, layer);
-    this.layers['selectedRegions'] = layer;
+    this.layers[LAYER_SELECTED_REGIONS] = layer;
   }
 
   componentWillUnmount () {
@@ -194,9 +199,10 @@ class OLComponent extends React.Component {
   setShapefile (prevProps) {
     let shapefile = this.props.selectedShapefile;
     console.log('change shapefile:', shapefile);
-    this.layers['selectedRegions'].getSource().clear();
+    this.layers[LAYER_SELECTED_REGIONS].getSource().clear();
     this.map.removeLayer(this.layers[prevProps.selectedShapefile.title]);
     this.addTileWMSLayer(
+      INDEX_SHAPEFILE,
       shapefile.title,
       shapefile.wmsUrl,
       shapefile.wmsParams
@@ -241,8 +247,8 @@ class OLComponent extends React.Component {
           'TIME': timeDimension['default'],
           'SRS': 'EPSG:4326'
         };
-        this.map.removeLayer(this.layers['dataset_layer']);
-        this.addTileWMSLayer('dataset_layer', url, wmsParams);
+        this.map.removeLayer(this.layers[LAYER_DATASET]);
+        this.addTileWMSLayer(INDEX_DATASET_LAYER, LAYER_DATASET, url, wmsParams);
       });
 
   }
