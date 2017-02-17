@@ -8,9 +8,7 @@ import Paper from 'material-ui/Paper';
 export default class LayerSwitcher extends React.Component {
   static propTypes = {
     fetchShapefiles: React.PropTypes.func.isRequired,
-    openWmsLayer: React.PropTypes.func.isRequired,
-    fetchWMSLayerDetails: React.PropTypes.func.isRequired,
-    selectLoadWms: React.PropTypes.func.isRequired,
+    selectDatasetLayer: React.PropTypes.func.isRequired,
     selectShapefile: React.PropTypes.func.isRequired,
     selectBasemap: React.PropTypes.func.isRequired,
     currentVisualizedDatasetLayers: React.PropTypes.array.isRequired,
@@ -42,15 +40,7 @@ export default class LayerSwitcher extends React.Component {
   }
 
   setSelectedDatasetLayer (event, value) {
-    let url = value.wms_url;
-    let index = url.indexOf('DATASET=');
-    let dataset = url.substr(index + 8);
-    let layer = `${dataset}/${value.variable[0]}`;
-    let date = '2006-01-01T00:00:00.000Z';
-    let wmsURL = 'http://outarde.crim.ca:8080/ncWMS2/';
-    this.props.openWmsLayer(layer);
-    this.props.fetchWMSLayerDetails(wmsURL, layer);
-    this.props.selectLoadWms(wmsURL, layer, date, '', 'default-scalar/div-RdYlBu', 0.4);
+    this.props.selectDatasetLayer(value);
   }
 
   makeShapefileList () {

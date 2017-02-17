@@ -16,13 +16,12 @@ import PlotlyWrapper from '../../components/PlotlyWrapper';
 import * as constants from './../../constants';
 class Visualize extends React.Component {
   static propTypes = {
-    fetchWMSLayerDetails: React.PropTypes.func.isRequired,
-    selectLoadWms: React.PropTypes.func.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
     currentVisualizedDatasetLayers: React.PropTypes.array.isRequired,
     fetchShapefiles: React.PropTypes.func.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
     selectedBasemap: React.PropTypes.string.isRequired,
+    selectDatasetLayer: React.PropTypes.func.isRequired,
     selectShapefile: React.PropTypes.func.isRequired,
     selectBasemap: React.PropTypes.func.isRequired,
     fetchFacets: React.PropTypes.func.isRequired,
@@ -38,7 +37,7 @@ class Visualize extends React.Component {
     console.log(props);
     this._onToggleMapPanel = this._onToggleMapPanel.bind(this);
     this.setOLComponentReference = this.setOLComponentReference.bind(this);
-    let wmsUrl = 'http://hirondelle.crim.ca:8080/ncWMS2/wms';
+    let wmsUrl = 'http://outarde.crim.ca:8080/ncWMS2/wms';
     // let wmsUrl = 'http://outarde.crim.ca:8083/thredds/wms/birdhouse/flyingpigeon/ncout-d149d317-b67f-11e6-acaf-fa163ee00329.nc';
     // let dataset = 'outputs/data/CMIP5/CCCMA/CanESM2/rcp85/day/atmos/r1i1p1/pr/pr_day_CanESM2_rcp85_r1i1p1_20060101-21001231.nc'
     // let dataset = 'outputs/flyingpigeon/ncout-ffc3a3eb-b7db-11e6-acaf-fa163ee00329.nc';
@@ -108,9 +107,7 @@ class Visualize extends React.Component {
             <div className={this.state.mapPanelStatus[LAYER_SWITCHER_PANEL] ? classes['panel'] : classes['hidden']}>
               <LayerSwitcher
                 fetchShapefiles={this.props.fetchShapefiles}
-                openWmsLayer={this.props.openWmsLayer}
-                fetchWMSLayerDetails={this.props.fetchWMSLayerDetails}
-                selectLoadWms={this.props.selectLoadWms}
+                selectDatasetLayer={this.props.selectDatasetLayer}
                 selectShapefile={this.props.selectShapefile}
                 selectBasemap={this.props.selectBasemap}
                 currentVisualizedDatasetLayers={this.props.currentVisualizedDatasetLayers}

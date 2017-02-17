@@ -6,6 +6,7 @@ const SET_WMS_LAYER = 'Visualize.SET_WMS_LAYER';
 const SET_SHAPEFILES = 'Visualize.SET_SHAPEFILES';
 const SET_SELECTED_SHAPEFILE = 'Visualize.SET_SELECTED_SHAPEFILE';
 const SET_SELECTED_BASEMAP = 'Visualize.SET_SELECTED_BASEMAP';
+const SET_SELECTED_DATASET_LAYER = 'Visualize.SET_SELECTED_DATASET_LAYER';
 const ADD_DATASET_LAYERS_TO_VISUALIZE = 'Visualize.ADD_DATASET_LAYERS_TO_VISUALIZE';
 const ADD_DATASETS_TO_PROJECTS = 'Visualize.ADD_DATASETS_TO_PROJECTS';
 const ADD_FACET_KEY_VALUE_PAIR = 'Visualize.ADD_FACET_KEY_VALUE_PAIR';
@@ -651,6 +652,11 @@ export function selectBasemap (basemap) {
     dispatch(setSelectedBasemap(basemap));
   };
 }
+export function selectDatasetLayer (layer) {
+  return dispatch => {
+    dispatch(setSelectedDatasetLayer(layer));
+  };
+}
 export function fetchShapefiles () {
   const parser = new ol.format.WMSCapabilities();
   return dispatch => {
@@ -692,6 +698,12 @@ function setSelectedBasemap (basemap) {
   return {
     type: SET_SELECTED_BASEMAP,
     basemap: basemap
+  };
+}
+function setSelectedDatasetLayer (layer) {
+  return {
+    type: SET_SELECTED_DATASET_LAYER,
+    layer: layer
   };
 }
 function setLayer (layer) {
@@ -839,6 +851,9 @@ const VISUALIZE_HANDLERS = {
   },
   [SET_SELECTED_BASEMAP]: (state, action) => {
     return {...state, selectedBasemap: action.basemap};
+  },
+  [SET_SELECTED_DATASET_LAYER]: (state, action) => {
+    return {...state, selectedDatasetLayer: action.layer};
   },
   [ADD_DATASETS_TO_PROJECTS]: (state, action) => {
     let newDatasets = state.currentProjectDatasets.concat(action.datasets);

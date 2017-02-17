@@ -8,12 +8,13 @@ const INDEX_BASE_MAP = -10;
 const INDEX_SELECTED_REGIONS = 1000;
 class OLComponent extends React.Component {
   static propTypes = {
+    selectedDatasetLayer: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
+    selectedBasemap: React.PropTypes.string.isRequired,
     capabilities: React.PropTypes.object,
     dataset: React.PropTypes.object,
     loadedWmsDatasets: React.PropTypes.array.isRequired,
-    layer: React.PropTypes.object.isRequired,
-    selectedBasemap: React.PropTypes.string.isRequired
+    layer: React.PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -269,30 +270,86 @@ class OLComponent extends React.Component {
     }
   }
 
-  componentDidUpdate (prevProps, prevState) {
-    if (prevProps.selectedBasemap !== this.props.selectedBasemap) {
-      console.log('change base map:', this.props.selectedBasemap);
-      let layer = this.getLayer(prevProps.selectedBasemap);
-      this.map.removeLayer(layer);
-      this.addBingLayer(this.props.selectedBasemap, this.props.selectedBasemap);
+  setBasemap (prevProps) {
+    console.log('change base map:', this.props.selectedBasemap);
+    let layer = this.getLayer(prevProps.selectedBasemap);
+    this.map.removeLayer(layer);
+    this.addBingLayer(this.props.selectedBasemap, this.props.selectedBasemap);
+  }
+
+  setShapefile (prevProps) {
+    let shapefile = this.props.selectedShapefile;
+    console.log('change shapefile:', shapefile);
+    this.layers['selectedRegions'].getSource().clear();
+    let layer = this.getTileWMSLayer(
+      prevProps.selectedShapefile.title,
+      prevProps.selectedShapefile.wmsUrl,
+      prevProps.selectedShapefile.wmsParams
+    );
+    this.map.removeLayer(
+      layer
+    );
+    this.addTileWMSLayer(
+      shapefile.title,
+      shapefile.wmsUrl,
+      shapefile.wmsParams
+    );
+  }
+
+  findDimension (dimensions, dimensionName) {
+    for (let i = 0; i < dimensions.length; i++) {
+      if (dimensions[i]['name'] === dimensionName) {
+        return dimensions[i];
+      }
     }
-    if (prevProps.selectedShapefile !== this.props.selectedShapefile) {
-      let shapefile = this.props.selectedShapefile;
-      console.log('change shapefile:', shapefile);
-      this.layers['selectedRegions'].getSource().clear();
-      let layer = this.getTileWMSLayer(
-        prevProps.selectedShapefile.title,
-        prevProps.selectedShapefile.wmsUrl,
-        prevProps.selectedShapefile.wmsParams
-      );
-      this.map.removeLayer(
-        layer
-      );
-      this.addTileWMSLayer(
-        shapefile.title,
-        shapefile.wmsUrl,
-        shapefile.wmsParams
-      );
+  }
+
+  setDatasetLayer (prevProps) {
+    console.log('setting new dataset layer', this.props.selectedDatasetLayer);
+    let wmsUrl = this.props.selectedDatasetLayer.wms_url;
+    let parser = new ol.format.WMSCapabilities();
+    let capabilities = {};
+    fetch(wmsUrl)
+      .then(response => {
+        return response.text();
+      })
+      .then(text => {
+        capabilities = parser.read(text);
+        console.log('wms capabilities:', capabilities);
+        let url = capabilities['Service']['OnlineResource'];
+        let wmsName = this.props.selectedDatasetLayer['dataset_id'];
+        // very nesting
+        let layer = capabilities['Capability']['Layer']['Layer'][0]['Layer'][0];
+        let layerName = layer['Name'];
+        let timeDimension = this.findDimension(layer['Dimension'], 'time');
+        console.log('got time dimension:', timeDimension);
+        let wmsParams = {
+          'TRANSPARENT': 'TRUE',
+          'STYLES': 'default',
+          'LAYERS': layerName,
+          'EPSG': '4326',
+          'COLORSCALERANGE': '0.0000004000,0.00006000',
+          'NUMCOLORBANDS': '10',
+          'LOGSCALE': false,
+          'crossOrigin': 'anonymous',
+          'BGCOLOR': 'transparent',
+          'TIME': timeDimension['default'],
+          'SRS': 'EPSG:4326'
+        };
+        this.addTileWMSLayer(wmsName, url, wmsParams);
+      });
+
+  }
+
+  componentDidUpdate (prevProps, prevState) {
+    if (this.props.selectedBasemap !== prevProps.selectedBasemap) {
+      this.setBasemap(prevProps);
+    }
+    if (this.props.selectedShapefile !== prevProps.selectedShapefile) {
+      this.setShapefile(prevProps);
+    }
+    if (this.props.selectedDatasetLayer !== prevProps.selectedDatasetLayer) {
+      this.setDatasetLayer(prevProps);
     }
     if (this.props.layer && this.props.layer.title) {
       let layer = this.props.layer;
