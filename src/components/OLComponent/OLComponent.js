@@ -53,18 +53,22 @@ class OLComponent extends React.Component {
    @param serverType Server's type
    */
   addTileWMSLayer (title, wmsUrl, wmsParams, extent, serverType, visible = true) {
-    let layer = this.getTileWMSLayer(
-      title,
-      wmsUrl,
-      wmsParams,
-      extent,
-      serverType,
-      visible
-    );
+    let source = new ol.source.TileWMS({
+      url: wmsUrl,
+      params: wmsParams,
+      serverType: serverType
+    });
+    let layer = new ol.layer.Tile(
+      {
+        visible: visible,
+        title: title,
+        opacity: 0.4, // TODO: Set opacity dynamically
+        source: source,
+        extent: extent
+      });
     this.layers[title] = layer;
     this.map.addLayer(layer);
-    console.log('addTileWMSLayer: Add layer ' + layer.get('title'));
-    return layer;
+    console.log('addTileWMSLayer:', layer.get('title'));
   }
 
   /*! \brief Returns a ol3 layer to a layers list
@@ -281,14 +285,7 @@ class OLComponent extends React.Component {
     let shapefile = this.props.selectedShapefile;
     console.log('change shapefile:', shapefile);
     this.layers['selectedRegions'].getSource().clear();
-    let layer = this.getTileWMSLayer(
-      prevProps.selectedShapefile.title,
-      prevProps.selectedShapefile.wmsUrl,
-      prevProps.selectedShapefile.wmsParams
-    );
-    this.map.removeLayer(
-      layer
-    );
+    this.map.removeLayer(this.layers[prevProps.selectedShapefile.title]);
     this.addTileWMSLayer(
       shapefile.title,
       shapefile.wmsUrl,
@@ -317,12 +314,10 @@ class OLComponent extends React.Component {
         capabilities = parser.read(text);
         console.log('wms capabilities:', capabilities);
         let url = capabilities['Service']['OnlineResource'];
-        let wmsName = this.props.selectedDatasetLayer['dataset_id'];
         // very nesting
         let layer = capabilities['Capability']['Layer']['Layer'][0]['Layer'][0];
         let layerName = layer['Name'];
         let timeDimension = this.findDimension(layer['Dimension'], 'time');
-        console.log('got time dimension:', timeDimension);
         let wmsParams = {
           'TRANSPARENT': 'TRUE',
           'STYLES': 'default',
@@ -336,7 +331,8 @@ class OLComponent extends React.Component {
           'TIME': timeDimension['default'],
           'SRS': 'EPSG:4326'
         };
-        this.addTileWMSLayer(wmsName, url, wmsParams);
+        this.map.removeLayer(this.layers['dataset_layer']);
+        this.addTileWMSLayer('dataset_layer', url, wmsParams);
       });
 
   }
@@ -350,35 +346,6 @@ class OLComponent extends React.Component {
     }
     if (this.props.selectedDatasetLayer !== prevProps.selectedDatasetLayer) {
       this.setDatasetLayer(prevProps);
-    }
-    if (this.props.layer && this.props.layer.title) {
-      let layer = this.props.layer;
-      console.log('making wms layer', layer);
-      this.makeWMSlayer(layer.title, layer.url, layer.time, layer.style, layer.name);
-    }
-    if (this.props.loadedWmsDatasets.length && this.layersCount !== this.props.loadedWmsDatasets.length) {
-      let wmsUrl = this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].url;
-      let wmsName = this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].name;
-      // TODO: Do we need to dynamically set style + palette
-      let wmsParams = {
-        'TRANSPARENT': 'TRUE',
-        'STYLES': this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].style,
-        'LAYERS': this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].name,
-        'EPSG': '4326',
-        'COLORSCALERANGE': '0.0000004000,0.00006000',
-        'NUMCOLORBANDS': '10',
-        'LOGSCALE': false,
-        'crossOrigin': 'anonymous',
-        'BGCOLOR': 'transparent',
-        'TIME': this.props.loadedWmsDatasets[this.props.loadedWmsDatasets.length - 1].start,
-        'SRS': 'EPSG:4326'
-      };
-      if (this.tmpLayer) {
-        // this.tmpLayer.setVisible(false)
-        this.map.removeLayer(this.tmpLayer);
-      }
-      this.tmpLayer = this.addTileWMSLayer(wmsName, wmsUrl, wmsParams);
-      this.layersCount = this.props.loadedWmsDatasets.length;
     }
   }
 
