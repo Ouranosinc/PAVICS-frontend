@@ -20,7 +20,8 @@ class OLComponent extends React.Component {
     capabilities: React.PropTypes.object,
     dataset: React.PropTypes.object,
     loadedWmsDatasets: React.PropTypes.array.isRequired,
-    layer: React.PropTypes.object.isRequired
+    layer: React.PropTypes.object.isRequired,
+    setSelectedDatasetCapabilities: React.PropTypes.func.isRequired,
   };
 
   constructor (props) {
@@ -230,6 +231,7 @@ class OLComponent extends React.Component {
         console.log('wms capabilities:', capabilities);
         let url = capabilities['Service']['OnlineResource'];
         // very nesting
+        this.props.setSelectedDatasetCapabilities(capabilities);
         let layer = capabilities['Capability']['Layer']['Layer'][0]['Layer'][0];
         let layerName = layer['Name'];
         let timeDimension = this.findDimension(layer['Dimension'], 'time');
@@ -262,7 +264,7 @@ class OLComponent extends React.Component {
     if (this.props.selectedShapefile !== prevProps.selectedShapefile) {
       this.setShapefile(prevProps);
     }
-    if (this.props.selectedDatasetLayer !== prevProps.selectedDatasetLayer) {
+    if (this.props.selectedDatasetLayer !== prevProps.selectedDatasetLayer && !this.props.selectedDatasetLayer.capabilities) {
       console.log(this.props.selectedDatasetLayer);
       if (Object.keys(this.props.selectedDatasetLayer).length === 0 && this.props.selectedDatasetLayer.constructor === Object) {
         console.log('removing dataset layer');

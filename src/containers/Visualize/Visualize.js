@@ -16,6 +16,7 @@ import PlotlyWrapper from '../../components/PlotlyWrapper';
 import * as constants from './../../constants';
 class Visualize extends React.Component {
   static propTypes = {
+    selectedDatasetCapabilities: React.PropTypes.object.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
     currentVisualizedDatasetLayers: React.PropTypes.array.isRequired,
     fetchShapefiles: React.PropTypes.func.isRequired,

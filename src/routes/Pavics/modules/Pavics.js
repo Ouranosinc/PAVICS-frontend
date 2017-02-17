@@ -7,6 +7,7 @@ const SET_SHAPEFILES = 'Visualize.SET_SHAPEFILES';
 const SET_SELECTED_SHAPEFILE = 'Visualize.SET_SELECTED_SHAPEFILE';
 const SET_SELECTED_BASEMAP = 'Visualize.SET_SELECTED_BASEMAP';
 const SET_SELECTED_DATASET_LAYER = 'Visualize.SET_SELECTED_DATASET_LAYER';
+const SET_SELECTED_DATASET_CAPABILITIES = 'Visualize.SET_SELECTED_DATASET_CAPABILITIES';
 const ADD_DATASET_LAYERS_TO_VISUALIZE = 'Visualize.ADD_DATASET_LAYERS_TO_VISUALIZE';
 const ADD_SEARCH_CRITERIAS_TO_PROJECTS = 'Visualize.ADD_SEARCH_CRITERIAS_TO_PROJECTS';
 const REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS = 'Visualize.REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS'
@@ -712,6 +713,12 @@ export function fetchShapefiles () {
       });
   };
 }
+export function setSelectedDatasetCapabilities (capabilities) {
+  return {
+    type: SET_SELECTED_DATASET_CAPABILITIES,
+    capabilities: capabilities
+  };
+}
 function setShapefiles (shapefiles) {
   return {
     type: SET_SHAPEFILES,
@@ -894,6 +901,9 @@ const VISUALIZE_HANDLERS = {
   },
   [SET_SELECTED_DATASET_LAYER]: (state, action) => {
     return {...state, selectedDatasetLayer: action.layer};
+  },
+  [SET_SELECTED_DATASET_CAPABILITIES]: (state, action) => {
+    return {...state, selectedDatasetCapabilities: action.capabilities};
   },
   [ADD_DATASETS_TO_PROJECTS]: (state, action) => {
     let newDatasets = state.currentProjectDatasets.concat(action.datasets);

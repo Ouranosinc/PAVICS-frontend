@@ -27,7 +27,10 @@ export class TimeSlider extends React.Component {
   static propTypes = {
     monthsRange: React.PropTypes.bool.isRequired,
     yearsRange: React.PropTypes.bool.isRequired,
-    currentDateTime: React.PropTypes.string.isRequired
+    currentDateTime: React.PropTypes.string.isRequired,
+    selectedDatasetCapabilities: React.PropTypes.object.isRequired,
+    fetchWMSLayerDetails: React.PropTypes.func.isRequired,
+    fetchWMSLayerTimesteps: React.PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -65,6 +68,17 @@ export class TimeSlider extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
+    if (nextProps.selectedDatasetCapabilities && nextProps.selectedDatasetCapabilities !== this.props.selectedDatasetCapabilities) {
+      let capabilities = nextProps.selectedDatasetCapabilities;
+      let url = capabilities['Service']['OnlineResource'];
+      let layer = capabilities['Capability']['Layer']['Layer'][0]['Layer'][0];
+      let layerName = layer['Name'];
+      let date = layer['Dimension'][0].values.split('/')[0];
+      // TODO MAKE THIS WORK!!!
+      // this.props.fetchWMSLayerDetails(url, layerName);
+      // this.props.fetchWMSLayerTimesteps(url, layerName, date);
+    }
+
     if (nextProps.selectedWMSLayerDetails && nextProps.selectedWMSLayerDetails.data && (nextProps.selectedWMSLayerDetails.data !== this.props.selectedWMSLayerDetails.data)) {
       this.changeGlobalRange(nextProps.selectedWMSLayerDetails.data);
     }
