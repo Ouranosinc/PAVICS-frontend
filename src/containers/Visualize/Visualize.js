@@ -16,6 +16,7 @@ import PlotlyWrapper from '../../components/PlotlyWrapper';
 import * as constants from './../../constants';
 class Visualize extends React.Component {
   static propTypes = {
+    selectedDatasetCapabilities: React.PropTypes.object.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
     currentVisualizedDatasetLayers: React.PropTypes.array.isRequired,
     fetchShapefiles: React.PropTypes.func.isRequired,
@@ -37,26 +38,26 @@ class Visualize extends React.Component {
     console.log(props);
     this._onToggleMapPanel = this._onToggleMapPanel.bind(this);
     this.setOLComponentReference = this.setOLComponentReference.bind(this);
-    let wmsUrl = 'http://outarde.crim.ca:8080/ncWMS2/wms';
+    // let wmsUrl = 'http://outarde.crim.ca:8080/ncWMS2/wms';
     // let wmsUrl = 'http://outarde.crim.ca:8083/thredds/wms/birdhouse/flyingpigeon/ncout-d149d317-b67f-11e6-acaf-fa163ee00329.nc';
     // let dataset = 'outputs/data/CMIP5/CCCMA/CanESM2/rcp85/day/atmos/r1i1p1/pr/pr_day_CanESM2_rcp85_r1i1p1_20060101-21001231.nc'
     // let dataset = 'outputs/flyingpigeon/ncout-ffc3a3eb-b7db-11e6-acaf-fa163ee00329.nc';
-    let dataset = 'outputs/ouranos/subdaily/aev/shum/aev_shum_1961.nc';
+    // let dataset = 'outputs/ouranos/subdaily/aev/shum/aev_shum_1961.nc';
     let mapPanelStatus = {};
     mapPanelStatus[MAP_PANEL] = true;
     mapPanelStatus[MAP_CONTROLS_PANEL] = false;
     mapPanelStatus[CHART_PANEL] = false;
-    mapPanelStatus[LAYER_SWITCHER_PANEL] = false;
-    mapPanelStatus[TIME_SLIDER_PANEL] = false;
+    mapPanelStatus[LAYER_SWITCHER_PANEL] = true;
+    mapPanelStatus[TIME_SLIDER_PANEL] = true;
     this.state = {
       mapPanelStatus: mapPanelStatus,
       OLComponentReference: {}
     };
     this.props.fetchFacets();
-    this.props.openDatasetWmsLayers(dataset);
-    this.props.fetchDatasetWMSLayers(wmsUrl, dataset);
-    this.props.clickTogglePanel(constants.PANEL_DATASET_DETAILS, false);
-    this.props.clickTogglePanel(constants.PANEL_DATASET_WMS_LAYERS, true);
+    // this.props.openDatasetWmsLayers(dataset);
+    // this.props.fetchDatasetWMSLayers(wmsUrl, dataset);
+    // this.props.clickTogglePanel(constants.PANEL_DATASET_DETAILS, false);
+    // this.props.clickTogglePanel(constants.PANEL_DATASET_WMS_LAYERS, true);
   }
 
   _onToggleMapPanel (panel) {
