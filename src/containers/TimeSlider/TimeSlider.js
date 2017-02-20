@@ -30,6 +30,7 @@ export class TimeSlider extends React.Component {
     yearsRange: React.PropTypes.bool.isRequired,
     currentDateTime: React.PropTypes.string.isRequired,
     selectedDatasetCapabilities: React.PropTypes.object.isRequired,
+    selectedWMSLayerDetails: React.PropTypes.object.isRequired,
     selectedWMSLayerTimesteps: React.PropTypes.object.isRequired,
     setCurrentDateTime: React.PropTypes.func.isRequired
   };
@@ -45,7 +46,7 @@ export class TimeSlider extends React.Component {
     this._onSelectedTime = this._onSelectedTime.bind(this);
     this.state = {
       currentDate: props.currentDateTime.substring(0, 10),
-      currentMonthDay: props.currentDateTime.substring(11, 15),
+      currentMonthDay: props.currentDateTime.substring(5, 10),
       currentTime: props.currentDateTime.substring(11, 24),
       currentYear: 1900,
       firstDay: 1,
@@ -69,17 +70,20 @@ export class TimeSlider extends React.Component {
   }
 
   componentDidUpdate (prevProps, prevState) {
+    // if (this.props.selectedWMSLayerDetails && this.props.selectedWMSLayerDetails.data &&
+    //   (this.props.selectedWMSLayerDetails.data !== prevProps.selectedWMSLayerDetails.data)) {
+    //   this.changeGlobalRange(this.props.selectedWMSLayerDetails.data);
+    // }
+
     if (this.props.selectedDatasetCapabilities !== prevProps.selectedDatasetCapabilities) {
       this.changeGlobalRange();
     }
-    /*
 
     // TODO DISABLE SOME MONTHS/YEARS IF NO DATA
     if (this.props.selectedWMSLayerTimesteps && this.props.selectedWMSLayerTimesteps.data &&
       (this.props.selectedWMSLayerTimesteps.data !== prevProps.selectedWMSLayerTimesteps.data)) {
       this.changeTimesteps(this.props.selectedWMSLayerTimesteps.data);
     }
-    */
   }
 
   // TODO duplicated in OLComponent
@@ -100,25 +104,32 @@ export class TimeSlider extends React.Component {
     return Object.keys(realDates);
   }
 
-  changeGlobalRange () {
+  changeGlobalRange (selectedWMSLayerDetailsData) {
     let marksYears = {};
     let yearArr = [];
+
+    // for (let year in selectedWMSLayerDetailsData.datesWithData) {
+    //   yearArr.push(parseInt(year));
+    // }
+    // yearArr.sort();
+
     let dimensions = this.props.selectedDatasetCapabilities['Capability']['Layer']['Layer'][0]['Layer'][0]['Dimension'];
     let timeDimension = this.findDimension(dimensions, 'time');
     console.log('found time dimension!', timeDimension);
     let boundDates = timeDimension['values'].split('/');
     if (boundDates.length === 3) {
-      let startDate = new Date(boundDates[0]).getFullYear();
-      let endDate = new Date(boundDates[1]).getFullYear();
+      let startDate = parseInt(boundDates[0].substring(0, 4)); // new Date(boundDates[0]).getFullYear();
+      let endDate = parseInt(boundDates[1].substring(0, 4)); // new Date(boundDates[1]).getFullYear();
       let currentDate = startDate;
       while (currentDate <= endDate) {
         yearArr.push(currentDate++);
-      }
+      }//
       yearArr.sort();
     }
     else {
       yearArr = this.parseTimeDimensionString(timeDimension['values'].split(','));
     }
+
     let firstYear = parseInt(yearArr[0]);
     let lastYear = parseInt(yearArr[yearArr.length - 1]);
     if (yearArr <= 10) {
@@ -169,13 +180,11 @@ export class TimeSlider extends React.Component {
 
       marksYears[lastYear] = lastYear;
     }
-    // TODO SET CURRENTDATE AND CURRENTMONTHDAY CORRECTLY
     this.setState(
       {
-        ...this.state,
-        currentDate: `${this.props.currentDateTime.substring(0, 10)}`,
-        currentMonthDay: `${this.props.currentDateTime.substring(4, 10)}`,
-        // currentTime: `${this.props.currentDateTime.substring(3, 7)}`,
+        currentDate: this.props.currentDateTime.substring(0, 10),
+        currentMonthDay: this.props.currentDateTime.substring(5, 10),
+        currentTime: `${this.props.currentDateTime.substring(11, 24)}`,
         currentYear: firstYear,
         firstYear: firstYear,
         lastYear: lastYear,
@@ -193,7 +202,6 @@ export class TimeSlider extends React.Component {
     }
     this.setState(
       {
-        ...this.state,
         timesteps: selectedWMSLayerTimestepsData.timesteps,
         currentTime: currentTime
       }
@@ -270,10 +278,7 @@ export class TimeSlider extends React.Component {
             included={false}
             range={false}
             value={new Date(
-              this.state.currentYear, this.state.currentMonthDay.substring(
-                0,
-                2
-              ), this.state.currentMonthDay.substring(3, 5)
+              this.state.currentYear, this.state.currentMonthDay.substring(0, 2), this.state.currentMonthDay.substring(3, 5)
             ).valueOf() / DIVIDER}
             onChange={this._onChangedMonthSlider}
           />
@@ -388,7 +393,6 @@ export class TimeSlider extends React.Component {
       let monthDay = ((month === 0) ? '12' : (month < 10 ? '0' + month : month)) + '-' + (day < 10 ? '0' + day : day);
       this.setState(
         {
-          ...this.state,
           currentMonthDay: monthDay,
           currentDate: `${this.state.currentYear}-${monthDay}`
         }, () => this.changeCurrentDateTime()
@@ -402,7 +406,6 @@ export class TimeSlider extends React.Component {
     } else {
       this.setState(
         {
-          ...this.state,
           currentYear: values,
           currentDate: `${values}-${this.state.currentMonthDay}`
         }, () => this.changeCurrentDateTime()
@@ -413,13 +416,11 @@ export class TimeSlider extends React.Component {
   _onChangedCurrentDate (event) {
     this.setState(
       {
-        ...this.state,
         currentDate: event.target.value
       });
     if (event.target.value.length === 10) {
       this.setState(
         {
-          ...this.state,
           currentYear: event.target.value.substring(0, 4),
           currentMonthDay: event.target.value.substring(5, 10)
         }, () => this.changeCurrentDateTime()
@@ -430,7 +431,6 @@ export class TimeSlider extends React.Component {
   _onChangedStepLength (event) {
     this.setState(
       {
-        ...this.state,
         stepLength: event.target.value
       });
   }
@@ -438,7 +438,6 @@ export class TimeSlider extends React.Component {
   _onChangedStepGranularity (event) {
     this.setState(
       {
-        ...this.state,
         stepGranularity: event.target.value
       });
   }
@@ -446,7 +445,6 @@ export class TimeSlider extends React.Component {
   _onChangedStepSpeed (event) {
     this.setState(
       {
-        ...this.state,
         stepSpeed: event.target.value
       });
   }
@@ -454,7 +452,6 @@ export class TimeSlider extends React.Component {
   _onSelectedTime (event) {
     this.setState(
       {
-        ...this.state,
         currentTime: event.target.value
       },
       () => this.changeCurrentDateTime()
@@ -470,7 +467,6 @@ export class TimeSlider extends React.Component {
       case PAUSE_ACTION:
         this.setState(
           {
-            ...this.state,
             isPlaying: false
           });
         // TODO: Destroy Play Loop, IT'S IMPORTANT
@@ -478,7 +474,6 @@ export class TimeSlider extends React.Component {
       case PLAY_ACTION:
         this.setState(
           {
-            ...this.state,
             isPlaying: true
           });
         this.playLoop(true);
@@ -508,7 +503,6 @@ export class TimeSlider extends React.Component {
   dispatchCurrentDateTime (dateStringified) {
     this.setState(
       {
-        ...this.state,
         currentDate: dateStringified.substring(0, 10),
         currentMonthDay: dateStringified.substring(5, 10),
         currentTime: dateStringified.substring(11, 24),

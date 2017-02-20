@@ -127,6 +127,7 @@ class Visualize extends React.Component {
             {(this.state.mapPanelStatus[TIME_SLIDER_PANEL])
               ? <div className={classes.panel}>
                 <TimeSlider
+                  selectedWMSLayerDetails={this.props.selectedWMSLayerDetails}
                   selectedWMSLayerTimesteps={this.props.selectedWMSLayerTimesteps}
                   setCurrentDateTime={this.props.setCurrentDateTime}
                   selectedDatasetCapabilities={this.props.selectedDatasetCapabilities}

@@ -120,7 +120,7 @@ export class ExperienceManagement extends React.Component {
                       return (
                         <ListItem
                           style={{width: '98%'}}
-                          key={i}
+                          key={j}
                           primaryText={fileName}
                           leftIcon={nestedIcon}
                           rightIconButton={
