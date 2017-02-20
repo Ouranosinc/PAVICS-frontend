@@ -11,7 +11,7 @@ export default class MapControls extends React.Component {
   render () {
     return (
       <Paper className={classes['MapControls']}>
-        <h2>Select Map Manipulation Mode</h2>
+        <h2>Map Manipulation Mode</h2>
         <Divider />
         <RadioButtonGroup
           style={{marginTop: '10px'}}

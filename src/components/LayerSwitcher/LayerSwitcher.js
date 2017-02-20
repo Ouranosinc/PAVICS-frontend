@@ -55,7 +55,7 @@ export default class LayerSwitcher extends React.Component {
   makeShapefileList () {
     return (
       <List
-        style={{maxHeight: '400px', overflowY: 'auto'}}
+        style={{minHeight: '250px', maxHeight: '250px', overflowY: 'auto'}}
         className={classes['layers']}>
         <ListItem
           initiallyOpen
@@ -79,6 +79,9 @@ export default class LayerSwitcher extends React.Component {
               );
             })
           } />
+        <ListItem
+          primaryTogglesNestedList
+          primaryText="Private (TODO)" />
       </List>
     );
   }
@@ -86,7 +89,7 @@ export default class LayerSwitcher extends React.Component {
   makeBaseMapsList () {
     return (
       <List
-        style={{maxHeight: '400px', overflowY: 'auto'}}
+        style={{minHeight: '250px', maxHeight: '250px', overflowY: 'auto'}}
         className={classes['layers']}>
         <ListItem
           initiallyOpen
@@ -117,7 +120,7 @@ export default class LayerSwitcher extends React.Component {
   makeDatasetsList () {
     return (
       <List
-        style={{maxHeight: '400px', overflowY: 'auto'}}
+        style={{minHeight: '250px', maxHeight: '250px', overflowY: 'auto'}}
         className={classes['layers']}>
         {
           this.props.currentVisualizedDatasetLayers.map((dataset, i) => {
@@ -146,13 +149,14 @@ export default class LayerSwitcher extends React.Component {
         <div className={classes['Tabs']}>
           <Tabs>
             <Tab
+              style={{height: '100%'}}
               icon={<FontIcon className="material-icons">satellite</FontIcon>}
               label="Datasets">
               <Paper zDepth={2}>
-                <div style={{width:'75%', display: 'inline-block'}}>
+                <div style={{width: '75%', display: 'inline-block'}}>
                   <h2>Datasets</h2>
                 </div>
-                <div style={{width:'25%', display: 'inline-block'}}>
+                <div style={{width: '25%', display: 'inline-block'}}>
                   <RaisedButton
                     onClick={this.resetDatasetLayer.bind(this)}
                     label="Reset" />
@@ -164,10 +168,10 @@ export default class LayerSwitcher extends React.Component {
               icon={<FontIcon className="material-icons">local_library</FontIcon>}
               label="Shape Files">
               <Paper zDepth={2}>
-                <div style={{width:'75%', display: 'inline-block'}}>
+                <div style={{width: '75%', display: 'inline-block'}}>
                   <h2>Shape Files</h2>
                 </div>
-                <div style={{width:'25%', display: 'inline-block'}}>
+                <div style={{width: '25%', display: 'inline-block'}}>
                   <RaisedButton
                     onClick={this.resetShapefile.bind(this)}
                     label="Reset" />

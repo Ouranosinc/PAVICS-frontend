@@ -119,11 +119,30 @@ class Visualize extends React.Component {
             onToggleMapPanel={this._onToggleMapPanel} />
           <div className={classes.left}>
             {
-              this.state.mapPanelStatus[MAP_CONTROLS_PANEL]
+              (this.state.mapPanelStatus[LAYER_SWITCHER_PANEL])
                 ? <div className={classes['panel']}>
-                  <MapControls
-                    selectMapManipulationMode={selectModeCallback} />
-                </div> : null
+                <LayerSwitcher
+                  fetchShapefiles={this.props.fetchShapefiles}
+                  selectDatasetLayer={this.props.selectDatasetLayer}
+                  selectShapefile={this.props.selectShapefile}
+                  selectBasemap={this.props.selectBasemap}
+                  currentVisualizedDatasetLayers={this.props.currentVisualizedDatasetLayers}
+                  selectedDatasetLayer={this.props.selectedDatasetLayer}
+                  selectedShapefile={this.props.selectedShapefile}
+                  selectedBasemap={this.props.selectedBasemap}
+                  publicShapeFiles={this.props.publicShapeFiles}
+                  baseMaps={this.props.baseMaps} />
+              </div> : null
+            }
+            {(this.state.mapPanelStatus[CHART_PANEL])
+              ? <div className={classes.panel}>
+              <PlotlyWrapper
+                panelControls={this.props.panelControls}
+                data={this.props.plotlyData.data}
+                layout={this.props.plotlyData.layout}
+                fetchPlotlyData={this.props.fetchPlotlyData}
+              />
+            </div> : null
             }
             {(this.state.mapPanelStatus[TIME_SLIDER_PANEL])
               ? <div className={classes.panel}>
@@ -137,29 +156,13 @@ class Visualize extends React.Component {
                   yearsRange={false} />
               </div> : null
             }
-            {(this.state.mapPanelStatus[CHART_PANEL])
-              ? <div className={classes.panel}>
-                <PlotlyWrapper
-                  panelControls={this.props.panelControls}
-                  data={this.props.plotlyData.data}
-                  layout={this.props.plotlyData.layout}
-                  fetchPlotlyData={this.props.fetchPlotlyData}
-                />
+            {
+              this.state.mapPanelStatus[MAP_CONTROLS_PANEL]
+                ? <div className={classes['panel']} style={{clear: 'left'}}>
+                <MapControls
+                  selectMapManipulationMode={selectModeCallback} />
               </div> : null
             }
-            <div className={this.state.mapPanelStatus[LAYER_SWITCHER_PANEL] ? classes['panel'] : classes['hidden']}>
-              <LayerSwitcher
-                fetchShapefiles={this.props.fetchShapefiles}
-                selectDatasetLayer={this.props.selectDatasetLayer}
-                selectShapefile={this.props.selectShapefile}
-                selectBasemap={this.props.selectBasemap}
-                currentVisualizedDatasetLayers={this.props.currentVisualizedDatasetLayers}
-                selectedDatasetLayer={this.props.selectedDatasetLayer}
-                selectedShapefile={this.props.selectedShapefile}
-                selectedBasemap={this.props.selectedBasemap}
-                publicShapeFiles={this.props.publicShapeFiles}
-                baseMaps={this.props.baseMaps} />
-            </div>
           </div>
         </div>
       </div>
