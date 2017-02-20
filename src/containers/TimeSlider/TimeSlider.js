@@ -69,6 +69,19 @@ export class TimeSlider extends React.Component {
     };
   }
 
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.currentDateTime && nextProps.currentDateTime !== this.props.currentDateTime) {
+      this.setState(
+        {
+          currentDate: nextProps.currentDateTime.substring(0, 10),
+          currentMonthDay: nextProps.currentDateTime.substring(5, 10),
+          currentTime: nextProps.currentDateTime.substring(11, 24),
+          currentYear: nextProps.currentDateTime.substring(0, 4)
+        }
+      );
+    }
+  }
+
   componentDidUpdate (prevProps, prevState) {
     // if (this.props.selectedWMSLayerDetails && this.props.selectedWMSLayerDetails.data &&
     //   (this.props.selectedWMSLayerDetails.data !== prevProps.selectedWMSLayerDetails.data)) {
@@ -248,7 +261,7 @@ export class TimeSlider extends React.Component {
             <FormControl
               componentClass="select"
               placeholder="Hour"
-              value={this.state.currentTime.substring(0, 7)}
+              value={this.state.currentTime}
               onChange={this._onSelectedTime}>
               {
                 (this.state.timesteps && this.state.timesteps.length) ?
@@ -456,7 +469,6 @@ export class TimeSlider extends React.Component {
       },
       () => this.changeCurrentDateTime()
     );
-    // TODO: Complete
   }
 
   _onClickedStepControls (key) {

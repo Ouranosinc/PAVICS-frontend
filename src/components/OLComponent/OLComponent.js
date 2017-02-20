@@ -18,6 +18,7 @@ class OLComponent extends React.Component {
   static propTypes = {
     currentDateTime: React.PropTypes.string.isRequired,
     mapManipulationMode: React.PropTypes.string.isRequired,
+    setCurrentDateTime: React.PropTypes.func.isRequired,
     selectedRegions: React.PropTypes.array.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
@@ -343,9 +344,11 @@ class OLComponent extends React.Component {
           );
           this.addTileWMSLayer(INDEX_DATASET_LAYER, LAYER_DATASET, this.datasetSource);
           this.props.setSelectedDatasetCapabilities(capabilities);
-          let date = layer['Dimension'][0].values.split('/')[0];
+          // timeDimension.values is rarely a time range splitted by /
+          let date = timeDimension.values.substring(0, 24); // layer['Dimension'][0].values.split('/')[0];
           this.props.fetchWMSLayerDetails(url, layerName);
           this.props.fetchWMSLayerTimesteps(url, layerName, date);
+          this.props.setCurrentDateTime(date);
         }
       );
   }
