@@ -1,4 +1,5 @@
 import * as constants from './../constants';
+
 const initialState = {
   workflowWizard: {
     selectedProcess: {

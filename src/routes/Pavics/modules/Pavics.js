@@ -525,7 +525,6 @@ export function fetchPavicsDatasets () {
     facets.forEach(function (facet, i) {
       constraints += `${(i > 0) ? ',' : ''}${facet.key}:${facet.value}`;
     });
-    console.log(getState().visualize);
     return fetch(`/api/datasets/pavics?constraints=${constraints}`)
       .then(response => response.json())
       .then(json =>
@@ -546,7 +545,6 @@ export function fetchEsgfDatasets () {
     facets.forEach(function (facet, i) {
       constraints += `${(i > 0) ? ',' : ''}${facet.key}:${facet.value}`;
     });
-    console.log(getState().visualize);
     return fetch(`/api/datasets/esgf?constraints=${constraints}`)
       .then(response => response.json())
       .then(json =>
