@@ -4,18 +4,24 @@ import * as constants from './../../constants';
 require('rc-slider/assets/index.css');
 import classes from './TimeSlider.scss';
 import Slider  from 'rc-slider';
-import { Button, Col, ControlLabel, Form, FormControl, FormGroup, Glyphicon } from 'react-bootstrap'
-import Loader from '../../components/Loader';
+import { Col, Row} from 'react-bootstrap'
 import Paper from 'material-ui/Paper';
 import AppBar from 'material-ui/AppBar';
+import Divider from 'material-ui/Divider';
+import Subheader from 'material-ui/Subheader';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
+import RaisedButton from 'material-ui/RaisedButton';
+import TextField from 'material-ui/TextField';
 import IconButton from 'material-ui/IconButton';
 import AccessTimeIcon from 'material-ui/svg-icons/device/access-time';
-import InsertChartIcon from 'material-ui/svg-icons/editor/insert-chart';
-import LayersIcon from 'material-ui/svg-icons/maps/layers';
-import MenuIcon from 'material-ui/svg-icons/navigation/menu';
-import MyLocationIcon from 'material-ui/svg-icons/maps/my-location';
+import PlayIcon from 'material-ui/svg-icons/av/play-arrow';
+import PauseIcon from 'material-ui/svg-icons/av/pause';
+import ForwardIcon from 'material-ui/svg-icons/av/skip-next';
+import BackwardIcon from 'material-ui/svg-icons/av/skip-previous';
+import FastForwardIcon from 'material-ui/svg-icons/av/fast-forward';
+import FastBackwardIcon from 'material-ui/svg-icons/av/fast-rewind';
 import MinimizeIcon from 'material-ui/svg-icons/content/remove';
-import {teal50} from 'material-ui/styles/colors';
 
 /* Constants */
 const DIVIDER = 100000;
@@ -57,9 +63,11 @@ export class TimeSlider extends React.Component {
     this._onHideTimeSliderPanel = this._onHideTimeSliderPanel.bind(this);
     this._onSelectedTime = this._onSelectedTime.bind(this);
     this.state = {
-      currentDate: props.currentDateTime.substring(0, 10),
-      currentMonthDay: props.currentDateTime.substring(5, 10),
-      currentTime: props.currentDateTime.substring(11, 24),
+      maxDatetime: '2020-12-31T00:00:00.000Z',
+      minDatetime: '1900-01-01T00:00:00.000Z',
+      currentDate: '1900-01-01', // props.currentDateTime.substring(0, 10),
+      currentMonthDay: '01-01', // props.currentDateTime.substring(5, 10),
+      currentTime: '00:00:00.000Z', // props.currentDateTime.substring(11, 24),
       currentYear: 1900,
       firstDay: 1,
       firstMonth: 1,
@@ -147,15 +155,18 @@ export class TimeSlider extends React.Component {
     console.log('found time dimension!', timeDimension);
     let boundDates = timeDimension['values'].split('/');
     if (boundDates.length === 3) {
-      let startDate = parseInt(boundDates[0].substring(0, 4)); // new Date(boundDates[0]).getFullYear();
-      let endDate = parseInt(boundDates[1].substring(0, 4)); // new Date(boundDates[1]).getFullYear();
-      let currentDate = startDate;
-      while (currentDate <= endDate) {
-        yearArr.push(currentDate++);
-      }//
+      let startYear = parseInt(boundDates[0].substring(0, 4)); // new Date(boundDates[0]).getFullYear();
+      let endYear = parseInt(boundDates[1].substring(0, 4)); // new Date(boundDates[1]).getFullYear();
+      this.setState({
+        minDatetime: boundDates[0],
+        maxDatetime: boundDates[1]
+      });
+      let currentYear = startYear;
+      while (currentYear <= endYear) {
+        yearArr.push(currentYear++);
+      }
       yearArr.sort();
-    }
-    else {
+    } else {
       yearArr = this.parseTimeDimensionString(timeDimension['values'].split(','));
     }
 
@@ -259,150 +270,150 @@ export class TimeSlider extends React.Component {
     return (
       <Paper className={classes['TimeSlider']}>
         <AppBar
-          title="Temporal slider"
+          title="Temporal Slider"
           iconElementLeft={<IconButton><AccessTimeIcon /></IconButton>}
           iconElementRight={<IconButton><MinimizeIcon onTouchTap={(event) => this._onHideTimeSliderPanel()} /></IconButton>} />
-        <div style={{padding: '5px'}}>
-          <Form className={classes['CurrentDateTime']} inline>
-            <ControlLabel>
-              Date:
-            </ControlLabel>
-            <FormGroup className={classes['InlineFormGroup']}>
-              <FormControl
-                type="text"
-                placeholder="Current"
+        <div className="container">
+          <Row>
+            <Col md={4} lg={4}>
+              <TextField
                 value={this.state.currentDate}
-                onChange={this._onChangedCurrentDate} />
-            </FormGroup>
-
-            <ControlLabel>
-              Time:
-            </ControlLabel>
-            <FormGroup className={classes['InlineFormGroup']}>
-              <FormControl
-                componentClass="select"
-                placeholder="Hour"
+                hintText="Format 9999-99-99"
+                fullWidth={true}
+                onChange={(event, value) => this._onChangedCurrentDate(value)}
+                floatingLabelText="Current Date" />
+            </Col>
+            <Col md={4} lg={4}>
+              <SelectField
                 value={this.state.currentTime}
-                onChange={this._onSelectedTime}>
-                {
+                fullWidth={true}
+                floatingLabelText="Time"
+                onChange={(event, index, value) => this._onSelectedTime(value)}>
+                 {
                   (this.state.timesteps && this.state.timesteps.length) ?
-                    this.state.timesteps.map((x) => <option key={x} value={x}>{x.substring(0, 8)}</option>) :
-                    <option value="00:00:00.000Z">00:00:00</option>
+                  this.state.timesteps.map((x) => {return <MenuItem key={x} value={x} primaryText={x.substring(0, 8)} />; }) :
+                  <MenuItem value="00:00:00.000Z" primaryText="00:00:00" />
                 }
-              </FormControl>
-            </FormGroup>
-            <ControlLabel>
-              Current Date Time:
-            </ControlLabel>
-            <strong style={{ fontWeigth: 'bold' }}> {this.props.currentDateTime.substring(
-              0,
-              10
-            )} {this.props.currentDateTime.substring(11, 19)}</strong>
-          </Form>
-          <Col sm={12}>
-            <Slider tipFormatter={(v) => {
-              let date = new Date(v * DIVIDER);
-              // Same problem with moment.js
-              return ((date.getMonth() === 0) ? '12' : date.getMonth()) + '/' + date.getDate();
-            }}
-              className={classes['SliderMonths']}
-              min={new Date(this.state.currentYear, 1, 1).valueOf() / DIVIDER}
-              max={new Date(this.state.currentYear, 12, 31).valueOf() / DIVIDER}
-              marks={marksMonths}
-              included={false}
-              range={false}
-              value={new Date(
-                this.state.currentYear, this.state.currentMonthDay.substring(0, 2), this.state.currentMonthDay.substring(3, 5)
-              ).valueOf() / DIVIDER}
-              onChange={this._onChangedMonthSlider}
-            />
-          </Col>
-          <Col sm={12}>
-            <Slider className={classes['SliderYears']}
-              min={this.state.firstYear}
-              max={this.state.lastYear}
-              marks={this.state.marksYears}
-              range={false}
-              included={false}
-              value={this.state.currentYear}
-              defaultValue={1900}
-              onChange={this._onChangedYearSlider}
-            />
-          </Col>
-          <Form className={classes['StepControls']} inline>
-            <ControlLabel>
-              Time steps:
-            </ControlLabel>
-            <FormGroup className={classes['InlineFormGroup']}>
-              <FormControl
-                style={{ width: '90px' }}
+              </SelectField>
+            </Col>
+            <Col md={4} lg={4}>
+              <TextField
+                value={this.props.currentDateTime.substring(0, 10) + ' ' + this.props.currentDateTime.substring(11, 19)}
+                hintText="Format 9999-99-99 00:00:00"
+                fullWidth={true}
+                disabled={true}
+                floatingLabelText="Current Datetime" />
+            </Col>
+          </Row>
+          <Row>
+            <Col sm={12}>
+              <Slider
+                tipFormatter={(v) => {
+                  let date = new Date(v * DIVIDER);
+                  // Same problem with moment.js
+                  return ((date.getMonth() === 0) ? '12' : date.getMonth()) + '/' + date.getDate();
+                }}
+                className={classes['SliderMonths']}
+                min={new Date(this.state.currentYear, 1, 1).valueOf() / DIVIDER}
+                max={new Date(this.state.currentYear, 12, 31).valueOf() / DIVIDER}
+                marks={marksMonths}
+                included={false}
+                range={false}
+                value={new Date(
+                  this.state.currentYear, this.state.currentMonthDay.substring(0, 2), this.state.currentMonthDay.substring(3, 5)
+                ).valueOf() / DIVIDER}
+                onChange={this._onChangedMonthSlider}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col sm={12}>
+              <Slider className={classes['SliderYears']}
+                min={this.state.firstYear}
+                max={this.state.lastYear}
+                marks={this.state.marksYears}
+                range={false}
+                included={false}
+                value={this.state.currentYear}
+                defaultValue={1900}
+                onChange={this._onChangedYearSlider}
+              />
+            </Col>
+          </Row>
+          <Row className={classes['StepControls']}>
+            <Col md={4} lg={4}>
+              <TextField
                 type="number"
-                placeholder="Number"
                 value={this.state.stepLength}
-                onChange={this._onChangedStepLength}/>
-            </FormGroup>
-            <ControlLabel>
-              Granularity:
-            </ControlLabel>
-            <FormGroup className={classes['InlineFormGroup']}>
-              <FormControl
-                componentClass="select"
-                placeholder="Granularity Level"
+                onChange={(event, value) => this._onChangedStepLength(value)}
+                hintText="Number"
+                fullWidth={true}
+                floatingLabelText="Timestep Length" />
+            </Col>
+            <Col md={4} lg={4}>
+              <SelectField
                 value={this.state.stepGranularity}
-                onChange={this._onChangedStepGranularity}>
-                <option value={MINUTE_VALUE}>minute(s)</option>
-                <option value={HOUR_VALUE}>hour(s)</option>
-                <option value={DAY_VALUE}>day(s)</option>
-                <option value={MONTH_VALUE}>month(s)</option>
-                <option value={YEAR_VALUE}>year(s)</option>
-              </FormControl>
-            </FormGroup>
-            <ControlLabel>
-              Speed:
-            </ControlLabel>
-            <FormGroup className={classes['InlineFormGroup']}>
-              <FormControl
-                componentClass="select"
-                placeholder="Speed Level"
+                fullWidth={true}
+                floatingLabelText="Timestep Granularity Level"
+                onChange={(event, index, value) => this._onChangedStepGranularity(value)}>
+                <MenuItem value={MINUTE_VALUE} primaryText="minute(s)" />
+                <MenuItem value={HOUR_VALUE} primaryText="hour(s)" />
+                <MenuItem value={DAY_VALUE} primaryText="day(s)" />
+                <MenuItem value={MONTH_VALUE} primaryText="month(s)" />
+                <MenuItem value={YEAR_VALUE} primaryText="year(s)" />
+              </SelectField>
+            </Col>
+            <Col md={4} lg={4}>
+              <SelectField
                 value={this.state.stepSpeed}
-                onChange={this._onChangedStepSpeed}>
-                <option value="10000">super slow</option>
-                <option value="5000">slow</option>
-                <option value="3000">medium</option>
-                <option value="1000">fast</option>
-              </FormControl>
-            </FormGroup>
-            <FormGroup className={classes['InlineFormGroup']}>
-              <Button onClick={this._onClickedStepControls.bind(this, 'fast-backward')}>
-                <Glyphicon glyph="fast-backward" />
-              </Button>
-            </FormGroup>
-            <FormGroup className={classes['InlineFormGroup']}>
-              <Button onClick={this._onClickedStepControls.bind(this, 'step-backward')}>
-                <Glyphicon glyph="step-backward" />
-              </Button>
-            </FormGroup>
-            <FormGroup className={classes['InlineFormGroup']}>
-              <Button onClick={this._onClickedStepControls.bind(this, PLAY_ACTION)}>
-                <Glyphicon glyph={PLAY_ACTION} />
-              </Button>
-            </FormGroup>
-            <FormGroup className={classes['InlineFormGroup']}>
-              <Button onClick={this._onClickedStepControls.bind(this, PAUSE_ACTION)}>
-                <Glyphicon glyph={PAUSE_ACTION} />
-              </Button>
-            </FormGroup>
-            <FormGroup className={classes['InlineFormGroup']}>
-              <Button onClick={this._onClickedStepControls.bind(this, 'step-forward')}>
-                <Glyphicon glyph="step-forward" />
-              </Button>
-            </FormGroup>
-            <FormGroup className={classes['InlineFormGroup']}>
-              <Button onClick={this._onClickedStepControls.bind(this, 'fast-forward')}>
-                <Glyphicon glyph="fast-forward" />
-              </Button>
-            </FormGroup>
-          </Form>
+                fullWidth={true}
+                floatingLabelText="Play Speed Level"
+                onChange={(event, index, value) => this._onChangedStepSpeed(value)}>
+                <MenuItem value={10000} primaryText="super slow" />
+                <MenuItem value={5000} primaryText="slow" />
+                <MenuItem value={3000} primaryText="medium" />
+                <MenuItem value={1000} primaryText="fast" />
+              </SelectField>
+            </Col>
+          </Row>
+          <Row>
+            <Col sm={12}>
+              <RaisedButton
+                disabled={this.state.minDatetime === this.props.currentDateTime}
+                primary={true}
+                icon={<FastBackwardIcon />}
+                style={{margin: '0 5px 0 5px', width: '14%'}}
+                onClick={this._onClickedStepControls.bind(this, FAST_BACKWARD_ACTION)} />
+              <RaisedButton
+                disabled={this.state.minDatetime === this.props.currentDateTime}
+                primary={true}
+                icon={<BackwardIcon />}
+                style={{margin: '0 5px 0 5px', width: '14%'}}
+                onClick={this._onClickedStepControls.bind(this, STEP_BACKWARD_ACTION)} />
+              <RaisedButton
+              primary={true}
+              icon={<PlayIcon />}
+              style={{margin: '0 5px 0 5px', width: '18%'}}
+              onClick={this._onClickedStepControls.bind(this, PLAY_ACTION)} />
+              <RaisedButton
+                primary={true}
+                icon={<PauseIcon />}
+                style={{margin: '0 5px 0 5px', width: '18%'}}
+                onClick={this._onClickedStepControls.bind(this, PAUSE_ACTION)} />
+              <RaisedButton
+                disabled={this.state.maxDatetime === this.props.currentDateTime}
+                primary={true}
+                icon={<ForwardIcon />}
+                style={{margin: '0 5px 0 5px', width: '14%'}}
+                onClick={this._onClickedStepControls.bind(this, STEP_FORWARD_ACTION)} />
+              <RaisedButton
+                disabled={this.state.maxDatetime === this.props.currentDateTime}
+                primary={true}
+                icon={<FastForwardIcon />}
+                style={{margin: '0 5px 0 5px', width: '14%'}}
+                onClick={this._onClickedStepControls.bind(this, FAST_FORWARD_ACTION)} />
+            </Col>
+          </Row>
         </div>
       </Paper>
     );
@@ -448,46 +459,46 @@ export class TimeSlider extends React.Component {
     }
   }
 
-  _onChangedCurrentDate (event) {
+  _onChangedCurrentDate (value) {
     this.setState(
       {
-        currentDate: event.target.value
+        currentDate: value
       });
-    if (event.target.value.length === 10) {
+    if (value.length === 10) {
       this.setState(
         {
-          currentYear: event.target.value.substring(0, 4),
-          currentMonthDay: event.target.value.substring(5, 10)
+          currentYear: value.substring(0, 4),
+          currentMonthDay: value.substring(5, 10)
         }, () => this.changeCurrentDateTime()
       );
     }
   }
 
-  _onChangedStepLength (event) {
+  _onChangedStepLength (value) {
     this.setState(
       {
-        stepLength: event.target.value
+        stepLength: value
       });
   }
 
-  _onChangedStepGranularity (event) {
+  _onChangedStepGranularity (value) {
     this.setState(
       {
-        stepGranularity: event.target.value
+        stepGranularity: value
       });
   }
 
-  _onChangedStepSpeed (event) {
+  _onChangedStepSpeed (value) {
     this.setState(
       {
-        stepSpeed: event.target.value
+        stepSpeed: value
       });
   }
 
-  _onSelectedTime (event) {
+  _onSelectedTime (value) {
     this.setState(
       {
-        currentTime: event.target.value
+        currentTime: value
       },
       () => this.changeCurrentDateTime()
     );
@@ -496,14 +507,16 @@ export class TimeSlider extends React.Component {
   _onClickedStepControls (key) {
     switch (key) {
       case FAST_BACKWARD_ACTION:
+        this.dispatchCurrentDateTime(this.state.minDatetime);
+        break;
       case FAST_FORWARD_ACTION:
+        this.dispatchCurrentDateTime(this.state.maxDatetime);
         break;
       case PAUSE_ACTION:
         this.setState(
           {
             isPlaying: false
           });
-        // TODO: Destroy Play Loop, IT'S IMPORTANT
         break;
       case PLAY_ACTION:
         this.setState(
@@ -527,6 +540,7 @@ export class TimeSlider extends React.Component {
     setTimeout(
       () => {
         this.moveOneStep(true);
+        console.log('looping');
         if (this.state.isPlaying) {
           this.playLoop(false);
         }
@@ -588,11 +602,19 @@ export class TimeSlider extends React.Component {
       default:
         break;
     }
-    // date.setHours(date.getHours() - 6); // TODO: Dynamise added hours
-    let newdate = date.toISOString();
-    this.dispatchCurrentDateTime(newdate);
+    let dateStringified = date.toISOString();
+    if (forward && date.valueOf() <= new Date(this.state.maxDatetime).valueOf()) {
+      this.dispatchCurrentDateTime(dateStringified);
+    } else if (!forward && date.valueOf() >= new Date(this.state.minDatetime).valueOf()) {
+      this.dispatchCurrentDateTime(dateStringified);
+    } else if (forward) {
+      this.dispatchCurrentDateTime(this.state.maxDatetime);
+      console.log('New step forward request is out of dataset range (too late). Targeted MAX dataset date.');
+    } else {
+      this.dispatchCurrentDateTime(this.state.minDatetime);
+      console.log('New step backward request is out of dataset range (too early). Targeted MIN dataset date.');
+    }
   }
-
 }
 
 const mapStateToProps = (state) => {
