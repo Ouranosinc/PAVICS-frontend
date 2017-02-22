@@ -8,7 +8,8 @@
   padding: 20px 0 0 0;
 }
 .IsOpen{
-  background-color: rgba(0,0,0,1) !important
+  background-color: #00A9B7 !important;
+  /*background-color: rgba(0,0,0,1) !important*/
 }
 
 .radialnav {
@@ -28,7 +29,8 @@
   width: 60px;
   height: 60px;
   border-radius: 100%;
-  background: #00A9B7;
+  background: #212121;
+  /*background: #00A9B7;*/
   color: white;
   text-align: center;
   /*box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.44);*/
@@ -43,7 +45,8 @@
 }
 .radialnav .ellipsis:active, .radialnav .ellipsis:hover {
   box-shadow: 0px 4px 7px 0px rgba(0, 0, 0, 0.44);
-  background: #00A9B7;
+  background: #212121;
+  /*background: #00A9B7;*/
 }
 .radialnav a {
   color: white;
@@ -51,7 +54,8 @@
 }
 .radialnav.active .ellipsis {
   box-shadow: 0px 4px 7px 0px rgba(0, 0, 0, 0.44);
-  background: #00A9B7;
+  /*background: #00A9B7;*/
+  background: #212121;
 }
 .radialnav.active .menu {
   pointer-events: auto;
@@ -93,7 +97,8 @@
   transform: rotate(35deg) skew(50deg);
 }
 .menu > li:nth-of-type(2) > a, .submenu > li:nth-of-type(2) > a {
-  background-color: #00C5DB;
+  /*background-color: #00C5DB;*/
+  background-color: rgba(0,0,0,0.9);
 }
 .menu > li:nth-of-type(3), .submenu > li:nth-of-type(3) {
   -moz-transform: rotate(70deg) skew(50deg);
@@ -108,8 +113,8 @@
   transform: rotate(105deg) skew(50deg);
 }
 .menu > li:nth-of-type(4) > a, .submenu > li:nth-of-type(4) > a {
-  background-color: #00C5DB;
-  /*background-color: rgba(255, 255, 255, 0.3);*/
+  /*background-color: #00C5DB;*/
+  background-color: rgba(0,0,0,0.9);
 }
 .menu > li:nth-of-type(5), .submenu > li:nth-of-type(5) {
   -moz-transform: rotate(140deg) skew(50deg);
@@ -156,7 +161,7 @@
   -webkit-transition: opacity 0.3s, color 0.3s;
   -moz-transition: opacity 0.3s, color 0.3s;
   transition: opacity 0.3s, color 0.3s;
-  background-color: #00A9B7;
+  background-color: rgba(0,0,0,0.9);
   /*background-color: rgba(255, 255, 255, 0.2);*/
   /*box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);*/
 }
@@ -164,7 +169,8 @@
   padding: 20px 15px 0 0;
 }
 .menu > li a:active, .menu > li a:hover, .submenu > li a:active, .submenu > li a:hover {
-  background-color: #212121;
+  /*background-color: #212121;*/
+  background-color: #00A9B7;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;

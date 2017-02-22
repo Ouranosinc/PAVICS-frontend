@@ -1,11 +1,21 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import * as constants from './../../constants';
 require('rc-slider/assets/index.css');
 import classes from './TimeSlider.scss';
 import Slider  from 'rc-slider';
 import { Button, Col, ControlLabel, Form, FormControl, FormGroup, Glyphicon } from 'react-bootstrap'
 import Loader from '../../components/Loader';
 import Paper from 'material-ui/Paper';
+import AppBar from 'material-ui/AppBar';
+import IconButton from 'material-ui/IconButton';
+import AccessTimeIcon from 'material-ui/svg-icons/device/access-time';
+import InsertChartIcon from 'material-ui/svg-icons/editor/insert-chart';
+import LayersIcon from 'material-ui/svg-icons/maps/layers';
+import MenuIcon from 'material-ui/svg-icons/navigation/menu';
+import MyLocationIcon from 'material-ui/svg-icons/maps/my-location';
+import MinimizeIcon from 'material-ui/svg-icons/content/remove';
+import {teal50} from 'material-ui/styles/colors';
 
 /* Constants */
 const DIVIDER = 100000;
@@ -32,7 +42,8 @@ export class TimeSlider extends React.Component {
     selectedDatasetCapabilities: React.PropTypes.object.isRequired,
     selectedWMSLayerDetails: React.PropTypes.object.isRequired,
     selectedWMSLayerTimesteps: React.PropTypes.object.isRequired,
-    setCurrentDateTime: React.PropTypes.func.isRequired
+    setCurrentDateTime: React.PropTypes.func.isRequired,
+    onToggleMapPanel: React.PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -43,6 +54,7 @@ export class TimeSlider extends React.Component {
     this._onChangedStepSpeed = this._onChangedStepSpeed.bind(this);
     this._onChangedMonthSlider = this._onChangedMonthSlider.bind(this);
     this._onChangedYearSlider = this._onChangedYearSlider.bind(this);
+    this._onHideTimeSliderPanel = this._onHideTimeSliderPanel.bind(this);
     this._onSelectedTime = this._onSelectedTime.bind(this);
     this.state = {
       currentDate: props.currentDateTime.substring(0, 10),
@@ -97,6 +109,10 @@ export class TimeSlider extends React.Component {
       (this.props.selectedWMSLayerTimesteps.data !== prevProps.selectedWMSLayerTimesteps.data)) {
       this.changeTimesteps(this.props.selectedWMSLayerTimesteps.data);
     }
+  }
+
+  _onHideTimeSliderPanel () {
+    this.props.onToggleMapPanel(constants.VISUALIZE_TIME_SLIDER_PANEL);
   }
 
   // TODO duplicated in OLComponent
@@ -242,146 +258,152 @@ export class TimeSlider extends React.Component {
     marksMonths[new Date(this.state.currentYear, 12, 1).valueOf() / DIVIDER] = 'Dec';
     return (
       <Paper className={classes['TimeSlider']}>
-        <Form className={classes['CurrentDateTime']} inline>
-          <ControlLabel>
-            Date:
-          </ControlLabel>
-          <FormGroup className={classes['InlineFormGroup']}>
-            <FormControl
-              type="text"
-              placeholder="Current"
-              value={this.state.currentDate}
-              onChange={this._onChangedCurrentDate}/>
-          </FormGroup>
+        <AppBar
+          title="Temporal slider"
+          iconElementLeft={<IconButton><AccessTimeIcon /></IconButton>}
+          iconElementRight={<IconButton><MinimizeIcon onTouchTap={(event) => this._onHideTimeSliderPanel()} /></IconButton>} />
+        <div style={{padding: '5px'}}>
+          <Form className={classes['CurrentDateTime']} inline>
+            <ControlLabel>
+              Date:
+            </ControlLabel>
+            <FormGroup className={classes['InlineFormGroup']}>
+              <FormControl
+                type="text"
+                placeholder="Current"
+                value={this.state.currentDate}
+                onChange={this._onChangedCurrentDate} />
+            </FormGroup>
 
-          <ControlLabel>
-            Time:
-          </ControlLabel>
-          <FormGroup className={classes['InlineFormGroup']}>
-            <FormControl
-              componentClass="select"
-              placeholder="Hour"
-              value={this.state.currentTime}
-              onChange={this._onSelectedTime}>
-              {
-                (this.state.timesteps && this.state.timesteps.length) ?
-                  this.state.timesteps.map((x) => <option key={x} value={x}>{x.substring(0, 8)}</option>) :
-                  <option value="00:00:00.000Z">00:00:00</option>
-              }
-            </FormControl>
-          </FormGroup>
-          <ControlLabel>
-            Current Date Time:
-          </ControlLabel>
-          <strong style={{ fontWeigth: 'bold' }}> {this.props.currentDateTime.substring(
-            0,
-            10
-          )} {this.props.currentDateTime.substring(11, 19)}</strong>
-        </Form>
-        <Col sm={12}>
-          <Slider tipFormatter={(v) => {
-            let date = new Date(v * DIVIDER);
-            // Same problem with moment.js
-            return ((date.getMonth() === 0) ? '12' : date.getMonth()) + '/' + date.getDate();
-          }}
-            className={classes['SliderMonths']}
-            min={new Date(this.state.currentYear, 1, 1).valueOf() / DIVIDER}
-            max={new Date(this.state.currentYear, 12, 31).valueOf() / DIVIDER}
-            marks={marksMonths}
-            included={false}
-            range={false}
-            value={new Date(
-              this.state.currentYear, this.state.currentMonthDay.substring(0, 2), this.state.currentMonthDay.substring(3, 5)
-            ).valueOf() / DIVIDER}
-            onChange={this._onChangedMonthSlider}
-          />
-        </Col>
-        <Col sm={12}>
-          <Slider className={classes['SliderYears']}
-            min={this.state.firstYear}
-            max={this.state.lastYear}
-            marks={this.state.marksYears}
-            range={false}
-            included={false}
-            value={this.state.currentYear}
-            defaultValue={1900}
-            onChange={this._onChangedYearSlider}
-          />
-        </Col>
-        <Form className={classes['StepControls']} inline>
-          <ControlLabel>
-            Time steps:
-          </ControlLabel>
-          <FormGroup className={classes['InlineFormGroup']}>
-            <FormControl
-              style={{ width: '90px' }}
-              type="number"
-              placeholder="Number"
-              value={this.state.stepLength}
-              onChange={this._onChangedStepLength}/>
-          </FormGroup>
-          <ControlLabel>
-            Granularity:
-          </ControlLabel>
-          <FormGroup className={classes['InlineFormGroup']}>
-            <FormControl
-              componentClass="select"
-              placeholder="Granularity Level"
-              value={this.state.stepGranularity}
-              onChange={this._onChangedStepGranularity}>
-              <option value={MINUTE_VALUE}>minute(s)</option>
-              <option value={HOUR_VALUE}>hour(s)</option>
-              <option value={DAY_VALUE}>day(s)</option>
-              <option value={MONTH_VALUE}>month(s)</option>
-              <option value={YEAR_VALUE}>year(s)</option>
-            </FormControl>
-          </FormGroup>
-          <ControlLabel>
-            Speed:
-          </ControlLabel>
-          <FormGroup className={classes['InlineFormGroup']}>
-            <FormControl
-              componentClass="select"
-              placeholder="Speed Level"
-              value={this.state.stepSpeed}
-              onChange={this._onChangedStepSpeed}>
-              <option value="10000">super slow</option>
-              <option value="5000">slow</option>
-              <option value="3000">medium</option>
-              <option value="1000">fast</option>
-            </FormControl>
-          </FormGroup>
-          <FormGroup className={classes['InlineFormGroup']}>
-            <Button onClick={this._onClickedStepControls.bind(this, 'fast-backward')}>
-              <Glyphicon glyph="fast-backward" />
-            </Button>
-          </FormGroup>
-          <FormGroup className={classes['InlineFormGroup']}>
-            <Button onClick={this._onClickedStepControls.bind(this, 'step-backward')}>
-              <Glyphicon glyph="step-backward" />
-            </Button>
-          </FormGroup>
-          <FormGroup className={classes['InlineFormGroup']}>
-            <Button onClick={this._onClickedStepControls.bind(this, PLAY_ACTION)}>
-              <Glyphicon glyph={PLAY_ACTION} />
-            </Button>
-          </FormGroup>
-          <FormGroup className={classes['InlineFormGroup']}>
-            <Button onClick={this._onClickedStepControls.bind(this, PAUSE_ACTION)}>
-              <Glyphicon glyph={PAUSE_ACTION} />
-            </Button>
-          </FormGroup>
-          <FormGroup className={classes['InlineFormGroup']}>
-            <Button onClick={this._onClickedStepControls.bind(this, 'step-forward')}>
-              <Glyphicon glyph="step-forward" />
-            </Button>
-          </FormGroup>
-          <FormGroup className={classes['InlineFormGroup']}>
-            <Button onClick={this._onClickedStepControls.bind(this, 'fast-forward')}>
-              <Glyphicon glyph="fast-forward" />
-            </Button>
-          </FormGroup>
-        </Form>
+            <ControlLabel>
+              Time:
+            </ControlLabel>
+            <FormGroup className={classes['InlineFormGroup']}>
+              <FormControl
+                componentClass="select"
+                placeholder="Hour"
+                value={this.state.currentTime}
+                onChange={this._onSelectedTime}>
+                {
+                  (this.state.timesteps && this.state.timesteps.length) ?
+                    this.state.timesteps.map((x) => <option key={x} value={x}>{x.substring(0, 8)}</option>) :
+                    <option value="00:00:00.000Z">00:00:00</option>
+                }
+              </FormControl>
+            </FormGroup>
+            <ControlLabel>
+              Current Date Time:
+            </ControlLabel>
+            <strong style={{ fontWeigth: 'bold' }}> {this.props.currentDateTime.substring(
+              0,
+              10
+            )} {this.props.currentDateTime.substring(11, 19)}</strong>
+          </Form>
+          <Col sm={12}>
+            <Slider tipFormatter={(v) => {
+              let date = new Date(v * DIVIDER);
+              // Same problem with moment.js
+              return ((date.getMonth() === 0) ? '12' : date.getMonth()) + '/' + date.getDate();
+            }}
+              className={classes['SliderMonths']}
+              min={new Date(this.state.currentYear, 1, 1).valueOf() / DIVIDER}
+              max={new Date(this.state.currentYear, 12, 31).valueOf() / DIVIDER}
+              marks={marksMonths}
+              included={false}
+              range={false}
+              value={new Date(
+                this.state.currentYear, this.state.currentMonthDay.substring(0, 2), this.state.currentMonthDay.substring(3, 5)
+              ).valueOf() / DIVIDER}
+              onChange={this._onChangedMonthSlider}
+            />
+          </Col>
+          <Col sm={12}>
+            <Slider className={classes['SliderYears']}
+              min={this.state.firstYear}
+              max={this.state.lastYear}
+              marks={this.state.marksYears}
+              range={false}
+              included={false}
+              value={this.state.currentYear}
+              defaultValue={1900}
+              onChange={this._onChangedYearSlider}
+            />
+          </Col>
+          <Form className={classes['StepControls']} inline>
+            <ControlLabel>
+              Time steps:
+            </ControlLabel>
+            <FormGroup className={classes['InlineFormGroup']}>
+              <FormControl
+                style={{ width: '90px' }}
+                type="number"
+                placeholder="Number"
+                value={this.state.stepLength}
+                onChange={this._onChangedStepLength}/>
+            </FormGroup>
+            <ControlLabel>
+              Granularity:
+            </ControlLabel>
+            <FormGroup className={classes['InlineFormGroup']}>
+              <FormControl
+                componentClass="select"
+                placeholder="Granularity Level"
+                value={this.state.stepGranularity}
+                onChange={this._onChangedStepGranularity}>
+                <option value={MINUTE_VALUE}>minute(s)</option>
+                <option value={HOUR_VALUE}>hour(s)</option>
+                <option value={DAY_VALUE}>day(s)</option>
+                <option value={MONTH_VALUE}>month(s)</option>
+                <option value={YEAR_VALUE}>year(s)</option>
+              </FormControl>
+            </FormGroup>
+            <ControlLabel>
+              Speed:
+            </ControlLabel>
+            <FormGroup className={classes['InlineFormGroup']}>
+              <FormControl
+                componentClass="select"
+                placeholder="Speed Level"
+                value={this.state.stepSpeed}
+                onChange={this._onChangedStepSpeed}>
+                <option value="10000">super slow</option>
+                <option value="5000">slow</option>
+                <option value="3000">medium</option>
+                <option value="1000">fast</option>
+              </FormControl>
+            </FormGroup>
+            <FormGroup className={classes['InlineFormGroup']}>
+              <Button onClick={this._onClickedStepControls.bind(this, 'fast-backward')}>
+                <Glyphicon glyph="fast-backward" />
+              </Button>
+            </FormGroup>
+            <FormGroup className={classes['InlineFormGroup']}>
+              <Button onClick={this._onClickedStepControls.bind(this, 'step-backward')}>
+                <Glyphicon glyph="step-backward" />
+              </Button>
+            </FormGroup>
+            <FormGroup className={classes['InlineFormGroup']}>
+              <Button onClick={this._onClickedStepControls.bind(this, PLAY_ACTION)}>
+                <Glyphicon glyph={PLAY_ACTION} />
+              </Button>
+            </FormGroup>
+            <FormGroup className={classes['InlineFormGroup']}>
+              <Button onClick={this._onClickedStepControls.bind(this, PAUSE_ACTION)}>
+                <Glyphicon glyph={PAUSE_ACTION} />
+              </Button>
+            </FormGroup>
+            <FormGroup className={classes['InlineFormGroup']}>
+              <Button onClick={this._onClickedStepControls.bind(this, 'step-forward')}>
+                <Glyphicon glyph="step-forward" />
+              </Button>
+            </FormGroup>
+            <FormGroup className={classes['InlineFormGroup']}>
+              <Button onClick={this._onClickedStepControls.bind(this, 'fast-forward')}>
+                <Glyphicon glyph="fast-forward" />
+              </Button>
+            </FormGroup>
+          </Form>
+        </div>
       </Paper>
     );
   }
