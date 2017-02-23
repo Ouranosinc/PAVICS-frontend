@@ -102,20 +102,26 @@ export class TimeSlider extends React.Component {
     }
   }
 
+  // TODO DELETE
   componentDidUpdate (prevProps, prevState) {
-    // if (this.props.selectedWMSLayerDetails && this.props.selectedWMSLayerDetails.data &&
-    //   (this.props.selectedWMSLayerDetails.data !== prevProps.selectedWMSLayerDetails.data)) {
-    //   this.changeGlobalRange(this.props.selectedWMSLayerDetails.data);
-    // }
-
-    if (this.props.selectedDatasetCapabilities !== prevProps.selectedDatasetCapabilities) {
-      this.changeGlobalRange();
+    // Context: We have two async fetch requests and we have no idea which one will be proceeded first
+    // And we need both values to be fetched to calculate ranges and steps
+    if (this.props.selectedWMSLayerDetails && this.props.selectedWMSLayerDetails.data &&
+      (this.props.selectedWMSLayerDetails.data !== prevProps.selectedWMSLayerDetails.data)) {
+      if (!this.props.selectedWMSLayerDetails.isFetching && !this.props.selectedWMSLayerTimesteps.isFetching) {
+        this.changeGlobalRange();
+        this.changeTimesteps();
+      }
+      // TODO DISABLE SOME MONTHS/YEARS IF MISSING DATA
     }
 
-    // TODO DISABLE SOME MONTHS/YEARS IF NO DATA
     if (this.props.selectedWMSLayerTimesteps && this.props.selectedWMSLayerTimesteps.data &&
       (this.props.selectedWMSLayerTimesteps.data !== prevProps.selectedWMSLayerTimesteps.data)) {
-      this.changeTimesteps(this.props.selectedWMSLayerTimesteps.data);
+      if (!this.props.selectedWMSLayerDetails.isFetching && !this.props.selectedWMSLayerTimesteps.isFetching) {
+        this.changeGlobalRange();
+        this.changeTimesteps();
+        // TODO DISABLE SOME MONTHS/YEARS IF MISSING DATA
+      }
     }
   }
 
@@ -132,43 +138,39 @@ export class TimeSlider extends React.Component {
     }
   }
 
-  parseTimeDimensionString(boundDates) {
+  parseTimeDimensionString (boundDates) {
     let realDates = {};
     for (let i = 0, nb = boundDates.length; i !== nb; i++) {
-      let year = boundDates[i].substr(0,4);
+      let year = boundDates[i].substr(0, 4);
       realDates[year] = true;
     }
     return Object.keys(realDates);
   }
 
-  changeGlobalRange (selectedWMSLayerDetailsData) {
+  changeGlobalRange () {
+    let layerDetails = this.props.selectedWMSLayerDetails.data;
+    let timeSteps = this.props.selectedWMSLayerTimesteps.data.timesteps;
+
+    // Define MIN and MAX dataset datetime values
+    let year = Object.keys(layerDetails.datesWithData)[0];
+    let monthObj = layerDetails.datesWithData[year];
+    let month = Object.keys(monthObj)[0];
+    let day = monthObj[month][0];
+    let realMonth = parseInt(month) + 1;
+    let realDay = parseInt(day);
+    realMonth = (realMonth < 10) ? '0' + realMonth : realMonth.toString();
+    realDay = (realDay < 10) ? '0' + realDay : realDay.toString();
+    this.setState({
+      minDatetime: `${year}-${realMonth}-${realDay}T${timeSteps[0]}`,
+      maxDatetime: layerDetails.nearestTimeIso
+    });
+
     let marksYears = {};
     let yearArr = [];
-
-    // for (let year in selectedWMSLayerDetailsData.datesWithData) {
-    //   yearArr.push(parseInt(year));
-    // }
-    // yearArr.sort();
-
-    let dimensions = this.props.selectedDatasetCapabilities['Capability']['Layer']['Layer'][0]['Layer'][0]['Dimension'];
-    let timeDimension = this.findDimension(dimensions, 'time');
-    console.log('found time dimension!', timeDimension);
-    let boundDates = timeDimension['values'].split('/');
-    if (boundDates.length === 3) {
-      let startYear = parseInt(boundDates[0].substring(0, 4)); // new Date(boundDates[0]).getFullYear();
-      let endYear = parseInt(boundDates[1].substring(0, 4)); // new Date(boundDates[1]).getFullYear();
-      this.setState({
-        minDatetime: boundDates[0],
-        maxDatetime: boundDates[1]
-      });
-      let currentYear = startYear;
-      while (currentYear <= endYear) {
-        yearArr.push(currentYear++);
-      }
-      yearArr.sort();
-    } else {
-      yearArr = this.parseTimeDimensionString(timeDimension['values'].split(','));
+    for (let year in layerDetails.datesWithData) {
+      yearArr.push(parseInt(year));
     }
+    yearArr.sort();
 
     let firstYear = parseInt(yearArr[0]);
     let lastYear = parseInt(yearArr[yearArr.length - 1]);
@@ -233,16 +235,56 @@ export class TimeSlider extends React.Component {
     );
   }
 
-  changeTimesteps (selectedWMSLayerTimestepsData) {
-    // CALCULATE TIME STEP
-    // TODO TIMESTEPS FOR HOURS/MINUTES
+  changeTimesteps () {
+    let datesWithData = this.props.selectedWMSLayerDetails.data.datesWithData;
+    let timeSteps = this.props.selectedWMSLayerTimesteps.data.timesteps;
+    let stepLength = 1;
+    let stepGranularity = DAY_VALUE;
+
+    // Calculate steps length and granularity based on timesteps OR datesWithData
+    if (timeSteps.length) {
+      if (timeSteps.length > 24) {
+        // Minutes
+        stepGranularity = MINUTE_VALUE;
+        stepLength = Math.round(60 / (Math.round(timeSteps.length) / 24));
+      } else if (timeSteps.length >= 2 && timeSteps.length < 24) {
+        // Hours
+        stepGranularity = HOUR_VALUE;
+        stepLength = Math.round(24 / timeSteps.length);
+      } else {
+        // Exactly one day
+        stepGranularity = DAY_VALUE;
+        stepLength = 1;
+      }
+    } else {
+      let yearObj = datesWithData[Object.keys(datesWithData)[0]];
+      if (Object.keys(yearObj).length < 12) {
+        // Months
+        stepGranularity = MONTH_VALUE;
+        stepLength = Math.round(12 / Object.keys(yearObj).length);
+      } else {
+        let monthObj = yearObj[Object.keys(yearObj)[0]];
+        if (monthObj.length < 30) {
+          // Days
+          stepGranularity = DAY_VALUE;
+          stepLength = Math.round(30 / monthObj.length);
+        } else {
+          // Years
+          stepGranularity = YEAR_VALUE;
+          stepLength = 1; // TODO Support multiple years frequency?
+        }
+      }
+    }
+
     let currentTime = this.state.currentTime;
-    if (selectedWMSLayerTimestepsData.timesteps && selectedWMSLayerTimestepsData.timesteps.length) {
-      currentTime = selectedWMSLayerTimestepsData.timesteps[0];
+    if (timeSteps && timeSteps.length) {
+      currentTime = timeSteps[0];
     }
     this.setState(
       {
-        timesteps: selectedWMSLayerTimestepsData.timesteps,
+        stepLength: stepLength,
+        stepGranularity: stepGranularity,
+        timesteps: timeSteps,
         currentTime: currentTime
       }
     );
@@ -382,35 +424,35 @@ export class TimeSlider extends React.Component {
                 disabled={this.state.minDatetime === this.props.currentDateTime}
                 primary={true}
                 icon={<FastBackwardIcon />}
-                style={{margin: '0 5px 0 5px', width: '14%'}}
+                style={{margin: '0 5px 0 5px', width: '13%'}}
                 onClick={this._onClickedStepControls.bind(this, FAST_BACKWARD_ACTION)} />
               <RaisedButton
                 disabled={this.state.minDatetime === this.props.currentDateTime}
                 primary={true}
                 icon={<BackwardIcon />}
-                style={{margin: '0 5px 0 5px', width: '14%'}}
+                style={{margin: '0 5px 0 5px', width: '13%'}}
                 onClick={this._onClickedStepControls.bind(this, STEP_BACKWARD_ACTION)} />
               <RaisedButton
               primary={true}
               icon={<PlayIcon />}
-              style={{margin: '0 5px 0 5px', width: '18%'}}
+              style={{margin: '0 5px 0 5px', width: '19%'}}
               onClick={this._onClickedStepControls.bind(this, PLAY_ACTION)} />
               <RaisedButton
                 primary={true}
                 icon={<PauseIcon />}
-                style={{margin: '0 5px 0 5px', width: '18%'}}
+                style={{margin: '0 5px 0 5px', width: '19%'}}
                 onClick={this._onClickedStepControls.bind(this, PAUSE_ACTION)} />
               <RaisedButton
                 disabled={this.state.maxDatetime === this.props.currentDateTime}
                 primary={true}
                 icon={<ForwardIcon />}
-                style={{margin: '0 5px 0 5px', width: '14%'}}
+                style={{margin: '0 5px 0 5px', width: '13%'}}
                 onClick={this._onClickedStepControls.bind(this, STEP_FORWARD_ACTION)} />
               <RaisedButton
                 disabled={this.state.maxDatetime === this.props.currentDateTime}
                 primary={true}
                 icon={<FastForwardIcon />}
-                style={{margin: '0 5px 0 5px', width: '14%'}}
+                style={{margin: '0 5px 0 5px', width: '13%'}}
                 onClick={this._onClickedStepControls.bind(this, FAST_FORWARD_ACTION)} />
             </Col>
           </Row>
