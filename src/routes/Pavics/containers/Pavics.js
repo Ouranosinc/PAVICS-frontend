@@ -79,47 +79,4 @@ const mapStateToProps = state => {
     monitor: state.pavics.monitor
   };
 };
-/*
-const mapStateToProps = (state) => {
-  return {
-    processes: state.pavics.workflowWizard.processes,
-    currentStep: state.pavics.workflowWizard.currentStep,
-    stepIndex: state.pavics.workflowWizard.stepIndex,
-    selectedProcess: state.pavics.workflowWizard.selectedProcess,
-    selectedProvider: state.pavics.workflowWizard.selectedProvider,
-    selectedProcessInputs: state.pavics.workflowWizard.selectedProcessInputs,
-    selectedProcessValues: state.pavics.workflowWizard.selectedProcessValues,
-    providers: state.pavics.workflowWizard.providers,
-    platform: state.pavics.platform,
-    monitor: state.pavics.monitor,
-    currentOpenedDataset: state.pavics.visualize.currentOpenedDataset,
-    currentOpenedDatasetWMSFile: state.pavics.visualize.currentOpenedDatasetWMSFile,
-    currentOpenedWMSLayer: state.pavics.visualize.currentOpenedWMSLayer,
-    loadedWmsDatasets: state.pavics.visualize.loadedWmsDatasets,
-    selectedFacets: state.pavics.visualize.selectedFacets,
-    selectedDatasets: state.pavics.visualize.selectedDatasets,
-    selectedWMSLayers: state.pavics.visualize.selectedWMSLayers,
-    selectedWMSLayerDetails: state.pavics.visualize.selectedWMSLayerDetails,
-    selectedWMSLayerTimesteps: state.pavics.visualize.selectedWMSLayerTimesteps,
-    currentDateTime: state.pavics.visualize.currentDateTime,
-    esgfDatasets: state.pavics.visualize.esgfDatasets,
-    pavicsDatasets: state.pavics.visualize.pavicsDatasets,
-    facets: state.pavics.visualize.facets,
-    climateIndicators: state.pavics.visualize.climateIndicators,
-    panelControls: state.pavics.visualize.panelControls,
-    plotlyData: state.pavics.visualize.plotlyData,
-    layer: state.pavics.visualize.layer,
-    publicShapeFiles: state.pavics.visualize.publicShapeFiles,
-    baseMaps: state.pavics.visualize.baseMaps,
-    selectedDatasetCapabilities: state.pavics.visualize.selectedDatasetCapabilities,
-    selectedDatasetLayer: state.pavics.visualize.selectedDatasetLayer,
-    selectedShapefile: state.pavics.visualize.selectedShapefile,
-    selectedBasemap: state.pavics.visualize.selectedBasemap,
-    mapManipulationMode: state.pavics.visualize.mapManipulationMode,
-    currentProjectDatasets: state.pavics.visualize.currentProjectDatasets,
-    currentProjectSearchCriterias: state.pavics.visualize.currentProjectSearchCriterias,
-    currentVisualizedDatasetLayers: state.pavics.visualize.currentVisualizedDatasetLayers
-  };
-};
-*/
 export default connect(mapStateToProps, mapActionCreators)(Pavics);
