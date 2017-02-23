@@ -4,6 +4,7 @@ import ol from 'openlayers';
 // SYNC
 const SET_WMS_LAYER = 'Visualize.SET_WMS_LAYER';
 const SET_SHAPEFILES = 'Visualize.SET_SHAPEFILES';
+const SET_SELECTED_COLOR_PALETTE = 'Visualize.SET_SELECTED_COLOR_PALETTE';
 const SET_SELECTED_SHAPEFILE = 'Visualize.SET_SELECTED_SHAPEFILE';
 const SET_SELECTED_BASEMAP = 'Visualize.SET_SELECTED_BASEMAP';
 const SET_SELECTED_DATASET_LAYER = 'Visualize.SET_SELECTED_DATASET_LAYER';
@@ -704,6 +705,17 @@ export function selectDatasetLayer (layer) {
     dispatch(setSelectedDatasetLayer(layer));
   };
 }
+function setSelectedColorPalette(palette) {
+  return {
+    type: SET_SELECTED_COLOR_PALETTE,
+    palette: palette
+  };
+}
+export function selectColorPalette (palette) {
+  return dispatch => {
+    dispatch(setSelectedColorPalette(palette));
+  };
+}
 export function receivedDatasetCapabilities (capabilities) {
   return dispatch => {
     dispatch(setSelectedDatasetCapabilities(capabilities));
@@ -906,6 +918,9 @@ const VISUALIZE_HANDLERS = {
   },
   [SET_SHAPEFILES]: (state, action) => {
     return {...state, publicShapeFiles: action.publicShapeFiles};
+  },
+  [SET_SELECTED_COLOR_PALETTE]: (state, action) => {
+    return {...state, selectedColorPalette: action.palette};
   },
   [SET_SELECTED_SHAPEFILE]: (state, action) => {
     return {...state, selectedShapefile: action.shapefile};

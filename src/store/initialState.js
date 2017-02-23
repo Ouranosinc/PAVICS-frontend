@@ -26,8 +26,13 @@ const initialState = {
   },
   visualize: {
     mapManipulationMode: constants.VISUALIZE_MODE_VISUALIZE,
+    selectedColorPalette: {
+      url: '',
+      name: ''
+    },
     selectedShapefile: {},
     selectedBasemap: '',
+    selectedDatasetLayer: {},
     publicShapeFiles: [],
     baseMaps: [
       'Aerial',
@@ -45,7 +50,6 @@ const initialState = {
     currentProjectSearchCriterias: [],
     currentProjectDatasets: [],
     currentVisualizedDatasetLayers: [],
-    selectedDatasetLayer: {},
     selectedDatasetCapabilities: {},
     selectedDatasets: {
       requestedAt: null,

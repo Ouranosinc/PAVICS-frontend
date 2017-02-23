@@ -20,6 +20,7 @@ class OLComponent extends React.Component {
     mapManipulationMode: React.PropTypes.string.isRequired,
     setCurrentDateTime: React.PropTypes.func.isRequired,
     selectedRegions: React.PropTypes.array.isRequired,
+    selectedColorPalette: React.PropTypes.object.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
     selectedBasemap: React.PropTypes.string.isRequired,
@@ -187,7 +188,8 @@ class OLComponent extends React.Component {
               dialogOpened: true
             }
           );
-        }
+        },
+        err => console.log(err)
       );
   }
 
@@ -197,11 +199,12 @@ class OLComponent extends React.Component {
     console.log('scalar value from coosrindates', converted);
     console.log('selected dataset:', this.props.selectedDatasetLayer);
     let opendapUrl = this.props.selectedDatasetLayer['opendap_urls'][0];
-    let lat = converted[0];
-    let lon = converted[1];
+    let lon = converted[0];
+    let lat = converted[1];
     let time = this.props.currentDateTime.substr(0, this.props.currentDateTime.length - 5);
     // TODO dialog to choose variable dynamically
     let variable = this.props.selectedDatasetLayer['variable'][0];
+    console.log('variable:', variable);
     let url = `/wps/getpoint?opendapUrl=${opendapUrl}&lat=${lat}&lon=${lon}&time=${time}&variable=${variable}`;
     fetch(url)
       .then(res => res.json())
@@ -216,13 +219,14 @@ class OLComponent extends React.Component {
                   selectedDatasetCapabilities={this.props.selectedDatasetCapabilities}
                   opendapUrl={this.props.selectedDatasetLayer['opendap_urls'][0]}
                   fetchPlotlyData={this.props.fetchPlotlyData}
-                  pointResult={json['pr']} />
+                  pointResult={json[variable]} />
               ),
               dialogOpened: true,
               dialogTitle: 'Point Result Data'
             }
           );
-        }
+        },
+        err => console.log(err)
       );
   }
 
@@ -323,12 +327,11 @@ class OLComponent extends React.Component {
           let layerName = layer['Name'];
           let timeDimension = this.findDimension(layer['Dimension'], 'time');
           let wmsParams = {
+            'ABOVEMAXCOLOR': 'extend',
             'TRANSPARENT': 'TRUE',
-            'STYLES': 'default',
+            'STYLES': 'default-scalar/seq-Blues', // TODO UI switcher for styles
             'LAYERS': layerName,
             'EPSG': '4326',
-            'COLORSCALERANGE': '0.0000004000,0.00006000',
-            'NUMCOLORBANDS': '10',
             'LOGSCALE': false,
             'crossOrigin': 'anonymous',
             'BGCOLOR': 'transparent',
@@ -349,11 +352,28 @@ class OLComponent extends React.Component {
           this.props.fetchWMSLayerDetails(url, layerName);
           this.props.fetchWMSLayerTimesteps(url, layerName, date);
           this.props.setCurrentDateTime(date);
-        }
+        },
+        err => console.log(err)
       );
   }
 
+  updateColorPalette () {
+    // TODO there is something that feels somewhat wrong about having the datasetLayer in a prop
+    // it might be totally ok, but be bit careful ot
+    if (this.layers[LAYER_DATASET]) {
+      console.log('changing color palette:', this.props.selectedColorPalette.name);
+      this.datasetSource.updateParams({
+        'STYLES': this.props.selectedColorPalette.name
+      });
+    } else {
+      console.log('select a dataset first');
+    }
+  }
+
   componentDidUpdate (prevProps, prevState) {
+    if (this.props.selectedColorPalette !== prevProps.selectedColorPalette) {
+      this.updateColorPalette();
+    }
     if (this.props.selectedBasemap !== prevProps.selectedBasemap) {
       this.setBasemap(prevProps);
     }

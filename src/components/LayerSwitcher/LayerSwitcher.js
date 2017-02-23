@@ -7,12 +7,26 @@ import FontIcon from 'material-ui/FontIcon';
 import Paper from 'material-ui/Paper';
 import RaisedButton from 'material-ui/RaisedButton';
 export default class LayerSwitcher extends React.Component {
+
+  availableColorPalettes = [
+    {
+      url: `${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=seq-Blues&COLORBARONLY=true&WIDTH=264&HEIGHT=70&VERTICAL=false`,
+      name: 'default-scalar/seq-Blues'
+    },
+    {
+      url: `${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=div-BuRd&COLORBARONLY=true&WIDTH=264&HEIGHT=70&VERTICAL=false`,
+      name: 'default-scalar/div-BuRd'
+    }
+  ];
+
   static propTypes = {
     fetchShapefiles: React.PropTypes.func.isRequired,
+    selectColorPalette: React.PropTypes.func.isRequired,
     selectDatasetLayer: React.PropTypes.func.isRequired,
     selectShapefile: React.PropTypes.func.isRequired,
     selectBasemap: React.PropTypes.func.isRequired,
     currentVisualizedDatasetLayers: React.PropTypes.array.isRequired,
+    selectedColorPalette: React.PropTypes.object.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
     selectedBasemap: React.PropTypes.string.isRequired,
@@ -25,6 +39,7 @@ export default class LayerSwitcher extends React.Component {
     this.setSelectedShapefile = this.setSelectedShapefile.bind(this);
     this.setSelectedBaseMap = this.setSelectedBaseMap.bind(this);
     this.setSelectedDatasetLayer = this.setSelectedDatasetLayer.bind(this);
+    this.setSelectedColorPalette = this.setSelectedColorPalette.bind(this);
   }
 
   componentDidMount() {
@@ -42,6 +57,10 @@ export default class LayerSwitcher extends React.Component {
 
   setSelectedDatasetLayer (event, value) {
     this.props.selectDatasetLayer(value);
+  }
+
+  setSelectedColorPalette (event, value) {
+    this.props.selectColorPalette(value);
   }
 
   resetShapefile () {
@@ -143,6 +162,35 @@ export default class LayerSwitcher extends React.Component {
     );
   }
 
+  makeColorPalettesList() {
+    return (
+      <List>
+        {
+          this.availableColorPalettes.map(
+            (palette, i) => {
+              return(
+                <ListItem
+                  key={i}
+                  primaryText={<img src={palette.url} />}
+                  leftCheckbox={
+                    <RadioButtonGroup
+                      onChange={this.setSelectedColorPalette}
+                      valueSelected={this.props.selectedColorPalette}
+                      name="selectedColorPalette">
+                      <RadioButton
+                        value={palette}
+                        label={palette.name}
+                      />
+                    </RadioButtonGroup>
+                  } />
+              )
+            }
+          )
+        }
+      </List>
+    );
+  }
+
   render () {
     return (
       <div className={classes['LayerSwitcher']}>
@@ -162,6 +210,16 @@ export default class LayerSwitcher extends React.Component {
                     label="Reset" />
                 </div>
                 {this.makeDatasetsList()}
+              </Paper>
+            </Tab>
+            <Tab
+              icon={<FontIcon className="material-icons">invert_colors</FontIcon>}
+              label="Color Palettes">
+              <Paper zDepth={2}>
+                <h2>Color Palettes</h2>
+                <List>
+                  {this.makeColorPalettesList()}
+                </List>
               </Paper>
             </Tab>
             <Tab
