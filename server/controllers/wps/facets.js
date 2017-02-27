@@ -8,16 +8,12 @@ var facets = (function () {
     getFacets: function * list (next) {
       if (this.method !== 'GET') return yield next;
 
-      let url = config.pavics_pywps_path + 'facets=*&limit=0&distrib=false';
+      let url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=pavicsearch&DataInputs=facets=*&limit=0&distrib=false`;
       console.log('consuming: ' + url);
       let response = yield request(url);
       let xmlToJson = yield Utils.parseXMLThunk(response.body);
       let jsonTempUrl = Utils.extractWPSOutputPath(xmlToJson);
       response = yield request(jsonTempUrl);
-
-      // OLD WAY using wps consumer
-      // let url = config.pavics_wpsconsumer_search_path + '?facets=*&limit=0&distrib=false';
-      // let response = yield request(url); //Yay, HTTP requests with no callbacks!
 
       let json = JSON.parse(response.body);
       response = [];
@@ -51,5 +47,3 @@ var facets = (function () {
   };
 })();
 export default facets;
-
-

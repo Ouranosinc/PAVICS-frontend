@@ -20,9 +20,14 @@ var consumer = (function () {
       console.log('consuming:', this.params.identifier);
       let response;
       let url;
+      let xml;
+      let jsonPath;
       switch (this.params.identifier) {
         case 'pavicsearch':
-          url = config.pavics_pywps_path + urlEncode(this.request.query);
+          // url = config.pavics_pywps_path + urlEncode(this.request.query);
+          url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=pavicsearch&DataInputs=${urlEncode(
+            this.request.query
+          )}`;
           console.log('consuming: ' + url);
           response = yield request(url);
           let xmlToJson = yield Utils.parseXMLThunk(response.body);
@@ -43,12 +48,26 @@ var consumer = (function () {
             ';spatial2_final_indice=' + this.request.query.spatial2_final_indice;
           response = yield request(url);
           console.log(url);
-          let xml = yield Utils.parseXMLThunk(response.body);
-          let jsonPath = Utils.extractWPSOutputPath(xml);
+          xml = yield Utils.parseXMLThunk(response.body);
+          jsonPath = Utils.extractWPSOutputPath(xml);
           response = yield request(jsonPath);
           console.log('json path: ', jsonPath);
           this.body = response.body;
           break;
+        case 'getpoint':
+          let opendapUrl = this.request.query['opendapUrl'];
+          let variable = this.request.query['variable'];
+          let lon = this.request.query['lon'];
+          let lat = this.request.query['lat'];
+          let time = this.request.query['time'];
+          let dataInputs = `opendap_url=${opendapUrl};variable=${variable};nearest_to=lon:${lon};nearest_to=lat:${lat};nearest_to=time:${time}`;
+          url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=getpoint&DataInputs=${dataInputs}`;
+          console.log('getting point:', url);
+          response = yield request(url);
+          xml = yield Utils.parseXMLThunk(response.body);
+          let jsonPath = Utils.extractWPSOutputPath(xml);
+          response = yield request(jsonPath);
+          this.body = response.body;
       }
     }
   };
