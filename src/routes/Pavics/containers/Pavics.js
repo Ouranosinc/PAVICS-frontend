@@ -71,6 +71,15 @@ class Pavics extends React.Component {
   }
 }
 const mapActionCreators = {...actionCreators};
+const mapStateToProps = state => {
+  return {
+    ...state.pavics.workflowWizard,
+    ...state.pavics.visualize,
+    platform: state.pavics.platform,
+    monitor: state.pavics.monitor
+  };
+};
+/*
 const mapStateToProps = (state) => {
   return {
     processes: state.pavics.workflowWizard.processes,
@@ -112,4 +121,5 @@ const mapStateToProps = (state) => {
     currentVisualizedDatasetLayers: state.pavics.visualize.currentVisualizedDatasetLayers
   };
 };
+*/
 export default connect(mapStateToProps, mapActionCreators)(Pavics);
