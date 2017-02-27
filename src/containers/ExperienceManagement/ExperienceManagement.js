@@ -107,7 +107,7 @@ export class ExperienceManagement extends React.Component {
                   leftIcon={folderIcon}
                   initiallyOpen={false}
                   primaryTogglesNestedList={false}
-                  nestedItems={[
+                  nestedItems={
                     dataset.wms_urls.map((wmsUrl, j) => {
                       let text = '/'; // 'DATASET=';
                       let fileName = wmsUrl.substr(wmsUrl.lastIndexOf(text) + text.length);
@@ -141,7 +141,7 @@ export class ExperienceManagement extends React.Component {
                         />
                       );
                     })
-                  ]}
+                  }
                 />
               );
             })}
