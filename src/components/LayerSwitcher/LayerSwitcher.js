@@ -54,7 +54,9 @@ export default class LayerSwitcher extends React.Component {
 
   makeShapefileList () {
     return (
-      <List className={classes['layers']}>
+      <List
+        style={{maxHeight: '400px', overflowY: 'auto'}}
+        className={classes['layers']}>
         <ListItem
           initiallyOpen
           primaryTogglesNestedList
@@ -83,7 +85,9 @@ export default class LayerSwitcher extends React.Component {
 
   makeBaseMapsList () {
     return (
-      <List className={classes['layers']}>
+      <List
+        style={{maxHeight: '400px', overflowY: 'auto'}}
+        className={classes['layers']}>
         <ListItem
           initiallyOpen
           primaryTogglesNestedList
@@ -112,7 +116,9 @@ export default class LayerSwitcher extends React.Component {
 
   makeDatasetsList () {
     return (
-      <List>
+      <List
+        style={{maxHeight: '400px', overflowY: 'auto'}}
+        className={classes['layers']}>
         {
           this.props.currentVisualizedDatasetLayers.map((dataset, i) => {
             return (
