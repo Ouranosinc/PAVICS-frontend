@@ -32,13 +32,15 @@ class Visualize extends React.Component {
     panelControls: React.PropTypes.object.isRequired,
     plotlyData: React.PropTypes.object.isRequired,
     publicShapeFiles: React.PropTypes.array.isRequired,
+    mapManipulationMode: React.PropTypes.string.isRequired,
     baseMaps: React.PropTypes.array.isRequired,
     currentDateTime: React.PropTypes.string.isRequired,
     fetchWMSLayerDetails: React.PropTypes.func.isRequired,
     fetchWMSLayerTimesteps: React.PropTypes.func.isRequired,
     selectedWMSLayerTimesteps: React.PropTypes.object.isRequired,
     selectedWMSLayerDetails: React.PropTypes.object.isRequired,
-    setCurrentDateTime: React.PropTypes.func.isRequired
+    setCurrentDateTime: React.PropTypes.func.isRequired,
+    setSelectedDatasetCapabilities: React.PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -94,7 +96,17 @@ class Visualize extends React.Component {
         <div className={classes['Visualize']}>
           {(this.state.mapPanelStatus[MAP_PANEL])
             ? <div className={classes.mapContainer}>
-              <OLComponent ref={this.setOLComponentReference} {...this.props} />
+              <OLComponent
+                setSelectedDatasetCapabilities={this.props.setSelectedDatasetCapabilities}
+                layer={this.props.layer}
+                currentDateTime={this.props.currentDateTime}
+                mapManipulationMode={this.props.mapManipulationMode}
+                fetchWMSLayerDetails={this.props.fetchWMSLayerDetails}
+                fetchWMSLayerTimesteps={this.props.fetchWMSLayerTimesteps}
+                selectedShapefile={this.props.selectedShapefile}
+                selectedBasemap={this.props.selectedBasemap}
+                selectedDatasetLayer={this.props.selectedDatasetLayer}
+                ref={this.setOLComponentReference} />
             </div> : null
           }
           <PieMenu
@@ -111,11 +123,8 @@ class Visualize extends React.Component {
             {(this.state.mapPanelStatus[TIME_SLIDER_PANEL])
               ? <div className={classes.panel}>
                 <TimeSlider
-                  selectedWMSLayerDetails={this.props.selectedWMSLayerDetails}
                   selectedWMSLayerTimesteps={this.props.selectedWMSLayerTimesteps}
                   setCurrentDateTime={this.props.setCurrentDateTime}
-                  fetchWMSLayerDetails={this.props.fetchWMSLayerDetails}
-                  fetchWMSLayerTimesteps={this.props.fetchWMSLayerTimesteps}
                   selectedDatasetCapabilities={this.props.selectedDatasetCapabilities}
                   currentDateTime={this.props.currentDateTime}
                   monthsRange={false}

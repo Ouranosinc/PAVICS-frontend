@@ -21,11 +21,12 @@ class OLComponent extends React.Component {
     selectedDatasetLayer: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
     selectedBasemap: React.PropTypes.string.isRequired,
+    setSelectedDatasetCapabilities: React.PropTypes.func.isRequired,
     capabilities: React.PropTypes.object,
     dataset: React.PropTypes.object,
-    loadedWmsDatasets: React.PropTypes.array.isRequired,
     layer: React.PropTypes.object.isRequired,
-    receivedDatasetCapabilities: React.PropTypes.func.isRequired
+    fetchWMSLayerDetails: React.PropTypes.func.isRequired,
+    fetchWMSLayerTimesteps: React.PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -332,7 +333,10 @@ class OLComponent extends React.Component {
             }
           );
           this.addTileWMSLayer(INDEX_DATASET_LAYER, LAYER_DATASET, this.datasetSource);
-          this.props.receivedDatasetCapabilities(capabilities);
+          this.props.setSelectedDatasetCapabilities(capabilities);
+          let date = layer['Dimension'][0].values.split('/')[0];
+          this.props.fetchWMSLayerDetails(url, layerName);
+          this.props.fetchWMSLayerTimesteps(url, layerName, date);
         }
       );
   }
