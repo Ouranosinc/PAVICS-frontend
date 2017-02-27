@@ -24,6 +24,7 @@ const initialState = {
     jobs: []
   },
   visualize: {
+    mapManipulationMode: constants.VISUALIZE_MODE_VISUALIZE,
     selectedShapefile: {},
     selectedBasemap: '',
     publicShapeFiles: [],
