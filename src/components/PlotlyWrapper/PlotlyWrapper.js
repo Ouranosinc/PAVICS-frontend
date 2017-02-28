@@ -1,6 +1,6 @@
 import React from 'react';
 import Plotly from 'plotly.js';
-import * as constants from './../../constants';
+import Paper from 'material-ui/Paper';
 class PlotlyWrapper extends React.Component {
   static propTypes = {
     panelControls: React.PropTypes.object.isRequired,
@@ -11,7 +11,7 @@ class PlotlyWrapper extends React.Component {
 
   constructor (props) {
     super(props);
-    this.props.fetchPlotlyData('PCP', 124, 360, 100, 101, 130, 131);
+    /*
     this.data = [
       {
         x: ['2013-10-04 22:23:00', '2013-11-04 22:23:00', '2013-12-04 22:23:00'],
@@ -19,6 +19,7 @@ class PlotlyWrapper extends React.Component {
         type: 'scatter'
       }
     ];
+    */
     this._bindRef = this._bindRef.bind(this);
   }
 
@@ -27,7 +28,7 @@ class PlotlyWrapper extends React.Component {
   }
 
   componentDidUpdate () {
-    this.container.data = this.data; // this.props.data
+    this.container.data = this.props.data;
     this.container.layout = {
       autosize: false,
       showlegend: false,
@@ -40,25 +41,9 @@ class PlotlyWrapper extends React.Component {
         t: 10,
         pad: 4
       },
-      xaxis: {
-        linecolor: '#fff',
-        tickcolor: '#fff',
-        color: '#fff',
-        titlefont: {
-          color: '#fff'
-        }
-      },
-      yaxis: {
-        linecolor: '#fff',
-        tickcolor: '#fff',
-        color: '#fff',
-        titlefont: {
-          color: '#fff'
-        }
-      },
-      paper_bgcolor: 'rgba(0,0,0,.7)',
-      plot_bgcolor: 'rgba(0,0,0,.7)'
-    }; // this.props.layout;
+      paper_bgcolor: 'inherit',
+      plot_bgcolor: 'inherit'
+    };
     Plotly.redraw(this.container);
     Plotly.Plots.resize(this.container);
   }
@@ -68,10 +53,11 @@ class PlotlyWrapper extends React.Component {
   }
 
   render () {
+    console.log('rendering plotly wrapper');
     return (
-      <div>
+      <Paper zDepth={0}>
         <div id="plotly" ref={this._bindRef}></div>
-      </div>
+      </Paper>
     );
   }
 }

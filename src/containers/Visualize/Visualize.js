@@ -97,6 +97,8 @@ class Visualize extends React.Component {
           {(this.state.mapPanelStatus[MAP_PANEL])
             ? <div className={classes.mapContainer}>
               <OLComponent
+                fetchPlotlyData={this.props.fetchPlotlyData}
+                selectedDatasetCapabilities={this.props.selectedDatasetCapabilities}
                 setSelectedDatasetCapabilities={this.props.setSelectedDatasetCapabilities}
                 layer={this.props.layer}
                 currentDateTime={this.props.currentDateTime}

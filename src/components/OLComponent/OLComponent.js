@@ -21,12 +21,14 @@ class OLComponent extends React.Component {
     selectedDatasetLayer: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
     selectedBasemap: React.PropTypes.string.isRequired,
+    selectedDatasetCapabilities: React.PropTypes.object.isRequired,
     setSelectedDatasetCapabilities: React.PropTypes.func.isRequired,
     capabilities: React.PropTypes.object,
     dataset: React.PropTypes.object,
     layer: React.PropTypes.object.isRequired,
     fetchWMSLayerDetails: React.PropTypes.func.isRequired,
-    fetchWMSLayerTimesteps: React.PropTypes.func.isRequired
+    fetchWMSLayerTimesteps: React.PropTypes.func.isRequired,
+    fetchPlotlyData: React.PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -207,7 +209,13 @@ class OLComponent extends React.Component {
           this.setState(
             {
               ...this.state,
-              dialogContent: <DatasetScalarValue json={json['pr']} />,
+              dialogContent: (
+                <DatasetScalarValue
+                  selectedDatasetCapabilities={this.props.selectedDatasetCapabilities}
+                  opendapUrl={this.props.selectedDatasetLayer['opendap_urls'][0]}
+                  fetchPlotlyData={this.props.fetchPlotlyData}
+                  pointResult={json['pr']} />
+              ),
               dialogOpened: true,
               dialogTitle: 'Point Result Data'
             }
