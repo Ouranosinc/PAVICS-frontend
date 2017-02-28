@@ -18,6 +18,7 @@ class OLComponent extends React.Component {
   static propTypes = {
     currentDateTime: React.PropTypes.string.isRequired,
     mapManipulationMode: React.PropTypes.string.isRequired,
+    selectedRegions: React.PropTypes.array.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
     selectedBasemap: React.PropTypes.string.isRequired,
@@ -227,7 +228,7 @@ class OLComponent extends React.Component {
   handleMapClick (event) {
     console.log(this.props.selectedDatasetLayer);
     switch (this.props.mapManipulationMode) {
-      case constants.VISUALIZE_MODE_REGION_SELECTION:
+      case constants.VISUALIZE_MODE_JOB_MANAGEMENT:
         return this.selectRegion(event);
       case constants.VISUALIZE_MODE_VISUALIZE:
         if (this.props.selectedDatasetLayer['dataset_id']) {

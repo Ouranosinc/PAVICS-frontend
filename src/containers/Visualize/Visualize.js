@@ -40,7 +40,8 @@ class Visualize extends React.Component {
     selectedWMSLayerTimesteps: React.PropTypes.object.isRequired,
     selectedWMSLayerDetails: React.PropTypes.object.isRequired,
     setCurrentDateTime: React.PropTypes.func.isRequired,
-    setSelectedDatasetCapabilities: React.PropTypes.func.isRequired
+    setSelectedDatasetCapabilities: React.PropTypes.func.isRequired,
+    selectedRegions: React.PropTypes.array.isRequired
   };
 
   constructor (props) {
@@ -97,6 +98,7 @@ class Visualize extends React.Component {
           {(this.state.mapPanelStatus[MAP_PANEL])
             ? <div className={classes.mapContainer}>
               <OLComponent
+                selectedRegions={this.props.selectedRegions}
                 fetchPlotlyData={this.props.fetchPlotlyData}
                 selectedDatasetCapabilities={this.props.selectedDatasetCapabilities}
                 setSelectedDatasetCapabilities={this.props.setSelectedDatasetCapabilities}

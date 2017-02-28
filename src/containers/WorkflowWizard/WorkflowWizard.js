@@ -17,7 +17,8 @@ export default class WorkflowWizard extends React.Component {
     selectWpsProvider: React.PropTypes.func.isRequired,
     providers: React.PropTypes.object.isRequired,
     goToSection: React.PropTypes.func.isRequired,
-    getLastStep: React.PropTypes.func.isRequired
+    getLastStep: React.PropTypes.func.isRequired,
+    selectedShapefile: React.PropTypes.object.isRequired
   }
 
   constructor (props) {
@@ -30,6 +31,7 @@ export default class WorkflowWizard extends React.Component {
 
   render () {
     return <WorkflowWizardStepper
+      selectedShapefile={this.props.selectedShapefile}
       stepIndex={this.props.stepIndex}
       processes={this.props.processes}
       chooseProcess={this.props.chooseProcess}

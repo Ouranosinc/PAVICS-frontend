@@ -19,7 +19,7 @@ export default class MapControls extends React.Component {
           name="map-manipulation-mode"
           defaultSelected={constants.VISUALIZE_MODE_VISUALIZE}>
           <RadioButton value={constants.VISUALIZE_MODE_VISUALIZE} label="Visualization" />
-          <RadioButton value={constants.VISUALIZE_MODE_REGION_SELECTION} label="Region Selection" />
+          <RadioButton value={constants.VISUALIZE_MODE_JOB_MANAGEMENT} label="Region Selection" />
         </RadioButtonGroup>
       </Paper>
     );
