@@ -81,7 +81,7 @@ class CriteriaSelection extends React.Component {
             leftIcon={<AddFilter />}
             initiallyOpen={false}
             primaryTogglesNestedList={true}
-            nestedItems={[
+            nestedItems={
               this._formatRows().map((row, i) => {
                 let checked = false;
                 this.props.selectedFacets.map(x => {
@@ -96,8 +96,8 @@ class CriteriaSelection extends React.Component {
                     leftCheckbox={<Checkbox value={row} checked={checked} onCheck={this._onSelectRow} />}
                   />
                 );
-              }),
-            ]}
+              })
+            }
           />
         </List>
         <div>

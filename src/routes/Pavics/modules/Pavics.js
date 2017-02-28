@@ -678,6 +678,17 @@ export function selectShapefile (shapefile) {
     dispatch(setSelectedShapefile(shapefile));
   };
 }
+function setMapManipulationMode (mode) {
+  return {
+    type: constants.VISUALIZE_SET_MAP_MANIPULATION_MODE,
+    mode: mode
+  };
+}
+export function selectMapManipulationMode (mode) {
+  return dispatch => {
+    dispatch(setMapManipulationMode(mode));
+  };
+}
 export function selectBasemap (basemap) {
   return dispatch => {
     dispatch(setSelectedBasemap(basemap));
@@ -882,6 +893,9 @@ const WORKFLOW_WIZARD_HANDLERS = {
   }
 };
 const VISUALIZE_HANDLERS = {
+  [constants.VISUALIZE_SET_MAP_MANIPULATION_MODE]: (state, action) => {
+    return {...state, mapManipulationMode: action.mode};
+  },
   [SET_WMS_LAYER]: (state, action) => {
     return {...state, layer: action.layer};
   },

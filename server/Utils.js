@@ -31,14 +31,21 @@ var Utils = (function () {
           // yeah, depending on the type of resource, the identifier is different
           // kinda defeats the purpose of having one wps response consumer
           // TODO please change this to always use the same identifier
+          // later - actually, maybe we don't care at all to verify, just return that output url, and be done with it...
+          // TODO verify that pywps will always only return one ouput
+          // if that's the case, remove this loop and just return output['wps:Reference'][0].$.href || output['wps:Reference'][0].$['xlink:href'];
+          // otherwise, just return an array of outputs with their identifier
+          console.log('identifier:', output['ows:Identifier'][0]);
           if (
             output['ows:Identifier'][0] === 'output' ||
             output['ows:Identifier'][0] === 'search_result' ||
-            output['ows:Identifier'][0] === 'plotly_result'
+            output['ows:Identifier'][0] === 'plotly_result' ||
+            output['ows:Identifier'][0] === 'point_result'
           ) {
             outputPath = output['wps:Reference'][0].$.href || output['wps:Reference'][0].$['xlink:href'];
           }
         });
+        console.log('output path:', outputPath);
         if (outputPath === '') {
           console.log('No identifier was found');
           return 'Failed output path extraction';

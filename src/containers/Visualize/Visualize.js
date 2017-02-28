@@ -9,13 +9,15 @@ import {
   MAP_PANEL,
   MAP_CONTROLS_PANEL,
   TIME_SLIDER_PANEL
-} from '../../components/PieMenu/PieMenu';
+} from './../../components/PieMenu/PieMenu';
 import TimeSlider from '../../containers/TimeSlider';
 import LayerSwitcher from '../../components/LayerSwitcher';
-import PlotlyWrapper from '../../components/PlotlyWrapper';
+import PlotlyWrapper from './../../components/PlotlyWrapper';
+import MapControls from './../../components/MapControls';
 import * as constants from './../../constants';
 class Visualize extends React.Component {
   static propTypes = {
+    selectMapManipulationMode: React.PropTypes.func.isRequired,
     selectedDatasetCapabilities: React.PropTypes.object.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
     currentVisualizedDatasetLayers: React.PropTypes.array.isRequired,
@@ -30,7 +32,15 @@ class Visualize extends React.Component {
     panelControls: React.PropTypes.object.isRequired,
     plotlyData: React.PropTypes.object.isRequired,
     publicShapeFiles: React.PropTypes.array.isRequired,
-    baseMaps: React.PropTypes.array.isRequired
+    mapManipulationMode: React.PropTypes.string.isRequired,
+    baseMaps: React.PropTypes.array.isRequired,
+    currentDateTime: React.PropTypes.string.isRequired,
+    fetchWMSLayerDetails: React.PropTypes.func.isRequired,
+    fetchWMSLayerTimesteps: React.PropTypes.func.isRequired,
+    selectedWMSLayerTimesteps: React.PropTypes.object.isRequired,
+    selectedWMSLayerDetails: React.PropTypes.object.isRequired,
+    setCurrentDateTime: React.PropTypes.func.isRequired,
+    setSelectedDatasetCapabilities: React.PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -78,21 +88,47 @@ class Visualize extends React.Component {
   }
 
   render () {
+    let selectModeCallback = (event, value) => {
+      this.props.selectMapManipulationMode(value);
+    };
     return (
       <div>
         <div className={classes['Visualize']}>
           {(this.state.mapPanelStatus[MAP_PANEL])
             ? <div className={classes.mapContainer}>
-              <OLComponent ref={this.setOLComponentReference} {...this.props} />
+              <OLComponent
+                setSelectedDatasetCapabilities={this.props.setSelectedDatasetCapabilities}
+                layer={this.props.layer}
+                currentDateTime={this.props.currentDateTime}
+                mapManipulationMode={this.props.mapManipulationMode}
+                fetchWMSLayerDetails={this.props.fetchWMSLayerDetails}
+                fetchWMSLayerTimesteps={this.props.fetchWMSLayerTimesteps}
+                selectedShapefile={this.props.selectedShapefile}
+                selectedBasemap={this.props.selectedBasemap}
+                selectedDatasetLayer={this.props.selectedDatasetLayer}
+                ref={this.setOLComponentReference} />
             </div> : null
           }
           <PieMenu
             mapPanelStatus={this.state.mapPanelStatus}
             onToggleMapPanel={this._onToggleMapPanel} />
           <div className={classes.left}>
+            {
+              this.state.mapPanelStatus[MAP_CONTROLS_PANEL]
+                ? <div className={classes['panel']}>
+                  <MapControls
+                    selectMapManipulationMode={selectModeCallback} />
+                </div> : null
+            }
             {(this.state.mapPanelStatus[TIME_SLIDER_PANEL])
               ? <div className={classes.panel}>
-                <TimeSlider {...this.props} monthsRange={false} yearsRange={false} />
+                <TimeSlider
+                  selectedWMSLayerTimesteps={this.props.selectedWMSLayerTimesteps}
+                  setCurrentDateTime={this.props.setCurrentDateTime}
+                  selectedDatasetCapabilities={this.props.selectedDatasetCapabilities}
+                  currentDateTime={this.props.currentDateTime}
+                  monthsRange={false}
+                  yearsRange={false} />
               </div> : null
             }
             {(this.state.mapPanelStatus[CHART_PANEL])
