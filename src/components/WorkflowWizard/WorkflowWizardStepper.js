@@ -21,7 +21,8 @@ export default class WorkflowWizardStepper extends React.Component {
     handleSelectedProcessValueChange: React.PropTypes.func.isRequired,
     selectedProcessValues: React.PropTypes.object.isRequired,
     selectedProcess: React.PropTypes.object.isRequired,
-    selectedShapefile: React.PropTypes.object.isRequired
+    selectedShapefile: React.PropTypes.object.isRequired,
+    selectedDatasetLayer: React.PropTypes.object.isRequired
   };
 
   render () {
@@ -62,6 +63,7 @@ export default class WorkflowWizardStepper extends React.Component {
                 this.props.selectedProcessInputs.length === 0
                   ? null
                   : <WpsProcessForm
+                    selectedDatasetLayer={this.props.selectedDatasetLayer}
                     selectedShapefile={this.props.selectedShapefile}
                     goToSection={this.props.goToSection}
                     executeProcess={this.props.executeProcess}
