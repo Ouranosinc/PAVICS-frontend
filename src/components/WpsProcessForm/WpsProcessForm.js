@@ -28,7 +28,8 @@ export default class WpsProcessForm extends React.Component {
     handleSelectedProcessValueChange: React.PropTypes.func.isRequired,
     executeProcess: React.PropTypes.func.isRequired,
     selectedProvider: React.PropTypes.string.isRequired,
-    goToSection: React.PropTypes.func.isRequired
+    goToSection: React.PropTypes.func.isRequired,
+    selectedShapefile: React.PropTypes.object.isRequired
   };
   handleChange = (event) => {
     let elem = event.target;
@@ -48,6 +49,7 @@ export default class WpsProcessForm extends React.Component {
   };
 
   makeInput (input) {
+    console.log('input:', input.dataType);
     switch (input.dataType) {
       case BOOLEAN:
         return (
@@ -67,6 +69,25 @@ export default class WpsProcessForm extends React.Component {
           </div>
         );
       case STRING:
+        console.log('shapefile:', this.props.selectedShapefile);
+        if (input.name === 'typename') {
+          return (
+            <div>
+              <FormControl
+                id={input.name}
+                type="text"
+                name={input.name}
+                value={this.props.selectedShapefile['wmsParams'] ? this.props.selectedShapefile['wmsParams']['LAYERS'] : ''} />
+              <p>{input.description}</p>
+            </div>
+          );
+        }
+        return (
+          <div>
+            <FormControl id={input.name} type="text" name={input.name} onChange={this.handleChange} />
+            <p>{input.description}</p>
+          </div>
+        );
       default:
         return (
           <div>

@@ -20,8 +20,9 @@ export default class WorkflowWizardStepper extends React.Component {
     goToSection: React.PropTypes.func.isRequired,
     handleSelectedProcessValueChange: React.PropTypes.func.isRequired,
     selectedProcessValues: React.PropTypes.object.isRequired,
-    selectedProcess: React.PropTypes.object.isRequired
-  }
+    selectedProcess: React.PropTypes.object.isRequired,
+    selectedShapefile: React.PropTypes.object.isRequired
+  };
 
   render () {
     const overflowable = {
@@ -61,6 +62,7 @@ export default class WorkflowWizardStepper extends React.Component {
                 this.props.selectedProcessInputs.length === 0
                   ? null
                   : <WpsProcessForm
+                    selectedShapefile={this.props.selectedShapefile}
                     goToSection={this.props.goToSection}
                     executeProcess={this.props.executeProcess}
                     handleSelectedProcessValueChange={this.props.handleSelectedProcessValueChange}

@@ -471,6 +471,7 @@ export function fetchFacets () {
   };
 }
 export function fetchPlotlyData (
+  opendapUrl,
   variableName,
   timeInitialIndice,
   timeFinalIndice,
@@ -481,7 +482,7 @@ export function fetchPlotlyData (
 ) {
   return function (dispatch) {
     dispatch(requestPlotlyData());
-    let url = `/wps/plotly?variable_name=${variableName}&time_initial_indice=${timeInitialIndice}` +
+    let url = `/wps/plotly?opendap_url=${opendapUrl}&variable_name=${variableName}&time_initial_indice=${timeInitialIndice}` +
       `&time_final_indice=${timeFinalIndice}&spatial1_initial_indice=${spatial1InitialIndice}` +
       `&spatial1_final_indice=${spatial1FinalIndice}&spatial2_initial_indice=${spatial2InitialIndice}` +
       `&spatial2_final_indice=${spatial2FinalIndice}`;
@@ -490,8 +491,14 @@ export function fetchPlotlyData (
         console.log('variable name: ', variableName);
         return response.json();
       })
-      .then(json => dispatch(receivePlotlyData(json)))
-      .catch(error => dispatch(receivePlotlyDataFailure(error)));
+      .then(
+        json => {
+          dispatch(receivePlotlyData(json));
+        },
+        err => {
+          dispatch(receivePlotlyDataFailure(err));
+        }
+      );
   };
 }
 export function fetchDataset (url) {
