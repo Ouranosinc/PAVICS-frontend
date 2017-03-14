@@ -196,8 +196,8 @@ class OLComponent extends React.Component {
     console.log('scalar value from coosrindates', converted);
     console.log('selected dataset:', this.props.selectedDatasetLayer);
     let opendapUrl = this.props.selectedDatasetLayer['opendap_urls'][0];
-    let lat = converted[0];
-    let lon = converted[1];
+    let lon = converted[0];
+    let lat = converted[1];
     let time = this.props.currentDateTime.substr(0, this.props.currentDateTime.length - 5);
     // TODO dialog to choose variable dynamically
     let variable = this.props.selectedDatasetLayer['variable'][0];
