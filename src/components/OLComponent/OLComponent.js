@@ -52,7 +52,7 @@ class OLComponent extends React.Component {
       {
         visible: visible,
         title: title,
-        opacity: 1, // TODO: Set opacity dynamically
+        opacity: 0.4, // TODO: Set opacity dynamically
         source: source,
         extent: extent
       }
@@ -186,7 +186,8 @@ class OLComponent extends React.Component {
               dialogOpened: true
             }
           );
-        }
+        },
+        err => console.log(err)
       );
   }
 
@@ -201,6 +202,7 @@ class OLComponent extends React.Component {
     let time = this.props.currentDateTime.substr(0, this.props.currentDateTime.length - 5);
     // TODO dialog to choose variable dynamically
     let variable = this.props.selectedDatasetLayer['variable'][0];
+    console.log('variable:', variable);
     let url = `/wps/getpoint?opendapUrl=${opendapUrl}&lat=${lat}&lon=${lon}&time=${time}&variable=${variable}`;
     fetch(url)
       .then(res => res.json())
@@ -215,13 +217,14 @@ class OLComponent extends React.Component {
                   selectedDatasetCapabilities={this.props.selectedDatasetCapabilities}
                   opendapUrl={this.props.selectedDatasetLayer['opendap_urls'][0]}
                   fetchPlotlyData={this.props.fetchPlotlyData}
-                  pointResult={json['pr']} />
+                  pointResult={json[variable]} />
               ),
               dialogOpened: true,
               dialogTitle: 'Point Result Data'
             }
           );
-        }
+        },
+        err => console.log(err)
       );
   }
 
