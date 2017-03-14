@@ -52,7 +52,7 @@ class OLComponent extends React.Component {
       {
         visible: visible,
         title: title,
-        opacity: 0.4, // TODO: Set opacity dynamically
+        opacity: 1, // TODO: Set opacity dynamically
         source: source,
         extent: extent
       }
@@ -322,12 +322,11 @@ class OLComponent extends React.Component {
           let layerName = layer['Name'];
           let timeDimension = this.findDimension(layer['Dimension'], 'time');
           let wmsParams = {
+            'ABOVEMAXCOLOR': 'extend',
             'TRANSPARENT': 'TRUE',
-            'STYLES': 'default',
+            'STYLES': 'default-scalar/seq-Blues', // TODO UI switcher for styles
             'LAYERS': layerName,
             'EPSG': '4326',
-            'COLORSCALERANGE': '0.0000004000,0.00006000',
-            'NUMCOLORBANDS': '10',
             'LOGSCALE': false,
             'crossOrigin': 'anonymous',
             'BGCOLOR': 'transparent',
