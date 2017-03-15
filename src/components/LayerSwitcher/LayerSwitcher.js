@@ -4,6 +4,7 @@ import {List, ListItem} from 'material-ui/List';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+import Slider from 'material-ui/Slider';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import FontIcon from 'material-ui/FontIcon';
 import Paper from 'material-ui/Paper';
@@ -39,6 +40,7 @@ export default class LayerSwitcher extends React.Component {
     this.setSelectedShapefile = this.setSelectedShapefile.bind(this);
     this.setSelectedBaseMap = this.setSelectedBaseMap.bind(this);
     this.setSelectedDatasetLayer = this.setSelectedDatasetLayer.bind(this);
+    this.setDatasetLayerOpacity = this.setDatasetLayerOpacity.bind(this);
     this.setSelectedColorPalette = this.setSelectedColorPalette.bind(this);
     this.resetDatasetLayer = this.resetDatasetLayer.bind(this);
     this.resetShapefile = this.resetShapefile.bind(this);
@@ -59,7 +61,18 @@ export default class LayerSwitcher extends React.Component {
   }
 
   setSelectedDatasetLayer (event, value) {
-    this.props.selectDatasetLayer(value);
+    let selectedDataset = this.props.currentVisualizedDatasetLayers.find(dataset => dataset.dataset_id === value);
+    this.props.selectDatasetLayer({
+      ...selectedDataset,
+      opacity: this.props.selectedDatasetLayer.opacity
+    });
+  }
+
+  setDatasetLayerOpacity (event, value) {
+    this.props.selectDatasetLayer({
+      ...this.props.selectedDatasetLayer,
+      opacity: value
+    });
   }
 
   setSelectedColorPalette (event, index, value) {
@@ -150,9 +163,9 @@ export default class LayerSwitcher extends React.Component {
                 leftCheckbox={
                   <RadioButtonGroup
                     name="selectedDatasetLayer"
-                    valueSelected={this.props.selectedDatasetLayer}
+                    valueSelected={this.props.selectedDatasetLayer.dataset_id}
                     onChange={this.setSelectedDatasetLayer}>
-                    <RadioButton value={dataset} />
+                    <RadioButton value={dataset.dataset_id} />
                   </RadioButtonGroup>
                 } />
             );
@@ -201,6 +214,11 @@ export default class LayerSwitcher extends React.Component {
                   <RaisedButton
                     onClick={this.resetDatasetLayer}
                     label="Reset" />
+                </div>
+                <div>
+                  <Slider
+                    onChange={this.setDatasetLayerOpacity}
+                    value={this.props.selectedDatasetLayer.opacity} />
                 </div>
                 {this.makeDatasetsList()}
               </Paper>

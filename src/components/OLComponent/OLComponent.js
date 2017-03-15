@@ -53,7 +53,7 @@ class OLComponent extends React.Component {
       {
         visible: visible,
         title: title,
-        opacity: 0.4, // TODO: Set opacity dynamically
+        opacity: this.props.selectedDatasetLayer.opacity,
         source: source,
         extent: extent
       }
@@ -379,7 +379,9 @@ class OLComponent extends React.Component {
     }
     if (this.props.selectedDatasetLayer !== prevProps.selectedDatasetLayer && !this.props.selectedDatasetLayer.capabilities) {
       console.log(this.props.selectedDatasetLayer);
-      if (Object.keys(this.props.selectedDatasetLayer).length === 0 && this.props.selectedDatasetLayer.constructor === Object) {
+      if (this.props.selectedDatasetLayer.opacity !== prevProps.selectedDatasetLayer.opacity) {
+        this.layers[LAYER_DATASET].setOpacity(this.props.selectedDatasetLayer.opacity);
+      } else if (Object.keys(this.props.selectedDatasetLayer).length === 0 && this.props.selectedDatasetLayer.constructor === Object) {
         console.log('removing dataset layer');
         this.map.removeLayer(this.layers[LAYER_DATASET]);
       } else {
