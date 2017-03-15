@@ -86,7 +86,7 @@ module.exports.getCapabilities = function * list (next) {
     return yield next;
   }
   let options = {
-    url: `${config.pavics_ncwms_path}/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0`
+    url: `${config.pavics_ncwms_path}?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0`
   };
   // Yay, HTTP requests with no callbacks!
   let response = yield request(options);
