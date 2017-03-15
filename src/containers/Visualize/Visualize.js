@@ -100,6 +100,7 @@ class Visualize extends React.Component {
           {(this.state.mapPanelStatus[MAP_PANEL])
             ? <div className={classes.mapContainer}>
               <OLComponent
+                selectedColorPalette={this.props.selectedColorPalette}
                 selectedRegions={this.props.selectedRegions}
                 fetchPlotlyData={this.props.fetchPlotlyData}
                 selectedDatasetCapabilities={this.props.selectedDatasetCapabilities}

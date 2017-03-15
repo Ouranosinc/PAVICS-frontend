@@ -707,10 +707,15 @@ export function selectDatasetLayer (layer) {
     dispatch(setSelectedDatasetLayer(layer));
   };
 }
-export function selectColorPalette (palette) {
+function setSelectedColorPalette(palette) {
   return {
     type: SET_SELECTED_COLOR_PALETTE,
     palette: palette
+  };
+}
+export function selectColorPalette (palette) {
+  return dispatch => {
+    dispatch(setSelectedColorPalette(palette));
   };
 }
 export function receivedDatasetCapabilities (capabilities) {

@@ -19,6 +19,7 @@ class OLComponent extends React.Component {
     currentDateTime: React.PropTypes.string.isRequired,
     mapManipulationMode: React.PropTypes.string.isRequired,
     selectedRegions: React.PropTypes.array.isRequired,
+    selectedColorPalette: React.PropTypes.object.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
     selectedBasemap: React.PropTypes.string.isRequired,
@@ -348,11 +349,28 @@ class OLComponent extends React.Component {
           let date = layer['Dimension'][0].values.split('/')[0];
           this.props.fetchWMSLayerDetails(url, layerName);
           this.props.fetchWMSLayerTimesteps(url, layerName, date);
-        }
+        },
+        err => console.log(err)
       );
   }
 
+  updateColorPalette () {
+    // TODO there is something that feels somewhat wrong about having the datasetLayer in a prop
+    // it might be totally ok, but be bit careful ot
+    if (this.layers[LAYER_DATASET]) {
+      console.log('changing color palette:', this.props.selectedColorPalette.name);
+      this.datasetSource.updateParams({
+        'STYLES': this.props.selectedColorPalette.name
+      });
+    } else {
+      console.log('select a dataset first');
+    }
+  }
+
   componentDidUpdate (prevProps, prevState) {
+    if (this.props.selectedColorPalette !== prevProps.selectedColorPalette) {
+      this.updateColorPalette();
+    }
     if (this.props.selectedBasemap !== prevProps.selectedBasemap) {
       this.setBasemap(prevProps);
     }
