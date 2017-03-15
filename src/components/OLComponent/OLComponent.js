@@ -48,12 +48,12 @@ class OLComponent extends React.Component {
     this.handleClose = this.handleClose.bind(this);
   }
 
-  addTileWMSLayer (position, title, source, extent, visible = true) {
+  addTileWMSLayer (position, title, source, opacity, extent, visible = true) {
     let layer = new ol.layer.Tile(
       {
         visible: visible,
         title: title,
-        opacity: this.props.selectedDatasetLayer.opacity,
+        opacity: opacity,
         source: source,
         extent: extent
       }
@@ -293,7 +293,8 @@ class OLComponent extends React.Component {
     this.addTileWMSLayer(
       INDEX_SHAPEFILE,
       shapefile.title,
-      source
+      source,
+      0.4
     );
   }
 
@@ -344,7 +345,7 @@ class OLComponent extends React.Component {
               params: wmsParams
             }
           );
-          this.addTileWMSLayer(INDEX_DATASET_LAYER, LAYER_DATASET, this.datasetSource);
+          this.addTileWMSLayer(INDEX_DATASET_LAYER, LAYER_DATASET, this.datasetSource, this.props.selectedDatasetLayer.opacity);
           this.props.setSelectedDatasetCapabilities(capabilities);
           let date = layer['Dimension'][0].values.split('/')[0];
           this.props.fetchWMSLayerDetails(url, layerName);
@@ -378,11 +379,9 @@ class OLComponent extends React.Component {
       this.setShapefile(prevProps);
     }
     if (this.props.selectedDatasetLayer !== prevProps.selectedDatasetLayer && !this.props.selectedDatasetLayer.capabilities) {
-      console.log(this.props.selectedDatasetLayer);
       if (this.props.selectedDatasetLayer.opacity !== prevProps.selectedDatasetLayer.opacity) {
         this.layers[LAYER_DATASET].setOpacity(this.props.selectedDatasetLayer.opacity);
       } else if (Object.keys(this.props.selectedDatasetLayer).length === 0 && this.props.selectedDatasetLayer.constructor === Object) {
-        console.log('removing dataset layer');
         this.map.removeLayer(this.layers[LAYER_DATASET]);
       } else {
         this.setDatasetLayer(prevProps);
