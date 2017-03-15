@@ -25,6 +25,10 @@ const initialState = {
   },
   visualize: {
     mapManipulationMode: constants.VISUALIZE_MODE_VISUALIZE,
+    selectedColorPalette: {
+      url: '',
+      name: ''
+    },
     selectedShapefile: {},
     selectedBasemap: '',
     selectedDatasetLayer: {},

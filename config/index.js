@@ -25,7 +25,7 @@ const config = {
   pavics_solr_path: `http://${birdhouseHost}:8091`,
   pavics_phoenix_path: `https://${birdhouseHost}:8443`,
   pavics_geoserver_path: `http://${birdhouseHost}:8087/geoserver`,
-  pavics_ncwms_path: `http://${birdhouseHost}:8080/ncWMS2`,
+  pavics_ncwms_path: `http://${birdhouseHost}:8080/ncWMS2/wms`,
   pavics_pywps_path: `http://${birdhouseHost}:8086/pywps`,
   // ----------------------------------
   // Project Structure
@@ -89,6 +89,7 @@ config.globals = {
   '__DEBUG__': config.env === 'development' && !argv.no_debug,
   '__COVERAGE__': !argv.watch && config.env === 'test',
   '__BASENAME__': JSON.stringify(process.env.BASENAME || ''),
+  '__PAVICS_NCWMS_PATH__': JSON.stringify(config.pavics_ncwms_path),
   '__PAVICS_PHOENIX_PATH__': JSON.stringify(config.pavics_phoenix_path),
   '__PAVICS_GEOSERVER_PATH__': JSON.stringify(config.pavics_geoserver_path)
 };
