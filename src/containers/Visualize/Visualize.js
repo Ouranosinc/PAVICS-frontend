@@ -41,7 +41,9 @@ class Visualize extends React.Component {
     selectedWMSLayerDetails: React.PropTypes.object.isRequired,
     setCurrentDateTime: React.PropTypes.func.isRequired,
     setSelectedDatasetCapabilities: React.PropTypes.func.isRequired,
-    selectedRegions: React.PropTypes.array.isRequired
+    selectedRegions: React.PropTypes.array.isRequired,
+    selectedColorPalette: React.PropTypes.object.isRequired,
+    selectColorPalette: React.PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -147,6 +149,8 @@ class Visualize extends React.Component {
             }
             <div className={this.state.mapPanelStatus[LAYER_SWITCHER_PANEL] ? classes['panel'] : classes['hidden']}>
               <LayerSwitcher
+                selectColorPalette={this.props.selectColorPalette}
+                selectedColorPalette={this.props.selectedColorPalette}
                 fetchShapefiles={this.props.fetchShapefiles}
                 selectDatasetLayer={this.props.selectDatasetLayer}
                 selectShapefile={this.props.selectShapefile}
