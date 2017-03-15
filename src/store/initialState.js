@@ -32,7 +32,7 @@ const initialState = {
     selectedShapefile: {},
     selectedBasemap: '',
     selectedDatasetLayer: {
-      opacity: 0.4
+      opacity: 0.8
     },
     publicShapeFiles: [],
     baseMaps: [

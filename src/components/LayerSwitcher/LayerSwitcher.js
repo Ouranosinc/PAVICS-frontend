@@ -201,9 +201,10 @@ export default class LayerSwitcher extends React.Component {
   makeSlider () {
     return (
       <div style={{padding: '0 15px'}}>
-        <div style={{textAlign: 'center'}}>opacity: {this.props.selectedDatasetLayer.opacity * 100}%
+        <div style={{textAlign: 'center'}}>opacity: {Math.floor(this.props.selectedDatasetLayer.opacity * 100)}%
         </div>
         <Slider
+          step={0.05}
           onChange={this.setDatasetLayerOpacity}
           value={this.props.selectedDatasetLayer.opacity} />
       </div>
