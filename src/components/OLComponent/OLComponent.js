@@ -169,7 +169,7 @@ class OLComponent extends React.Component {
       'outputFormat=application/json&srsname=EPSG:3857&' +
       'bbox=' + extent.join(',') + ',EPSG:3857';
     fetch(url)
-      .then(response => response.json())
+      .then(response => response.json(), err => console.log(err))
       .then(
         response => {
           // ici
@@ -206,7 +206,7 @@ class OLComponent extends React.Component {
     console.log('variable:', variable);
     let url = `/wps/getpoint?opendapUrl=${opendapUrl}&lat=${lat}&lon=${lon}&time=${time}&variable=${variable}`;
     fetch(url)
-      .then(res => res.json())
+      .then(res => res.json(), err => console.log(err))
       .then(
         json => {
           console.log(json);
@@ -313,9 +313,8 @@ class OLComponent extends React.Component {
     let capabilities = {};
     fetch(wmsUrl)
       .then(
-        response => {
-          return response.text();
-        }
+        response => response.text(),
+        err => console.log(err)
       )
       .then(
         text => {
@@ -379,12 +378,12 @@ class OLComponent extends React.Component {
       this.setShapefile(prevProps);
     }
     if (this.props.selectedDatasetLayer !== prevProps.selectedDatasetLayer && !this.props.selectedDatasetLayer.capabilities) {
-      if (this.props.selectedDatasetLayer.opacity !== prevProps.selectedDatasetLayer.opacity) {
+      if (this.props.selectedDatasetLayer.opacity !== prevProps.selectedDatasetLayer.opacity && this.props.selectedDatasetLayer.opacity > 0) {
         this.layers[LAYER_DATASET].setOpacity(this.props.selectedDatasetLayer.opacity);
       } else if (Object.keys(this.props.selectedDatasetLayer).length === 0 && this.props.selectedDatasetLayer.constructor === Object) {
         this.map.removeLayer(this.layers[LAYER_DATASET]);
       } else {
-        this.setDatasetLayer(prevProps);
+        this.setDatasetLayer(this.props.selectedDatasetLayer);
       }
     }
   }

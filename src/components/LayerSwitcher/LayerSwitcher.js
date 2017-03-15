@@ -198,6 +198,18 @@ export default class LayerSwitcher extends React.Component {
     );
   }
 
+  makeSlider () {
+    return (
+      <div style={{padding: '0 15px'}}>
+        <div style={{textAlign: 'center'}}>opacity: {this.props.selectedDatasetLayer.opacity * 100}%
+        </div>
+        <Slider
+          onChange={this.setDatasetLayerOpacity}
+          value={this.props.selectedDatasetLayer.opacity} />
+      </div>
+    );
+  }
+
   render () {
     return (
       <div className={classes['LayerSwitcher']}>
@@ -215,11 +227,7 @@ export default class LayerSwitcher extends React.Component {
                     onClick={this.resetDatasetLayer}
                     label="Reset" />
                 </div>
-                <div>
-                  <Slider
-                    onChange={this.setDatasetLayerOpacity}
-                    value={this.props.selectedDatasetLayer.opacity} />
-                </div>
+                {this.props.selectedDatasetLayer.dataset_id ? this.makeSlider() : null}
                 {this.makeDatasetsList()}
               </Paper>
             </Tab>
