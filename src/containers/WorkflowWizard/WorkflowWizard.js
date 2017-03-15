@@ -18,8 +18,9 @@ export default class WorkflowWizard extends React.Component {
     providers: React.PropTypes.object.isRequired,
     goToSection: React.PropTypes.func.isRequired,
     getLastStep: React.PropTypes.func.isRequired,
-    selectedShapefile: React.PropTypes.object.isRequired
-  }
+    selectedShapefile: React.PropTypes.object.isRequired,
+    selectedDatasetLayer: React.PropTypes.object.isRequired
+  };
 
   constructor (props) {
     super(props);
@@ -31,6 +32,7 @@ export default class WorkflowWizard extends React.Component {
 
   render () {
     return <WorkflowWizardStepper
+      selectedDatasetLayer={this.props.selectedDatasetLayer}
       selectedShapefile={this.props.selectedShapefile}
       stepIndex={this.props.stepIndex}
       processes={this.props.processes}

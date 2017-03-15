@@ -29,7 +29,8 @@ export default class WpsProcessForm extends React.Component {
     executeProcess: React.PropTypes.func.isRequired,
     selectedProvider: React.PropTypes.string.isRequired,
     goToSection: React.PropTypes.func.isRequired,
-    selectedShapefile: React.PropTypes.object.isRequired
+    selectedShapefile: React.PropTypes.object.isRequired,
+    selectedDatasetLayer: React.PropTypes.object.isRequired
   };
   handleChange = (event) => {
     let elem = event.target;
@@ -49,7 +50,6 @@ export default class WpsProcessForm extends React.Component {
   };
 
   makeInput (input) {
-    console.log('input:', input.dataType);
     switch (input.dataType) {
       case BOOLEAN:
         return (
@@ -60,16 +60,21 @@ export default class WpsProcessForm extends React.Component {
           </div>
         );
       case NETCDF:
+        console.log('file:', this.props.selectedDatasetLayer);
         return (
           <div>
             <input type="hidden" name="__start__" value="resource:sequence" />
-            <FormControl name="resource" id={input.name} type="text" onChange={this.handleChange} />
+            <FormControl
+              name="resource"
+              id={input.name}
+              type="text"
+              onChange={this.handleChange}
+              value={this.props.selectedDatasetLayer['opendap_urls'] ? this.props.selectedDatasetLayer['opendap_urls'][0] : ''}/>
             <input type="hidden" name="__end__" value="resource:sequence" />
             <p>{input.description}</p>
           </div>
         );
       case STRING:
-        console.log('shapefile:', this.props.selectedShapefile);
         if (input.name === 'typename') {
           return (
             <div>
@@ -77,6 +82,7 @@ export default class WpsProcessForm extends React.Component {
                 id={input.name}
                 type="text"
                 name={input.name}
+                onChange={this.handleChange}
                 value={this.props.selectedShapefile['wmsParams'] ? this.props.selectedShapefile['wmsParams']['LAYERS'] : ''} />
               <p>{input.description}</p>
             </div>
