@@ -45,8 +45,8 @@ class Visualize extends React.Component {
     this._onToggleMapPanel = this._onToggleMapPanel.bind(this);
     this.setOLComponentReference = this.setOLComponentReference.bind(this);
     let mapPanelStatus = {};
-    mapPanelStatus[constants.VISUALIZE_MAP_PANEL] = true;
-    mapPanelStatus[constants.VISUALIZE_MAP_CONTROLS_PANEL] = false;
+    mapPanelStatus[constants.VISUALIZE_INFO_PANEL] = false;
+    mapPanelStatus[constants.VISUALIZE_MAP_CONTROLS_PANEL] = true;
     mapPanelStatus[constants.VISUALIZE_CHART_PANEL] = false;
     mapPanelStatus[constants.VISUALIZE_LAYER_SWITCHER_PANEL] = true;
     mapPanelStatus[constants.VISUALIZE_TIME_SLIDER_PANEL] = true;
@@ -81,7 +81,7 @@ class Visualize extends React.Component {
     return (
       <div>
         <div className={classes['Visualize']}>
-          {(this.state.mapPanelStatus[constants.VISUALIZE_MAP_PANEL])
+          {(this.state.mapPanelStatus[constants.VISUALIZE_INFO_PANEL])
             ? <div className={classes.mapContainer}>
               <OLComponent
                 setCurrentDateTime={this.props.setCurrentDateTime}
@@ -105,6 +105,16 @@ class Visualize extends React.Component {
             mapPanelStatus={this.state.mapPanelStatus}
             onToggleMapPanel={this._onToggleMapPanel} />
           <div className={classes.left}>
+            {(this.state.mapPanelStatus[constants.VISUALIZE_CHART_PANEL])
+              ? <div className={classes.panel}>
+              <PlotlyWrapper
+                onToggleMapPanel={this._onToggleMapPanel}
+                data={this.props.plotlyData.data}
+                layout={this.props.plotlyData.layout}
+                fetchPlotlyData={this.props.fetchPlotlyData}
+              />
+            </div> : null
+            }
             {
               (this.state.mapPanelStatus[constants.VISUALIZE_LAYER_SWITCHER_PANEL])
                 ? <div className={classes['panel']}>
@@ -123,16 +133,6 @@ class Visualize extends React.Component {
                     publicShapeFiles={this.props.publicShapeFiles}
                     baseMaps={this.props.baseMaps} />
                 </div> : null
-            }
-            {(this.state.mapPanelStatus[constants.VISUALIZE_CHART_PANEL])
-              ? <div className={classes.panel}>
-                <PlotlyWrapper
-                  onToggleMapPanel={this._onToggleMapPanel}
-                  data={this.props.plotlyData.data}
-                  layout={this.props.plotlyData.layout}
-                  fetchPlotlyData={this.props.fetchPlotlyData}
-                />
-              </div> : null
             }
             {(this.state.mapPanelStatus[constants.VISUALIZE_TIME_SLIDER_PANEL])
               ? <div className={classes.panel}>
