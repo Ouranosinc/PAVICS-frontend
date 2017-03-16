@@ -1,7 +1,7 @@
 # PAVICS-Platform
 #
 # VERSION 0.0.4
-FROM nodesource/node:5.10
+FROM nodesource/node:6.7
 MAINTAINER Renaud Hébert-Legault <renaud.hebert-legault@crim.ca>
 LABEL Description="PAVICS Platform - Based on Node.js, Koa, React, Redux, Webpack, OpenLayers and Bootstrap" Vendor="CRIM" Version="0.0.4"
 
