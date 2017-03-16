@@ -1,9 +1,16 @@
 import React from 'react';
 import Plotly from 'plotly.js';
+import classes from './PlotlyWrapper.scss';
+import * as constants from './../../constants';
 import Paper from 'material-ui/Paper';
+import AppBar from 'material-ui/AppBar';
+import IconButton from 'material-ui/IconButton';
+import TimelineIcon from 'material-ui/svg-icons/action/timeline';
+import MinimizeIcon from 'material-ui/svg-icons/content/remove';
+
 class PlotlyWrapper extends React.Component {
   static propTypes = {
-    panelControls: React.PropTypes.object.isRequired,
+    onToggleMapPanel: React.PropTypes.func.isRequired,
     data: React.PropTypes.array.isRequired,
     layout: React.PropTypes.object.isRequired,
     fetchPlotlyData: React.PropTypes.func.isRequired
@@ -11,16 +18,8 @@ class PlotlyWrapper extends React.Component {
 
   constructor (props) {
     super(props);
-    /*
-    this.data = [
-      {
-        x: ['2013-10-04 22:23:00', '2013-11-04 22:23:00', '2013-12-04 22:23:00'],
-        y: [1, 3, 6],
-        type: 'scatter'
-      }
-    ];
-    */
     this._bindRef = this._bindRef.bind(this);
+    this._onHideChartPanel = this._onHideChartPanel.bind(this);
   }
 
   componentDidMount () {
@@ -32,8 +31,8 @@ class PlotlyWrapper extends React.Component {
     this.container.layout = {
       autosize: false,
       showlegend: false,
-      height: 385,
-      width: 500,
+      height: 372,
+      width: 650,
       margin: {
         l: 50,
         r: 20,
@@ -48,6 +47,10 @@ class PlotlyWrapper extends React.Component {
     Plotly.Plots.resize(this.container);
   }
 
+  _onHideChartPanel () {
+    this.props.onToggleMapPanel(constants.VISUALIZE_CHART_PANEL);
+  }
+
   _bindRef (node) {
     this.container = node;
   }
@@ -55,8 +58,12 @@ class PlotlyWrapper extends React.Component {
   render () {
     console.log('rendering plotly wrapper');
     return (
-      <Paper zDepth={0}>
-        <div style={{height: '385px', width: '500px', opacity: '0.9'}} id="plotly" ref={this._bindRef}></div>
+      <Paper className={classes['PieMenu']}>
+        <AppBar
+          title="Time Series Chart"
+          iconElementLeft={<IconButton><TimelineIcon /></IconButton>}
+          iconElementRight={<IconButton><MinimizeIcon onTouchTap={(event) => this._onHideChartPanel()} /></IconButton>} />
+        <div style={{height: '372px', width: '650px', opacity: '0.9'}} id="plotly" ref={this._bindRef}></div>
       </Paper>
     );
   }

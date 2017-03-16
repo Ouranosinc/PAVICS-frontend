@@ -109,6 +109,7 @@ class Visualize extends React.Component {
               (this.state.mapPanelStatus[constants.VISUALIZE_LAYER_SWITCHER_PANEL])
                 ? <div className={classes['panel']}>
                   <LayerSwitcher
+                    onToggleMapPanel={this._onToggleMapPanel}
                     selectColorPalette={this.props.selectColorPalette}
                     selectedColorPalette={this.props.selectedColorPalette}
                     fetchShapefiles={this.props.fetchShapefiles}
@@ -126,7 +127,7 @@ class Visualize extends React.Component {
             {(this.state.mapPanelStatus[constants.VISUALIZE_CHART_PANEL])
               ? <div className={classes.panel}>
                 <PlotlyWrapper
-                  panelControls={this.props.panelControls}
+                  onToggleMapPanel={this._onToggleMapPanel}
                   data={this.props.plotlyData.data}
                   layout={this.props.plotlyData.layout}
                   fetchPlotlyData={this.props.fetchPlotlyData}
@@ -151,6 +152,7 @@ class Visualize extends React.Component {
               this.state.mapPanelStatus[constants.VISUALIZE_MAP_CONTROLS_PANEL]
                 ? <div className={classes['panel']} style={{clear: 'left'}}>
                   <MapControls
+                    onToggleMapPanel={this._onToggleMapPanel}
                     selectMapManipulationMode={selectModeCallback} />
                 </div> : null
             }

@@ -3,10 +3,9 @@ import { Glyphicon } from 'react-bootstrap';
 import * as constants from './../../constants';
 import classes from './PieMenu.scss';
 import AccessTimeIcon from 'material-ui/svg-icons/device/access-time';
-import InsertChartIcon from 'material-ui/svg-icons/editor/insert-chart';
+import ChartIcon from 'material-ui/svg-icons/action/timeline';
 import LayersIcon from 'material-ui/svg-icons/maps/layers';
-import MenuIcon from 'material-ui/svg-icons/navigation/menu';
-import MyLocationIcon from 'material-ui/svg-icons/maps/my-location';
+import MapControlsIcon from 'material-ui/svg-icons/maps/my-location';
 import {white} from 'material-ui/styles/colors';
 
 const customSvgStyle = {
@@ -70,7 +69,7 @@ export class PieMenu extends React.Component {
             </li>
             <li>
               <a href="#" onClick={this._toggleMapControlsPanel} className={this.props.mapPanelStatus[constants.VISUALIZE_MAP_CONTROLS_PANEL] ? classes['IsOpen'] : ''}>
-                <MyLocationIcon color={white} style={customSvgStyle} />
+                <MapControlsIcon color={white} style={customSvgStyle} />
               </a>
             </li>
             <li>
@@ -80,7 +79,7 @@ export class PieMenu extends React.Component {
             </li>
             <li>
               <a href="#" onClick={this._toggleChartPanel} className={this.props.mapPanelStatus[constants.VISUALIZE_CHART_PANEL] ? classes['IsOpen'] : ''}>
-                <InsertChartIcon color={white} style={customSvgStyle} />
+                <ChartIcon color={white} style={customSvgStyle} />
               </a>
             </li>
             <li>
