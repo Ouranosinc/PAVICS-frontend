@@ -26,11 +26,10 @@ const browserHistory = useRouterHistory(createBrowserHistory)({
 // react-router-redux reducer under the routerKey "router" in src/routes/index.js,
 // so we need to provide a custom `selectLocationState` to inform
 // react-router-redux of its location.
-
 getStoredState({}, (err, restoredState) => {
   let store;
   if (err) {
-    const initialState = window.__INITIAL_STATE__;
+    const initialState = window.___INITIAL_STATE__;
     store = createStore(initialState, browserHistory);
   } else {
     store = createStore(restoredState, browserHistory);
@@ -91,6 +90,7 @@ getStoredState({}, (err, restoredState) => {
     };
     module.hot.accept(['./routes/index'], () => render());
   }
+
   // ========================================================
   // Go!
   // ========================================================

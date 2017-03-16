@@ -29,11 +29,11 @@ export default (initialState = {}, history) => {
     initialState,
     compose(
       applyMiddleware(...middleware),
-      // autoRehydrate(),
+      autoRehydrate(),
       ...enhancers
     )
   );
-  // persistStore(store);
+  persistStore(store);
   store.asyncReducers = {};
 
   if (module.hot) {
