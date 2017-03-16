@@ -119,9 +119,9 @@ export class TimeSlider extends React.Component {
         if (this.props.selectedWMSLayerDetails.data.datesWithData) {
           this.changeGlobalRange();
           this.changeTimesteps();
-          this.setState({disabled: false});
+          // this.setState({disabled: false});
         } else {
-          this.setState(DEFAULT_STATE);
+          // this.setState(DEFAULT_STATE);
         }
       }
       // TODO DISABLE SOME MONTHS/YEARS IF MISSING DATA
@@ -133,9 +133,9 @@ export class TimeSlider extends React.Component {
         if (this.props.selectedWMSLayerDetails.data.datesWithData) {
           this.changeGlobalRange();
           this.changeTimesteps();
-          this.setState({disabled: false});
+          // this.setState({disabled: false});
         } else {
-          this.setState(DEFAULT_STATE);
+          // this.setState(DEFAULT_STATE);
         }
       }
       // TODO DISABLE SOME MONTHS/YEARS IF MISSING DATA
@@ -309,7 +309,10 @@ export class TimeSlider extends React.Component {
   }
 
   changeCurrentDateTime () {
-    this.props.setCurrentDateTime(`${this.state.currentYear}-${this.state.currentMonthDay}T${this.state.currentTime}`);
+    let newDateTime = `${this.state.currentYear}-${this.state.currentMonthDay}T${this.state.currentTime}`;
+    if (this.props.currentDateTime !== newDateTime) {
+      this.props.setCurrentDateTime(newDateTime);
+    }
   }
 
   render () {
@@ -497,12 +500,14 @@ export class TimeSlider extends React.Component {
       let month = date.getMonth();
       let day = date.getDate();
       let monthDay = ((month === 0) ? '12' : (month < 10 ? '0' + month : month)) + '-' + (day < 10 ? '0' + day : day);
-      this.setState(
-        {
-          currentMonthDay: monthDay,
-          currentDate: `${this.state.currentYear}-${monthDay}`
-        }, () => this.changeCurrentDateTime()
-      );
+      if(monthDay !== this.state.currentMonthDay || `${this.state.currentYear}-${monthDay}` !== this.state.currentDate) {
+        this.setState(
+          {
+            currentMonthDay: monthDay,
+            currentDate: `${this.state.currentYear}-${monthDay}`
+          }, () => this.changeCurrentDateTime()
+        );
+      }
     }
   }
 

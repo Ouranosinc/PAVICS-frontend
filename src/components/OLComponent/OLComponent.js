@@ -325,7 +325,6 @@ class OLComponent extends React.Component {
           // very nesting
           let layer = capabilities['Capability']['Layer']['Layer'][0]['Layer'][0];
           let layerName = layer['Name'];
-          let timeDimension = this.findDimension(layer['Dimension'], 'time');
           let wmsParams = {
             'ABOVEMAXCOLOR': 'extend',
             'TRANSPARENT': 'TRUE',
@@ -335,9 +334,19 @@ class OLComponent extends React.Component {
             'LOGSCALE': false,
             'crossOrigin': 'anonymous',
             'BGCOLOR': 'transparent',
-            'TIME': timeDimension['default'],
-            'SRS': 'EPSG:4326'
+            'SRS': 'EPSG:4326',
+            'TIME': ''
+
           };
+          if (layer['Dimension']) {
+            // Only if a temporal dimension exists
+            let timeDimension = this.findDimension(layer['Dimension'], 'time');
+            let date = timeDimension.values.substring(0, 24);
+            this.props.fetchWMSLayerTimesteps(url, layerName, date);
+            this.props.setCurrentDateTime(date);
+          } else {
+            // wmsParams['ELEVATION'] = 0;
+          }
           this.map.removeLayer(this.layers[LAYER_DATASET]);
           this.datasetSource = new ol.source.TileWMS(
             {
@@ -347,11 +356,7 @@ class OLComponent extends React.Component {
           );
           this.addTileWMSLayer(INDEX_DATASET_LAYER, LAYER_DATASET, this.datasetSource);
           this.props.setSelectedDatasetCapabilities(capabilities);
-          // timeDimension.values is rarely a time range splitted by /
-          let date = timeDimension.values.substring(0, 24); // layer['Dimension'][0].values.split('/')[0];
           this.props.fetchWMSLayerDetails(url, layerName);
-          this.props.fetchWMSLayerTimesteps(url, layerName, date);
-          this.props.setCurrentDateTime(date);
         },
         err => console.log(err)
       );
