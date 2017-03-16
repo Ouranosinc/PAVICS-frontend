@@ -119,9 +119,9 @@ export class TimeSlider extends React.Component {
         if (this.props.selectedWMSLayerDetails.data.datesWithData) {
           this.changeGlobalRange();
           this.changeTimesteps();
-          // this.setState({disabled: false});
+          this.setState({disabled: false});
         } else {
-          // this.setState(DEFAULT_STATE);
+          this.setState(DEFAULT_STATE);
         }
       }
       // TODO DISABLE SOME MONTHS/YEARS IF MISSING DATA
@@ -348,6 +348,7 @@ export class TimeSlider extends React.Component {
             </Col>
             <Col md={4} lg={4}>
               <SelectField
+                disabled={this.state.disabled}
                 value={this.state.currentTime}
                 fullWidth={true}
                 floatingLabelText="Time"
@@ -361,16 +362,17 @@ export class TimeSlider extends React.Component {
             </Col>
             <Col md={4} lg={4}>
               <TextField
+                disabled={true}
                 value={this.props.currentDateTime.substring(0, 10) + ' ' + this.props.currentDateTime.substring(11, 19)}
                 hintText="Format 9999-99-99 00:00:00"
                 fullWidth={true}
-                disabled={true}
                 floatingLabelText="Current Datetime" />
             </Col>
           </Row>
           <Row>
             <Col sm={12}>
               <Slider
+                disabled={this.state.disabled}
                 tipFormatter={(v) => {
                   let date = new Date(v * DIVIDER);
                   // Same problem with moment.js
@@ -392,6 +394,7 @@ export class TimeSlider extends React.Component {
           <Row>
             <Col sm={12}>
               <Slider className={classes['SliderYears']}
+                disabled={this.state.disabled}
                 min={this.state.firstYear}
                 max={this.state.lastYear}
                 marks={this.state.marksYears}
@@ -406,6 +409,7 @@ export class TimeSlider extends React.Component {
           <Row className={classes['StepControls']}>
             <Col md={4} lg={4}>
               <TextField
+                disabled={this.state.disabled}
                 type="number"
                 value={this.state.stepLength}
                 onChange={(event, value) => this._onChangedStepLength(value)}
@@ -415,6 +419,7 @@ export class TimeSlider extends React.Component {
             </Col>
             <Col md={4} lg={4}>
               <SelectField
+                disabled={this.state.disabled}
                 value={this.state.stepGranularity}
                 fullWidth={true}
                 floatingLabelText="Timestep Granularity Level"
@@ -428,6 +433,7 @@ export class TimeSlider extends React.Component {
             </Col>
             <Col md={4} lg={4}>
               <SelectField
+                disabled={this.state.disabled}
                 value={this.state.stepSpeed}
                 fullWidth={true}
                 floatingLabelText="Play Speed Level"
@@ -442,35 +448,37 @@ export class TimeSlider extends React.Component {
           <Row>
             <Col sm={12}>
               <RaisedButton
-                disabled={this.state.minDatetime === this.props.currentDateTime}
+                disabled={(this.state.minDatetime === this.props.currentDateTime) || this.state.disabled}
                 primary={true}
                 icon={<FastBackwardIcon />}
                 style={{margin: '0 5px 0 5px', width: '13%'}}
                 onClick={this._onClickedStepControls.bind(this, FAST_BACKWARD_ACTION)} />
               <RaisedButton
-                disabled={this.state.minDatetime === this.props.currentDateTime}
+                disabled={(this.state.minDatetime === this.props.currentDateTime) || this.state.disabled}
                 primary={true}
                 icon={<BackwardIcon />}
                 style={{margin: '0 5px 0 5px', width: '13%'}}
                 onClick={this._onClickedStepControls.bind(this, STEP_BACKWARD_ACTION)} />
               <RaisedButton
-              primary={true}
-              icon={<PlayIcon />}
-              style={{margin: '0 5px 0 5px', width: '19%'}}
-              onClick={this._onClickedStepControls.bind(this, PLAY_ACTION)} />
+                disabled={this.state.disabled}
+                primary={true}
+                icon={<PlayIcon />}
+                style={{margin: '0 5px 0 5px', width: '19%'}}
+                onClick={this._onClickedStepControls.bind(this, PLAY_ACTION)} />
               <RaisedButton
+                disabled={this.state.disabled}
                 primary={true}
                 icon={<PauseIcon />}
                 style={{margin: '0 5px 0 5px', width: '19%'}}
                 onClick={this._onClickedStepControls.bind(this, PAUSE_ACTION)} />
               <RaisedButton
-                disabled={this.state.maxDatetime === this.props.currentDateTime}
+                disabled={(this.state.maxDatetime === this.props.currentDateTime) || this.state.disabled}
                 primary={true}
                 icon={<ForwardIcon />}
                 style={{margin: '0 5px 0 5px', width: '13%'}}
                 onClick={this._onClickedStepControls.bind(this, STEP_FORWARD_ACTION)} />
               <RaisedButton
-                disabled={this.state.maxDatetime === this.props.currentDateTime}
+                disabled={(this.state.maxDatetime === this.props.currentDateTime) || this.state.disabled}
                 primary={true}
                 icon={<FastForwardIcon />}
                 style={{margin: '0 5px 0 5px', width: '13%'}}
