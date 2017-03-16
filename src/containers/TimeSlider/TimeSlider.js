@@ -39,12 +39,40 @@ const MINUTE_VALUE = 'minute';
 const MONTH_VALUE = 'month';
 const YEAR_VALUE = 'year';
 
+const DEFAULT_STATE = {
+  disabled: true,
+  maxDatetime: '2020-12-31T00:00:00.000Z',
+  minDatetime: '1900-01-01T00:00:00.000Z',
+  currentDate: '1900-01-01', // props.currentDateTime.substring(0, 10),
+  currentMonthDay: '01-01', // props.currentDateTime.substring(5, 10),
+  currentTime: '00:00:00.000Z', // props.currentDateTime.substring(11, 24),
+  currentYear: 1900,
+  firstDay: 1,
+  firstMonth: 1,
+  firstYear: 1900,
+  lastDay: 31,
+  lastYear: 2020,
+  lastMonth: 12,
+  isPlaying: false,
+  marksYears: {
+    1900: '1900',
+    1940: '1940',
+    1980: '1980',
+    2020: '2020'
+  },
+  stepLength: 1,
+  stepGranularity: DAY_VALUE,
+  stepSpeed: 5000,
+  timesteps: ['00:00:00.000Z']
+};
+
 export class TimeSlider extends React.Component {
   static propTypes = {
     // Not sure why monthsRange and yearsRange, but maybe for future range selection?
     monthsRange: React.PropTypes.bool.isRequired,
     yearsRange: React.PropTypes.bool.isRequired,
     currentDateTime: React.PropTypes.string.isRequired,
+    selectedDatasetLayer: React.PropTypes.object.isRequired,
     selectedDatasetCapabilities: React.PropTypes.object.isRequired,
     selectedWMSLayerDetails: React.PropTypes.object.isRequired,
     selectedWMSLayerTimesteps: React.PropTypes.object.isRequired,
@@ -62,31 +90,7 @@ export class TimeSlider extends React.Component {
     this._onChangedYearSlider = this._onChangedYearSlider.bind(this);
     this._onHideTimeSliderPanel = this._onHideTimeSliderPanel.bind(this);
     this._onSelectedTime = this._onSelectedTime.bind(this);
-    this.state = {
-      maxDatetime: '2020-12-31T00:00:00.000Z',
-      minDatetime: '1900-01-01T00:00:00.000Z',
-      currentDate: '1900-01-01', // props.currentDateTime.substring(0, 10),
-      currentMonthDay: '01-01', // props.currentDateTime.substring(5, 10),
-      currentTime: '00:00:00.000Z', // props.currentDateTime.substring(11, 24),
-      currentYear: 1900,
-      firstDay: 1,
-      firstMonth: 1,
-      firstYear: 1900,
-      lastDay: 31,
-      lastYear: 2020,
-      lastMonth: 12,
-      isPlaying: false,
-      marksYears: {
-        1900: '1900',
-        1940: '1940',
-        1980: '1980',
-        2020: '2020'
-      },
-      stepLength: 1,
-      stepGranularity: DAY_VALUE,
-      stepSpeed: 5000,
-      timesteps: ['00:00:00.000Z']
-    };
+    this.state = DEFAULT_STATE;
   }
 
   componentWillReceiveProps (nextProps) {
@@ -100,6 +104,9 @@ export class TimeSlider extends React.Component {
         }
       );
     }
+    if (nextProps.selectedDatasetLayer && nextProps.selectedDatasetLayer !== this.props.selectedDatasetLayer && !nextProps.selectedDatasetLayer['dataset_id']) {
+      this.setState(DEFAULT_STATE);
+    }
   }
 
   // TODO DELETE
@@ -109,8 +116,13 @@ export class TimeSlider extends React.Component {
     if (this.props.selectedWMSLayerDetails && this.props.selectedWMSLayerDetails.data &&
       (this.props.selectedWMSLayerDetails.data !== prevProps.selectedWMSLayerDetails.data)) {
       if (!this.props.selectedWMSLayerDetails.isFetching && !this.props.selectedWMSLayerTimesteps.isFetching) {
-        this.changeGlobalRange();
-        this.changeTimesteps();
+        if (this.props.selectedWMSLayerDetails.data.datesWithData) {
+          this.changeGlobalRange();
+          this.changeTimesteps();
+          this.setState({disabled: false});
+        } else {
+          this.setState(DEFAULT_STATE);
+        }
       }
       // TODO DISABLE SOME MONTHS/YEARS IF MISSING DATA
     }
@@ -118,10 +130,15 @@ export class TimeSlider extends React.Component {
     if (this.props.selectedWMSLayerTimesteps && this.props.selectedWMSLayerTimesteps.data &&
       (this.props.selectedWMSLayerTimesteps.data !== prevProps.selectedWMSLayerTimesteps.data)) {
       if (!this.props.selectedWMSLayerDetails.isFetching && !this.props.selectedWMSLayerTimesteps.isFetching) {
-        this.changeGlobalRange();
-        this.changeTimesteps();
-        // TODO DISABLE SOME MONTHS/YEARS IF MISSING DATA
+        if (this.props.selectedWMSLayerDetails.data.datesWithData) {
+          this.changeGlobalRange();
+          this.changeTimesteps();
+          this.setState({disabled: false});
+        } else {
+          this.setState(DEFAULT_STATE);
+        }
       }
+      // TODO DISABLE SOME MONTHS/YEARS IF MISSING DATA
     }
   }
 
@@ -319,6 +336,7 @@ export class TimeSlider extends React.Component {
           <Row>
             <Col md={4} lg={4}>
               <TextField
+                disabled={this.state.disabled}
                 value={this.state.currentDate}
                 hintText="Format 9999-99-99"
                 fullWidth={true}

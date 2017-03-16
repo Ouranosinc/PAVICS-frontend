@@ -139,6 +139,7 @@ class Visualize extends React.Component {
                   selectedWMSLayerDetails={this.props.selectedWMSLayerDetails}
                   selectedWMSLayerTimesteps={this.props.selectedWMSLayerTimesteps}
                   setCurrentDateTime={this.props.setCurrentDateTime}
+                  selectedDatasetLayer={this.props.selectedDatasetLayer}
                   selectedDatasetCapabilities={this.props.selectedDatasetCapabilities}
                   currentDateTime={this.props.currentDateTime}
                   monthsRange={false}
