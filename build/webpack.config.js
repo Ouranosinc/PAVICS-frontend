@@ -132,7 +132,7 @@ webpackConfig.module.loaders = [{
     presets: ['es2015', 'react', 'stage-0'],
     env: {
       production: {
-        presets: ['react-optimize']
+        presets: [/*'react-optimize'*/]
       }
     }
   }

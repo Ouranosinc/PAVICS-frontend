@@ -32,11 +32,11 @@ class PlotlyWrapper extends React.Component {
     this.container.layout = {
       autosize: false,
       showlegend: false,
-      height: 300,
-      width: 450,
+      height: 385,
+      width: 500,
       margin: {
         l: 50,
-        r: 10,
+        r: 20,
         b: 50,
         t: 10,
         pad: 4
@@ -56,7 +56,7 @@ class PlotlyWrapper extends React.Component {
     console.log('rendering plotly wrapper');
     return (
       <Paper zDepth={0}>
-        <div id="plotly" ref={this._bindRef}></div>
+        <div style={{height: '385px', width: '500px', opacity: '0.9'}} id="plotly" ref={this._bindRef}></div>
       </Paper>
     );
   }

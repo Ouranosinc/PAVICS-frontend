@@ -163,7 +163,7 @@ export class ExperienceManagement extends React.Component {
                       <span>
                         {
                           search.criterias.map((criteria, i) => {
-                            return <span>{criteria.key + '=' + criteria.value + ((i + 1 === search.criterias.length) ? '' : ', ')}</span>;
+                            return <span key={i}>{criteria.key + '=' + criteria.value + ((i + 1 === search.criterias.length) ? '' : ', ')}</span>;
                           })
                         }
                       </span>

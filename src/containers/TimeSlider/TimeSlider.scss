@@ -1,24 +1,23 @@
 .TimeSlider {
-  height:200px;
-  width: 100%;
+  height:330px;
+  width: 700px;
   bottom: 0;
   text-align: left;
-  opacity: 0.99;
-  padding: 5px;
+  opacity: 0.9;
 
   .CurrentDateTime{
 
   }
 
   .SliderMonths{
-    margin-top: 10px;
+
   }
   .SliderYears{
     margin-top: 20px;
   }
 
   .StepControls{
-    margin-top: 80px;
+    margin-top: 20px;
   }
 
   .InlineFormGroup {

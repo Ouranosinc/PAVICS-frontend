@@ -2,14 +2,7 @@ import React from 'react';
 import classes from './Visualize.scss';
 // TODO: Fix, we should only import containers here
 import OLComponent from '../../components/OLComponent';
-import {
-  PieMenu,
-  CHART_PANEL,
-  LAYER_SWITCHER_PANEL,
-  MAP_PANEL,
-  MAP_CONTROLS_PANEL,
-  TIME_SLIDER_PANEL
-} from './../../components/PieMenu/PieMenu';
+import { PieMenu } from './../../components/PieMenu/PieMenu';
 import TimeSlider from '../../containers/TimeSlider';
 import LayerSwitcher from '../../components/LayerSwitcher';
 import PlotlyWrapper from './../../components/PlotlyWrapper';
@@ -51,26 +44,17 @@ class Visualize extends React.Component {
     console.log(props);
     this._onToggleMapPanel = this._onToggleMapPanel.bind(this);
     this.setOLComponentReference = this.setOLComponentReference.bind(this);
-    // let wmsUrl = 'http://outarde.crim.ca:8080/ncWMS2/wms';
-    // let wmsUrl = 'http://outarde.crim.ca:8083/thredds/wms/birdhouse/flyingpigeon/ncout-d149d317-b67f-11e6-acaf-fa163ee00329.nc';
-    // let dataset = 'outputs/data/CMIP5/CCCMA/CanESM2/rcp85/day/atmos/r1i1p1/pr/pr_day_CanESM2_rcp85_r1i1p1_20060101-21001231.nc'
-    // let dataset = 'outputs/flyingpigeon/ncout-ffc3a3eb-b7db-11e6-acaf-fa163ee00329.nc';
-    // let dataset = 'outputs/ouranos/subdaily/aev/shum/aev_shum_1961.nc';
     let mapPanelStatus = {};
-    mapPanelStatus[MAP_PANEL] = true;
-    mapPanelStatus[MAP_CONTROLS_PANEL] = false;
-    mapPanelStatus[CHART_PANEL] = false;
-    mapPanelStatus[LAYER_SWITCHER_PANEL] = true;
-    mapPanelStatus[TIME_SLIDER_PANEL] = true;
+    mapPanelStatus[constants.VISUALIZE_MAP_PANEL] = true;
+    mapPanelStatus[constants.VISUALIZE_MAP_CONTROLS_PANEL] = false;
+    mapPanelStatus[constants.VISUALIZE_CHART_PANEL] = false;
+    mapPanelStatus[constants.VISUALIZE_LAYER_SWITCHER_PANEL] = true;
+    mapPanelStatus[constants.VISUALIZE_TIME_SLIDER_PANEL] = true;
     this.state = {
       mapPanelStatus: mapPanelStatus,
       OLComponentReference: {}
     };
     this.props.fetchFacets();
-    // this.props.openDatasetWmsLayers(dataset);
-    // this.props.fetchDatasetWMSLayers(wmsUrl, dataset);
-    // this.props.clickTogglePanel(constants.PANEL_DATASET_DETAILS, false);
-    // this.props.clickTogglePanel(constants.PANEL_DATASET_WMS_LAYERS, true);
   }
 
   _onToggleMapPanel (panel) {
@@ -97,9 +81,10 @@ class Visualize extends React.Component {
     return (
       <div>
         <div className={classes['Visualize']}>
-          {(this.state.mapPanelStatus[MAP_PANEL])
+          {(this.state.mapPanelStatus[constants.VISUALIZE_MAP_PANEL])
             ? <div className={classes.mapContainer}>
               <OLComponent
+                setCurrentDateTime={this.props.setCurrentDateTime}
                 selectedColorPalette={this.props.selectedColorPalette}
                 selectedRegions={this.props.selectedRegions}
                 fetchPlotlyData={this.props.fetchPlotlyData}
@@ -121,24 +106,24 @@ class Visualize extends React.Component {
             onToggleMapPanel={this._onToggleMapPanel} />
           <div className={classes.left}>
             {
-              this.state.mapPanelStatus[MAP_CONTROLS_PANEL]
+              (this.state.mapPanelStatus[constants.VISUALIZE_LAYER_SWITCHER_PANEL])
                 ? <div className={classes['panel']}>
-                  <MapControls
-                    selectMapManipulationMode={selectModeCallback} />
+                  <LayerSwitcher
+                    selectColorPalette={this.props.selectColorPalette}
+                    selectedColorPalette={this.props.selectedColorPalette}
+                    fetchShapefiles={this.props.fetchShapefiles}
+                    selectDatasetLayer={this.props.selectDatasetLayer}
+                    selectShapefile={this.props.selectShapefile}
+                    selectBasemap={this.props.selectBasemap}
+                    currentVisualizedDatasetLayers={this.props.currentVisualizedDatasetLayers}
+                    selectedDatasetLayer={this.props.selectedDatasetLayer}
+                    selectedShapefile={this.props.selectedShapefile}
+                    selectedBasemap={this.props.selectedBasemap}
+                    publicShapeFiles={this.props.publicShapeFiles}
+                    baseMaps={this.props.baseMaps} />
                 </div> : null
             }
-            {(this.state.mapPanelStatus[TIME_SLIDER_PANEL])
-              ? <div className={classes.panel}>
-                <TimeSlider
-                  selectedWMSLayerTimesteps={this.props.selectedWMSLayerTimesteps}
-                  setCurrentDateTime={this.props.setCurrentDateTime}
-                  selectedDatasetCapabilities={this.props.selectedDatasetCapabilities}
-                  currentDateTime={this.props.currentDateTime}
-                  monthsRange={false}
-                  yearsRange={false} />
-              </div> : null
-            }
-            {(this.state.mapPanelStatus[CHART_PANEL])
+            {(this.state.mapPanelStatus[constants.VISUALIZE_CHART_PANEL])
               ? <div className={classes.panel}>
                 <PlotlyWrapper
                   panelControls={this.props.panelControls}
@@ -148,21 +133,27 @@ class Visualize extends React.Component {
                 />
               </div> : null
             }
-            <div className={this.state.mapPanelStatus[LAYER_SWITCHER_PANEL] ? classes['panel'] : classes['hidden']}>
-              <LayerSwitcher
-                selectColorPalette={this.props.selectColorPalette}
-                selectedColorPalette={this.props.selectedColorPalette}
-                fetchShapefiles={this.props.fetchShapefiles}
-                selectDatasetLayer={this.props.selectDatasetLayer}
-                selectShapefile={this.props.selectShapefile}
-                selectBasemap={this.props.selectBasemap}
-                currentVisualizedDatasetLayers={this.props.currentVisualizedDatasetLayers}
-                selectedDatasetLayer={this.props.selectedDatasetLayer}
-                selectedShapefile={this.props.selectedShapefile}
-                selectedBasemap={this.props.selectedBasemap}
-                publicShapeFiles={this.props.publicShapeFiles}
-                baseMaps={this.props.baseMaps} />
-            </div>
+            {(this.state.mapPanelStatus[constants.VISUALIZE_TIME_SLIDER_PANEL])
+              ? <div className={classes.panel}>
+                <TimeSlider
+                  selectedWMSLayerDetails={this.props.selectedWMSLayerDetails}
+                  selectedWMSLayerTimesteps={this.props.selectedWMSLayerTimesteps}
+                  setCurrentDateTime={this.props.setCurrentDateTime}
+                  selectedDatasetLayer={this.props.selectedDatasetLayer}
+                  selectedDatasetCapabilities={this.props.selectedDatasetCapabilities}
+                  currentDateTime={this.props.currentDateTime}
+                  monthsRange={false}
+                  yearsRange={false}
+                  onToggleMapPanel={this._onToggleMapPanel} />
+              </div> : null
+            }
+            {
+              this.state.mapPanelStatus[constants.VISUALIZE_MAP_CONTROLS_PANEL]
+                ? <div className={classes['panel']} style={{clear: 'left'}}>
+                  <MapControls
+                    selectMapManipulationMode={selectModeCallback} />
+                </div> : null
+            }
           </div>
         </div>
       </div>

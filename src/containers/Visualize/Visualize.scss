@@ -21,21 +21,10 @@
   }
 
   .left {
-    max-width: 50%;
+    max-width: 65%;
     float: left;
     .panel {
       float: left;
-      clear: left;
-    }
-  }
-
-  .right {
-    max-width: 42%;
-    float: right;
-    margin: 15px;
-    .panel {
-      float: right;
-      clear: right;
     }
   }
 

@@ -213,6 +213,7 @@ export class SearchCatalog extends React.Component {
                         variables={this.props.facets.items.find((x) => {
                           return x.key === facetKey;
                         })}
+                        menuStyle="HERE!!!!"
                         selectedFacets={this.props.selectedFacets}
                         addFacetKeyValue={this.props.addFacetKeyValue}
                         removeFacetKeyValue={this.props.removeFacetKeyValue}

@@ -18,6 +18,7 @@ class OLComponent extends React.Component {
   static propTypes = {
     currentDateTime: React.PropTypes.string.isRequired,
     mapManipulationMode: React.PropTypes.string.isRequired,
+    setCurrentDateTime: React.PropTypes.func.isRequired,
     selectedRegions: React.PropTypes.array.isRequired,
     selectedColorPalette: React.PropTypes.object.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
@@ -48,12 +49,12 @@ class OLComponent extends React.Component {
     this.handleClose = this.handleClose.bind(this);
   }
 
-  addTileWMSLayer (position, title, source, extent, visible = true) {
+  addTileWMSLayer (position, title, source, opacity, extent, visible = true) {
     let layer = new ol.layer.Tile(
       {
         visible: visible,
         title: title,
-        opacity: 0.4, // TODO: Set opacity dynamically
+        opacity: opacity,
         source: source,
         extent: extent
       }
@@ -169,7 +170,7 @@ class OLComponent extends React.Component {
       'outputFormat=application/json&srsname=EPSG:3857&' +
       'bbox=' + extent.join(',') + ',EPSG:3857';
     fetch(url)
-      .then(response => response.json())
+      .then(response => response.json(), err => console.log(err))
       .then(
         response => {
           // ici
@@ -206,7 +207,7 @@ class OLComponent extends React.Component {
     console.log('variable:', variable);
     let url = `/wps/getpoint?opendapUrl=${opendapUrl}&lat=${lat}&lon=${lon}&time=${time}&variable=${variable}`;
     fetch(url)
-      .then(res => res.json())
+      .then(res => res.json(), err => console.log(err))
       .then(
         json => {
           console.log(json);
@@ -293,7 +294,8 @@ class OLComponent extends React.Component {
     this.addTileWMSLayer(
       INDEX_SHAPEFILE,
       shapefile.title,
-      source
+      source,
+      0.4
     );
   }
 
@@ -312,9 +314,8 @@ class OLComponent extends React.Component {
     let capabilities = {};
     fetch(wmsUrl)
       .then(
-        response => {
-          return response.text();
-        }
+        response => response.text(),
+        err => console.log(err)
       )
       .then(
         text => {
@@ -324,7 +325,6 @@ class OLComponent extends React.Component {
           // very nesting
           let layer = capabilities['Capability']['Layer']['Layer'][0]['Layer'][0];
           let layerName = layer['Name'];
-          let timeDimension = this.findDimension(layer['Dimension'], 'time');
           let wmsParams = {
             'ABOVEMAXCOLOR': 'extend',
             'TRANSPARENT': 'TRUE',
@@ -334,9 +334,19 @@ class OLComponent extends React.Component {
             'LOGSCALE': false,
             'crossOrigin': 'anonymous',
             'BGCOLOR': 'transparent',
-            'TIME': timeDimension['default'],
-            'SRS': 'EPSG:4326'
+            'SRS': 'EPSG:4326',
+            'TIME': ''
+
           };
+          if (layer['Dimension']) {
+            // Only if a temporal dimension exists
+            let timeDimension = this.findDimension(layer['Dimension'], 'time');
+            let date = timeDimension.values.substring(0, 24);
+            this.props.fetchWMSLayerTimesteps(url, layerName, date);
+            this.props.setCurrentDateTime(date);
+          } else {
+            // wmsParams['ELEVATION'] = 0;
+          }
           this.map.removeLayer(this.layers[LAYER_DATASET]);
           this.datasetSource = new ol.source.TileWMS(
             {
@@ -344,11 +354,9 @@ class OLComponent extends React.Component {
               params: wmsParams
             }
           );
-          this.addTileWMSLayer(INDEX_DATASET_LAYER, LAYER_DATASET, this.datasetSource);
+          this.addTileWMSLayer(INDEX_DATASET_LAYER, LAYER_DATASET, this.datasetSource, this.props.selectedDatasetLayer.opacity);
           this.props.setSelectedDatasetCapabilities(capabilities);
-          let date = layer['Dimension'][0].values.split('/')[0];
           this.props.fetchWMSLayerDetails(url, layerName);
-          this.props.fetchWMSLayerTimesteps(url, layerName, date);
         },
         err => console.log(err)
       );
@@ -378,12 +386,12 @@ class OLComponent extends React.Component {
       this.setShapefile(prevProps);
     }
     if (this.props.selectedDatasetLayer !== prevProps.selectedDatasetLayer && !this.props.selectedDatasetLayer.capabilities) {
-      console.log(this.props.selectedDatasetLayer);
-      if (Object.keys(this.props.selectedDatasetLayer).length === 0 && this.props.selectedDatasetLayer.constructor === Object) {
-        console.log('removing dataset layer');
+      if (this.props.selectedDatasetLayer.opacity !== prevProps.selectedDatasetLayer.opacity && this.props.selectedDatasetLayer.opacity > 0) {
+        this.layers[LAYER_DATASET].setOpacity(this.props.selectedDatasetLayer.opacity);
+      } else if (Object.keys(this.props.selectedDatasetLayer).length === 0 && this.props.selectedDatasetLayer.constructor === Object) {
         this.map.removeLayer(this.layers[LAYER_DATASET]);
       } else {
-        this.setDatasetLayer(prevProps);
+        this.setDatasetLayer(this.props.selectedDatasetLayer);
       }
     }
   }
