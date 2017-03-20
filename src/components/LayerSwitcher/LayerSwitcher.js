@@ -202,6 +202,11 @@ export default class LayerSwitcher extends React.Component {
   }
 
   makeSlider () {
+    // not so clever trick so that opacity is not undefined when resetting layer
+    // should stay aligned with initialState's opacity
+    if (isNaN(this.props.selectedDatasetLayer.opacity)) {
+      this.setDatasetLayerOpacity(null, 0.8);
+    }
     return (
       <div style={{padding: '0 15px'}}>
         <div style={{textAlign: 'center'}}>opacity: {Math.floor(this.props.selectedDatasetLayer.opacity * 100)}%
