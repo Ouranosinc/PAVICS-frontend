@@ -1,5 +1,7 @@
 import React from 'react';
-import Loader from '../../components/Loader';
+import * as constants from './../../constants';
+import Loader from './../../components/Loader';
+import Pagination from './../../components/Pagination';
 import {Alert} from 'react-bootstrap';
 import {List, ListItem} from 'material-ui/List';
 import Checkbox from 'material-ui/Checkbox';
@@ -25,17 +27,26 @@ export class SearchCatalogResults extends React.Component {
     fetchDataset: React.PropTypes.func.isRequired,
     currentOpenedDataset: React.PropTypes.string.isRequired,
     esgfDatasets: React.PropTypes.object.isRequired
-  }
-
-  state = {
-    checkedDatasets: [],
-    confirm: false
   };
 
   constructor (props) {
     super(props);
     this._onAddCheckedDatasetsToProject = this._onAddCheckedDatasetsToProject.bind(this);
     this._onCheckedDataset = this._onCheckedDataset.bind(this);
+    this._onPageChanged = this._onPageChanged.bind(this);
+    this.state = {
+      checkedDatasets: [],
+      confirm: false,
+      pageNumber: 1,
+      numberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX]
+    };
+  }
+
+  _onPageChanged (pageNumber, numberPerPage) {
+    this.setState({
+      pageNumber: pageNumber,
+      numberPerPage: numberPerPage
+    });
   }
 
   _onCheckedDataset (event) {
@@ -89,6 +100,8 @@ export class SearchCatalogResults extends React.Component {
           </Alert>;
       }
       if (this.props.pavicsDatasets.items.length) {
+        let start = (this.state.pageNumber - 1) * this.state.numberPerPage;
+        let paginated = this.props.pavicsDatasets.items.slice(start, start + this.state.numberPerPage);
         let confirmation = null;
         if (this.state.confirm) {
           confirmation =
@@ -102,7 +115,7 @@ export class SearchCatalogResults extends React.Component {
               <List>
                 {archive}
                 <Subheader inset={true}>Found <strong>{this.props.pavicsDatasets.items.length}</strong> results</Subheader>
-                {this.props.pavicsDatasets.items.map((x, i) =>
+                {paginated.map((x, i) =>
                   <ListItem
                     key={i}
                     leftCheckbox={<Checkbox value={x.dataset_id} onCheck={this._onCheckedDataset} />}
@@ -142,6 +155,11 @@ export class SearchCatalogResults extends React.Component {
                   />
                 )}
               </List>
+              <Pagination
+                total={this.props.pavicsDatasets.items.length}
+                initialPerPageOptionIndex={constants.PER_PAGE_INITIAL_INDEX}
+                perPageOptions={constants.PER_PAGE_OPTIONS}
+                onChange={this._onPageChanged} />
             </Paper>
             <RaisedButton
               disabled={!this.state.checkedDatasets.length}
