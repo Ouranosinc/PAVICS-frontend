@@ -26,7 +26,7 @@ const errorStyle = {
 const infoStyle = {
   color: '#03a9f4'
 };
-const PER_PAGE_SINGLE_OPTION = 10;
+const PER_PAGE_INITIAL_INDEX = 1;
 
 class ProcessMonitoring extends React.Component {
   static propTypes = {
@@ -38,11 +38,12 @@ class ProcessMonitoring extends React.Component {
   constructor (props) {
     super(props);
     this.state = {
-      pageNumber: 1
+      pageNumber: 1,
+      numberPerPage: constants.PER_PAGE_OPTIONS[PER_PAGE_INITIAL_INDEX]
     };
+    //         this.props.fetchWPSJobs();
     this._onRefreshResults = this._onRefreshResults.bind(this);
     this._onPageChanged = this._onPageChanged.bind(this);
-    this.props.fetchWPSJobs();
   }
 
   _onRefreshResults () {
@@ -52,10 +53,10 @@ class ProcessMonitoring extends React.Component {
     this.props.fetchWPSJobs();
   }
 
-  _onPageChanged (pageNumber, nbPerPage) {
-    console.log(pageNumber);
+  _onPageChanged (pageNumber, numberPerPage) {
     this.setState({
-      pageNumber: pageNumber
+      pageNumber: pageNumber,
+      numberPerPage: numberPerPage
     });
   }
 
@@ -68,13 +69,13 @@ class ProcessMonitoring extends React.Component {
         </Paper>;
     } else {
       if (this.props.monitor.jobs.items.length) {
-        let start = (this.state.pageNumber - 1) * PER_PAGE_SINGLE_OPTION;
+        let start = (this.state.pageNumber - 1) * this.state.numberPerPage;
         mainComponent =
           <div>
             <Paper style={{ marginTop: 20 }}>
               <List>
                 <Subheader>Launched Jobs</Subheader>
-                {this.props.monitor.jobs.items.slice(start, start + PER_PAGE_SINGLE_OPTION).map((x, i) => {
+                {this.props.monitor.jobs.items.slice(start, start + this.state.numberPerPage).map((x, i) => {
                   let status = null;
                   switch (x.status) {
                     case constants.JOB_SUCCESS_STATUS:
@@ -130,7 +131,8 @@ class ProcessMonitoring extends React.Component {
               </List>
               <Pagination
                 total={this.props.monitor.jobs.items.length}
-                perPageOptions={[PER_PAGE_SINGLE_OPTION]}
+                initialPerPageOptionIndex={PER_PAGE_INITIAL_INDEX}
+                perPageOptions={constants.PER_PAGE_OPTIONS}
                 onChange={this._onPageChanged} />
             </Paper>
           </div>;

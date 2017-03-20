@@ -47,7 +47,7 @@ class Pagination extends Component {
   static propTypes = {
     onChange: React.PropTypes.func,
     total: React.PropTypes.number.isRequired,
-    perPageOptions: React.PropTypes.number,
+    perPageOptions: React.PropTypes.array,
     texts: React.PropTypes.shape({
       page: React.PropTypes.string.isRequired,
       perPageOptions: React.PropTypes.string.isRequired,
@@ -75,7 +75,7 @@ class Pagination extends Component {
   }
 
   handleChangePerPage (perPage) {
-    let maxPage = Math.ceil(this.props.total/this.props.perPageOptions[perPage]);
+    let maxPage = Math.ceil(this.props.total / this.props.perPageOptions[perPage]);
     let newPageIndex = this.state.currentPageIndex;
     if (newPageIndex > maxPage) {
       newPageIndex = maxPage;

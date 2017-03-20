@@ -41,3 +41,6 @@ export const PANEL_DATASET_WMS_LAYERS = 'Visualize.DatasetWMSLayers';
 export const PANEL_CLIMATE_INDICATORS = 'Visualize.ClimateIndicators';
 export const PANEL_PLOTLY = 'Visualize.Plotly';
 export const DEFAULT_SELECTED_KEY = 'frequency';
+// Pagination
+export const PER_PAGE_OPTIONS = [5, 10, 25];
+export const PER_PAGE_INITIAL_INDEX = 0;
