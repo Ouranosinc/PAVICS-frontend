@@ -22,7 +22,13 @@ const initialState = {
     section: ''
   },
   monitor: {
-    jobs: []
+    jobs: {
+      requestedAt: null,
+      receivedAt: null,
+      isFetching: false,
+      items: [],
+      error: null
+    }
   },
   visualize: {
     mapManipulationMode: constants.VISUALIZE_MODE_VISUALIZE,

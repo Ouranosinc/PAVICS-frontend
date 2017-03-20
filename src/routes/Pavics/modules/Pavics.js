@@ -1,5 +1,6 @@
 import initialState from './../../../store/initialState';
 import * as constants from './../../../constants';
+import {parseString} from 'xml2js';
 import ol from 'openlayers';
 // SYNC
 const SET_WMS_LAYER = 'Visualize.SET_WMS_LAYER';
@@ -52,6 +53,9 @@ const FETCH_WMS_LAYER_DETAILS_SUCCESS = 'Visualize.FETCH_WMS_LAYER_DETAILS_SUCCE
 const FETCH_WMS_LAYER_TIMESTEPS_REQUEST = 'Visualize.FETCH_WMS_LAYER_TIMESTEPS_REQUEST';
 const FETCH_WMS_LAYER_TIMESTEPS_FAILURE = 'Visualize.FETCH_WMS_LAYER_TIMESTEPS_FAILURE';
 const FETCH_WMS_LAYER_TIMESTEPS_SUCCESS = 'Visualize.FETCH_WMS_LAYER_TIMESTEPS_SUCCESS';
+const FETCH_WPS_JOBS_REQUEST = 'Visualize.FETCH_WPS_JOBS_REQUEST';
+const FETCH_WPS_JOBS_FAILURE = 'Visualize.FETCH_WPS_JOBS_FAILURE';
+const FETCH_WPS_JOBS_SUCCESS = 'Visualize.FETCH_WPS_JOBS_SUCCESS';
 // ------------------------------------
 // Actions
 // ------------------------------------
@@ -452,6 +456,39 @@ export function receiveWMSLayerTimesteps (data) {
     }
   };
 }
+
+export function requestWPSJobs () {
+  return {
+    type: FETCH_WPS_JOBS_REQUEST,
+    jobs: {
+      requestedAt: Date.now(),
+      isFetching: true,
+      items: []
+    }
+  };
+}
+export function receiveWPSJobsFailure (error) {
+  return {
+    type: FETCH_WPS_JOBS_FAILURE,
+    jobs: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      items: [],
+      error: error
+    }
+  };
+}
+export function receiveWPSJobs (jobs) {
+  return {
+    type: FETCH_WPS_JOBS_SUCCESS,
+    jobs: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      items: jobs,
+      error: null
+    }
+  };
+}
 // ASYNC
 export function fetchClimateIndicators () {
   return function (dispatch) {
@@ -825,13 +862,17 @@ export function chooseProcess (process) {
     dispatch(getNextStep());
   };
 }
-export function fetchJobs () {
-  return (dispatch) => {
+export function fetchWPSJobs () {
+  return function (dispatch) {
+    dispatch(requestWPSJobs());
     return fetch('/phoenix/jobs')
       .then(response => response.json())
-      .then(json => dispatch(setJobs(json.jobs)))
-      .catch(err => {
-        console.log(err);
+      .then(json =>
+        dispatch(receiveWPSJobs(json.jobs))
+      )
+      .catch(error => {
+        console.log(error);
+        dispatch(receiveWPSJobsFailure(error));
       });
   };
 }
@@ -1100,9 +1141,15 @@ const PLATFORM_HANDLERS = {
   }
 };
 const MONITOR_HANDLERS = {
-  [constants.MONITOR_SET_JOBS]: (state, action) => {
-    return {...state, jobs: action.jobs};
-  }
+  [FETCH_WPS_JOBS_REQUEST]: (state, action) => {
+    return ({...state, jobs: action.jobs});
+  },
+  [FETCH_WPS_JOBS_FAILURE]: (state, action) => {
+    return ({...state, jobs: action.jobs});
+  },
+  [FETCH_WPS_JOBS_SUCCESS]: (state, action) => {
+    return ({...state, jobs: action.jobs});
+  },
 };
 function workflowWizardReducer (state, action) {
   const handler = WORKFLOW_WIZARD_HANDLERS[action.type];

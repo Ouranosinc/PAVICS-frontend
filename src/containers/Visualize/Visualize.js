@@ -81,25 +81,26 @@ class Visualize extends React.Component {
     return (
       <div>
         <div className={classes['Visualize']}>
+          <div className={classes.mapContainer}>
+            <OLComponent
+              setCurrentDateTime={this.props.setCurrentDateTime}
+              selectedColorPalette={this.props.selectedColorPalette}
+              selectedRegions={this.props.selectedRegions}
+              fetchPlotlyData={this.props.fetchPlotlyData}
+              selectedDatasetCapabilities={this.props.selectedDatasetCapabilities}
+              setSelectedDatasetCapabilities={this.props.setSelectedDatasetCapabilities}
+              layer={this.props.layer}
+              currentDateTime={this.props.currentDateTime}
+              mapManipulationMode={this.props.mapManipulationMode}
+              fetchWMSLayerDetails={this.props.fetchWMSLayerDetails}
+              fetchWMSLayerTimesteps={this.props.fetchWMSLayerTimesteps}
+              selectedShapefile={this.props.selectedShapefile}
+              selectedBasemap={this.props.selectedBasemap}
+              selectedDatasetLayer={this.props.selectedDatasetLayer}
+              ref={this.setOLComponentReference} />
+          </div>
           {(this.state.mapPanelStatus[constants.VISUALIZE_INFO_PANEL])
-            ? <div className={classes.mapContainer}>
-              <OLComponent
-                setCurrentDateTime={this.props.setCurrentDateTime}
-                selectedColorPalette={this.props.selectedColorPalette}
-                selectedRegions={this.props.selectedRegions}
-                fetchPlotlyData={this.props.fetchPlotlyData}
-                selectedDatasetCapabilities={this.props.selectedDatasetCapabilities}
-                setSelectedDatasetCapabilities={this.props.setSelectedDatasetCapabilities}
-                layer={this.props.layer}
-                currentDateTime={this.props.currentDateTime}
-                mapManipulationMode={this.props.mapManipulationMode}
-                fetchWMSLayerDetails={this.props.fetchWMSLayerDetails}
-                fetchWMSLayerTimesteps={this.props.fetchWMSLayerTimesteps}
-                selectedShapefile={this.props.selectedShapefile}
-                selectedBasemap={this.props.selectedBasemap}
-                selectedDatasetLayer={this.props.selectedDatasetLayer}
-                ref={this.setOLComponentReference} />
-            </div> : null
+            ? <div></div> : null
           }
           <PieMenu
             mapPanelStatus={this.state.mapPanelStatus}

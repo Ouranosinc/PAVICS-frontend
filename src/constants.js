@@ -17,6 +17,9 @@ export const VISUALIZE_MAP_CONTROLS_PANEL = 'MAP_CONTROLS_PANEL';
 export const VISUALIZE_TIME_SLIDER_PANEL = 'TIME_SLIDER_PANEL';
 // monitor
 export const MONITOR_SET_JOBS = 'MONITOR_SET_JOBS';
+export const JOB_FAILED_STATUS = 'ProcessFailed';
+export const JOB_SUCCESS_STATUS = 'ProcessSucceeded';
+export const JOB_STARTED_STATUS = 'ProcessStarted';
 // workflow wizard
 export const WORKFLOW_CHOOSE_PROCESS = 'WORKFLOW_CHOOSE_PROCESS';
 export const WORKFLOW_SET_PROCESSES = 'WORKFLOW_SET_PROCESSES';

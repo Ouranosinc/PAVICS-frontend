@@ -10,7 +10,7 @@ import {
   ExperienceManagement,
   SearchCatalog,
   WorkflowWizard,
-  Monitor,
+  ProcessMonitoring,
   Visualize } from './../../../containers';
 import { SectionalPanel } from './../../../components/SectionalPanel';
 
@@ -18,7 +18,10 @@ class Pavics extends React.Component {
   static propTypes = {
     chooseStep: React.PropTypes.func.isRequired,
     goToSection: React.PropTypes.func.isRequired,
-    platform: React.PropTypes.object.isRequired
+    platform: React.PropTypes.object.isRequired,
+    fetchWPSJobs: React.PropTypes.func.isRequired,
+    monitor: React.PropTypes.object.isRequired,
+    fetchVisualizableData: React.PropTypes.func.isRequired
   };
 
   makeSection () {
@@ -39,7 +42,10 @@ class Pavics extends React.Component {
         );
       case constants.PLATFORM_SECTION_MONITOR:
         return (
-          <Monitor {...this.props} />
+          <ProcessMonitoring
+            fetchWPSJobs={this.props.fetchWPSJobs}
+            monitor={this.props.monitor}
+            fetchVisualizableData={this.props.fetchVisualizableData} />
         );
       case constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT:
         return (
