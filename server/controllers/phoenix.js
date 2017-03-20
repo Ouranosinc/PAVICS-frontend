@@ -1,5 +1,7 @@
 import config from '../../config';
 import request from 'koa-request';
+import Utils from './../Utils';
+
 let phoenix = (() => {
   return {
     consume: function * () {
@@ -22,6 +24,8 @@ let phoenix = (() => {
           break;
         case 'jobs' :
           options = {
+            // PARAMS ARE ACTUALLY WORKING
+            /* url: config.pavics_phoenix_path + '/monitor?page=1&limit=10&sort=duration', */
             url: config.pavics_phoenix_path + '/monitor?limit=1000',
             headers: {
               Accept: 'application/json'
@@ -29,7 +33,12 @@ let phoenix = (() => {
             rejectUnauthorized: false
           };
           response = yield request(options);
-          this.body = response.body;
+          let json = JSON.parse(response.body);
+          for (let i = 0; i < json.jobs.length; ++i) {
+            json.jobs[i]['response_to_json'] = yield Utils.parseXMLThunk(json.jobs[i]['response']);
+            json.jobs[i]['request_to_json'] = yield Utils.parseXMLThunk(json.jobs[i]['request']);
+          }
+          this.body = json;
           break;
         case 'processes' :
           options = {

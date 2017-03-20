@@ -1,5 +1,6 @@
 import React from 'react';
 import * as classes from './LayerSwitcher.scss';
+import * as constants from './../../constants';
 import {List, ListItem} from 'material-ui/List';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import SelectField from 'material-ui/SelectField';
@@ -8,7 +9,12 @@ import Slider from 'material-ui/Slider';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import FontIcon from 'material-ui/FontIcon';
 import Paper from 'material-ui/Paper';
+import Subheader from 'material-ui/Subheader';
 import RaisedButton from 'material-ui/RaisedButton';
+import AppBar from 'material-ui/AppBar';
+import IconButton from 'material-ui/IconButton';
+import LayersIcon from 'material-ui/svg-icons/maps/layers';
+import MinimizeIcon from 'material-ui/svg-icons/content/remove';
 export default class LayerSwitcher extends React.Component {
   availableColorPalettes = [
     {
@@ -21,6 +27,7 @@ export default class LayerSwitcher extends React.Component {
     }
   ];
   static propTypes = {
+    onToggleMapPanel: React.PropTypes.func.isRequired,
     fetchShapefiles: React.PropTypes.func.isRequired,
     selectColorPalette: React.PropTypes.func.isRequired,
     selectDatasetLayer: React.PropTypes.func.isRequired,
@@ -37,6 +44,7 @@ export default class LayerSwitcher extends React.Component {
 
   constructor (props) {
     super(props);
+    this._onHideLayerSwitcherPanel = this._onHideLayerSwitcherPanel.bind(this);
     this.setSelectedShapefile = this.setSelectedShapefile.bind(this);
     this.setSelectedBaseMap = this.setSelectedBaseMap.bind(this);
     this.setSelectedDatasetLayer = this.setSelectedDatasetLayer.bind(this);
@@ -50,6 +58,10 @@ export default class LayerSwitcher extends React.Component {
   componentDidMount () {
     this.props.fetchShapefiles();
     this.setSelectedBaseMap(null, 'Aerial');
+  }
+
+  _onHideLayerSwitcherPanel () {
+    this.props.onToggleMapPanel(constants.VISUALIZE_LAYER_SWITCHER_PANEL);
   }
 
   setSelectedShapefile (event, value) {
@@ -90,7 +102,7 @@ export default class LayerSwitcher extends React.Component {
   makeShapefileList () {
     return (
       <List
-        style={{minHeight: '250px', maxHeight: '250px', overflowY: 'auto'}}
+        style={{height: '252px', overflowY: 'auto'}}
         className={classes['layers']}>
         <ListItem
           initiallyOpen
@@ -124,7 +136,7 @@ export default class LayerSwitcher extends React.Component {
   makeBaseMapsList () {
     return (
       <List
-        style={{minHeight: '250px', maxHeight: '250px', overflowY: 'auto'}}
+        style={{height: '300px', overflowY: 'auto'}}
         className={classes['layers']}>
         <ListItem
           initiallyOpen
@@ -138,7 +150,7 @@ export default class LayerSwitcher extends React.Component {
                   key={i}
                   leftCheckbox={
                     <RadioButtonGroup
-                      name="selectedBaseMap"
+                      name="selectedBaseMap" f
                       valueSelected={this.props.selectedBasemap}
                       onChange={this.setSelectedBaseMap}>
                       <RadioButton value={map} />
@@ -155,7 +167,7 @@ export default class LayerSwitcher extends React.Component {
   makeDatasetsList () {
     return (
       <List
-        style={{minHeight: '250px', maxHeight: '250px', overflowY: 'auto'}}
+        style={{height: '252px', overflowY: 'auto'}}
         className={classes['layers']}>
         {
           this.props.currentVisualizedDatasetLayers.map((dataset, i) => {
@@ -175,6 +187,24 @@ export default class LayerSwitcher extends React.Component {
           })
         }
       </List>
+    );
+  }
+
+  makeSlider () {
+    // not so clever trick so that opacity is not undefined when resetting layer
+    // should stay aligned with initialState's opacity
+    if (isNaN(this.props.selectedDatasetLayer.opacity)) {
+      this.setDatasetLayerOpacity(null, 0.8);
+    }
+    return (
+      <div style={{padding: '0 15px'}}>
+        <div style={{textAlign: 'center'}}>opacity: {Math.floor(this.props.selectedDatasetLayer.opacity * 100)}%
+        </div>
+        <Slider
+          step={0.05}
+          onChange={this.setDatasetLayerOpacity}
+          value={this.props.selectedDatasetLayer.opacity} />
+      </div>
     );
   }
 
@@ -201,28 +231,15 @@ export default class LayerSwitcher extends React.Component {
     );
   }
 
-  makeSlider () {
-    // not so clever trick so that opacity is not undefined when resetting layer
-    // should stay aligned with initialState's opacity
-    if (isNaN(this.props.selectedDatasetLayer.opacity)) {
-      this.setDatasetLayerOpacity(null, 0.8);
-    }
-    return (
-      <div style={{padding: '0 15px'}}>
-        <div style={{textAlign: 'center'}}>opacity: {Math.floor(this.props.selectedDatasetLayer.opacity * 100)}%
-        </div>
-        <Slider
-          step={0.05}
-          onChange={this.setDatasetLayerOpacity}
-          value={this.props.selectedDatasetLayer.opacity} />
-      </div>
-    );
-  }
-
   render () {
     return (
       <div className={classes['LayerSwitcher']}>
         <div className={classes['Tabs']}>
+          <AppBar
+            title="Layer Switcher"
+            iconElementLeft={<IconButton><LayersIcon /></IconButton>}
+            iconElementRight={<IconButton><MinimizeIcon
+              onTouchTap={(event) => this._onHideLayerSwitcherPanel()} /></IconButton>} />
           <Tabs>
             <Tab
               style={{height: '100%'}}
@@ -233,9 +250,11 @@ export default class LayerSwitcher extends React.Component {
                   {this.makeColorPalettesSelect()}
                 </div>
                 <div style={{width: '25%', display: 'inline-block'}}>
-                  <RaisedButton
-                    onClick={this.resetDatasetLayer}
-                    label="Reset" />
+                  <Subheader>
+                    <RaisedButton
+                      onClick={this.resetDatasetLayer}
+                      label="Reset" />
+                  </Subheader>
                 </div>
                 {this.props.selectedDatasetLayer.dataset_id ? this.makeSlider() : null}
                 {this.makeDatasetsList()}
@@ -245,22 +264,19 @@ export default class LayerSwitcher extends React.Component {
               icon={<FontIcon className="material-icons">local_library</FontIcon>}
               label="Shape Files">
               <Paper zDepth={2}>
-                <div style={{width: '75%', display: 'inline-block'}}>
-                  <h2>Shape Files</h2>
-                </div>
-                <div style={{width: '25%', display: 'inline-block'}}>
+                <Subheader>
                   <RaisedButton
                     onClick={this.resetShapefile}
                     label="Reset" />
-                </div>
+                </Subheader>
                 {this.makeShapefileList()}
               </Paper>
             </Tab>
             <Tab
+              style={{height: '100%'}}
               icon={<FontIcon className="material-icons">map</FontIcon>}
               label="Base Maps">
               <Paper zDepth={2}>
-                <h2>Base Maps</h2>
                 {this.makeBaseMapsList()}
               </Paper>
             </Tab>

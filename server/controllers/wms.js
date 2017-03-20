@@ -58,8 +58,8 @@ module.exports.getLayers = function * list (next) {
   console.log(wmsUrl);
   var options = {
     url: wmsUrl
-  }
-  var response = yield request(options)
-  this.body = yield parseXMLThunk(response.body, url, dataset)
+  };
+  var response = yield request(options);
+  this.body = yield parseXMLThunk(response.body, url, dataset);
 }
 
