@@ -41,7 +41,7 @@ class ProcessMonitoring extends React.Component {
       pageNumber: 1,
       numberPerPage: constants.PER_PAGE_OPTIONS[PER_PAGE_INITIAL_INDEX]
     };
-    //         this.props.fetchWPSJobs();
+    this.props.fetchWPSJobs();
     this._onRefreshResults = this._onRefreshResults.bind(this);
     this._onPageChanged = this._onPageChanged.bind(this);
   }
@@ -70,12 +70,13 @@ class ProcessMonitoring extends React.Component {
     } else {
       if (this.props.monitor.jobs.items.length) {
         let start = (this.state.pageNumber - 1) * this.state.numberPerPage;
+        let paginated = this.props.monitor.jobs.items.slice(start, start + this.state.numberPerPage);
         mainComponent =
           <div>
             <Paper style={{ marginTop: 20 }}>
               <List>
                 <Subheader>Launched Jobs</Subheader>
-                {this.props.monitor.jobs.items.slice(start, start + this.state.numberPerPage).map((x, i) => {
+                {paginated.map((x, i) => {
                   let status = null;
                   switch (x.status) {
                     case constants.JOB_SUCCESS_STATUS:

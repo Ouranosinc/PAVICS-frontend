@@ -130,6 +130,7 @@ class Pagination extends Component {
           <div style={styles.label}>{`${texts.page} `}</div>
           <SelectField
             onChange={(e, idx, page) => this.handleChangePage(page)}
+            disabled={!total}
             value={currentPageIndex}
             style={styles.select}
             underlineStyle={styles.underline}>
@@ -147,6 +148,7 @@ class Pagination extends Component {
           <div style={styles.label}>{`${texts.perPageOptions} `}</div>
           <SelectField
             onChange={(e, idx, selectedOption) => this.handleChangePerPage(selectedOption)}
+            disabled={!total}
             value={selectedPerPageOptionIndex}
             style={styles.select}
             underlineStyle={styles.underline}>
@@ -160,12 +162,12 @@ class Pagination extends Component {
         <div style={styles.elements}>
           <div style={styles.label}>{`${showing}`}</div>
           <IconButton
-            disabled={currentPageIndex === 1}
+            disabled={currentPageIndex === 1 || !total}
             onTouchTap={e => this.handleChangePage(currentPageIndex - 1, e)}>
             <ChevronLeft />
           </IconButton>
           <IconButton
-            disabled={currentPageIndex === count}
+            disabled={currentPageIndex === count || !total}
             onTouchTap={e => this.handleChangePage(currentPageIndex + 1, e)}>
             <ChevronRight />
           </IconButton>

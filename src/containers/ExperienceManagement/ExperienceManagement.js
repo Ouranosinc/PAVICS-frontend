@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import classes from './ExperienceManagement.scss';
 import * as constants from './../../constants';
+import Pagination from './../../components/Pagination';
 import {List, ListItem} from 'material-ui/List';
 import {grey400, darkBlack} from 'material-ui/styles/colors';
 import Subheader from 'material-ui/Subheader';
@@ -35,17 +36,21 @@ export class ExperienceManagement extends React.Component {
     fetchPavicsDatasets: React.PropTypes.func.isRequired,
     restorePavicsDatasets: React.PropTypes.func.isRequired
   };
-
-  state = {
-    open: false
-  };
-
   constructor (props) {
     super(props);
     this._onVisualizeLayer = this._onVisualizeLayer.bind(this);
+    this._onCriteriasPageChanged = this._onCriteriasPageChanged.bind(this);
+    this._onDatasetsPageChanged = this._onDatasetsPageChanged.bind(this);
     this._onRelaunchSearch = this._onRelaunchSearch.bind(this);
     this._onRestoreSearchCriteria = this._onRestoreSearchCriteria.bind(this);
     this._onRemoveSearchCriteria = this._onRemoveSearchCriteria.bind(this);
+    this.state = {
+      open: false,
+      datasetsPageNumber: 1,
+      datasetsNumberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX],
+      criteriasPageNumber: 1,
+      criteriasNumberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX]
+    };
   }
 
   handleNestedListToggle = (item) => {
@@ -53,6 +58,20 @@ export class ExperienceManagement extends React.Component {
       open: item.state.open
     });
   };
+
+  _onCriteriasPageChanged (pageNumber, numberPerPage) {
+    this.setState({
+      criteriasPageNumber: pageNumber,
+      criteriasNumberPerPage: numberPerPage
+    });
+  }
+
+  _onDatasetsPageChanged (pageNumber, numberPerPage) {
+    this.setState({
+      datasetsPageNumber: pageNumber,
+      datasetsNumberPerPage: numberPerPage
+    });
+  }
 
   _onVisualizeLayer (event, dataset, currentWmsUrl, i) {
     dataset['wms_url'] = currentWmsUrl;
@@ -83,12 +102,16 @@ export class ExperienceManagement extends React.Component {
   }
 
   render () {
+    let datasetsStart = (this.state.datasetsPageNumber - 1) * this.state.datasetsNumberPerPage;
+    let datasetsPaginated = this.props.currentProjectDatasets.slice(datasetsStart, datasetsStart + this.state.datasetsNumberPerPage);
+    let criteriasStart = (this.state.criteriasPageNumber - 1) * this.state.criteriasNumberPerPage;
+    let criteriasPaginated = this.props.currentProjectSearchCriterias.slice(criteriasStart, criteriasStart + this.state.criteriasNumberPerPage);
     return (
       <div className={classes['ExperienceManagement']} style={{ margin: 20 }}>
         <Paper>
           <List>
             <Subheader>Current project dataset(s)</Subheader>
-            {this.props.currentProjectDatasets.map((dataset, i) => {
+            {datasetsPaginated.map((dataset, i) => {
               let folderIcon = <Folder />;
               if (this.props.currentVisualizedDatasetLayers.find(x => x.dataset_id === dataset.dataset_id)) {
                 folderIcon = <FolderSpecial />;
@@ -109,7 +132,7 @@ export class ExperienceManagement extends React.Component {
                   primaryTogglesNestedList={false}
                   nestedItems={
                     dataset.wms_urls.map((wmsUrl, j) => {
-                      let text = '/'; // 'DATASET=';
+                      let text = '/';
                       let fileName = wmsUrl.substr(wmsUrl.lastIndexOf(text) + text.length);
                       let nestedIcon = <File />;
                       let disabledNestedVisualize = false;
@@ -146,12 +169,17 @@ export class ExperienceManagement extends React.Component {
               );
             })}
           </List>
+          <Pagination
+            total={this.props.currentProjectDatasets.length}
+            initialPerPageOptionIndex={constants.PER_PAGE_INITIAL_INDEX}
+            perPageOptions={constants.PER_PAGE_OPTIONS}
+            onChange={this._onDatasetsPageChanged} />
         </Paper>
 
         <Paper style={{marginTop: 20}}>
           <List>
             <Subheader>Manage search criteria(s)</Subheader>
-            {this.props.currentProjectSearchCriterias.map((search, index) => {
+            {criteriasPaginated.map((search, index) => {
               return (
                 <ListItem
                   key={index}
@@ -189,6 +217,11 @@ export class ExperienceManagement extends React.Component {
               );
             })}
           </List>
+          <Pagination
+            total={this.props.currentProjectSearchCriterias.length}
+            initialPerPageOptionIndex={constants.PER_PAGE_INITIAL_INDEX}
+            perPageOptions={constants.PER_PAGE_OPTIONS}
+            onChange={this._onCriteriasPageChanged} />
         </Paper>
       </div>
     );
