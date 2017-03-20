@@ -26,10 +26,10 @@ const errorStyle = {
 const infoStyle = {
   color: '#03a9f4'
 };
-const PER_PAGE_INITIAL_INDEX = 1;
 
 class ProcessMonitoring extends React.Component {
   static propTypes = {
+    addDatasetLayersToVisualize: React.PropTypes.func.isRequired,
     fetchWPSJobs: React.PropTypes.func.isRequired,
     monitor: React.PropTypes.object.isRequired,
     fetchVisualizableData: React.PropTypes.func.isRequired
@@ -39,11 +39,12 @@ class ProcessMonitoring extends React.Component {
     super(props);
     this.state = {
       pageNumber: 1,
-      numberPerPage: constants.PER_PAGE_OPTIONS[PER_PAGE_INITIAL_INDEX]
+      numberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX]
     };
     this.props.fetchWPSJobs();
     this._onRefreshResults = this._onRefreshResults.bind(this);
     this._onPageChanged = this._onPageChanged.bind(this);
+    this._onVisualiseDataset = this._onVisualiseDataset.bind(this);
   }
 
   _onRefreshResults () {
@@ -58,6 +59,19 @@ class ProcessMonitoring extends React.Component {
       pageNumber: pageNumber,
       numberPerPage: numberPerPage
     });
+  }
+
+  _onVisualiseDataset (url) {
+    // TODO Remove hardcoded path
+    let prefix = 'http://hirondelle.crim.ca:8080/ncWMS2/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&DATASET=outputs/wps_outputs/';
+    let index = url.indexOf('flyingpigeon');
+    let suffix = url.substring(index, url.length);
+    this.props.addDatasetLayersToVisualize([
+      {
+        wms_url: prefix + suffix,
+        dataset_id: suffix
+      }
+    ]);
   }
 
   render () {
@@ -78,6 +92,13 @@ class ProcessMonitoring extends React.Component {
                 <Subheader>Launched Jobs</Subheader>
                 {paginated.map((x, i) => {
                   let status = null;
+                  let netcdfUrl = '';
+                  try {
+                    netcdfUrl = x.response_to_json['wps:ExecuteResponse']['wps:ProcessOutputs'][0]['wps:Output'][1]['wps:Reference'][0]['$']['href'];
+                    console.log(netcdfUrl);
+                  } catch (error) {
+
+                  }
                   switch (x.status) {
                     case constants.JOB_SUCCESS_STATUS:
                       status = <strong style={successStyle}>COMPLETED</strong>;
@@ -108,8 +129,8 @@ class ProcessMonitoring extends React.Component {
                           <MoreVertIcon color={grey400} />
                         </IconButton>}>
                         <MenuItem
-                          primaryText="Visualize (TODO)"
-                          onTouchTap={(event) => alert('visualize result')}
+                          primaryText="Visualize"
+                          onTouchTap={(event) => this._onVisualiseDataset(netcdfUrl)}
                           leftIcon={<VisualizeIcon />} />
                         <MenuItem
                           primaryText="Show XML Status File"
@@ -118,7 +139,7 @@ class ProcessMonitoring extends React.Component {
                         <MenuItem
                           primaryText="Download"
                           disabled={x.status !== constants.JOB_SUCCESS_STATUS}
-                          onTouchTap={(event) => window.open(x.response_to_json['wps:ExecuteResponse']['wps:ProcessOutputs'][0]['wps:Output'][1]['wps:Reference'][0]['$']['href'], '_blank')}
+                          onTouchTap={(event) => window.open(netcdfUrl, '_blank')}
                           leftIcon={<DownloadIcon />} />
                         <MenuItem
                           primaryText="Share (TODO)"
@@ -132,7 +153,7 @@ class ProcessMonitoring extends React.Component {
               </List>
               <Pagination
                 total={this.props.monitor.jobs.items.length}
-                initialPerPageOptionIndex={PER_PAGE_INITIAL_INDEX}
+                initialPerPageOptionIndex={constants.PER_PAGE_INITIAL_INDEX}
                 perPageOptions={constants.PER_PAGE_OPTIONS}
                 onChange={this._onPageChanged} />
             </Paper>

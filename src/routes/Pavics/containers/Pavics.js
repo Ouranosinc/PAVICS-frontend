@@ -16,6 +16,7 @@ import { SectionalPanel } from './../../../components/SectionalPanel';
 
 class Pavics extends React.Component {
   static propTypes = {
+    addDatasetLayersToVisualize: React.PropTypes.func.isRequired,
     chooseStep: React.PropTypes.func.isRequired,
     goToSection: React.PropTypes.func.isRequired,
     platform: React.PropTypes.object.isRequired,
@@ -43,6 +44,7 @@ class Pavics extends React.Component {
       case constants.PLATFORM_SECTION_MONITOR:
         return (
           <ProcessMonitoring
+            addDatasetLayersToVisualize={this.props.addDatasetLayersToVisualize}
             fetchWPSJobs={this.props.fetchWPSJobs}
             monitor={this.props.monitor}
             fetchVisualizableData={this.props.fetchVisualizableData} />
