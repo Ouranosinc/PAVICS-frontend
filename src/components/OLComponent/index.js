@@ -1,3 +1,2 @@
-import OLComponent from './OLComponent'
-
-export default OLComponent
+import OLComponent from './OLComponent';
+export default OLComponent;

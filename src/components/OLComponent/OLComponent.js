@@ -26,12 +26,32 @@ class OLComponent extends React.Component {
     selectedBasemap: React.PropTypes.string.isRequired,
     selectedDatasetCapabilities: React.PropTypes.object.isRequired,
     setSelectedDatasetCapabilities: React.PropTypes.func.isRequired,
+    selectRegion: React.PropTypes.func.isRequired,
+    unselectRegion: React.PropTypes.func.isRequired,
     capabilities: React.PropTypes.object,
     dataset: React.PropTypes.object,
     layer: React.PropTypes.object.isRequired,
     fetchWMSLayerDetails: React.PropTypes.func.isRequired,
     fetchWMSLayerTimesteps: React.PropTypes.func.isRequired,
     fetchPlotlyData: React.PropTypes.func.isRequired
+  };
+
+  config = {
+    polygons: {
+      text: 'normal',
+      align: 'center',
+      baseline: 'middle',
+      rotation: 0,
+      font: 'inherit',
+      weight: 'bold',
+      size: '10px',
+      offsetX: 0,
+      offsetY: 0,
+      color: 'blue',
+      outline: 'white',
+      outlineWidth: 3,
+      maxreso: 1200
+    }
   };
 
   constructor (props) {
@@ -47,6 +67,8 @@ class OLComponent extends React.Component {
     };
     this.handleMapClick = this.handleMapClick.bind(this);
     this.handleClose = this.handleClose.bind(this);
+    this.createPolygonStyleFunction = this.createPolygonStyleFunction.bind(this);
+    this.createTextStyle = this.createTextStyle.bind(this);
   }
 
   addTileWMSLayer (position, title, source, opacity, extent, visible = true) {
@@ -115,26 +137,10 @@ class OLComponent extends React.Component {
         format: new ol.format.GeoJSON()
       }
     );
-    let fill = new ol.style.Fill(
-      {
-        color: 'rgba(0,255,255,0.5)'
-      }
-    );
-    let stroke = new ol.style.Stroke(
-      {
-        color: 'rgba(255,255,255,0.5)'
-      }
-    );
-    let style = new ol.style.Style(
-      {
-        fill: fill,
-        stroke: stroke
-      }
-    );
     let layer = new ol.layer.Vector(
       {
         source: source,
-        style: style,
+        style: this.createPolygonStyleFunction(),
         opacity: 1
       }
     );
@@ -142,7 +148,7 @@ class OLComponent extends React.Component {
     return layer;
   }
 
-  selectRegion (event) {
+  handleSelectRegionClick (event) {
     let coordinates = this.map.getCoordinateFromPixel(event.pixel);
     let tl = ol.coordinate.add(coordinates, [-10e-6, -10e-6]);
     let br = ol.coordinate.add(coordinates, [10e-6, 10e-6]);
@@ -173,24 +179,98 @@ class OLComponent extends React.Component {
       .then(response => response.json(), err => console.log(err))
       .then(
         response => {
-          // ici
+          console.log('selected regions before click:', this.props.selectedRegions);
           let id = response.features[0].id;
-          console.log(id);
-          let converted = ol.proj.transform(coordinates, 'EPSG:3857', 'EPSG:4326');
-          let content = `lat: ${converted[0]}, lon: ${converted[1]}, feature id: ${id}`;
-          let format = new ol.format.GeoJSON();
-          let features = format.readFeatures(response, { featureProjection: 'EPSG:3857' });
-          this.layers[LAYER_SELECTED_REGIONS].getSource().addFeatures(features);
-          this.setState(
-            {
-              ...this.state,
-              dialogContent: content,
-              dialogOpened: true
-            }
-          );
+          if (this.props.selectedRegions.indexOf(id) !== -1) {
+            console.log('removing feature', id);
+            this.props.unselectRegion(id);
+            let feature = this.layers[LAYER_SELECTED_REGIONS].getSource().getFeatures().find(elem => elem.f === id);
+            this.layers[LAYER_SELECTED_REGIONS].getSource().removeFeature(feature);
+          } else {
+            console.log('adding feature', id);
+            this.props.selectRegion(id);
+            let format = new ol.format.GeoJSON();
+            let features = format.readFeatures(response, {featureProjection: 'EPSG:3857'});
+            console.log('adding feature named', features[0].name);
+            console.log('received response:', response);
+            console.log('received feature:', features);
+            this.layers[LAYER_SELECTED_REGIONS].getSource().addFeatures(features);
+          }
         },
         err => console.log(err)
       );
+  }
+
+  stringDivider (str, lineLength, addedCharacter) {
+    let result = '';
+    while (str.length > 0) {
+      result += str.substring(0, lineLength) + addedCharacter;
+      str = str.substring(lineLength);
+    }
+    return result;
+  }
+
+  getText (feature, resolution, dom) {
+    let type = dom.text.value;
+    let maxResolution = dom.maxreso.value;
+    let text = feature['f'];
+
+    if (resolution > maxResolution) {
+      text = '';
+    } else if (type === 'hide') {
+      text = '';
+    } else if (type === 'shorten') {
+      text = text.trunc(12);
+    } else if (type === 'wrap') {
+      text = this.stringDivider(text, 16, '\n');
+    }
+    return text;
+  }
+
+  createTextStyle (feature, resolution, dom) {
+    let align = dom.align;
+    let baseline = dom.baseline;
+    let size = dom.size;
+    let offsetX = parseInt(dom.offsetX, 10);
+    let offsetY = parseInt(dom.offsetY, 10);
+    let weight = dom.weight;
+    let rotation = parseFloat(dom.rotation);
+    let font = weight + ' ' + size + ' ' + dom.font;
+    let fillColor = dom.color;
+    let outlineColor = dom.outline;
+    let outlineWidth = parseInt(dom.outlineWidth, 10);
+    return new ol.style.Text({
+      textAlign: align,
+      textBaseline: baseline,
+      font: font,
+      text: this.getText(feature, resolution, dom),
+      fill: new ol.style.Fill({color: fillColor}),
+      stroke: new ol.style.Stroke({color: outlineColor, width: outlineWidth}),
+      offsetX: offsetX,
+      offsetY: offsetY,
+      rotation: rotation
+    });
+  }
+
+  createPolygonStyleFunction () {
+    return (feature, resolution) => {
+      let fill = new ol.style.Fill(
+        {
+          color: 'rgba(0,255,255,0.5)'
+        }
+      );
+      let stroke = new ol.style.Stroke(
+        {
+          color: 'rgba(255,255,255,0.5)'
+        }
+      );
+      let style = new ol.style.Style({
+        stroke: stroke,
+        fill: fill,
+        text: this.createTextStyle(feature, resolution, this.config.polygons)
+      });
+      return [style];
+    };
   }
 
   getScalarValue (event) {
@@ -231,12 +311,18 @@ class OLComponent extends React.Component {
   }
 
   handleMapClick (event) {
-    console.log(this.props.selectedDatasetLayer);
+    console.log('handling map click:', event);
     switch (this.props.mapManipulationMode) {
       case constants.VISUALIZE_MODE_JOB_MANAGEMENT:
-        return this.selectRegion(event);
+        if (this.props.selectedShapefile.title) {
+          console.log('selected shapefile:', this.props.selectedShapefile);
+          return this.handleSelectRegionClick(event);
+        }
+        console.log('choose a shapefile first');
+        return;
       case constants.VISUALIZE_MODE_VISUALIZE:
         if (this.props.selectedDatasetLayer['dataset_id']) {
+          console.log('selected dataset:', this.props.selectedDatasetLayer);
           return this.getScalarValue(event);
         }
         console.log('choose a dataset first');
@@ -336,7 +422,6 @@ class OLComponent extends React.Component {
             'BGCOLOR': 'transparent',
             'SRS': 'EPSG:4326',
             'TIME': ''
-
           };
           if (layer['Dimension']) {
             // Only if a temporal dimension exists
@@ -409,7 +494,7 @@ class OLComponent extends React.Component {
   render () {
     return (
       <div className={classes['OLComponent']}>
-        <div id="map" className="map" style={{ 'width': '100%', 'height': '100%', 'position': 'fixed' }}>
+        <div id="map" className="map" style={{'width': '100%', 'height': '100%', 'position': 'fixed'}}>
           <div id="popup" className="ol-popup"></div>
         </div>
         <Dialog

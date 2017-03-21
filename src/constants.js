@@ -12,11 +12,14 @@ export const VISUALIZE_MODE_GRAPHS = 'MapControls.MODE_GRAPHS';
 export const VISUALIZE_MODE_JOB_MANAGEMENT = 'MapControls.MODE_REGION_SELECTION';
 export const VISUALIZE_CHART_PANEL = 'CHART_PANEL';
 export const VISUALIZE_LAYER_SWITCHER_PANEL = 'LAYER_SWITCHER_PANEL';
-export const VISUALIZE_MAP_PANEL = 'MAP_PANEL';
+export const VISUALIZE_INFO_PANEL = 'INFO_PANEL';
 export const VISUALIZE_MAP_CONTROLS_PANEL = 'MAP_CONTROLS_PANEL';
 export const VISUALIZE_TIME_SLIDER_PANEL = 'TIME_SLIDER_PANEL';
 // monitor
 export const MONITOR_SET_JOBS = 'MONITOR_SET_JOBS';
+export const JOB_FAILED_STATUS = 'ProcessFailed';
+export const JOB_SUCCESS_STATUS = 'ProcessSucceeded';
+export const JOB_STARTED_STATUS = 'ProcessStarted';
 // workflow wizard
 export const WORKFLOW_CHOOSE_PROCESS = 'WORKFLOW_CHOOSE_PROCESS';
 export const WORKFLOW_SET_PROCESSES = 'WORKFLOW_SET_PROCESSES';
@@ -38,3 +41,6 @@ export const PANEL_DATASET_WMS_LAYERS = 'Visualize.DatasetWMSLayers';
 export const PANEL_CLIMATE_INDICATORS = 'Visualize.ClimateIndicators';
 export const PANEL_PLOTLY = 'Visualize.Plotly';
 export const DEFAULT_SELECTED_KEY = 'frequency';
+// Pagination
+export const PER_PAGE_OPTIONS = [5, 10, 25];
+export const PER_PAGE_INITIAL_INDEX = 0;

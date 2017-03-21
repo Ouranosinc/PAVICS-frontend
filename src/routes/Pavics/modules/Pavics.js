@@ -1,5 +1,6 @@
 import initialState from './../../../store/initialState';
 import * as constants from './../../../constants';
+import {parseString} from 'xml2js';
 import ol from 'openlayers';
 // SYNC
 const SET_WMS_LAYER = 'Visualize.SET_WMS_LAYER';
@@ -11,7 +12,10 @@ const SET_SELECTED_DATASET_LAYER = 'Visualize.SET_SELECTED_DATASET_LAYER';
 const SET_SELECTED_DATASET_CAPABILITIES = 'Visualize.SET_SELECTED_DATASET_CAPABILITIES';
 const ADD_DATASET_LAYERS_TO_VISUALIZE = 'Visualize.ADD_DATASET_LAYERS_TO_VISUALIZE';
 const ADD_SEARCH_CRITERIAS_TO_PROJECTS = 'Visualize.ADD_SEARCH_CRITERIAS_TO_PROJECTS';
-const REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS = 'Visualize.REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS'
+const ADD_FEATURE_TO_SELECTED_REGIONS = 'Visualize.ADD_FEATURE_TO_SELECTED_REGIONS';
+const REMOVE_FEATURE_FROM_SELECTED_REGIONS = 'Visualize.REMOVE_FEATURE_FROM_SELECTED_REGIONS';
+const RESET_SELECTED_REGIONS = 'Visualize.RESET_SELECTED_REGIONS';
+const REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS = 'Visualize.REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS';
 const ADD_DATASETS_TO_PROJECTS = 'Visualize.ADD_DATASETS_TO_PROJECTS';
 const ADD_FACET_KEY_VALUE_PAIR = 'Visualize.ADD_FACET_KEY_VALUE_PAIR';
 const REMOVE_FACET_KEY_VALUE_PAIR = 'Visualize.REMOVE_FACET_KEY_VALUE_PAIR';
@@ -52,6 +56,9 @@ const FETCH_WMS_LAYER_DETAILS_SUCCESS = 'Visualize.FETCH_WMS_LAYER_DETAILS_SUCCE
 const FETCH_WMS_LAYER_TIMESTEPS_REQUEST = 'Visualize.FETCH_WMS_LAYER_TIMESTEPS_REQUEST';
 const FETCH_WMS_LAYER_TIMESTEPS_FAILURE = 'Visualize.FETCH_WMS_LAYER_TIMESTEPS_FAILURE';
 const FETCH_WMS_LAYER_TIMESTEPS_SUCCESS = 'Visualize.FETCH_WMS_LAYER_TIMESTEPS_SUCCESS';
+const FETCH_WPS_JOBS_REQUEST = 'Visualize.FETCH_WPS_JOBS_REQUEST';
+const FETCH_WPS_JOBS_FAILURE = 'Visualize.FETCH_WPS_JOBS_FAILURE';
+const FETCH_WPS_JOBS_SUCCESS = 'Visualize.FETCH_WPS_JOBS_SUCCESS';
 // ------------------------------------
 // Actions
 // ------------------------------------
@@ -452,6 +459,39 @@ export function receiveWMSLayerTimesteps (data) {
     }
   };
 }
+
+export function requestWPSJobs () {
+  return {
+    type: FETCH_WPS_JOBS_REQUEST,
+    jobs: {
+      requestedAt: Date.now(),
+      isFetching: true,
+      items: []
+    }
+  };
+}
+export function receiveWPSJobsFailure (error) {
+  return {
+    type: FETCH_WPS_JOBS_FAILURE,
+    jobs: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      items: [],
+      error: error
+    }
+  };
+}
+export function receiveWPSJobs (jobs) {
+  return {
+    type: FETCH_WPS_JOBS_SUCCESS,
+    jobs: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      items: jobs,
+      error: null
+    }
+  };
+}
 // ASYNC
 export function fetchClimateIndicators () {
   return function (dispatch) {
@@ -746,6 +786,40 @@ export function fetchShapefiles () {
       });
   };
 }
+function restoreInitialSelectedRegions () {
+  return {
+    type: RESET_SELECTED_REGIONS
+  };
+}
+function addFeatureIdToSelectedRegions (featureId) {
+  console.log('about to return the actual action handler');
+  return {
+    type: ADD_FEATURE_TO_SELECTED_REGIONS,
+    featureId: featureId
+  };
+}
+function removeFeatureIdFromSelectedRegions (featureId) {
+  return {
+    type: REMOVE_FEATURE_FROM_SELECTED_REGIONS,
+    featureId: featureId
+  };
+}
+export function selectRegion (featureId) {
+  return dispatch => {
+    console.log('about to dispatch select region');
+    dispatch(addFeatureIdToSelectedRegions(featureId));
+  };
+}
+export function unselectRegion (featureId) {
+  return dispatch => {
+    dispatch(removeFeatureIdFromSelectedRegions(featureId));
+  };
+}
+export function resetSelectedRegions () {
+  return dispatch => {
+    dispatch(restoreInitialSelectedRegions());
+  };
+}
 export function setSelectedDatasetCapabilities (capabilities) {
   return {
     type: SET_SELECTED_DATASET_CAPABILITIES,
@@ -825,13 +899,17 @@ export function chooseProcess (process) {
     dispatch(getNextStep());
   };
 }
-export function fetchJobs () {
-  return (dispatch) => {
+export function fetchWPSJobs () {
+  return function (dispatch) {
+    dispatch(requestWPSJobs());
     return fetch('/phoenix/jobs')
       .then(response => response.json())
-      .then(json => dispatch(setJobs(json.jobs)))
-      .catch(err => {
-        console.log(err);
+      .then(json =>
+        dispatch(receiveWPSJobs(json.jobs))
+      )
+      .catch(error => {
+        console.log(error);
+        dispatch(receiveWPSJobsFailure(error));
       });
   };
 }
@@ -912,6 +990,19 @@ const WORKFLOW_WIZARD_HANDLERS = {
 const VISUALIZE_HANDLERS = {
   [constants.VISUALIZE_SET_MAP_MANIPULATION_MODE]: (state, action) => {
     return {...state, mapManipulationMode: action.mode};
+  },
+  [ADD_FEATURE_TO_SELECTED_REGIONS]: (state, action) => {
+    let copy = state.selectedRegions.concat([action.featureId]);
+    return {...state, selectedRegions: copy};
+  },
+  [REMOVE_FEATURE_FROM_SELECTED_REGIONS]: (state, action) => {
+    let copy = state.selectedRegions.slice();
+    copy.splice(copy.indexOf(action.featureId), 1);
+    console.log('after removing feature:', copy);
+    return {...state, selectedRegions: copy};
+  },
+  [RESET_SELECTED_REGIONS]: (state) => {
+    return {...state, selectedRegions: []};
   },
   [SET_WMS_LAYER]: (state, action) => {
     return {...state, layer: action.layer};
@@ -1100,9 +1191,15 @@ const PLATFORM_HANDLERS = {
   }
 };
 const MONITOR_HANDLERS = {
-  [constants.MONITOR_SET_JOBS]: (state, action) => {
-    return {...state, jobs: action.jobs};
-  }
+  [FETCH_WPS_JOBS_REQUEST]: (state, action) => {
+    return ({...state, jobs: action.jobs});
+  },
+  [FETCH_WPS_JOBS_FAILURE]: (state, action) => {
+    return ({...state, jobs: action.jobs});
+  },
+  [FETCH_WPS_JOBS_SUCCESS]: (state, action) => {
+    return ({...state, jobs: action.jobs});
+  },
 };
 function workflowWizardReducer (state, action) {
   const handler = WORKFLOW_WIZARD_HANDLERS[action.type];

@@ -3,10 +3,10 @@ import { Glyphicon } from 'react-bootstrap';
 import * as constants from './../../constants';
 import classes from './PieMenu.scss';
 import AccessTimeIcon from 'material-ui/svg-icons/device/access-time';
-import InsertChartIcon from 'material-ui/svg-icons/editor/insert-chart';
+import ChartIcon from 'material-ui/svg-icons/action/timeline';
 import LayersIcon from 'material-ui/svg-icons/maps/layers';
-import MenuIcon from 'material-ui/svg-icons/navigation/menu';
-import MyLocationIcon from 'material-ui/svg-icons/maps/my-location';
+import MapControlsIcon from 'material-ui/svg-icons/maps/my-location';
+import InfoIcon from 'material-ui/svg-icons/action/description';
 import {white} from 'material-ui/styles/colors';
 
 const customSvgStyle = {
@@ -64,13 +64,13 @@ export class PieMenu extends React.Component {
           </a>*/}
           <ul className={classes['menu']}>
             <li>
-              <a href="#" onClick={this._toggleMapPanel} className={this.props.mapPanelStatus[constants.VISUALIZE_MAP_PANEL] ? classes['IsOpen'] : ''}>
-                <Glyphicon className={classes['CustomGlyphIcon']} glyph="globe" />
+              <a href="#" className={this.props.mapPanelStatus[constants.VISUALIZE_MAP_PANEL] ? classes['IsOpen'] : ''}>
+                <InfoIcon color={white} style={customSvgStyle} />
               </a>
             </li>
             <li>
-              <a href="#" onClick={this._toggleMapControlsPanel} className={this.props.mapPanelStatus[constants.VISUALIZE_MAP_CONTROLS_PANEL] ? classes['IsOpen'] : ''}>
-                <MyLocationIcon color={white} style={customSvgStyle} />
+              <a href="#" onClick={this._toggleChartPanel} className={this.props.mapPanelStatus[constants.VISUALIZE_CHART_PANEL] ? classes['IsOpen'] : ''}>
+                <ChartIcon color={white} style={customSvgStyle} />
               </a>
             </li>
             <li>
@@ -79,13 +79,13 @@ export class PieMenu extends React.Component {
               </a>
             </li>
             <li>
-              <a href="#" onClick={this._toggleChartPanel} className={this.props.mapPanelStatus[constants.VISUALIZE_CHART_PANEL] ? classes['IsOpen'] : ''}>
-                <InsertChartIcon color={white} style={customSvgStyle} />
+              <a href="#" onClick={this._toggleTimeSliderPanel} className={this.props.mapPanelStatus[constants.VISUALIZE_TIME_SLIDER_PANEL] ? classes['IsOpen'] : ''}>
+                <AccessTimeIcon color={white} style={customSvgStyle} />
               </a>
             </li>
             <li>
-              <a href="#" onClick={this._toggleTimeSliderPanel} className={this.props.mapPanelStatus[constants.VISUALIZE_TIME_SLIDER_PANEL] ? classes['IsOpen'] : ''}>
-                <AccessTimeIcon color={white} style={customSvgStyle} />
+              <a href="#" onClick={this._toggleMapControlsPanel} className={this.props.mapPanelStatus[constants.VISUALIZE_MAP_CONTROLS_PANEL] ? classes['IsOpen'] : ''}>
+                <MapControlsIcon color={white} style={customSvgStyle} />
               </a>
             </li>
           </ul>

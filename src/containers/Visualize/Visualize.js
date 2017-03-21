@@ -2,7 +2,7 @@ import React from 'react';
 import classes from './Visualize.scss';
 // TODO: Fix, we should only import containers here
 import OLComponent from '../../components/OLComponent';
-import { PieMenu } from './../../components/PieMenu/PieMenu';
+import {PieMenu} from './../../components/PieMenu/PieMenu';
 import TimeSlider from '../../containers/TimeSlider';
 import LayerSwitcher from '../../components/LayerSwitcher';
 import PlotlyWrapper from './../../components/PlotlyWrapper';
@@ -36,7 +36,10 @@ class Visualize extends React.Component {
     setSelectedDatasetCapabilities: React.PropTypes.func.isRequired,
     selectedRegions: React.PropTypes.array.isRequired,
     selectedColorPalette: React.PropTypes.object.isRequired,
-    selectColorPalette: React.PropTypes.func.isRequired
+    selectColorPalette: React.PropTypes.func.isRequired,
+    selectRegion: React.PropTypes.func.isRequired,
+    unselectRegion: React.PropTypes.func.isRequired,
+    resetSelectedRegions: React.PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -45,8 +48,8 @@ class Visualize extends React.Component {
     this._onToggleMapPanel = this._onToggleMapPanel.bind(this);
     this.setOLComponentReference = this.setOLComponentReference.bind(this);
     let mapPanelStatus = {};
-    mapPanelStatus[constants.VISUALIZE_MAP_PANEL] = true;
-    mapPanelStatus[constants.VISUALIZE_MAP_CONTROLS_PANEL] = false;
+    mapPanelStatus[constants.VISUALIZE_INFO_PANEL] = false;
+    mapPanelStatus[constants.VISUALIZE_MAP_CONTROLS_PANEL] = true;
     mapPanelStatus[constants.VISUALIZE_CHART_PANEL] = false;
     mapPanelStatus[constants.VISUALIZE_LAYER_SWITCHER_PANEL] = true;
     mapPanelStatus[constants.VISUALIZE_TIME_SLIDER_PANEL] = true;
@@ -81,34 +84,50 @@ class Visualize extends React.Component {
     return (
       <div>
         <div className={classes['Visualize']}>
-          {(this.state.mapPanelStatus[constants.VISUALIZE_MAP_PANEL])
-            ? <div className={classes.mapContainer}>
-              <OLComponent
-                setCurrentDateTime={this.props.setCurrentDateTime}
-                selectedColorPalette={this.props.selectedColorPalette}
-                selectedRegions={this.props.selectedRegions}
-                fetchPlotlyData={this.props.fetchPlotlyData}
-                selectedDatasetCapabilities={this.props.selectedDatasetCapabilities}
-                setSelectedDatasetCapabilities={this.props.setSelectedDatasetCapabilities}
-                layer={this.props.layer}
-                currentDateTime={this.props.currentDateTime}
-                mapManipulationMode={this.props.mapManipulationMode}
-                fetchWMSLayerDetails={this.props.fetchWMSLayerDetails}
-                fetchWMSLayerTimesteps={this.props.fetchWMSLayerTimesteps}
-                selectedShapefile={this.props.selectedShapefile}
-                selectedBasemap={this.props.selectedBasemap}
-                selectedDatasetLayer={this.props.selectedDatasetLayer}
-                ref={this.setOLComponentReference} />
-            </div> : null
+          <div className={classes.mapContainer}>
+            <OLComponent
+              selectRegion={this.props.selectRegion}
+              unselectRegion={this.props.unselectRegion}
+              setCurrentDateTime={this.props.setCurrentDateTime}
+              selectedColorPalette={this.props.selectedColorPalette}
+              selectedRegions={this.props.selectedRegions}
+              fetchPlotlyData={this.props.fetchPlotlyData}
+              selectedDatasetCapabilities={this.props.selectedDatasetCapabilities}
+              setSelectedDatasetCapabilities={this.props.setSelectedDatasetCapabilities}
+              layer={this.props.layer}
+              currentDateTime={this.props.currentDateTime}
+              mapManipulationMode={this.props.mapManipulationMode}
+              fetchWMSLayerDetails={this.props.fetchWMSLayerDetails}
+              fetchWMSLayerTimesteps={this.props.fetchWMSLayerTimesteps}
+              selectedShapefile={this.props.selectedShapefile}
+              selectedBasemap={this.props.selectedBasemap}
+              selectedDatasetLayer={this.props.selectedDatasetLayer}
+              ref={this.setOLComponentReference} />
+          </div>
+          {(this.state.mapPanelStatus[constants.VISUALIZE_INFO_PANEL])
+            ? <div></div> : null
           }
           <PieMenu
             mapPanelStatus={this.state.mapPanelStatus}
             onToggleMapPanel={this._onToggleMapPanel} />
           <div className={classes.left}>
+            {(this.state.mapPanelStatus[constants.VISUALIZE_CHART_PANEL])
+              ? <div className={classes.panel}>
+                <PlotlyWrapper
+                  onToggleMapPanel={this._onToggleMapPanel}
+                  data={this.props.plotlyData.data}
+                  layout={this.props.plotlyData.layout}
+                  fetchPlotlyData={this.props.fetchPlotlyData}
+                />
+              </div>
+              : null
+            }
             {
               (this.state.mapPanelStatus[constants.VISUALIZE_LAYER_SWITCHER_PANEL])
                 ? <div className={classes['panel']}>
                   <LayerSwitcher
+                    resetSelectedRegions={this.props.resetSelectedRegions}
+                    onToggleMapPanel={this._onToggleMapPanel}
                     selectColorPalette={this.props.selectColorPalette}
                     selectedColorPalette={this.props.selectedColorPalette}
                     fetchShapefiles={this.props.fetchShapefiles}
@@ -122,16 +141,6 @@ class Visualize extends React.Component {
                     publicShapeFiles={this.props.publicShapeFiles}
                     baseMaps={this.props.baseMaps} />
                 </div> : null
-            }
-            {(this.state.mapPanelStatus[constants.VISUALIZE_CHART_PANEL])
-              ? <div className={classes.panel}>
-                <PlotlyWrapper
-                  panelControls={this.props.panelControls}
-                  data={this.props.plotlyData.data}
-                  layout={this.props.plotlyData.layout}
-                  fetchPlotlyData={this.props.fetchPlotlyData}
-                />
-              </div> : null
             }
             {(this.state.mapPanelStatus[constants.VISUALIZE_TIME_SLIDER_PANEL])
               ? <div className={classes.panel}>
@@ -151,6 +160,7 @@ class Visualize extends React.Component {
               this.state.mapPanelStatus[constants.VISUALIZE_MAP_CONTROLS_PANEL]
                 ? <div className={classes['panel']} style={{clear: 'left'}}>
                   <MapControls
+                    onToggleMapPanel={this._onToggleMapPanel}
                     selectMapManipulationMode={selectModeCallback} />
                 </div> : null
             }

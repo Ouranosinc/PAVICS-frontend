@@ -6,7 +6,7 @@ import SearchCatalogResults from './SearchCatalogResults';
 import TimeSlider from './TimeSlider';
 import {ClimateIndicators, Visualize} from './Visualize';
 import WorkflowWizard from './WorkflowWizard';
-import Monitor from './Monitor';
+import ProcessMonitoring from './ProcessMonitoring';
 
 export {
   AccountManagement,
@@ -15,7 +15,7 @@ export {
   SearchCatalog,
   SearchCatalogResults,
   ClimateIndicators,
-  Monitor,
+  ProcessMonitoring,
   TimeSlider,
   Visualize,
   WorkflowWizard
