@@ -12,7 +12,10 @@ const SET_SELECTED_DATASET_LAYER = 'Visualize.SET_SELECTED_DATASET_LAYER';
 const SET_SELECTED_DATASET_CAPABILITIES = 'Visualize.SET_SELECTED_DATASET_CAPABILITIES';
 const ADD_DATASET_LAYERS_TO_VISUALIZE = 'Visualize.ADD_DATASET_LAYERS_TO_VISUALIZE';
 const ADD_SEARCH_CRITERIAS_TO_PROJECTS = 'Visualize.ADD_SEARCH_CRITERIAS_TO_PROJECTS';
-const REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS = 'Visualize.REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS'
+const ADD_FEATURE_TO_SELECTED_REGIONS = 'Visualize.ADD_FEATURE_TO_SELECTED_REGIONS';
+const REMOVE_FEATURE_FROM_SELECTED_REGIONS = 'Visualize.REMOVE_FEATURE_FROM_SELECTED_REGIONS';
+const RESET_SELECTED_REGIONS = 'Visualize.RESET_SELECTED_REGIONS';
+const REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS = 'Visualize.REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS';
 const ADD_DATASETS_TO_PROJECTS = 'Visualize.ADD_DATASETS_TO_PROJECTS';
 const ADD_FACET_KEY_VALUE_PAIR = 'Visualize.ADD_FACET_KEY_VALUE_PAIR';
 const REMOVE_FACET_KEY_VALUE_PAIR = 'Visualize.REMOVE_FACET_KEY_VALUE_PAIR';
@@ -783,6 +786,38 @@ export function fetchShapefiles () {
       });
   };
 }
+function restoreInitialSelectedRegions () {
+  return {
+    type: RESET_SELECTED_REGIONS
+  };
+}
+function addFeatureIdToSelectedRegions (featureId) {
+  return {
+    type: ADD_FEATURE_TO_SELECTED_REGIONS,
+    featureId: featureId
+  };
+}
+function removeFeatureIdFromSelectedRegions (featureId) {
+  return {
+    type: REMOVE_FEATURE_FROM_SELECTED_REGIONS,
+    featureId: featureId
+  };
+}
+export function selectRegion (featureId) {
+  return dispatch => {
+    dispatch(addFeatureIdToSelectedRegions(featureId));
+  };
+}
+export function unselectRegion (featureId) {
+  return dispatch => {
+    dispatch(removeFeatureIdFromSelectedRegions(featureId));
+  };
+}
+export function resetSelectedRegions () {
+  return dispatch => {
+    dispatch(restoreInitialSelectedRegions());
+  };
+}
 export function setSelectedDatasetCapabilities (capabilities) {
   return {
     type: SET_SELECTED_DATASET_CAPABILITIES,
@@ -953,6 +988,19 @@ const WORKFLOW_WIZARD_HANDLERS = {
 const VISUALIZE_HANDLERS = {
   [constants.VISUALIZE_SET_MAP_MANIPULATION_MODE]: (state, action) => {
     return {...state, mapManipulationMode: action.mode};
+  },
+  [ADD_FEATURE_TO_SELECTED_REGIONS]: (state, action) => {
+    let copy = state.selectedRegions;
+    copy.push(action.featureId);
+    return {...state, selectedRegions: copy};
+  },
+  [REMOVE_FEATURE_FROM_SELECTED_REGIONS]: (state, action) => {
+    let copy = state.selectedRegions;
+    copy.splice(state.selectedRegions.indexOf(action.featureId), 1);
+    return {...state, selectedRegions: copy};
+  },
+  [RESET_SELECTED_REGIONS]: (state) => {
+    return {...state, selectedRegions: []};
   },
   [SET_WMS_LAYER]: (state, action) => {
     return {...state, layer: action.layer};
