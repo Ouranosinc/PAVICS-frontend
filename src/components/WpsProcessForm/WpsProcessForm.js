@@ -8,6 +8,7 @@ const STRING = '//www.w3.org/TR/xmlschema-2/#string';
 const NETCDF = 'ComplexData';
 const LABEL_NETCDF = 'LABEL_NETCDF';
 const LABEL_SHAPEFILE = 'LABEL_SHAPEFILE';
+const LABEL_FEATURE_IDS = 'LABEL_FEATURE_IDS';
 export default class WpsProcessForm extends React.Component {
   static propTypes = {
     selectedProcess: React.PropTypes.object.isRequired,
@@ -19,7 +20,8 @@ export default class WpsProcessForm extends React.Component {
     selectedProvider: React.PropTypes.string.isRequired,
     goToSection: React.PropTypes.func.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
-    selectedDatasetLayer: React.PropTypes.object.isRequired
+    selectedDatasetLayer: React.PropTypes.object.isRequired,
+    selectedRegions: React.PropTypes.array.isRequired
   };
 
   constructor (props) {
@@ -33,6 +35,7 @@ export default class WpsProcessForm extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
+    console.log('form will receive props', nextProps);
     if (nextProps.selectedDatasetLayer['urls']) {
       // TODO when unhardcoding files, remove the [0]
       if (this.state.formData[LABEL_NETCDF] !== nextProps.selectedDatasetLayer['urls'][0]) {
@@ -51,10 +54,28 @@ export default class WpsProcessForm extends React.Component {
           ...this.state,
           formData: {
             ...this.state.formData,
-            [LABEL_SHAPEFILE]: nextProps.selectedShapefile['wmsParams']['LAYERS']
+            [LABEL_SHAPEFILE]: nextProps.selectedShapefile['wmsParams'] ? nextProps.selectedShapefile['wmsParams']['LAYERS'] : ''
           }
         });
       }
+    } else {
+      this.setState({
+        ...this.state,
+        formData: {
+          ...this.state.formData,
+          [LABEL_SHAPEFILE]: ''
+        }
+      });
+    }
+    let thisFeatureIdsString = nextProps.selectedRegions.join(', ');
+    if (this.state.formData[LABEL_FEATURE_IDS] !== thisFeatureIdsString) {
+      this.setState({
+        ...this.state,
+        formData: {
+          ...this.state.formData,
+          [LABEL_FEATURE_IDS]: thisFeatureIdsString
+        }
+      });
     }
   }
 
@@ -134,6 +155,18 @@ export default class WpsProcessForm extends React.Component {
                 name={input.name}
                 onChange={this.handleChange}
                 value={this.state.formData[LABEL_SHAPEFILE]} />
+              <p>{input.description}</p>
+            </div>
+          );
+        } else if (input.name === 'featureids') {
+          return (
+            <div>
+              <FormControl
+                id={LABEL_FEATURE_IDS}
+                type="text"
+                name={input.name}
+                onChange={this.handleChange}
+                value={this.state.formData[LABEL_FEATURE_IDS]} />
               <p>{input.description}</p>
             </div>
           );

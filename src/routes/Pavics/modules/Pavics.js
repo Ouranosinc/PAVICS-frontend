@@ -792,6 +792,7 @@ function restoreInitialSelectedRegions () {
   };
 }
 function addFeatureIdToSelectedRegions (featureId) {
+  console.log('about to return the actual action handler');
   return {
     type: ADD_FEATURE_TO_SELECTED_REGIONS,
     featureId: featureId
@@ -805,6 +806,7 @@ function removeFeatureIdFromSelectedRegions (featureId) {
 }
 export function selectRegion (featureId) {
   return dispatch => {
+    console.log('about to dispatch select region');
     dispatch(addFeatureIdToSelectedRegions(featureId));
   };
 }
@@ -990,13 +992,13 @@ const VISUALIZE_HANDLERS = {
     return {...state, mapManipulationMode: action.mode};
   },
   [ADD_FEATURE_TO_SELECTED_REGIONS]: (state, action) => {
-    let copy = state.selectedRegions;
-    copy.push(action.featureId);
+    let copy = state.selectedRegions.concat([action.featureId]);
     return {...state, selectedRegions: copy};
   },
   [REMOVE_FEATURE_FROM_SELECTED_REGIONS]: (state, action) => {
-    let copy = state.selectedRegions;
-    copy.splice(state.selectedRegions.indexOf(action.featureId), 1);
+    let copy = state.selectedRegions.slice();
+    copy.splice(copy.indexOf(action.featureId), 1);
+    console.log('after removing feature:', copy);
     return {...state, selectedRegions: copy};
   },
   [RESET_SELECTED_REGIONS]: (state) => {

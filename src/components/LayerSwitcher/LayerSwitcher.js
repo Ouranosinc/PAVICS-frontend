@@ -66,6 +66,7 @@ export default class LayerSwitcher extends React.Component {
   }
 
   setSelectedShapefile (event, value) {
+    this.props.resetSelectedRegions();
     this.props.selectShapefile(value);
   }
 
@@ -93,8 +94,8 @@ export default class LayerSwitcher extends React.Component {
   }
 
   resetShapefile () {
-    this.props.resetSelectedRegions();
     this.props.selectShapefile({});
+    this.props.resetSelectedRegions();
   }
 
   resetDatasetLayer () {
