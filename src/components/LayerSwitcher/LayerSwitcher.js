@@ -105,7 +105,7 @@ export default class LayerSwitcher extends React.Component {
   makeShapefileList () {
     return (
       <List
-        style={{height: '252px', overflowY: 'auto'}}
+        style={{height: '302px', overflowY: 'auto'}}
         className={classes['layers']}>
         <ListItem
           initiallyOpen
@@ -139,7 +139,7 @@ export default class LayerSwitcher extends React.Component {
   makeBaseMapsList () {
     return (
       <List
-        style={{height: '300px', overflowY: 'auto'}}
+        style={{height: '350px', overflowY: 'auto'}}
         className={classes['layers']}>
         <ListItem
           initiallyOpen
@@ -170,7 +170,7 @@ export default class LayerSwitcher extends React.Component {
   makeDatasetsList () {
     return (
       <List
-        style={{height: '252px', overflowY: 'auto'}}
+        style={{height: '225px', overflowY: 'auto'}}
         className={classes['layers']}>
         {
           this.props.currentVisualizedDatasetLayers.map((dataset, i) => {
@@ -204,6 +204,8 @@ export default class LayerSwitcher extends React.Component {
         <div style={{textAlign: 'center'}}>opacity: {Math.floor(this.props.selectedDatasetLayer.opacity * 100)}%
         </div>
         <Slider
+          disabled={!this.props.selectedDatasetLayer.dataset_id}
+          sliderStyle={{margin: '0'}}
           step={0.05}
           onChange={this.setDatasetLayerOpacity}
           value={this.props.selectedDatasetLayer.opacity} />
@@ -249,17 +251,18 @@ export default class LayerSwitcher extends React.Component {
               icon={<FontIcon className="material-icons">satellite</FontIcon>}
               label="Datasets">
               <Paper zDepth={2}>
-                <div style={{width: '75%', display: 'inline-block', padding: '0 15px'}}>
+                <div style={{width: '65%', display: 'inline-block', padding: '0 15px'}}>
                   {this.makeColorPalettesSelect()}
                 </div>
-                <div style={{width: '25%', display: 'inline-block'}}>
+                <div style={{width: '35%', display: 'inline-block'}}>
                   <Subheader>
                     <RaisedButton
+                      style={{marginLeft: '10px'}}
                       onClick={this.resetDatasetLayer}
                       label="Reset" />
                   </Subheader>
                 </div>
-                {this.props.selectedDatasetLayer.dataset_id ? this.makeSlider() : null}
+                {this.makeSlider()}
                 {this.makeDatasetsList()}
               </Paper>
             </Tab>
