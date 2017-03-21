@@ -38,7 +38,9 @@ const initialState = {
     },
     selectedShapefile: {},
     selectedBasemap: '',
-    selectedDatasetLayer: {},
+    selectedDatasetLayer: {
+      opacity: 0.8
+    },
     publicShapeFiles: [],
     baseMaps: [
       'Aerial',

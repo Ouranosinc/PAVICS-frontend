@@ -3,6 +3,9 @@ import * as classes from './LayerSwitcher.scss';
 import * as constants from './../../constants';
 import {List, ListItem} from 'material-ui/List';
 import {Tabs, Tab} from 'material-ui/Tabs';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
+import Slider from 'material-ui/Slider';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import FontIcon from 'material-ui/FontIcon';
 import Paper from 'material-ui/Paper';
@@ -12,20 +15,17 @@ import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
 import LayersIcon from 'material-ui/svg-icons/maps/layers';
 import MinimizeIcon from 'material-ui/svg-icons/content/remove';
-
 export default class LayerSwitcher extends React.Component {
-
   availableColorPalettes = [
     {
-      url: `${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=seq-Blues&COLORBARONLY=true&WIDTH=264&HEIGHT=70&VERTICAL=false`,
+      url: `${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=seq-Blues&COLORBARONLY=true&WIDTH=200&HEIGHT=20&VERTICAL=false`,
       name: 'default-scalar/seq-Blues'
     },
     {
-      url: `${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=div-BuRd&COLORBARONLY=true&WIDTH=264&HEIGHT=70&VERTICAL=false`,
+      url: `${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=div-BuRd&COLORBARONLY=true&WIDTH=200&HEIGHT=20&VERTICAL=false`,
       name: 'default-scalar/div-BuRd'
     }
   ];
-
   static propTypes = {
     onToggleMapPanel: React.PropTypes.func.isRequired,
     fetchShapefiles: React.PropTypes.func.isRequired,
@@ -37,18 +37,23 @@ export default class LayerSwitcher extends React.Component {
     selectedColorPalette: React.PropTypes.object.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
+    resetSelectedRegions: React.PropTypes.func.isRequired,
     selectedBasemap: React.PropTypes.string.isRequired,
     publicShapeFiles: React.PropTypes.array.isRequired,
     baseMaps: React.PropTypes.array.isRequired
   };
 
-  constructor () {
-    super();
+  constructor (props) {
+    super(props);
     this._onHideLayerSwitcherPanel = this._onHideLayerSwitcherPanel.bind(this);
     this.setSelectedShapefile = this.setSelectedShapefile.bind(this);
     this.setSelectedBaseMap = this.setSelectedBaseMap.bind(this);
     this.setSelectedDatasetLayer = this.setSelectedDatasetLayer.bind(this);
+    this.setDatasetLayerOpacity = this.setDatasetLayerOpacity.bind(this);
     this.setSelectedColorPalette = this.setSelectedColorPalette.bind(this);
+    this.resetDatasetLayer = this.resetDatasetLayer.bind(this);
+    this.resetShapefile = this.resetShapefile.bind(this);
+    this.props.selectColorPalette(this.availableColorPalettes[0]);
   }
 
   componentDidMount () {
@@ -61,6 +66,7 @@ export default class LayerSwitcher extends React.Component {
   }
 
   setSelectedShapefile (event, value) {
+    this.props.resetSelectedRegions();
     this.props.selectShapefile(value);
   }
 
@@ -69,15 +75,27 @@ export default class LayerSwitcher extends React.Component {
   }
 
   setSelectedDatasetLayer (event, value) {
-    this.props.selectDatasetLayer(value);
+    let selectedDataset = this.props.currentVisualizedDatasetLayers.find(dataset => dataset.dataset_id === value);
+    this.props.selectDatasetLayer({
+      ...selectedDataset,
+      opacity: this.props.selectedDatasetLayer.opacity
+    });
   }
 
-  setSelectedColorPalette (event, value) {
+  setDatasetLayerOpacity (event, value) {
+    this.props.selectDatasetLayer({
+      ...this.props.selectedDatasetLayer,
+      opacity: value
+    });
+  }
+
+  setSelectedColorPalette (event, index, value) {
     this.props.selectColorPalette(value);
   }
 
   resetShapefile () {
     this.props.selectShapefile({});
+    this.props.resetSelectedRegions();
   }
 
   resetDatasetLayer () {
@@ -135,7 +153,7 @@ export default class LayerSwitcher extends React.Component {
                   key={i}
                   leftCheckbox={
                     <RadioButtonGroup
-                      name="selectedBaseMap"f
+                      name="selectedBaseMap" f
                       valueSelected={this.props.selectedBasemap}
                       onChange={this.setSelectedBaseMap}>
                       <RadioButton value={map} />
@@ -163,9 +181,9 @@ export default class LayerSwitcher extends React.Component {
                 leftCheckbox={
                   <RadioButtonGroup
                     name="selectedDatasetLayer"
-                    valueSelected={this.props.selectedDatasetLayer}
+                    valueSelected={this.props.selectedDatasetLayer.dataset_id}
                     onChange={this.setSelectedDatasetLayer}>
-                    <RadioButton value={dataset} />
+                    <RadioButton value={dataset.dataset_id} />
                   </RadioButtonGroup>
                 } />
             );
@@ -175,33 +193,44 @@ export default class LayerSwitcher extends React.Component {
     );
   }
 
-  makeColorPalettesList () {
+  makeSlider () {
+    // not so clever trick so that opacity is not undefined when resetting layer
+    // should stay aligned with initialState's opacity
+    if (isNaN(this.props.selectedDatasetLayer.opacity)) {
+      this.setDatasetLayerOpacity(null, 0.8);
+    }
     return (
-      <List
-        style={{height: '284px', overflowY: 'auto'}}>
-        {
-          this.availableColorPalettes.map(
-            (palette, i) => {
-              return (
-                <ListItem
-                  key={i}
-                  primaryText={<img src={palette.url} />}
-                  leftCheckbox={
-                    <RadioButtonGroup
-                      onChange={this.setSelectedColorPalette}
-                      valueSelected={this.props.selectedColorPalette}
-                      name="selectedColorPalette">
-                      <RadioButton
-                        value={palette}
-                        label={palette.name}
-                      />
-                    </RadioButtonGroup>
-                  } />
-              );
-            }
-          )
-        }
-      </List>
+      <div style={{padding: '0 15px'}}>
+        <div style={{textAlign: 'center'}}>opacity: {Math.floor(this.props.selectedDatasetLayer.opacity * 100)}%
+        </div>
+        <Slider
+          step={0.05}
+          onChange={this.setDatasetLayerOpacity}
+          value={this.props.selectedDatasetLayer.opacity} />
+      </div>
+    );
+  }
+
+  makeColorPalettesSelect () {
+    return (
+      <SelectField
+        selectedMenuItemStyle={{color: 'inherit'}}
+        floatingLabelText="Color Palette"
+        value={this.props.selectedColorPalette}
+        onChange={this.setSelectedColorPalette}>{
+        this.availableColorPalettes.map((palette, i) => {
+          return (
+            <MenuItem
+              key={i}
+              value={palette}
+              primaryText={
+                <div style={{background: `url(${palette.url}) center no-repeat`, padding: '0 0 0 10px'}}>
+                  {palette.name}
+                </div>
+              } />
+          );
+        })
+      }</SelectField>
     );
   }
 
@@ -212,39 +241,35 @@ export default class LayerSwitcher extends React.Component {
           <AppBar
             title="Layer Switcher"
             iconElementLeft={<IconButton><LayersIcon /></IconButton>}
-            iconElementRight={<IconButton><MinimizeIcon onTouchTap={(event) => this._onHideLayerSwitcherPanel()} /></IconButton>} />
+            iconElementRight={<IconButton><MinimizeIcon
+              onTouchTap={(event) => this._onHideLayerSwitcherPanel()} /></IconButton>} />
           <Tabs>
             <Tab
               style={{height: '100%'}}
               icon={<FontIcon className="material-icons">satellite</FontIcon>}
               label="Datasets">
               <Paper zDepth={2}>
-                <Subheader>
-                  <RaisedButton
-                    onClick={this.resetDatasetLayer.bind(this)}
-                    label="Reset" />
-                </Subheader>
+                <div style={{width: '75%', display: 'inline-block', padding: '0 15px'}}>
+                  {this.makeColorPalettesSelect()}
+                </div>
+                <div style={{width: '25%', display: 'inline-block'}}>
+                  <Subheader>
+                    <RaisedButton
+                      onClick={this.resetDatasetLayer}
+                      label="Reset" />
+                  </Subheader>
+                </div>
+                {this.props.selectedDatasetLayer.dataset_id ? this.makeSlider() : null}
                 {this.makeDatasetsList()}
               </Paper>
             </Tab>
             <Tab
-              style={{height: '100%'}}
-              icon={<FontIcon className="material-icons">invert_colors</FontIcon>}
-              label="Color Palettes">
-              <Paper zDepth={2}>
-                <List>
-                  {this.makeColorPalettesList()}
-                </List>
-              </Paper>
-            </Tab>
-            <Tab
-              style={{height: '100%'}}
               icon={<FontIcon className="material-icons">local_library</FontIcon>}
               label="Shape Files">
               <Paper zDepth={2}>
                 <Subheader>
                   <RaisedButton
-                    onClick={this.resetShapefile.bind(this)}
+                    onClick={this.resetShapefile}
                     label="Reset" />
                 </Subheader>
                 {this.makeShapefileList()}
