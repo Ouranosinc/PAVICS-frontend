@@ -81,7 +81,7 @@ export default class InformationPanel extends React.Component {
         <AppBar
           title="Informations"
           iconElementLeft={<IconButton><InfoIcon /></IconButton>}
-          iconElementRight={<IconButton><MinimizeIcon onTouchTap={(event) => this._onHideMapControlsPanel()} /></IconButton>} />
+          iconElementRight={<IconButton><MinimizeIcon onTouchTap={(event) => this._onHideInformationPanel()} /></IconButton>} />
         <div className={classes['Content']}>
           {mainComponent}
         </div>
