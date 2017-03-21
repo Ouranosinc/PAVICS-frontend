@@ -9,13 +9,14 @@ import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 import {grey400, darkBlack} from 'material-ui/styles/colors';
 import IconButton from 'material-ui/IconButton';
-import PersonAddIcon from 'material-ui/svg-icons/social/person-add';
+import ShareIcon from 'material-ui/svg-icons/social/person-add';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import VisualizeIcon from 'material-ui/svg-icons/image/remove-red-eye';
 import RaisedButton from 'material-ui/RaisedButton';
 import RefreshIcon from 'material-ui/svg-icons/navigation/refresh';
 import FileIcon from 'material-ui/svg-icons/editor/insert-drive-file';
 import DownloadIcon from 'material-ui/svg-icons/file/file-download';
+import AddToProjectIcon from 'material-ui/svg-icons/av/playlist-add';
 
 const successStyle = {
   color: '#4caf50'
@@ -129,13 +130,14 @@ class ProcessMonitoring extends React.Component {
                           <MoreVertIcon color={grey400} />
                         </IconButton>}>
                         <MenuItem
-                          primaryText="Visualize"
-                          onTouchTap={(event) => this._onVisualiseDataset(netcdfUrl)}
-                          leftIcon={<VisualizeIcon />} />
-                        <MenuItem
                           primaryText="Show XML Status File"
                           onTouchTap={(event) => window.open(x.status_location, '_blank')}
                           leftIcon={<FileIcon />} />
+                        <MenuItem
+                          primaryText="Visualize"
+                          disabled={x.status !== constants.JOB_SUCCESS_STATUS}
+                          onTouchTap={(event) => this._onVisualiseDataset(netcdfUrl)}
+                          leftIcon={<VisualizeIcon />} />
                         <MenuItem
                           primaryText="Download"
                           disabled={x.status !== constants.JOB_SUCCESS_STATUS}
@@ -143,8 +145,14 @@ class ProcessMonitoring extends React.Component {
                           leftIcon={<DownloadIcon />} />
                         <MenuItem
                           primaryText="Share (TODO)"
+                          disabled={x.status !== constants.JOB_SUCCESS_STATUS}
                           onTouchTap={(event) => alert('share: launch crawler')}
-                          leftIcon={<PersonAddIcon />} />
+                          leftIcon={<ShareIcon />} />
+                        <MenuItem
+                          primaryText="Add to current project (TODO)"
+                          disabled={x.status !== constants.JOB_SUCCESS_STATUS}
+                          onTouchTap={(event) => alert('add to current project')}
+                          leftIcon={<AddToProjectIcon />} />
                       </IconMenu>
                     }
                   />;
