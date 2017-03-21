@@ -3,10 +3,8 @@ import {connect} from 'react-redux';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import * as actionCreators from './../modules/Pavics';
 import * as constants from './../../../constants';
-import DatasetDetails from './../../../components/DatasetDetails';
 import {
   AccountManagement,
-  DatasetWMSLayers,
   ExperienceManagement,
   SearchCatalog,
   WorkflowWizard,
@@ -51,11 +49,7 @@ class Pavics extends React.Component {
         );
       case constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT:
         return (
-          <div>
-            <AccountManagement {...this.props} />
-            <DatasetDetails {...this.props} />
-            <DatasetWMSLayers {...this.props} />
-          </div>
+          <AccountManagement {...this.props} />
         );
       default:
         return null;

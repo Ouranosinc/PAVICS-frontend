@@ -1,38 +1,36 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import classes from './AccountManagement.scss'
-
-var me;
+import React from 'react';
+import { connect } from 'react-redux';
+import Paper from 'material-ui/Paper';
+import classes from './AccountManagement.scss';
 
 export class AccountManagement extends React.Component {
   static propTypes = {
 
-  }
+  };
 
   constructor(props) {
     super(props);
-    me = this;
   }
-
 
   render () {
     return (
-      <div className={classes['AccountManagement']}>
-        AccountManagement (TODO)
+      <div className={classes['AccountManagement']} style={{ margin: 20 }}>
+        <Paper>
+          AccountManagement (TODO)
+        </Paper>
       </div>
-    )
+    );
   }
 }
 
 const mapStateToProps = (state) => {
-  return {}
-}
+  return {};
+};
 const mapDispatchToProps = (dispatch) => {
-  return {}
-}
+  return {};
+};
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(AccountManagement)
+)(AccountManagement);
