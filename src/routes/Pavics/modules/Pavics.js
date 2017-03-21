@@ -17,11 +17,6 @@ const ADD_DATASETS_TO_PROJECTS = 'Visualize.ADD_DATASETS_TO_PROJECTS';
 const ADD_FACET_KEY_VALUE_PAIR = 'Visualize.ADD_FACET_KEY_VALUE_PAIR';
 const REMOVE_FACET_KEY_VALUE_PAIR = 'Visualize.REMOVE_FACET_KEY_VALUE_PAIR';
 const REMOVE_ALL_FACET_KEY_VALUE = 'Visualize.REMOVE_ALL_FACET_KEY_VALUE';
-/*const OPEN_DATASET_DETAILS = 'Visualize.OPEN_DATASET_DETAILS';
-const CLOSE_DATASET_DETAILS = 'Visualize.CLOSE_DATASET_DETAILS';
-const OPEN_DATASET_WMS_LAYERS = 'Visualize.OPEN_DATASET_WMS_LAYERS';
-const OPEN_WMS_LAYER = 'Visualize.OPEN_WMS_LAYER';
-const SELECT_LOAD_WMS = 'Visualize.SELECT_LOAD_WMS';*/
 const CLICK_TOGGLE_PANEL = 'Visualize.CLICK_TOGGLE_PANEL';
 const SET_CURRENT_TIME_ISO = 'Visualize.SET_CURRENT_TIME_ISO';
 const RESTORE_PAVICS_DATASETS = 'Visualize.RESTORE_PAVICS_DATASETS';
@@ -44,9 +39,6 @@ const FETCH_ESGF_DATASETS_SUCCESS = 'Visualize.FETCH_ESGF_DATASETS_SUCCESS';
 const FETCH_PAVICS_DATASETS_REQUEST = 'Visualize.FETCH_PAVICS_DATASETS_REQUEST';
 const FETCH_PAVICS_DATASETS_FAILURE = 'Visualize.FETCH_PAVICS_DATASETS_FAILURE';
 const FETCH_PAVICS_DATASETS_SUCCESS = 'Visualize.FETCH_PAVICS_DATASETS_SUCCESS';
-const FETCH_DATASET_WMS_LAYERS_REQUEST = 'Visualize.FETCH_DATASET_WMS_LAYERS_REQUEST';
-const FETCH_DATASET_WMS_LAYERS_FAILURE = 'Visualize.FETCH_DATASET_WMS_LAYERS_FAILURE';
-const FETCH_DATASET_WMS_LAYERS_SUCCESS = 'Visualize.FETCH_DATASET_WMS_LAYERS_SUCCESS';
 const FETCH_WMS_LAYER_DETAILS_REQUEST = 'Visualize.FETCH_WMS_LAYER_DETAILS_REQUEST';
 const FETCH_WMS_LAYER_DETAILS_FAILURE = 'Visualize.FETCH_WMS_LAYER_DETAILS_FAILURE';
 const FETCH_WMS_LAYER_DETAILS_SUCCESS = 'Visualize.FETCH_WMS_LAYER_DETAILS_SUCCESS';
@@ -56,6 +48,9 @@ const FETCH_WMS_LAYER_TIMESTEPS_SUCCESS = 'Visualize.FETCH_WMS_LAYER_TIMESTEPS_S
 const FETCH_WPS_JOBS_REQUEST = 'Visualize.FETCH_WPS_JOBS_REQUEST';
 const FETCH_WPS_JOBS_FAILURE = 'Visualize.FETCH_WPS_JOBS_FAILURE';
 const FETCH_WPS_JOBS_SUCCESS = 'Visualize.FETCH_WPS_JOBS_SUCCESS';
+const FETCH_SCALAR_VALUE_REQUEST = 'Visualize.FETCH_SCALAR_VALUE_REQUEST';
+const FETCH_SCALAR_VALUE_FAILURE = 'Visualize.FETCH_SCALAR_VALUE_FAILURE';
+const FETCH_SCALAR_VALUE_SUCCESS = 'Visualize.FETCH_SCALAR_VALUE_SUCCESS';
 // ------------------------------------
 // Actions
 // ------------------------------------
@@ -173,6 +168,35 @@ export function receiveClimateIndicators (items) {
       receivedAt: Date.now(),
       isFetching: false,
       items: items
+    }
+  };
+}
+export function requestScalarValue () {
+  return {
+    type: FETCH_SCALAR_VALUE_REQUEST,
+    currentScalarValue: {
+      requestedAt: Date.now(),
+      isFetching: true
+    }
+  };
+}
+export function receiveScalarValueFailure (error) {
+  return {
+    type: FETCH_SCALAR_VALUE_FAILURE,
+    currentScalarValue: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      error: error
+    }
+  };
+}
+export function receiveScalarValue (data) {
+  return {
+    type: FETCH_SCALAR_VALUE_SUCCESS,
+    currentScalarValue: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      data: data
     }
   };
 }
@@ -424,6 +448,20 @@ export function receiveWPSJobs (jobs) {
   };
 }
 // ASYNC
+export function fetchScalarValue (opendapUrl, lat, lon, time, variable) {
+  return function (dispatch) {
+    dispatch(requestScalarValue());
+    return fetch(`/wps/getpoint?opendapUrl=${opendapUrl}&lat=${lat}&lon=${lon}&time=${time}&variable=${variable}`)
+      .then(response => response.json())
+      .then(json => {
+        // Removing black magic from application
+        json['variable'] = json[variable];
+        delete json[variable];
+        dispatch(receiveScalarValue(json));
+      })
+      .catch(error => dispatch(receiveScalarValueFailure(error)));
+  };
+}
 export function fetchClimateIndicators () {
   return function (dispatch) {
     dispatch(requestClimateIndicators());
@@ -981,6 +1019,15 @@ const VISUALIZE_HANDLERS = {
   },
   [FETCH_CLIMATE_INDICATORS_SUCCESS]: (state, action) => {
     return ({...state, climateIndicators: Object.assign({}, state.climateIndicators, action.climateIndicators)});
+  },
+  [FETCH_SCALAR_VALUE_REQUEST]: (state, action) => {
+    return ({...state, currentScalarValue: action.currentScalarValue});
+  },
+  [FETCH_SCALAR_VALUE_FAILURE]: (state, action) => {
+    return ({...state, currentScalarValue: action.currentScalarValue});
+  },
+  [FETCH_SCALAR_VALUE_SUCCESS]: (state, action) => {
+    return ({...state, currentScalarValue: action.currentScalarValue});
   },
   [FETCH_ESGF_DATASETS_REQUEST]: (state, action) => {
     return ({...state, esgfDatasets: action.esgfDatasets});

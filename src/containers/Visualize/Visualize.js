@@ -5,7 +5,7 @@ import OLComponent from '../../components/OLComponent';
 import { PieMenu } from './../../components/PieMenu/PieMenu';
 import TimeSlider from '../../containers/TimeSlider';
 import LayerSwitcher from '../../components/LayerSwitcher';
-import PlotlyWrapper from './../../components/PlotlyWrapper';
+import TimeSeriesChart from './../../components/TimeSeriesChart';
 import MapControls from './../../components/MapControls';
 import * as constants from './../../constants';
 class Visualize extends React.Component {
@@ -13,6 +13,7 @@ class Visualize extends React.Component {
     selectMapManipulationMode: React.PropTypes.func.isRequired,
     selectedDatasetCapabilities: React.PropTypes.object.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
+    currentScalarValue: React.PropTypes.object.isRequired,
     currentVisualizedDatasetLayers: React.PropTypes.array.isRequired,
     fetchShapefiles: React.PropTypes.func.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
@@ -28,6 +29,7 @@ class Visualize extends React.Component {
     mapManipulationMode: React.PropTypes.string.isRequired,
     baseMaps: React.PropTypes.array.isRequired,
     currentDateTime: React.PropTypes.string.isRequired,
+    fetchScalarValue: React.PropTypes.func.isRequired,
     fetchWMSLayerDetails: React.PropTypes.func.isRequired,
     fetchWMSLayerTimesteps: React.PropTypes.func.isRequired,
     selectedWMSLayerTimesteps: React.PropTypes.object.isRequired,
@@ -83,20 +85,21 @@ class Visualize extends React.Component {
         <div className={classes['Visualize']}>
           <div className={classes.mapContainer}>
             <OLComponent
-              setCurrentDateTime={this.props.setCurrentDateTime}
-              selectedColorPalette={this.props.selectedColorPalette}
-              selectedRegions={this.props.selectedRegions}
-              fetchPlotlyData={this.props.fetchPlotlyData}
-              selectedDatasetCapabilities={this.props.selectedDatasetCapabilities}
-              setSelectedDatasetCapabilities={this.props.setSelectedDatasetCapabilities}
-              layer={this.props.layer}
               currentDateTime={this.props.currentDateTime}
-              mapManipulationMode={this.props.mapManipulationMode}
+              fetchPlotlyData={this.props.fetchPlotlyData}
+              fetchScalarValue={this.props.fetchScalarValue}
               fetchWMSLayerDetails={this.props.fetchWMSLayerDetails}
               fetchWMSLayerTimesteps={this.props.fetchWMSLayerTimesteps}
-              selectedShapefile={this.props.selectedShapefile}
+              layer={this.props.layer}
+              mapManipulationMode={this.props.mapManipulationMode}
               selectedBasemap={this.props.selectedBasemap}
+              selectedColorPalette={this.props.selectedColorPalette}
+              selectedDatasetCapabilities={this.props.selectedDatasetCapabilities}
               selectedDatasetLayer={this.props.selectedDatasetLayer}
+              selectedRegions={this.props.selectedRegions}
+              selectedShapefile={this.props.selectedShapefile}
+              setCurrentDateTime={this.props.setCurrentDateTime}
+              setSelectedDatasetCapabilities={this.props.setSelectedDatasetCapabilities}
               ref={this.setOLComponentReference} />
           </div>
           {(this.state.mapPanelStatus[constants.VISUALIZE_INFO_PANEL])
@@ -108,13 +111,14 @@ class Visualize extends React.Component {
           <div className={classes.left}>
             {(this.state.mapPanelStatus[constants.VISUALIZE_CHART_PANEL])
               ? <div className={classes.panel}>
-              <PlotlyWrapper
-                onToggleMapPanel={this._onToggleMapPanel}
-                data={this.props.plotlyData.data}
-                layout={this.props.plotlyData.layout}
-                fetchPlotlyData={this.props.fetchPlotlyData}
-              />
-            </div> : null
+                <TimeSeriesChart
+                  currentScalarValue={this.props.currentScalarValue}
+                  selectedDatasetLayer={this.props.selectedDatasetLayer}
+                  onToggleMapPanel={this._onToggleMapPanel}
+                  plotlyData={this.props.plotlyData}
+                  fetchPlotlyData={this.props.fetchPlotlyData}
+                />
+              </div> : null
             }
             {
               (this.state.mapPanelStatus[constants.VISUALIZE_LAYER_SWITCHER_PANEL])

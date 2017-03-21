@@ -17,11 +17,7 @@ export class SearchCatalogResults extends React.Component {
   static propTypes = {
     clickTogglePanel: React.PropTypes.func.isRequired,
     addDatasetsToProject: React.PropTypes.func.isRequired,
-    closeDatasetDetails: React.PropTypes.func.isRequired,
-    openDatasetDetails: React.PropTypes.func.isRequired,
-    fetchDataset: React.PropTypes.func.isRequired,
-    currentOpenedDataset: React.PropTypes.string.isRequired,
-    esgfDatasets: React.PropTypes.object.isRequired
+    pavicsDatasets: React.PropTypes.object.isRequired
   };
 
   constructor (props) {

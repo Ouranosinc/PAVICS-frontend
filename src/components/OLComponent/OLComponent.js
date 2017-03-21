@@ -31,7 +31,8 @@ class OLComponent extends React.Component {
     layer: React.PropTypes.object.isRequired,
     fetchWMSLayerDetails: React.PropTypes.func.isRequired,
     fetchWMSLayerTimesteps: React.PropTypes.func.isRequired,
-    fetchPlotlyData: React.PropTypes.func.isRequired
+    fetchPlotlyData: React.PropTypes.func.isRequired,
+    fetchScalarValue: React.PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -206,7 +207,8 @@ class OLComponent extends React.Component {
     let variable = this.props.selectedDatasetLayer['variable'][0];
     console.log('variable:', variable);
     let url = `/wps/getpoint?opendapUrl=${opendapUrl}&lat=${lat}&lon=${lon}&time=${time}&variable=${variable}`;
-    fetch(url)
+    this.props.fetchScalarValue(opendapUrl, lat, lon, time, variable);
+    /*fetch(url)
       .then(res => res.json())
       .then(
         json => {
@@ -227,7 +229,7 @@ class OLComponent extends React.Component {
           );
         },
         err => console.log(err)
-      );
+      );*/
   }
 
   handleMapClick (event) {

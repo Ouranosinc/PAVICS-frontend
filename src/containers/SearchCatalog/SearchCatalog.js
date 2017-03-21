@@ -23,15 +23,6 @@ export class SearchCatalog extends React.Component {
     addFacetKeyValue: React.PropTypes.func.isRequired,
     removeFacetKeyValue: React.PropTypes.func.isRequired,
     removeAllFacetKeyValue: React.PropTypes.func.isRequired,
-    requestFacets: React.PropTypes.func.isRequired,
-    receiveFacetsFailure: React.PropTypes.func.isRequired,
-    receiveFacets: React.PropTypes.func.isRequired,
-    requestEsgfDatasets: React.PropTypes.func.isRequired,
-    receiveEsgfDatasetsFailure: React.PropTypes.func.isRequired,
-    receiveEsgfDatasets: React.PropTypes.func.isRequired,
-    requestPavicsDatasets: React.PropTypes.func.isRequired,
-    receivePavicsDatasetsFailure: React.PropTypes.func.isRequired,
-    receivePavicsDatasets: React.PropTypes.func.isRequired,
     fetchFacets: React.PropTypes.func.isRequired,
     fetchDataset: React.PropTypes.func.isRequired,
     fetchEsgfDatasets: React.PropTypes.func.isRequired,
@@ -244,7 +235,10 @@ export class SearchCatalog extends React.Component {
               disabled={!this.props.selectedFacets.length}
               style={{marginTop: 20, marginLeft: 20}} />
             {this.state.confirmation}
-            <SearchCatalogResults {...this.props} />
+            <SearchCatalogResults
+              clickTogglePanel={this.props.clickTogglePanel}
+              addDatasetsToProject={this.props.addDatasetsToProject}
+              pavicsDatasets={this.props.pavicsDatasets} />
           </div>
         )
       );
