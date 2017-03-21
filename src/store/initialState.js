@@ -48,31 +48,20 @@ const initialState = {
       'AerialWithLabels'
     ],
     layer: {},
-    currentOpenedDataset: '',
-    currentOpenedDatasetWMSFile: '',
-    currentOpenedWMSLayer: '',
-    currentDateTime: '1900-01-01T00:00:00.000Z',
-    loadedWmsDatasets: [],
     selectedFacets: [],
     selectedRegions: [],
+    currentDateTime: '1900-01-01T00:00:00.000Z',
     currentProjectSearchCriterias: [],
     currentProjectDatasets: [],
+    currentScalarValue: {
+      requestedAt: null,
+      receivedAt: null,
+      isFetching: false,
+      data: {},
+      error: null
+    },
     currentVisualizedDatasetLayers: [],
     selectedDatasetCapabilities: {},
-    selectedDatasets: {
-      requestedAt: null,
-      receivedAt: null,
-      isFetching: false,
-      items: [],
-      error: null
-    },
-    selectedWMSLayers: {
-      requestedAt: null,
-      receivedAt: null,
-      isFetching: false,
-      items: [],
-      error: null
-    },
     selectedWMSLayerDetails: {
       requestedAt: null,
       receivedAt: null,
@@ -116,7 +105,7 @@ const initialState = {
       error: null
     },
     plotlyData: {
-      isFecthing: false,
+      isFetching: false,
       receivedAt: null,
       requestedAt: null,
       data: [],

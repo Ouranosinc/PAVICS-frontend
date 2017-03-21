@@ -1,7 +1,7 @@
 import initialState from './../../../store/initialState';
 import * as constants from './../../../constants';
-import {parseString} from 'xml2js';
 import ol from 'openlayers';
+
 // SYNC
 const SET_WMS_LAYER = 'Visualize.SET_WMS_LAYER';
 const SET_SHAPEFILES = 'Visualize.SET_SHAPEFILES';
@@ -20,11 +20,6 @@ const ADD_DATASETS_TO_PROJECTS = 'Visualize.ADD_DATASETS_TO_PROJECTS';
 const ADD_FACET_KEY_VALUE_PAIR = 'Visualize.ADD_FACET_KEY_VALUE_PAIR';
 const REMOVE_FACET_KEY_VALUE_PAIR = 'Visualize.REMOVE_FACET_KEY_VALUE_PAIR';
 const REMOVE_ALL_FACET_KEY_VALUE = 'Visualize.REMOVE_ALL_FACET_KEY_VALUE';
-const OPEN_DATASET_DETAILS = 'Visualize.OPEN_DATASET_DETAILS';
-const CLOSE_DATASET_DETAILS = 'Visualize.CLOSE_DATASET_DETAILS';
-const OPEN_DATASET_WMS_LAYERS = 'Visualize.OPEN_DATASET_WMS_LAYERS';
-const OPEN_WMS_LAYER = 'Visualize.OPEN_WMS_LAYER';
-const SELECT_LOAD_WMS = 'Visualize.SELECT_LOAD_WMS';
 const CLICK_TOGGLE_PANEL = 'Visualize.CLICK_TOGGLE_PANEL';
 const SET_CURRENT_TIME_ISO = 'Visualize.SET_CURRENT_TIME_ISO';
 const RESTORE_PAVICS_DATASETS = 'Visualize.RESTORE_PAVICS_DATASETS';
@@ -47,9 +42,6 @@ const FETCH_ESGF_DATASETS_SUCCESS = 'Visualize.FETCH_ESGF_DATASETS_SUCCESS';
 const FETCH_PAVICS_DATASETS_REQUEST = 'Visualize.FETCH_PAVICS_DATASETS_REQUEST';
 const FETCH_PAVICS_DATASETS_FAILURE = 'Visualize.FETCH_PAVICS_DATASETS_FAILURE';
 const FETCH_PAVICS_DATASETS_SUCCESS = 'Visualize.FETCH_PAVICS_DATASETS_SUCCESS';
-const FETCH_DATASET_WMS_LAYERS_REQUEST = 'Visualize.FETCH_DATASET_WMS_LAYERS_REQUEST';
-const FETCH_DATASET_WMS_LAYERS_FAILURE = 'Visualize.FETCH_DATASET_WMS_LAYERS_FAILURE';
-const FETCH_DATASET_WMS_LAYERS_SUCCESS = 'Visualize.FETCH_DATASET_WMS_LAYERS_SUCCESS';
 const FETCH_WMS_LAYER_DETAILS_REQUEST = 'Visualize.FETCH_WMS_LAYER_DETAILS_REQUEST';
 const FETCH_WMS_LAYER_DETAILS_FAILURE = 'Visualize.FETCH_WMS_LAYER_DETAILS_FAILURE';
 const FETCH_WMS_LAYER_DETAILS_SUCCESS = 'Visualize.FETCH_WMS_LAYER_DETAILS_SUCCESS';
@@ -59,6 +51,9 @@ const FETCH_WMS_LAYER_TIMESTEPS_SUCCESS = 'Visualize.FETCH_WMS_LAYER_TIMESTEPS_S
 const FETCH_WPS_JOBS_REQUEST = 'Visualize.FETCH_WPS_JOBS_REQUEST';
 const FETCH_WPS_JOBS_FAILURE = 'Visualize.FETCH_WPS_JOBS_FAILURE';
 const FETCH_WPS_JOBS_SUCCESS = 'Visualize.FETCH_WPS_JOBS_SUCCESS';
+const FETCH_SCALAR_VALUE_REQUEST = 'Visualize.FETCH_SCALAR_VALUE_REQUEST';
+const FETCH_SCALAR_VALUE_FAILURE = 'Visualize.FETCH_SCALAR_VALUE_FAILURE';
+const FETCH_SCALAR_VALUE_SUCCESS = 'Visualize.FETCH_SCALAR_VALUE_SUCCESS';
 // ------------------------------------
 // Actions
 // ------------------------------------
@@ -103,40 +98,6 @@ export function removeFacetKeyValue (key, value) {
 export function removeAllFacetKeyValue () {
   return {
     type: REMOVE_ALL_FACET_KEY_VALUE
-  };
-}
-export function openDatasetDetails (id) {
-  return {
-    type: OPEN_DATASET_DETAILS,
-    id: id
-  };
-}
-export function closeDatasetDetails () {
-  return {
-    type: OPEN_DATASET_DETAILS
-  };
-}
-export function openDatasetWmsLayers (dataset) {
-  return {
-    type: OPEN_DATASET_WMS_LAYERS,
-    dataset: dataset
-  };
-}
-export function openWmsLayer (layer) {
-  return {
-    type: OPEN_WMS_LAYER,
-    layer: layer
-  };
-}
-export function selectLoadWms (url, name, start, end, style, opacity) {
-  return {
-    type: SELECT_LOAD_WMS,
-    url: url,
-    name: name,
-    start: start,
-    end: end,
-    style: style,
-    opacity: opacity
   };
 }
 export function clickTogglePanel (panel, show) {
@@ -210,6 +171,35 @@ export function receiveClimateIndicators (items) {
       receivedAt: Date.now(),
       isFetching: false,
       items: items
+    }
+  };
+}
+export function requestScalarValue () {
+  return {
+    type: FETCH_SCALAR_VALUE_REQUEST,
+    currentScalarValue: {
+      requestedAt: Date.now(),
+      isFetching: true
+    }
+  };
+}
+export function receiveScalarValueFailure (error) {
+  return {
+    type: FETCH_SCALAR_VALUE_FAILURE,
+    currentScalarValue: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      error: error
+    }
+  };
+}
+export function receiveScalarValue (data) {
+  return {
+    type: FETCH_SCALAR_VALUE_SUCCESS,
+    currentScalarValue: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      data: data
     }
   };
 }
@@ -358,38 +348,6 @@ export function receiveEsgfDatasets (datasets) {
     }
   };
 }
-export function requestDatasetWMSLayers () {
-  return {
-    type: FETCH_DATASET_WMS_LAYERS_REQUEST,
-    selectedWMSLayers: {
-      requestedAt: Date.now(),
-      isFetching: true,
-      items: []
-    }
-  };
-}
-export function receiveDatasetWMSLayersFailure (error) {
-  return {
-    type: FETCH_DATASET_WMS_LAYERS_FAILURE,
-    selectedWMSLayers: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      items: [],
-      error: error
-    }
-  };
-}
-export function receiveDatasetWMSLayers (layers) {
-  return {
-    type: FETCH_DATASET_WMS_LAYERS_SUCCESS,
-    selectedWMSLayers: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      items: layers,
-      error: null
-    }
-  };
-}
 export function requestWMSLayerDetails (layer, url) {
   return {
     type: FETCH_WMS_LAYER_DETAILS_REQUEST,
@@ -493,6 +451,20 @@ export function receiveWPSJobs (jobs) {
   };
 }
 // ASYNC
+export function fetchScalarValue (opendapUrl, lat, lon, time, variable) {
+  return function (dispatch) {
+    dispatch(requestScalarValue());
+    return fetch(`/wps/getpoint?opendapUrl=${opendapUrl}&lat=${lat}&lon=${lon}&time=${time}&variable=${variable}`)
+      .then(response => response.json())
+      .then(json => {
+        // Removing black magic from application
+        json['variable'] = json[variable];
+        delete json[variable];
+        dispatch(receiveScalarValue(json));
+      })
+      .catch(error => dispatch(receiveScalarValueFailure(error)));
+  };
+}
 export function fetchClimateIndicators () {
   return function (dispatch) {
     dispatch(requestClimateIndicators());
@@ -593,20 +565,6 @@ export function fetchEsgfDatasets () {
       )
       .catch(error =>
         dispatch(receiveEsgfDatasetsFailure(error))
-      );
-  };
-}
-export function fetchDatasetWMSLayers (url, dataset) {
-  return function (dispatch) {
-    dispatch(requestDatasetWMSLayers());
-    // dataset = 'outputs/ouranos/subdaily/aet/pcp/aet_pcp_1970.nc'; // TODO, Dynamically use datasetid
-    return fetch(`/api/wms/dataset/layers?url=${url}&dataset=${dataset}`)
-      .then(response => response.json())
-      .then(json =>
-        dispatch(receiveDatasetWMSLayers(json))
-      )
-      .catch(error =>
-        dispatch(receiveDatasetWMSLayersFailure(error))
       );
   };
 }
@@ -1067,30 +1025,6 @@ const VISUALIZE_HANDLERS = {
   [REMOVE_ALL_FACET_KEY_VALUE]: (state, action) => {
     return ({...state, selectedFacets: []});
   },
-  [OPEN_DATASET_DETAILS]: (state, action) => {
-    return ({...state, currentOpenedDataset: action.id});
-  },
-  [CLOSE_DATASET_DETAILS]: (state) => {
-    return ({...state, currentOpenedDataset: ''});
-  },
-  [OPEN_DATASET_WMS_LAYERS]: (state, action) => {
-    return ({...state, currentOpenedDatasetWMSFile: action.dataset});
-  },
-  [OPEN_WMS_LAYER]: (state, action) => {
-    return ({...state, currentOpenedWMSLayer: action.layer});
-  },
-  [SELECT_LOAD_WMS]: (state, action) => {
-    return ({
-      ...state, loadedWmsDatasets: state.loadedWmsDatasets.concat({
-        url: action.url,
-        name: action.name,
-        start: action.start,
-        end: action.end,
-        style: action.style,
-        opacity: action.opacity
-      })
-    });
-  },
   [SET_CURRENT_TIME_ISO]: (state, action) => {
     return ({...state, currentDateTime: action.currentDateTime});
   },
@@ -1136,6 +1070,15 @@ const VISUALIZE_HANDLERS = {
   [FETCH_CLIMATE_INDICATORS_SUCCESS]: (state, action) => {
     return ({...state, climateIndicators: Object.assign({}, state.climateIndicators, action.climateIndicators)});
   },
+  [FETCH_SCALAR_VALUE_REQUEST]: (state, action) => {
+    return ({...state, currentScalarValue: action.currentScalarValue});
+  },
+  [FETCH_SCALAR_VALUE_FAILURE]: (state, action) => {
+    return ({...state, currentScalarValue: action.currentScalarValue});
+  },
+  [FETCH_SCALAR_VALUE_SUCCESS]: (state, action) => {
+    return ({...state, currentScalarValue: action.currentScalarValue});
+  },
   [FETCH_ESGF_DATASETS_REQUEST]: (state, action) => {
     return ({...state, esgfDatasets: action.esgfDatasets});
   },
@@ -1156,15 +1099,6 @@ const VISUALIZE_HANDLERS = {
   },
   [FETCH_PAVICS_DATASETS_SUCCESS]: (state, action) => {
     return ({...state, pavicsDatasets: action.pavicsDatasets});
-  },
-  [FETCH_DATASET_WMS_LAYERS_REQUEST]: (state, action) => {
-    return ({...state, selectedWMSLayers: action.selectedWMSLayers});
-  },
-  [FETCH_DATASET_WMS_LAYERS_FAILURE]: (state, action) => {
-    return ({...state, selectedWMSLayers: action.selectedWMSLayers});
-  },
-  [FETCH_DATASET_WMS_LAYERS_SUCCESS]: (state, action) => {
-    return ({...state, selectedWMSLayers: action.selectedWMSLayers});
   },
   [FETCH_WMS_LAYER_DETAILS_REQUEST]: (state, action) => {
     return ({...state, selectedWMSLayerDetails: action.selectedWMSLayerDetails});

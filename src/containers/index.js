@@ -1,5 +1,4 @@
 import AccountManagement from './AccountManagement';
-import DatasetWMSLayers from './DatasetWMSLayers';
 import ExperienceManagement from './ExperienceManagement';
 import SearchCatalog from './SearchCatalog';
 import SearchCatalogResults from './SearchCatalogResults';
@@ -10,7 +9,6 @@ import ProcessMonitoring from './ProcessMonitoring';
 
 export {
   AccountManagement,
-  DatasetWMSLayers,
   ExperienceManagement,
   SearchCatalog,
   SearchCatalogResults,

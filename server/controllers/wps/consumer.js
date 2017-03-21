@@ -66,6 +66,16 @@ var consumer = (function () {
           let jsonPath = Utils.extractWPSOutputPath(xml);
           response = yield request(jsonPath);
           this.body = response.body;
+          break;
+        case 'crawl':
+          let dataset = this.request.query['dateset_id'];
+          url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=pavicrawler&storeExecuteResponse=true&DataInputs=targetfiles=${dataset}`;
+          console.log('crawling a file:', url);
+          response = yield request(url);
+          xml = yield Utils.parseXMLThunk(response.body);
+          // let jsonPath = Utils.extractWPSOutputPath(xml);
+          // response = yield request(jsonPath);
+          this.body = xml;
       }
     }
   };
