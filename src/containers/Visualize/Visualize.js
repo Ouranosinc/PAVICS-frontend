@@ -4,6 +4,7 @@ import classes from './Visualize.scss';
 import OLComponent from '../../components/OLComponent';
 import { PieMenu } from './../../components/PieMenu/PieMenu';
 import TimeSlider from '../../containers/TimeSlider';
+import InformationPanel from '../../components/InformationPanel';
 import LayerSwitcher from '../../components/LayerSwitcher';
 import TimeSeriesChart from './../../components/TimeSeriesChart';
 import MapControls from './../../components/MapControls';
@@ -102,13 +103,18 @@ class Visualize extends React.Component {
               setSelectedDatasetCapabilities={this.props.setSelectedDatasetCapabilities}
               ref={this.setOLComponentReference} />
           </div>
-          {(this.state.mapPanelStatus[constants.VISUALIZE_INFO_PANEL])
-            ? <div></div> : null
-          }
           <PieMenu
             mapPanelStatus={this.state.mapPanelStatus}
             onToggleMapPanel={this._onToggleMapPanel} />
           <div className={classes.left}>
+            {(this.state.mapPanelStatus[constants.VISUALIZE_INFO_PANEL])
+              ?
+              <div className={classes.panel}>
+                <InformationPanel
+                  onToggleMapPanel={this._onToggleMapPanel}
+                  currentScalarValue={this.props.currentScalarValue} />
+              </div> : null
+            }
             {(this.state.mapPanelStatus[constants.VISUALIZE_CHART_PANEL])
               ? <div className={classes.panel}>
                 <TimeSeriesChart

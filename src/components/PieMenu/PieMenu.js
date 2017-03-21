@@ -24,7 +24,7 @@ export class PieMenu extends React.Component {
   constructor (props) {
     super(props);
     this._onClick = this._onClick.bind(this);
-    this._toggleMapPanel = this._toggleMapPanel.bind(this);
+    this._toggleInfoPanel = this._toggleInfoPanel.bind(this);
     this._toggleMapControlsPanel = this._toggleMapControlsPanel.bind(this);
     this._toggleLayerSwitcherPanel = this._toggleLayerSwitcherPanel.bind(this);
     this._toggleChartPanel = this._toggleChartPanel.bind(this);
@@ -35,8 +35,8 @@ export class PieMenu extends React.Component {
     console.log(event);
   }
 
-  _toggleMapPanel () {
-    this.props.onToggleMapPanel(constants.VISUALIZE_MAP_PANEL);
+  _toggleInfoPanel () {
+    this.props.onToggleMapPanel(constants.VISUALIZE_INFO_PANEL);
   }
 
   _toggleMapControlsPanel () {
@@ -59,12 +59,9 @@ export class PieMenu extends React.Component {
     return (
       <div className={classes['PieMenu']}>
         <nav className={classes['radialnav']}>
-          {/*<a href="#" className='ellipsis'>
-            <MenuIcon color={white} />
-          </a>*/}
           <ul className={classes['menu']}>
             <li>
-              <a href="#" className={this.props.mapPanelStatus[constants.VISUALIZE_MAP_PANEL] ? classes['IsOpen'] : ''}>
+              <a href="#" onClick={this._toggleInfoPanel} className={this.props.mapPanelStatus[constants.VISUALIZE_INFO_PANEL] ? classes['IsOpen'] : ''}>
                 <InfoIcon color={white} style={customSvgStyle} />
               </a>
             </li>

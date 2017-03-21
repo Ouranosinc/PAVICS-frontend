@@ -3,7 +3,6 @@ import classes from './OLComponent.scss';
 import ol from 'openlayers';
 import Dialog from 'material-ui/Dialog';
 import * as constants from './../../constants';
-import DatasetScalarValue from './../DatasetScalarValue';
 // Couldn't figure out the bug when importing inner component css file but it works from node_modules
 let G_BING_API_KEY = 'AtXX65CBBfZXBxm6oMyf_5idMAMI7W6a5GuZ5acVcrYi6lCQayiiBz7_aMHB7JR7';
 const INDEX_BASE_MAP = -10;
@@ -203,33 +202,8 @@ class OLComponent extends React.Component {
     let lon = converted[0];
     let lat = converted[1];
     let time = this.props.currentDateTime.substr(0, this.props.currentDateTime.length - 5);
-    // TODO dialog to choose variable dynamically
     let variable = this.props.selectedDatasetLayer['variable'][0];
-    console.log('variable:', variable);
-    let url = `/wps/getpoint?opendapUrl=${opendapUrl}&lat=${lat}&lon=${lon}&time=${time}&variable=${variable}`;
     this.props.fetchScalarValue(opendapUrl, lat, lon, time, variable);
-    /*fetch(url)
-      .then(res => res.json())
-      .then(
-        json => {
-          console.log(json);
-          this.setState(
-            {
-              ...this.state,
-              dialogContent: (
-                <DatasetScalarValue
-                  selectedDatasetCapabilities={this.props.selectedDatasetCapabilities}
-                  opendapUrl={this.props.selectedDatasetLayer['opendap_urls'][0]}
-                  fetchPlotlyData={this.props.fetchPlotlyData}
-                  pointResult={json[variable]} />
-              ),
-              dialogOpened: true,
-              dialogTitle: 'Point Result Data'
-            }
-          );
-        },
-        err => console.log(err)
-      );*/
   }
 
   handleMapClick (event) {
