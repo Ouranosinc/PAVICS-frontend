@@ -37,6 +37,7 @@ export default class LayerSwitcher extends React.Component {
     selectedColorPalette: React.PropTypes.object.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
+    resetSelectedRegions: React.PropTypes.func.isRequired,
     selectedBasemap: React.PropTypes.string.isRequired,
     publicShapeFiles: React.PropTypes.array.isRequired,
     baseMaps: React.PropTypes.array.isRequired
@@ -92,6 +93,7 @@ export default class LayerSwitcher extends React.Component {
   }
 
   resetShapefile () {
+    this.props.resetSelectedRegions();
     this.props.selectShapefile({});
   }
 

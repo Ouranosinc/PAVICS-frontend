@@ -26,6 +26,8 @@ class OLComponent extends React.Component {
     selectedBasemap: React.PropTypes.string.isRequired,
     selectedDatasetCapabilities: React.PropTypes.object.isRequired,
     setSelectedDatasetCapabilities: React.PropTypes.func.isRequired,
+    selectRegion: React.PropTypes.func.isRequired,
+    unselectRegion: React.PropTypes.func.isRequired,
     capabilities: React.PropTypes.object,
     dataset: React.PropTypes.object,
     layer: React.PropTypes.object.isRequired,
@@ -173,21 +175,28 @@ class OLComponent extends React.Component {
       .then(response => response.json(), err => console.log(err))
       .then(
         response => {
-          // ici
           let id = response.features[0].id;
-          console.log(id);
-          let converted = ol.proj.transform(coordinates, 'EPSG:3857', 'EPSG:4326');
-          let content = `lat: ${converted[0]}, lon: ${converted[1]}, feature id: ${id}`;
-          let format = new ol.format.GeoJSON();
-          let features = format.readFeatures(response, { featureProjection: 'EPSG:3857' });
-          this.layers[LAYER_SELECTED_REGIONS].getSource().addFeatures(features);
-          this.setState(
-            {
-              ...this.state,
-              dialogContent: content,
-              dialogOpened: true
-            }
-          );
+          if (this.props.selectedRegions.indexOf(id) !== -1) {
+            console.log('removing feature', id);
+            this.props.unselectRegion(id);
+            let feature = this.layers[LAYER_SELECTED_REGIONS].getSource().getFeatures().find(elem => elem.f === id);
+            this.layers[LAYER_SELECTED_REGIONS].getSource().removeFeature(feature);
+          } else {
+            console.log('adding feature', id);
+            this.props.selectRegion(id);
+            let converted = ol.proj.transform(coordinates, 'EPSG:3857', 'EPSG:4326');
+            let content = `lat: ${converted[0]}, lon: ${converted[1]}, feature id: ${id}`;
+            let format = new ol.format.GeoJSON();
+            let features = format.readFeatures(response, { featureProjection: 'EPSG:3857' });
+            this.layers[LAYER_SELECTED_REGIONS].getSource().addFeatures(features);
+            this.setState(
+              {
+                ...this.state,
+                dialogContent: content,
+                dialogOpened: true
+              }
+            );
+          }
         },
         err => console.log(err)
       );
@@ -231,12 +240,18 @@ class OLComponent extends React.Component {
   }
 
   handleMapClick (event) {
-    console.log(this.props.selectedDatasetLayer);
+    console.log('handling map click:', event);
     switch (this.props.mapManipulationMode) {
       case constants.VISUALIZE_MODE_JOB_MANAGEMENT:
-        return this.selectRegion(event);
+        if (this.props.selectedShapefile.title) {
+          console.log('selected shapefile:', this.props.selectedShapefile);
+          return this.selectRegion(event);
+        }
+        console.log('choose a shapefile first');
+        return;
       case constants.VISUALIZE_MODE_VISUALIZE:
         if (this.props.selectedDatasetLayer['dataset_id']) {
+          console.log('selected dataset:', this.props.selectedDatasetLayer);
           return this.getScalarValue(event);
         }
         console.log('choose a dataset first');

@@ -2,7 +2,7 @@ import React from 'react';
 import classes from './Visualize.scss';
 // TODO: Fix, we should only import containers here
 import OLComponent from '../../components/OLComponent';
-import { PieMenu } from './../../components/PieMenu/PieMenu';
+import {PieMenu} from './../../components/PieMenu/PieMenu';
 import TimeSlider from '../../containers/TimeSlider';
 import LayerSwitcher from '../../components/LayerSwitcher';
 import PlotlyWrapper from './../../components/PlotlyWrapper';
@@ -36,7 +36,10 @@ class Visualize extends React.Component {
     setSelectedDatasetCapabilities: React.PropTypes.func.isRequired,
     selectedRegions: React.PropTypes.array.isRequired,
     selectedColorPalette: React.PropTypes.object.isRequired,
-    selectColorPalette: React.PropTypes.func.isRequired
+    selectColorPalette: React.PropTypes.func.isRequired,
+    selectRegion: React.PropTypes.func.isRequired,
+    unselectRegion: React.PropTypes.func.isRequired,
+    resetSelectedRegions: React.PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -83,6 +86,8 @@ class Visualize extends React.Component {
         <div className={classes['Visualize']}>
           <div className={classes.mapContainer}>
             <OLComponent
+              selectRegion={this.props.selectRegion}
+              unselectRegion={this.props.unselectRegion}
               setCurrentDateTime={this.props.setCurrentDateTime}
               selectedColorPalette={this.props.selectedColorPalette}
               selectedRegions={this.props.selectedRegions}
@@ -108,18 +113,20 @@ class Visualize extends React.Component {
           <div className={classes.left}>
             {(this.state.mapPanelStatus[constants.VISUALIZE_CHART_PANEL])
               ? <div className={classes.panel}>
-              <PlotlyWrapper
-                onToggleMapPanel={this._onToggleMapPanel}
-                data={this.props.plotlyData.data}
-                layout={this.props.plotlyData.layout}
-                fetchPlotlyData={this.props.fetchPlotlyData}
-              />
-            </div> : null
+                <PlotlyWrapper
+                  onToggleMapPanel={this._onToggleMapPanel}
+                  data={this.props.plotlyData.data}
+                  layout={this.props.plotlyData.layout}
+                  fetchPlotlyData={this.props.fetchPlotlyData}
+                />
+              </div>
+              : null
             }
             {
               (this.state.mapPanelStatus[constants.VISUALIZE_LAYER_SWITCHER_PANEL])
                 ? <div className={classes['panel']}>
                   <LayerSwitcher
+                    resetSelectedRegions={this.props.resetSelectedRegions}
                     onToggleMapPanel={this._onToggleMapPanel}
                     selectColorPalette={this.props.selectColorPalette}
                     selectedColorPalette={this.props.selectedColorPalette}
