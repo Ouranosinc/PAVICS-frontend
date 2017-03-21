@@ -22,6 +22,7 @@ import AddedCriterias from 'material-ui/svg-icons/image/add-to-photos';
 import Relaunch from 'material-ui/svg-icons/action/youtube-searched-for';
 import Rename from 'material-ui/svg-icons/image/edit';
 import Restore from 'material-ui/svg-icons/action/restore-page';
+import ShareIcon from 'material-ui/svg-icons/social/person-add';
 
 export class ExperienceManagement extends React.Component {
   static propTypes = {
@@ -158,7 +159,8 @@ export class ExperienceManagement extends React.Component {
                                 this._onVisualizeLayer(event, dataset, wmsUrl, j)
                               }} leftIcon={<Visualize />} />
                               <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.opendap_urls[i], '_blank')} leftIcon={<Download />} />
-                              <MenuItem primaryText="Remove (TODO?)" onTouchTap={(event) => alert('remove ' + fileName)} leftIcon={<Remove />} />
+                              <MenuItem primaryText="Remove (TODO)" onTouchTap={(event) => alert('remove ' + fileName)} leftIcon={<Remove />} />
+                              <MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + fileName)} leftIcon={<ShareIcon />} />
                             </IconMenu>
                           }
                         />
