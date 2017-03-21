@@ -14,7 +14,7 @@ import IconButton from 'material-ui/IconButton';
 import Download from 'material-ui/svg-icons/file/file-download';
 import ShoppingCart from 'material-ui/svg-icons/action/add-shopping-cart';
 import PersonAdd from 'material-ui/svg-icons/social/person-add';
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import InfoIcon from 'material-ui/svg-icons/action/info';
 import RaisedButton from 'material-ui/RaisedButton';
 import AddIcon from 'material-ui/svg-icons/content/add-box';
 
@@ -128,29 +128,24 @@ export class SearchCatalogResults extends React.Component {
                     }
                     secondaryTextLines={2}
                     rightIconButton={
-                      <IconMenu iconButtonElement={
-                        <IconButton
-                          touch={true}
-                          tooltip={<div>
-                            <strong>Dataset: </strong>{x.dataset_id}<br />
-                            <strong>Subject: </strong>{x.subject}<br />
-                            <strong>Category: </strong>{x.category}<br />
-                            <strong>Experiment: </strong>{x.experiment}<br />
-                            <strong>Variable: </strong>{x.variable.join(', ')}<br />
-                            <strong>Project: </strong>{x.project}<br />
-                            <strong>Institute: </strong>{x.institute}<br />
-                            <strong>Model: </strong>{x.model}<br />
-                            <strong>Units: </strong>{x.units.join(', ')}<br />
-                            <strong>Frequency: </strong>{x.frequency}<br />
-                            <strong>Content type: </strong>{x.content_type}<br />
-                          </div>}
-                          tooltipPosition="bottom-left">
-                          <MoreVertIcon color={grey400} />
-                        </IconButton>}>
-                        <MenuItem primaryText="Add to favorites (TODO)" onTouchTap={(event) => alert('add to favorites')} leftIcon={<ShoppingCart />} />
-                        <MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share')} leftIcon={<PersonAdd />} />
-                        <MenuItem primaryText="Download (TODO?)" onTouchTap={(event) => alert('download')} leftIcon={<Download />} />
-                      </IconMenu>
+                      <IconButton
+                        touch={true}
+                        tooltip={<div>
+                          <strong>Dataset: </strong>{x.dataset_id}<br />
+                          <strong>Subject: </strong>{x.subject}<br />
+                          <strong>Category: </strong>{x.category}<br />
+                          <strong>Experiment: </strong>{x.experiment}<br />
+                          <strong>Variable: </strong>{x.variable.join(', ')}<br />
+                          <strong>Project: </strong>{x.project}<br />
+                          <strong>Institute: </strong>{x.institute}<br />
+                          <strong>Model: </strong>{x.model}<br />
+                          <strong>Units: </strong>{x.units.join(', ')}<br />
+                          <strong>Frequency: </strong>{x.frequency}<br />
+                          <strong>Content type: </strong>{x.content_type}<br />
+                        </div>}
+                        tooltipPosition="bottom-left">
+                        <InfoIcon color={grey400} />
+                      </IconButton>
                     }
                   />
                 )}
