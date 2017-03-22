@@ -3,13 +3,8 @@ import * as classes from './InformationPanel.scss';
 import * as constants from './../../constants';
 import Loader from './../../components/Loader';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
-import {List, ListItem} from 'material-ui/List';
-import {Tabs, Tab} from 'material-ui/Tabs';
-import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
-import FontIcon from 'material-ui/FontIcon';
+import {Alert} from 'react-bootstrap';
 import Paper from 'material-ui/Paper';
-import Subheader from 'material-ui/Subheader';
-import RaisedButton from 'material-ui/RaisedButton';
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
 import InfoIcon from 'material-ui/svg-icons/action/description';
@@ -31,11 +26,11 @@ export default class InformationPanel extends React.Component {
   }
 
   render () {
-    let mainComponent = null;
+    let content = null;
     if (this.props.currentScalarValue.isFetching) {
-      mainComponent = <Loader name="informations" />;
+      content = <Loader name="informations" />;
     } else if (this.props.currentScalarValue.data && this.props.currentScalarValue.data.variable) {
-      mainComponent =
+      content =
         <Table selectable={false} className={classes['Table']}>
           <TableHeader
             adjustForCheckbox={false}
@@ -75,15 +70,20 @@ export default class InformationPanel extends React.Component {
             }
           </TableBody>
         </Table>;
-    }
+    } else if (!this.props.currentScalarValue.data || !this.props.currentScalarValue.data._dimensions) {
+      content =
+        <Alert bsStyle="info" style={{marginTop: 20}}>
+          A dataset must first be selected. Then a point must be clicked on the map with the map controls mode 'Point scalar values' activated for scalar value to be calculated.
+        </Alert>;
+    };
     return (
       <Paper className={classes['InformationPanel']}>
         <AppBar
-          title="Informations"
+          title="Point Informations"
           iconElementLeft={<IconButton><InfoIcon /></IconButton>}
           iconElementRight={<IconButton><MinimizeIcon onTouchTap={(event) => this._onHideInformationPanel()} /></IconButton>} />
         <div className={classes['Content']}>
-          {mainComponent}
+          {content}
         </div>
       </Paper>
     );

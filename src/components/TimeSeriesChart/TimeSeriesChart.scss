@@ -1,6 +1,16 @@
 .TimeSeriesChart {
   opacity: 0.9;
   overflow: hidden;
+  height: 485px;
+  width: 550px;
+}
+.Chart {
+  height: 422px;
+  opacity: 0.9;
+}
+.Empty {
+  opacity: 0.9;
+  height: 90px;
 }
 .hidden {
   display: none;
