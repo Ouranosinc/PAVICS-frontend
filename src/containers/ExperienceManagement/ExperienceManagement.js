@@ -31,6 +31,7 @@ export class ExperienceManagement extends React.Component {
     currentVisualizedDatasetLayers: React.PropTypes.array.isRequired,
     addDatasetLayersToVisualize: React.PropTypes.func.isRequired,
     removeSearchCriteriasFromProject: React.PropTypes.func.isRequired,
+    selectDatasetLayer: React.PropTypes.func.isRequired,
     goToSection: React.PropTypes.func.isRequired,
     addFacetKeyValue: React.PropTypes.func.isRequired,
     removeAllFacetKeyValue: React.PropTypes.func.isRequired,
@@ -78,6 +79,10 @@ export class ExperienceManagement extends React.Component {
     dataset['wms_url'] = currentWmsUrl;
     dataset['currentWmsIndex'] = i;
     this.props.addDatasetLayersToVisualize([dataset]);
+    this.props.selectDatasetLayer({
+      ...dataset,
+      opacity: 0.8
+    });
   }
 
   onReloadSearchCriteria (searchCriteria) {

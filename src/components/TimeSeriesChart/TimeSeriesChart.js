@@ -94,7 +94,7 @@ class TimeSeriesChart extends React.Component {
 
   render () {
     let card = null;
-    if (this.props.currentScalarValue.data && this.props.plotlyData.layout) {
+    if (this.props.currentScalarValue.data && this.props.currentScalarValue.data._dimensions && this.props.plotlyData.layout && this.props.plotlyData.layout.title) {
       card = (<Card>
         <CardHeader
           title={this.props.plotlyData.layout.title.split('/')[this.props.plotlyData.layout.title.split('/').length - 1]}
