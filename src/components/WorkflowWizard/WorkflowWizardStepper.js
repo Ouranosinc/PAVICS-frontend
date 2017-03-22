@@ -5,6 +5,7 @@ import WpsProcessSelector from './../../components/WpsProcessSelector';
 import WpsProcessDetails from './../../components/WpsProcessDetails';
 import WpsProcessForm from './../../components/WpsProcessForm';
 import RaisedButton from 'material-ui/RaisedButton';
+import BackIcon from 'material-ui/svg-icons/navigation/arrow-back';
 export default class WorkflowWizardStepper extends React.Component {
   static propTypes = {
     stepIndex: React.PropTypes.number.isRequired,
@@ -27,12 +28,6 @@ export default class WorkflowWizardStepper extends React.Component {
   };
 
   render () {
-    const overflowable = {
-      'height': '400px',
-      'overflowY': 'auto',
-      'overflowX': 'hidden',
-      'margin': '10px 0'
-    };
     return (
       <Stepper activeStep={this.props.stepIndex} orientation="vertical">
         <Step>
@@ -46,18 +41,25 @@ export default class WorkflowWizardStepper extends React.Component {
         <Step>
           <StepLabel>Select WPS Process</StepLabel>
           <StepContent>
+            <RaisedButton
+              label="Back"
+              onClick={this.props.getLastStep}
+              icon={<BackIcon />} />
             <WpsProcessSelector
               processes={this.props.processes}
               chooseProcess={this.props.chooseProcess}
               fetchProcessInputs={this.props.fetchProcessInputs}
               selectedProvider={this.props.selectedProvider} />
-            <RaisedButton label="Back" onClick={this.props.getLastStep} />
           </StepContent>
         </Step>
         <Step>
           <StepLabel>Input Parameters</StepLabel>
           <StepContent>
-            <div style={overflowable}>
+            <div>
+              <RaisedButton
+                label="Back"
+                onClick={this.props.getLastStep}
+                icon={<BackIcon />} />
               <WpsProcessDetails
                 process={this.props.selectedProcess} />
               {
@@ -76,7 +78,6 @@ export default class WorkflowWizardStepper extends React.Component {
                     selectedProvider={this.props.selectedProvider} />
               }
             </div>
-            <RaisedButton label="Back" onClick={this.props.getLastStep} />
           </StepContent>
         </Step>
       </Stepper>

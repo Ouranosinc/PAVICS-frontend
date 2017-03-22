@@ -24,6 +24,7 @@ export default class WpsProcessForm extends React.Component {
     selectedRegions: React.PropTypes.array.isRequired
   };
 
+
   constructor (props) {
     super(props);
     this.state = {
@@ -201,32 +202,36 @@ export default class WpsProcessForm extends React.Component {
   // so 1990
   render () {
     // TODO validate that async is really something we want each time
+    const gridStyle = {
+      'height': '450px',
+      'overflowY': 'auto',
+      'margin': '10px 0',
+      'overflowX': 'hidden'
+    };
     return (
-      <Paper zDepth={2}>
-        <Form id="process-form" horizontal>
+      <Form id="process-form" horizontal>
+        <Paper zDepth={2} style={gridStyle}>
           <input type="hidden" name="_charset_" value="UTF-8" />
           <input type="hidden" name="__formid__" value="deform" />
           <input type="hidden" name="_async_check" value="true" />
           {
             this.props.selectedProcessInputs.map((elem, i) => {
               return (
-                <FormGroup key={i}>
-                  <Col sm={2}>{elem.title}</Col>
-                  <Col sm={10}>
-                    {this.makeInput(elem)}
-                  </Col>
-                </FormGroup>
+                <Col sm={12}>
+                  <FormGroup key={i}>
+                    <Col sm={2}>{elem.title}</Col>
+                    <Col sm={10}>
+                      {this.makeInput(elem)}
+                    </Col>
+                  </FormGroup>
+                </Col>
               );
             })
           }
-          <FormGroup>
-            <Col smOffset={2} sm={10}>
-              <ExecuteButton executeProcess={this.execute} />
-            </Col>
-          </FormGroup>
-          <input type="hidden" name="submit" value="submit" />
-        </Form>
-      </Paper>
+        </Paper>
+        <ExecuteButton executeProcess={this.execute} />
+        <input type="hidden" name="submit" value="submit" />
+      </Form>
     );
   }
 }

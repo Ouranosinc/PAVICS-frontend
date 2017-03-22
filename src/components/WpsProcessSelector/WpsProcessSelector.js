@@ -1,6 +1,6 @@
 import React from 'react';
 import {Card, CardHeader, CardActions, CardText} from 'material-ui/Card';
-import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
 export default class WpsProcessSelector extends React.Component {
   static propTypes = {
     processes: React.PropTypes.array.isRequired,
@@ -33,7 +33,10 @@ export default class WpsProcessSelector extends React.Component {
                     title={process.title} />
                   <CardText>{process.description}</CardText>
                   <CardActions>
-                    <FlatButton label="Execute Process" onClick={this.makeChooseProcessCallback(process)} />
+                    <RaisedButton
+                      primary={true}
+                      label="Select Process"
+                      onClick={this.makeChooseProcessCallback(process)} />
                   </CardActions>
                 </Card>
               );
