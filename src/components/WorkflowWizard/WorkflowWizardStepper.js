@@ -28,10 +28,13 @@ export default class WorkflowWizardStepper extends React.Component {
   };
 
   render () {
+    const styleStepLabel = {
+      color: 'white'
+    };
     return (
       <Stepper activeStep={this.props.stepIndex} orientation="vertical">
         <Step>
-          <StepLabel>Select WPS Provider</StepLabel>
+          <StepLabel style={styleStepLabel}>Select WPS Provider</StepLabel>
           <StepContent>
             <WpsProviderSelector
               selectWpsProvider={this.props.selectWpsProvider}
@@ -39,7 +42,7 @@ export default class WorkflowWizardStepper extends React.Component {
           </StepContent>
         </Step>
         <Step>
-          <StepLabel>Select WPS Process</StepLabel>
+          <StepLabel style={styleStepLabel}>Select WPS Process</StepLabel>
           <StepContent>
             <RaisedButton
               label="Back"
@@ -53,7 +56,7 @@ export default class WorkflowWizardStepper extends React.Component {
           </StepContent>
         </Step>
         <Step>
-          <StepLabel>Input Parameters</StepLabel>
+          <StepLabel style={styleStepLabel}>Input Parameters</StepLabel>
           <StepContent>
             <div>
               <RaisedButton
