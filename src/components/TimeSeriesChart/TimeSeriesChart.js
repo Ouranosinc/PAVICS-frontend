@@ -8,21 +8,23 @@ import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
 import TimelineIcon from 'material-ui/svg-icons/action/timeline';
 import MinimizeIcon from 'material-ui/svg-icons/content/remove';
+import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
 
-const layout = {
-  autosize: false,
-  showlegend: false,
-  height: 372,
-  width: 650,
+const LAYOUT = {
+  // autosize: false,
+  // showlegend: false,
+  title: '',
   margin: {
-    l: 50,
+    l: 60,
     r: 20,
     b: 50,
-    t: 10,
+    t: 20,
     pad: 4
   },
   paper_bgcolor: 'inherit',
-  plot_bgcolor: 'inherit'
+  plot_bgcolor: 'inherit',
+  height: 351,
+  width: 650
 };
 
 class TimeSeriesChart extends React.Component {
@@ -59,14 +61,26 @@ class TimeSeriesChart extends React.Component {
 
     if (nextProps.plotlyData.data && nextProps.plotlyData.data !== this.props.plotlyData.data) {
       this.container.data = nextProps.plotlyData.data;
-      // Custom layout, we could also use this.props.plotlyData.layout
-      // this.container.layout = layout;
+      // We merge this.props.plotlyData.layout with predefined LAYOUT
+      this.container.layout = JSON.parse(JSON.stringify(nextProps.plotlyData.layout));
+      for (let propName in LAYOUT) {
+        if (LAYOUT.hasOwnProperty(propName)) {
+          this.container.layout[propName] = LAYOUT[propName];
+        }
+      }
       Plotly.redraw(this.container);
       Plotly.Plots.resize(this.container);
     }
   }
 
   componentDidMount () {
+    // We merge this.props.plotlyData.layout with predefined LAYOUT
+    let layout = JSON.parse(JSON.stringify(this.props.plotlyData.layout));
+    for (let propName in LAYOUT) {
+      if (LAYOUT.hasOwnProperty(propName)) {
+        layout[propName] = LAYOUT[propName];
+      }
+    }
     Plotly.plot(this.container, this.props.plotlyData.data, layout, { displayModeBar: false });
   }
 
@@ -79,17 +93,27 @@ class TimeSeriesChart extends React.Component {
   }
 
   render () {
+    let card = null;
+    if (this.props.currentScalarValue.data && this.props.plotlyData.layout) {
+      card = (<Card>
+        <CardHeader
+          title={this.props.plotlyData.layout.title.split('/')[this.props.plotlyData.layout.title.split('/').length - 1]}
+          subtitle={`Latitude: ${this.props.currentScalarValue.data._dimensions.lat.value} / Longitude: ${this.props.currentScalarValue.data._dimensions.lon.value}`}
+        />
+      </Card>);
+    }
     return (
       <Paper className={classes['TimeSeriesChart']}>
         <AppBar
           title="Time Series Chart"
           iconElementLeft={<IconButton><TimelineIcon /></IconButton>}
           iconElementRight={<IconButton><MinimizeIcon onTouchTap={(event) => this._onHideChartPanel()} /></IconButton>} />
-        <div style={{height: '372px', width: '650px', opacity: '0.9'}}>
+        <div style={{height: '422px', width: '650px', opacity: '0.9'}}>
           {
-            (this.props.plotlyData.isFetching) ? <Loader name="chart" /> : null
+            (this.props.plotlyData.isFetching || this.props.currentScalarValue.isFetching) ? <Loader name="chart" /> : null
           }
-          <div className={this.props.plotlyData.isFetching ? 'hidden' : ''}>
+          <div className={this.props.plotlyData.isFetching || this.props.currentScalarValue.isFetching ? 'hidden' : ''}>
+            {card}
             <div id="plotly" ref={this._bindRef}></div>
           </div>
         </div>
