@@ -1,11 +1,12 @@
 # PAVICS-Platform
 #
-# VERSION 0.0.4
+# VERSION 0.0.5
 FROM nodesource/node:6.7
 MAINTAINER Renaud Hébert-Legault <renaud.hebert-legault@crim.ca>
-LABEL Description="PAVICS Platform - Based on Node.js, Koa, React, Redux, Webpack, OpenLayers and Bootstrap" Vendor="CRIM" Version="0.0.4"
+LABEL Description="PAVICS Platform - Based on Node.js, React, Redux, Webpack, OpenLayers, Koa and MaterialUI" Vendor="CRIM" Version="0.0.5"
 
-ENV NODE_ENV=development
+ENV NODE_ENV=production
+ENV BIRDHOUSE_HOST=outarde.crim.ca
 ADD package.json package.json
 RUN npm install
 ADD . .
