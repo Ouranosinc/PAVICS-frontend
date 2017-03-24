@@ -2,7 +2,7 @@ import { applyMiddleware, compose, createStore } from 'redux';
 import { routerMiddleware } from 'react-router-redux';
 import thunk from 'redux-thunk';
 import makeRootReducer from './reducers';
-import { persistStore, autoRehydrate } from 'redux-persist';
+// import { persistStore, autoRehydrate } from 'redux-persist';
 
 export default (initialState = {}, history) => {
   // ======================================================
@@ -29,11 +29,11 @@ export default (initialState = {}, history) => {
     initialState,
     compose(
       applyMiddleware(...middleware),
-      autoRehydrate(),
+      // autoRehydrate(),
       ...enhancers
     )
   );
-  persistStore(store);
+  // persistStore(store);
   store.asyncReducers = {};
 
   if (module.hot) {

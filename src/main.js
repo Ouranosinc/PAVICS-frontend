@@ -6,7 +6,7 @@ import {syncHistoryWithStore} from 'react-router-redux';
 import createStore from './store/createStore';
 import AppContainer from './containers/AppContainer';
 import injectTapEventPlugin from 'react-tap-event-plugin';
-import { persistStore, getStoredState } from 'redux-persist';
+// import { persistStore, getStoredState } from 'redux-persist';
 
 // ========================================================
 // Fix for mobile tap event, waiting for material-ui to phase towards onClick instead of onTap
@@ -26,25 +26,25 @@ const browserHistory = useRouterHistory(createBrowserHistory)({
 // react-router-redux reducer under the routerKey "router" in src/routes/index.js,
 // so we need to provide a custom `selectLocationState` to inform
 // react-router-redux of its location.
-getStoredState({}, (err, restoredState) => {
-  let store;
-  if (err) {
+// getStoredState({}, (err, restoredState) => {
+   let store;
+//   if (err) {
     const initialState = window.___INITIAL_STATE__;
     store = createStore(initialState, browserHistory);
-  } else {
-    store = createStore(restoredState, browserHistory);
-  }
+//   } else {
+//     store = createStore(restoredState, browserHistory);
+//   }
 
   // Save Store locally every 60 seconds
-  const loop = () => {
-    setTimeout(() => {
-      persistStore(store, {}, () => {
-        console.log('Persistency completed at ' + new Date());
-        loop();
-      });
-    }, 60000);
-  };
-  loop();
+  // const loop = () => {
+  //   setTimeout(() => {
+  //     persistStore(store, {}, () => {
+  //       console.log('Persistency completed at ' + new Date());
+  //       loop();
+  //     });
+  //   }, 60000);
+  // };
+  // loop();
 
   const history = syncHistoryWithStore(browserHistory, store, {
     selectLocationState: (state) => state.router
@@ -95,4 +95,4 @@ getStoredState({}, (err, restoredState) => {
   // Go!
   // ========================================================
   render();
-});
+// });

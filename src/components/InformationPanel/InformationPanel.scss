@@ -1,10 +1,12 @@
 .InformationPanel {
-  height: 435px;
-  width: 450px;
+  /*height: 485px;*/
+  width: 550px;
   opacity: 0.9;
 }
 .Content{
-  height: 371px;
-  width: 450px;
+  height: 421px;
   overflow: auto;
+}
+.Empty {
+  height: 90px;
 }

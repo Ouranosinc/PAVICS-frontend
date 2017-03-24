@@ -1,5 +1,7 @@
 import React from 'react';
-import {Button} from 'react-bootstrap';
+import RaisedButton from 'material-ui/RaisedButton';
+import ExecuteIcon from 'material-ui/svg-icons/action/done';
+
 class ExecuteButton extends React.Component {
   static propTypes = {
     executeProcess: React.PropTypes.func.isRequired
@@ -7,9 +9,10 @@ class ExecuteButton extends React.Component {
 
   render () {
     return (
-      <Button onClick={this.props.executeProcess}>
-        Run process
-      </Button>
+      <RaisedButton
+        onClick={this.props.executeProcess}
+        icon={<ExecuteIcon />}
+        label="Execute process" />
     );
   }
 }
