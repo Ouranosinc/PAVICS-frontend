@@ -64,7 +64,7 @@ class ProcessMonitoring extends React.Component {
 
   _onVisualiseDataset (url) {
     // TODO Remove hardcoded path
-    let prefix = 'http://hirondelle.crim.ca:8080/ncWMS2/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&DATASET=outputs/wps_outputs/';
+    let prefix = __PAVICS_NCWMS_PATH__ + '?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&DATASET=outputs/wps_outputs/';
     let index = url.indexOf('flyingpigeon');
     let suffix = url.substring(index, url.length);
     this.props.addDatasetLayersToVisualize([
