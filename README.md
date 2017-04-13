@@ -1,5 +1,17 @@
 # PAVICS-frontend
 
+This project focuses on answering the most-pressing needs we’ve identified: creation of standard and custom climate change scenarios for impacts and adaptation studies, exploration, analysis and validation of climate model simulations, as well as visualization of climate change scenarios at the watershed scale. These tasks currently require downloading terabytes of data and heavy data processing that convert raw data into useful products: statistics, graphics, time series, or maps. We plan to turn these time-consuming tasks into a streamlined click, drag and drop exercise. Over 20 collaborators have pledged their support to this vision of an hardware and software interface that gives both experienced researchers and non-specialists access to a highly advanced and powerful toolset.
+
+## Abstract
+
+Climate service providers are boundary organizations working at the interface of climate science research and users of climate information. Users include academics in other disciplines looking for credible, customized future climate scenarios, government planners, resource managers, asset owners, as well as service utilities. These users are looking for relevant information regarding the impacts of climate change as well as informing decisions regarding adaptation options. As climate change concerns become mainstream, the pressure on climate service providers to deliver tailored, high quality information in a timely manner increases rapidly. To meet this growing demand, Ouranos, a climate service center located in Montreal, is collaborating with the Centre de recherche informatique de Montreal (CRIM) to develop a climate data analysis web-based platform interacting with RESTful services covering data access and retrieval, geospatial analysis, bias correction, distributed climate indicator computing and results visualization.
+
+The project, financed by CANARIE, relies on the experience of Earth System Grid Federation Compute Working Team (ESGF-CWT), as well as on the Birdhouse framework developed by the German Climate Research Center (DKRZ) and French IPSL. 
+
+Climate data is accessed through OPEnDAP, while computations are carried through WPS. Regions such as watersheds or user-defined polygons, used as spatial selections for computations, are managed by GeoServer, also providing WMS, WCS, WFS and WPS capabilities. The services are hosted on independent servers communicating by high throughput network. Deployment, maintenance and collaboration with other development teams are eased by the use of Docker and OpenStack VMs. Web-based tools are developed with modern web frameworks such as React-Redux, Koa, Webpack, OpenLayers 3 and Plotly.
+
+Although the main objective of the project is to build a functioning, usable data analysis pipeline within two years, time is also devoted to explore emerging technologies and assess their potential. For instance, sandbox environments will store climate data in HDFS, process it with Apache Spark and allow interaction through Jupyter Notebooks. Data streaming of observational data with OpenGL and Cesium is also considered.
+
 ## Features
 * [react](https://github.com/facebook/react)
 * [redux](https://github.com/rackt/redux)
@@ -174,6 +186,18 @@ If you need environment-specific overrides (useful for dynamically setting API e
 |`compiler_devtool`|what type of source-maps to generate (set to `false`/`null` to disable)|
 |`compiler_vendor`|packages to separate into to the vendor bundle|
 
+The platform is coupled to a few services from Birdhouse. As of 2017-04-13, the platform assumes that five specific services are exposed at specific ports and paths of one domain, which is controlled through the BIRDHOUSE_HOST environment variable. This variable will default to outarde.crim.ca, CRIM's preprod Birdhouse server.
+
+```js
+let birdhouseHost = process.env.BIRDHOUSE_HOST || 'outarde.crim.ca';
+pavics_solr_path: `http://${birdhouseHost}:8091`,
+pavics_phoenix_path: `https://${birdhouseHost}:8443`,
+pavics_geoserver_path: `http://${birdhouseHost}:8087/geoserver`,
+pavics_ncwms_path: `http://${birdhouseHost}:8080/ncWMS2/wms`,
+pavics_pywps_path: `http://${birdhouseHost}:8086/pywps`,
+```
+  
+For now, if one wants to use a custom deployement of either of these services, they must deploy exactly all the others as well, at the ports and paths defined here. These are normally visible on CRIM's github profile.
 
 ### Root Resolve
 Webpack is configured to make use of [resolve.root](http://webpack.github.io/docs/configuration.html#resolve-root), which lets you import local packages as if you were traversing from the root of your `~/src` directory. Here's an example:
