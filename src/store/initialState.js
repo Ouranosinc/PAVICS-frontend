@@ -16,7 +16,13 @@ const initialState = {
     providers: {
       items: []
     },
-    selectedProvider: ''
+    selectedProvider: '',
+    workflows: {
+      isFetching: false,
+      isSaving: false,
+      isDeleting: false,
+      items: []
+    }
   },
   platform: {
     section: ''
