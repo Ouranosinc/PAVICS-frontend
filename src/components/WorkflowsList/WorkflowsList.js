@@ -34,6 +34,7 @@ export default class WorkflowsList extends Component {
     this.openConfirmWorkflowDeletionDialog = this.openConfirmWorkflowDeletionDialog.bind(this);
     this.makeConfirmWorkflowDeletionDialogActions = this.makeConfirmWorkflowDeletionDialogActions.bind(this);
     this.closeDialog = this.closeDialog.bind(this);
+    this.confirmWorkflowDeletion = this.confirmWorkflowDeletion.bind(this);
     this.state = {
       pageNumber: 1,
       numberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX],
@@ -57,6 +58,11 @@ export default class WorkflowsList extends Component {
     });
   }
 
+  confirmWorkflowDeletion (id) {
+    this.props.deleteWorkflow(id);
+    this.closeDialog();
+  }
+
   makeConfirmWorkflowDeletionDialogActions (id) {
     return [
       <FlatButton
@@ -69,7 +75,7 @@ export default class WorkflowsList extends Component {
         label="OK"
         primary={true}
         keyboardFocused={false}
-        onTouchTap={() => {this.props.deleteWorkflow(id)}}
+        onTouchTap={() => {this.confirmWorkflowDeletion(id);}}
       />
     ]
   }
