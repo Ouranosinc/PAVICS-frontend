@@ -217,7 +217,7 @@ export default class WpsProcessForm extends React.Component {
           {
             this.props.selectedProcessInputs.map((elem, i) => {
               return (
-                <Col sm={12}>
+                <Col key={i} sm={12}>
                   <FormGroup key={i}>
                     <Col sm={2}>{elem.title}</Col>
                     <Col sm={10}>
