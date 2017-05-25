@@ -10,22 +10,21 @@ import { grey400 } from 'material-ui/styles/colors';
 import FlatButton from 'material-ui/FlatButton';
 import Remove from 'material-ui/svg-icons/action/delete';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import Create from 'material-ui/svg-icons/content/create';
 import Build from 'material-ui/svg-icons/action/build';
 import DeviceHub from 'material-ui/svg-icons/hardware/device-hub';
 import Pagination from '../Pagination';
 import * as constants from '../../constants';
 const style = {
-  container: {
-    margin: '20px'
-  },
   noWorkflows: {
     padding: '20px'
   }
 };
-export default class WorkflowsList extends Component {
+export default class ScientificWorkflowList extends Component {
   static propTypes = {
     workflows: React.PropTypes.object.isRequired,
-    deleteWorkflow: React.PropTypes.func.isRequired
+    deleteWorkflow: React.PropTypes.func.isRequired,
+    goToConfigureAndRunStep: React.PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -34,6 +33,8 @@ export default class WorkflowsList extends Component {
     this.openConfirmWorkflowDeletionDialog = this.openConfirmWorkflowDeletionDialog.bind(this);
     this.makeConfirmWorkflowDeletionDialogActions = this.makeConfirmWorkflowDeletionDialogActions.bind(this);
     this.closeDialog = this.closeDialog.bind(this);
+    this.onRunWorkflowClick = this.onRunWorkflowClick.bind(this);
+    this.onEditWorkflowClick = this.onEditWorkflowClick.bind(this);
     this.confirmWorkflowDeletion = this.confirmWorkflowDeletion.bind(this);
     this.state = {
       pageNumber: 1,
@@ -87,16 +88,27 @@ export default class WorkflowsList extends Component {
     });
   }
 
+  onRunWorkflowClick (workflow) {
+    this.props.goToConfigureAndRunStep(workflow);
+  }
+
+  onEditWorkflowClick () {
+    this.setState({
+      dialogOpened: true,
+      dialogContent: 'editing workflow'
+    });
+  }
+
   render () {
     if (this.props.workflows.isFetching) {
       return (
-        <div style={style.container}><Paper><CircularProgress /></Paper></div>
+        <div><Paper><CircularProgress /></Paper></div>
       );
     } else if (this.props.workflows.items.length > 0) {
       let start = (this.state.pageNumber - 1) * this.state.numberPerPage;
       let paginated = this.props.workflows.items.slice(start, start + this.state.numberPerPage);
       return (
-        <div style={style.container}>
+        <div>
           <Paper>
             <List>
               {
@@ -115,9 +127,10 @@ export default class WorkflowsList extends Component {
                             tooltipPosition="bottom-left">
                             <MoreVertIcon color={grey400} />
                           </IconButton>}>
-                          <MenuItem onTouchTap={() => {alert('run')}} leftIcon={<Build />}>Run</MenuItem>
-                          <MenuItem onTouchTap={() => {this.openConfirmWorkflowDeletionDialog(workflow.id, workflow.json.name)}} leftIcon={<Remove />}>Delete</MenuItem>
-                        </IconMenu>
+                          <MenuItem leftIcon={<Build />} onTouchTap={() => this.onRunWorkflowClick(workflow)}>Configure & Run</MenuItem>
+                          <MenuItem leftIcon={<Create />} onTouchTap={this.onEditWorkflowClick}>Edit</MenuItem>
+                          <MenuItem leftIcon={<Remove />} onTouchTap={() => {this.openConfirmWorkflowDeletionDialog(workflow.id, workflow.json.name)}}>Delete</MenuItem>
+                          </IconMenu>
                       }/>
                   );
                 })
@@ -141,7 +154,7 @@ export default class WorkflowsList extends Component {
       );
     } else {
       return (
-        <div style={style.container}><Paper style={style.noWorkflows}>No workflows yet</Paper></div>
+        <div><Paper style={style.noWorkflows}>No workflows yet</Paper></div>
       );
     }
   }

@@ -1,8 +1,7 @@
 import React from 'react';
-import WorkflowWizardStepper from './../../components/WorkflowWizard';
+import ScientificWorkflowStepper from '../../components/ScientificWorkflowStepper';
+import WorkflowWizardStepper from '../../components/WorkflowWizard';
 import { Tabs, Tab } from 'material-ui/Tabs';
-import WorkflowsList from '../../components/WorkflowsList/WorkflowsList';
-import AddWorkflowForm from '../../components/AddWorkflowForm/AddWorkflowForm';
 export default class WorkflowWizard extends React.Component {
   static propTypes = {
     processes: React.PropTypes.array.isRequired,
@@ -50,12 +49,21 @@ export default class WorkflowWizard extends React.Component {
   render () {
     return (
       <Tabs>
-        <Tab label="Workflows">
-          <WorkflowsList
-            deleteWorkflow={this.deleteWorkflowCallback}
-            workflows={this.props.workflows} />
-          <AddWorkflowForm
-            saveWorkflow={this.props.saveWorkflow} />
+        <Tab label="Scientific Workflows">
+          <ScientificWorkflowStepper
+            selectedRegions={this.props.selectedRegions}
+            selectedDatasetLayer={this.props.selectedDatasetLayer}
+            selectedShapefile={this.props.selectedShapefile}
+            goToSection={this.props.goToSection}
+            executeProcess={this.props.executeProcess}
+            handleSelectedProcessValueChange={this.props.handleSelectedProcessValueChange}
+            selectedProcess={this.props.selectedProcess}
+            selectedProcessInputs={this.props.selectedProcessInputs}
+            selectedProcessValues={this.props.selectedProcessValues}
+            selectedProvider={this.props.selectedProvider}
+            workflows={this.props.workflows}
+            saveWorkflow={this.props.saveWorkflow}
+            deleteWorkflowCallback={this.deleteWorkflowCallback} />
         </Tab>
         <Tab label="WPS Processes">
           <WorkflowWizardStepper

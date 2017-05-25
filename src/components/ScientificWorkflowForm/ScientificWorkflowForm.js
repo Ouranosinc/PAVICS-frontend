@@ -6,9 +6,6 @@ import FlatButton from 'material-ui/FlatButton';
 import Paper from 'material-ui/Paper';
 import Done from 'material-ui/svg-icons/action/done'
 const styles = {
-  container: {
-    margin: '20px'
-  },
   textarea: {
     padding: '20px'
   },
@@ -16,7 +13,7 @@ const styles = {
     marginTop: '20px'
   }
 };
-export default class AddWorkflowForm extends Component {
+export default class ScientificWorkflowForm extends Component {
   static propTypes = {
     saveWorkflow: React.PropTypes.func.isRequired
   };
@@ -79,7 +76,7 @@ export default class AddWorkflowForm extends Component {
 
   render () {
     return (
-      <div style={styles.container}>
+      <div>
         <Paper style={styles.textarea}>
           <TextField
             value={this.state.json}

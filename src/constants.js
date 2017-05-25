@@ -44,3 +44,10 @@ export const DEFAULT_SELECTED_KEY = 'frequency';
 // Pagination
 export const PER_PAGE_OPTIONS = [5, 10, 25];
 export const PER_PAGE_INITIAL_INDEX = 0;
+// WPS processes and forms
+export const BOOLEAN = '//www.w3.org/TR/xmlschema-2/#boolean';
+export const STRING = '//www.w3.org/TR/xmlschema-2/#string';
+export const NETCDF = 'ComplexData';
+export const LABEL_NETCDF = 'LABEL_NETCDF';
+export const LABEL_SHAPEFILE = 'LABEL_SHAPEFILE';
+export const LABEL_FEATURE_IDS = 'LABEL_FEATURE_IDS';
