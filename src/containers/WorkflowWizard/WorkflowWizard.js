@@ -1,6 +1,8 @@
 import React from 'react';
 import ScientificWorkflowStepper from '../../components/ScientificWorkflowStepper';
 import WorkflowWizardStepper from '../../components/WorkflowWizard';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
 import { Tabs, Tab } from 'material-ui/Tabs';
 export default class WorkflowWizard extends React.Component {
   static propTypes = {
@@ -32,10 +34,19 @@ export default class WorkflowWizard extends React.Component {
   constructor (props) {
     super(props);
     this.deleteWorkflowCallback = this.deleteWorkflowCallback.bind(this);
+    this.openDialog = this.openDialog.bind(this);
+    this.closeDialog = this.closeDialog.bind(this);
+    this.showDialog = this.showDialog.bind(this);
     this.props.fetchProviders();
     if (this.props.selectedProvider) {
       this.props.fetchProcesses(this.props.selectedProvider);
     }
+    this.state = {
+      dialogOpened: false,
+      dialogTitle: '',
+      dialogContent: '',
+      dialogActions: []
+    };
   }
 
   componentDidMount () {
@@ -46,46 +57,88 @@ export default class WorkflowWizard extends React.Component {
     this.props.deleteWorkflow(id);
   }
 
+  openDialog () {
+    this.setState({
+      dialogOpened: true
+    });
+  }
+
+  closeDialog () {
+    this.setState({
+      dialogOpened: false
+    });
+  }
+
+  showDialog (title, content, actions) {
+    const defaultDialogActions = [
+      <FlatButton
+        label="OK"
+        primary={true}
+        keyboardFocused={true}
+        onTouchTap={this.closeDialog}
+      />
+    ];
+    this.setState({
+      dialogOpened: true,
+      dialogTitle: title,
+      dialogContent: content,
+      dialogActions: actions ? actions : defaultDialogActions
+    });
+  }
+
   render () {
     return (
-      <Tabs>
-        <Tab label="Scientific Workflows">
-          <ScientificWorkflowStepper
-            selectedRegions={this.props.selectedRegions}
-            selectedDatasetLayer={this.props.selectedDatasetLayer}
-            selectedShapefile={this.props.selectedShapefile}
-            goToSection={this.props.goToSection}
-            executeProcess={this.props.executeProcess}
-            handleSelectedProcessValueChange={this.props.handleSelectedProcessValueChange}
-            selectedProcess={this.props.selectedProcess}
-            selectedProcessInputs={this.props.selectedProcessInputs}
-            selectedProcessValues={this.props.selectedProcessValues}
-            selectedProvider={this.props.selectedProvider}
-            workflows={this.props.workflows}
-            saveWorkflow={this.props.saveWorkflow}
-            deleteWorkflowCallback={this.deleteWorkflowCallback} />
-        </Tab>
-        <Tab label="WPS Processes">
-          <WorkflowWizardStepper
-            selectedRegions={this.props.selectedRegions}
-            selectedDatasetLayer={this.props.selectedDatasetLayer}
-            selectedShapefile={this.props.selectedShapefile}
-            stepIndex={this.props.stepIndex}
-            processes={this.props.processes}
-            chooseProcess={this.props.chooseProcess}
-            fetchProcessInputs={this.props.fetchProcessInputs}
-            selectWpsProvider={this.props.selectWpsProvider}
-            providers={this.props.providers}
-            selectedProvider={this.props.selectedProvider}
-            getLastStep={this.props.getLastStep}
-            selectedProcess={this.props.selectedProcess}
-            selectedProcessValues={this.props.selectedProcessValues}
-            selectedProcessInputs={this.props.selectedProcessInputs}
-            goToSection={this.props.goToSection}
-            executeProcess={this.props.executeProcess}
-            handleSelectedProcessValueChange={this.props.handleSelectedProcessValueChange} />
-        </Tab>
-      </Tabs>
+      <div>
+        <Tabs>
+          <Tab label="Scientific Workflows">
+            <ScientificWorkflowStepper
+              showDialog={this.showDialog}
+              providers={this.props.providers}
+              selectedRegions={this.props.selectedRegions}
+              selectedDatasetLayer={this.props.selectedDatasetLayer}
+              selectedShapefile={this.props.selectedShapefile}
+              goToSection={this.props.goToSection}
+              executeProcess={this.props.executeProcess}
+              handleSelectedProcessValueChange={this.props.handleSelectedProcessValueChange}
+              selectedProcess={this.props.selectedProcess}
+              selectedProcessInputs={this.props.selectedProcessInputs}
+              selectedProcessValues={this.props.selectedProcessValues}
+              selectedProvider={this.props.selectedProvider}
+              workflows={this.props.workflows}
+              saveWorkflow={this.props.saveWorkflow}
+              deleteWorkflowCallback={this.deleteWorkflowCallback}/>
+          </Tab>
+          <Tab label="WPS Processes">
+            <WorkflowWizardStepper
+              selectedRegions={this.props.selectedRegions}
+              selectedDatasetLayer={this.props.selectedDatasetLayer}
+              selectedShapefile={this.props.selectedShapefile}
+              stepIndex={this.props.stepIndex}
+              processes={this.props.processes}
+              chooseProcess={this.props.chooseProcess}
+              fetchProcessInputs={this.props.fetchProcessInputs}
+              selectWpsProvider={this.props.selectWpsProvider}
+              providers={this.props.providers}
+              selectedProvider={this.props.selectedProvider}
+              getLastStep={this.props.getLastStep}
+              selectedProcess={this.props.selectedProcess}
+              selectedProcessValues={this.props.selectedProcessValues}
+              selectedProcessInputs={this.props.selectedProcessInputs}
+              goToSection={this.props.goToSection}
+              executeProcess={this.props.executeProcess}
+              handleSelectedProcessValueChange={this.props.handleSelectedProcessValueChange}/>
+          </Tab>
+        </Tabs>
+        <Dialog
+          open={this.state.dialogOpened}
+          title={this.state.dialogTitle}
+          onRequestClose={this.closeDialog}
+          actions={this.state.dialogActions}
+          modal={true}>
+          {this.state.dialogContent}
+        </Dialog>
+      </div>
+
     );
   }
 }

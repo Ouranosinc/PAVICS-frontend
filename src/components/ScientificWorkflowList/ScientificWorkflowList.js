@@ -113,7 +113,6 @@ export default class ScientificWorkflowList extends Component {
             <List>
               {
                 paginated.map((workflow, i) => {
-                  console.log(workflow);
                   return (
                     <ListItem
                       style={{width: '98%'}}
