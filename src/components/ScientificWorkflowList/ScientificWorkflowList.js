@@ -48,7 +48,7 @@ export default class ScientificWorkflowList extends Component {
   openConfirmWorkflowDeletionDialog (id, name) {
     this.setState({
       dialogOpened: true,
-      dialogContent: 'Voulez-vous vraiment supprimer le workflow ' + name + '?',
+      dialogContent: 'Do you really want to delete the workflow ' + name + '?',
       dialogActions: this.makeConfirmWorkflowDeletionDialogActions(id)
     });
   }

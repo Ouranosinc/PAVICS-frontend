@@ -27,6 +27,38 @@ export default class WorkflowWizardStepper extends React.Component {
     selectedRegions: React.PropTypes.array.isRequired
   };
 
+  constructor(props) {
+    super(props);
+    this.execute = this.execute.bind(this);
+    this.makePostRequest = this.makePostRequest.bind(this);
+  }
+
+  execute () {
+    // ugly hack to workaround making one extra trip to the backend
+    // we already have had to put strange __start__ and __end__ inputs to work nicely with phoenix
+    let formData = new FormData(document.querySelector('#process-form'));
+    let url = `${__PAVICS_PHOENIX_PATH__}/processes/execute?wps=${this.props.selectedProvider}&process=${this.props.selectedProcessIdentifier}`;
+    // let url = `/phoenix/execute?wps=${this.props.selectedProvider}&process=${this.props.selectedProcess.identifier}`;
+    this.makePostRequest(url, formData, (res) => {
+      // TODO actually do something once the post have been done
+      console.log(res);
+    });
+    // this.props.executeProcess(provider, identifier, values);
+    // this.props.goToSection(constants.PLATFORM_SECTION_MONITOR);
+  }
+
+  makePostRequest (url, data, callable, params) {
+    let xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      if (callable !== undefined) {
+        callable(xhr.responseText, params);
+      }
+    };
+    xhr.open('POST', url);
+    xhr.setRequestHeader('accept', 'text/html');
+    xhr.send(data);
+  }
+
   render () {
     const styleStepLabel = {
       color: 'white'
@@ -73,7 +105,7 @@ export default class WorkflowWizardStepper extends React.Component {
                     selectedDatasetLayer={this.props.selectedDatasetLayer}
                     selectedShapefile={this.props.selectedShapefile}
                     goToSection={this.props.goToSection}
-                    executeProcess={this.props.executeProcess}
+                    executeProcess={this.execute}
                     handleSelectedProcessValueChange={this.props.handleSelectedProcessValueChange}
                     selectedProcess={this.props.selectedProcess}
                     selectedProcessInputs={this.props.selectedProcessInputs}

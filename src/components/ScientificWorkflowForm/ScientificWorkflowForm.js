@@ -107,9 +107,7 @@ export default class ScientificWorkflowForm extends Component {
             ]
           }
         >
-          Ce JSON n'est pas valide. Veuillez fournir un JSON valide. Vous pouvez consulter <a target="_blank"
-                                                                                              href="https://jsonlint.com/">ce
-          site</a> pour corriger les erreurs.
+          The value you entered is not valid JSON. You can visit <a target="_blank" href="https://jsonlint.com/">this site</a> to correct the errors.
         </Dialog>
       </div>
     );
