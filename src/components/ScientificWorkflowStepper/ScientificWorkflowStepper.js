@@ -19,6 +19,7 @@ export default class ScientificWorkflowStepper extends Component {
     workflows: React.PropTypes.object.isRequired,
     saveWorkflow: React.PropTypes.func.isRequired,
     deleteWorkflowCallback: React.PropTypes.func.isRequired,
+    setProcessInputs: React.PropTypes.func.isRequired,
     selectedProvider: React.PropTypes.string.isRequired,
     selectedProcessInputs: React.PropTypes.array.isRequired,
     selectedProcessValues: React.PropTypes.object.isRequired,
@@ -59,40 +60,58 @@ export default class ScientificWorkflowStepper extends Component {
 
   }
 
+  /*
+  I'm sorry
+  they made me do this against my will
+   */
   parseScientificWorkflow = async (workflow) => {
     if (workflow.json && workflow.json.tasks) {
       let tasks = workflow.json.tasks;
+      let inputsThatShouldBeProvided = [];
       let validProviders = [];
-      this.props.providers.items.map(elem => {
-        validProviders.push(elem.identifier);
-      });
+      this.props.providers.items.map(elem => validProviders.push(elem.identifier));
       // validate that each task has a valid provider
-      for (let i = 0, nb = tasks.length; i !== nb; i++) {
+      for (let i = 0, nbTasks = tasks.length; i !== nbTasks; i++) {
         let thisTask = tasks[i];
-        let thisProvider = thisTask.provider;
-        let thisProcess = thisTask.identifier;
-        // careful, i is already used
-        let j = validProviders.indexOf(thisProvider);
-        if (j === -1) {
-          throw new Error(`The provider ${thisProvider} is not a valid provider. Please edit the workflow accordingly.`);
+        let thisTaskProvider = thisTask.provider;
+        let thisTaskProcessIdentifier = thisTask.identifier;
+        if (validProviders.indexOf(thisTaskProvider) === -1) {
+          throw new Error(`The provider ${thisTaskProvider} is not a valid provider. Please edit the workflow accordingly.`);
         }
-        let providerDescription = await this.request(`/phoenix/processesList?provider=${thisProvider}`);
+        let providerDescription = await this.request(`/phoenix/processesList?provider=${thisTaskProvider}`);
         // we want only the part before the ?
         // also we use tasks[i] because we want the original array to be modified
         // not the local thisTask
         tasks[i]['url'] = providerDescription.url.substring(0, providerDescription.url.indexOf('?'));
-        let validIdentifiers = [];
-        providerDescription.items.map(elem => validIdentifiers.push(elem.identifier));
+        let validProcessIdentifiers = [];
+        providerDescription.items.map(elem => validProcessIdentifiers.push(elem.identifier));
         // validate that this task has a valid identifier (that is, the provider provides that identifier)
-        if (validIdentifiers.indexOf(thisProcess) === -1) {
-          throw new Error(
-            'The identifier %s is not a valid process identifier of the provider %s. Please provide valid process identifiers',
-            thisProcess,
-            thisProvider
-          );
+        if (validProcessIdentifiers.indexOf(thisTaskProcessIdentifier) === -1) {
+          throw new Error(`The identifier ${thisTaskProcessIdentifier} is not a valid process identifier of the provider ${thisTaskProvider}. Please provide valid process identifiers`);
         }
-        let processDescription = await this.request(`/phoenix/inputs?provider=${thisProvider}&process=${thisProcess}`);
-        console.log('this task inputs:', processDescription);
+        // if the task has inputs (a task can have only linked_inputs, that are provided by other tasks)
+        // those tasks need nothing from the user
+        // here, we validate that all inputs are actually existing in the process
+        if (thisTask.inputs) {
+          let processDescription = await this.request(`/phoenix/inputs?provider=${thisTaskProvider}&process=${thisTaskProcessIdentifier}`);
+          let validInputNames = [];
+          processDescription.inputs.map(elem => validInputNames.push(elem.name));
+          for (let j = 0, nbInputs = thisTask.inputs.length; j !== nbInputs; j++) {
+             let thisInputName = thisTask.inputs[j][0];
+             let validInputIndex = validInputNames.indexOf(thisInputName);
+             if (validInputIndex === -1) {
+               throw new Error(`The input ${thisInputName} is not a valid input for the process ${thisTaskProcessIdentifier}, it should be one of ${validInputNames.join(', ')}.`);
+             }
+             console.log('process description:', processDescription);
+             inputsThatShouldBeProvided.push({
+               name: thisInputName,
+               type: processDescription.inputs[validInputIndex].dataType,
+               description: processDescription.inputs[validInputIndex].description
+             });
+          }
+        }
+        console.log('inputs that should be provided:', inputsThatShouldBeProvided);
+        this.props.setProcessInputs(inputsThatShouldBeProvided);
       }
     } else {
       throw new Error('The workflow is invalid, it lacks a json member.');
@@ -132,13 +151,13 @@ export default class ScientificWorkflowStepper extends Component {
     return (
       <Stepper activeStep={this.state.activeStep} orientation="vertical">
         <Step>
-          <StepLabel style={styleStepLabel}>Sélectionnez l'action 'Configure & Run' du workflow voulu</StepLabel>
+          <StepLabel style={styleStepLabel}>Choose the 'Configure & Run' action of the desired workflow</StepLabel>
           <StepContent>
             <ScientificWorkflowList
               goToConfigureAndRunStep={this.goToConfigureAndRunStep}
               deleteWorkflow={this.props.deleteWorkflowCallback}
               workflows={this.props.workflows}/>
-            <p style={styles.orParagraph}>Ou ajoutez un nouveau workflow</p>
+            <p style={styles.orParagraph}>Or add a new workflow</p>
             <ScientificWorkflowForm
               saveWorkflow={this.props.saveWorkflow}/>
           </StepContent>

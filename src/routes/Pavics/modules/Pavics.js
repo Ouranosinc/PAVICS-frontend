@@ -760,7 +760,7 @@ function setWpsProvider (provider) {
     provider: provider
   };
 }
-function setProcessInputs (inputs) {
+export function setProcessInputs (inputs) {
   return {
     type: constants.WORKFLOW_SET_ACTIVE_PROCESS_INPUTS,
     inputs: inputs

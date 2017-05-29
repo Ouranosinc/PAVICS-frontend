@@ -7,7 +7,7 @@ export default class WpsProcessSelector extends React.Component {
     chooseProcess: React.PropTypes.func.isRequired,
     fetchProcessInputs: React.PropTypes.func.isRequired,
     selectedProvider: React.PropTypes.string.isRequired
-  }
+  };
 
   makeChooseProcessCallback (process) {
     return () => {
