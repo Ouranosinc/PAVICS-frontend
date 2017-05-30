@@ -93,7 +93,7 @@ const initialState = {
     error: null
   }
 };
-export default function projectReducer (state = initialState, action) {
+export default function (state = initialState, action) {
   const handler = PROJECT_HANDLERS[action.type];
   return handler ? handler(state, action) : state;
 }
