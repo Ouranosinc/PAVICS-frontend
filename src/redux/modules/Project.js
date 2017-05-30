@@ -48,15 +48,15 @@ export function setCurrentProject (project) {
 export function fetchResearcherProjects (reseacherId) {
   return dispatch => {
     dispatch(fetchResearcherProjectsRequest());
-    fetch(__LOOPBACK_API_PATH__ + `/Projects?filter={"where":{"researcherId" : ${reseacherId}}`)
-      .then(
-        res => res.json(),
-        err => dispatch(fetchResearcherProjectsFailure()
-        )
-          .then(
-            json => dispatch(fetchResearcherProjectsSuccess(json)),
-            err => dispatch(fetchResearcherProjectsFailure())
-          ));
+    const filter = {
+      where: {
+        researcherId: reseacherId
+      }
+    };
+    fetch(__LOOPBACK_API_PATH__ + `/Projects?filter=${JSON.stringify(filter)}`)
+      .then(res => res.json())
+      .then(json => dispatch(fetchResearcherProjectsSuccess(json)))
+      .catch(err => dispatch(fetchResearcherProjectsFailure(err)));
   };
 }
 
@@ -93,7 +93,7 @@ const initialState = {
     error: null
   }
 };
-export default function (state = initialState, action) {
+export default function projectReducer (state = initialState, action) {
   const handler = PROJECT_HANDLERS[action.type];
   return handler ? handler(state, action) : state;
 }

@@ -1,7 +1,6 @@
 import initialState from './../../../store/initialState';
 import * as constants from './../../../constants';
 import ol from 'openlayers';
-import projectReducer from './../../../redux/modules/Project';
 
 // SYNC
 const SET_WMS_LAYER = 'Visualize.SET_WMS_LAYER';
@@ -496,7 +495,7 @@ export function deleteWorkflow (id) {
   return dispatch => {
     dispatch(deleteWorkflowRequest());
     let request = new Request(
-      __LOOPBACK_API_PATH__+'/workflows/'+id,
+      __LOOPBACK_API_PATH__+'/Workflows/'+id,
       {
         method: 'DELETE'
       }
@@ -1302,8 +1301,7 @@ function pavicsReducer (state = initialState, action) {
     workflowWizard: workflowWizardReducer(state.workflowWizard, action),
     platform: platformReducer(state.platform, action),
     monitor: monitorReducer(state.monitor, action),
-    visualize: visualizeReducer(state.visualize, action),
-    project: projectReducer(state.project, action)
+    visualize: visualizeReducer(state.visualize, action)
   };
 }
 export default pavicsReducer;

@@ -36,10 +36,12 @@ export class ExperienceManagement extends React.Component {
     addFacetKeyValue: React.PropTypes.func.isRequired,
     removeAllFacetKeyValue: React.PropTypes.func.isRequired,
     fetchPavicsDatasets: React.PropTypes.func.isRequired,
-    restorePavicsDatasets: React.PropTypes.func.isRequired
+    restorePavicsDatasets: React.PropTypes.func.isRequired,
+    fetchResearcherProjects: React.PropTypes.func.isRequired
   };
   constructor (props) {
     super(props);
+    props.fetchResearcherProjects(1);
     this._onVisualizeLayer = this._onVisualizeLayer.bind(this);
     this._onCriteriasPageChanged = this._onCriteriasPageChanged.bind(this);
     this._onDatasetsPageChanged = this._onDatasetsPageChanged.bind(this);

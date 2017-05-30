@@ -2,7 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import * as actionCreators from './../modules/Pavics';
-import { setCurrentProject, fetchResearcherProjects } from './../../../redux/modules/Project';
+import * as projectActionCreators from './../../../redux/modules/Project';
 import * as constants from './../../../constants';
 import {
   AccountManagement,
@@ -74,9 +74,7 @@ class Pavics extends React.Component {
   }
 }
 const mapActionCreators = {
-    ...actionCreators,
-  setCurrentProject,
-  fetchResearcherProjects
+    ...actionCreators, ...projectActionCreators
 };
 const mapStateToProps = state => {
   return {
