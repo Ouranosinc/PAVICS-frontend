@@ -2,6 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import * as actionCreators from './../modules/Pavics';
+import { setCurrentProject, fetchResearcherProjects } from './../../../redux/modules/Project';
 import * as constants from './../../../constants';
 import {
   AccountManagement,
@@ -72,13 +73,18 @@ class Pavics extends React.Component {
     );
   }
 }
-const mapActionCreators = {...actionCreators};
+const mapActionCreators = {
+    ...actionCreators,
+  setCurrentProject,
+  fetchResearcherProjects
+};
 const mapStateToProps = state => {
   return {
     ...state.pavics.workflowWizard,
     ...state.pavics.visualize,
     platform: state.pavics.platform,
-    monitor: state.pavics.monitor
+    monitor: state.pavics.monitor,
+    project: state.project
   };
 };
 export default connect(mapStateToProps, mapActionCreators)(Pavics);

@@ -1,6 +1,7 @@
 import initialState from './../../../store/initialState';
 import * as constants from './../../../constants';
 import ol from 'openlayers';
+import projectReducer from './../../../redux/modules/Project';
 
 // SYNC
 const SET_WMS_LAYER = 'Visualize.SET_WMS_LAYER';
@@ -1301,7 +1302,8 @@ function pavicsReducer (state = initialState, action) {
     workflowWizard: workflowWizardReducer(state.workflowWizard, action),
     platform: platformReducer(state.platform, action),
     monitor: monitorReducer(state.monitor, action),
-    visualize: visualizeReducer(state.visualize, action)
+    visualize: visualizeReducer(state.visualize, action),
+    project: projectReducer(state.project, action)
   };
 }
 export default pavicsReducer;
