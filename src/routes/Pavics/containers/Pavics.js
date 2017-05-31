@@ -1,13 +1,16 @@
 import React from 'react';
 import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import * as actionCreators from './../modules/Pavics';
 import * as projectActionCreators from './../../../redux/modules/Project';
+import { actions as researchActionsCreators } from './../../../redux/modules/Research';
 import * as constants from './../../../constants';
 import {
   AccountManagement,
   ExperienceManagement,
   SearchCatalog,
+  Research,
   WorkflowWizard,
   ProcessMonitoring,
   Visualize } from './../../../containers';
@@ -68,13 +71,20 @@ class Pavics extends React.Component {
             chooseStep={this.props.chooseStep}
             showContent={this.makeSection() !== null}
             currentContent={this.makeSection()} />
+          <Research {...this.props}/>
         </div>
       </MuiThemeProvider>
     );
   }
 }
+
+// const mapActionCreators = dispatch => ({
+//   researchActions: bindActionCreators({...researchActionsCreators}, dispatch)
+// });
+
 const mapActionCreators = {
-    ...actionCreators, ...projectActionCreators
+  ...actionCreators,
+  ...projectActionCreators
 };
 const mapStateToProps = state => {
   return {

@@ -1,11 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { actions as researchActionsCreators } from './../../redux/modules/Research';
 
-export class <%= pascalEntityName %> extends React.Component {
+export class Research extends React.Component {
   static propTypes = {
 
-  };
+  }
 
   constructor(props) {
     super(props);
@@ -13,22 +14,27 @@ export class <%= pascalEntityName %> extends React.Component {
 
 
   render () {
+    var yolo = this.props;
     return (
       <div>
-        <h1><%= pascalEntityName %></h1>
+        <h1>Research</h1>
       </div>
     )
   }
 }
 
 const mapStateToProps = (state) => {
-  return {}
+  return {
+    researchs: state.researchs
+  }
 };
 const mapDispatchToProps = (dispatch) => {
-  return {}
+  return {
+    researchActions: bindActionCreators({...researchActionsCreators}, dispatch)
+  };
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(<%= pascalEntityName %>)
+)(Research)

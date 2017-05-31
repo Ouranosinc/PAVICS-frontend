@@ -1,5 +1,6 @@
 import AccountManagement from './AccountManagement';
 import ExperienceManagement from './ExperienceManagement';
+import Research from './Research';
 import SearchCatalog from './SearchCatalog';
 import SearchCatalogResults from './SearchCatalogResults';
 import TimeSlider from './TimeSlider';
@@ -10,6 +11,7 @@ import ProcessMonitoring from './ProcessMonitoring';
 export {
   AccountManagement,
   ExperienceManagement,
+  Research,
   SearchCatalog,
   SearchCatalogResults,
   ClimateIndicators,

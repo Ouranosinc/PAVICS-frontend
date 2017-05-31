@@ -61,7 +61,7 @@ export function fetchResearcherProjects (reseacherId) {
 }
 
 // Exported Action Creators
-export const actions = {
+export const projectActions = {
   setCurrentProject,
   fetchResearcherProjects
 };

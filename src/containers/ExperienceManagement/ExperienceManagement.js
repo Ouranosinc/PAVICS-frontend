@@ -41,7 +41,7 @@ export class ExperienceManagement extends React.Component {
   };
   constructor (props) {
     super(props);
-    props.fetchResearcherProjects(1);
+    // props.projectActions.fetchResearcherProjects(1);
     this._onVisualizeLayer = this._onVisualizeLayer.bind(this);
     this._onCriteriasPageChanged = this._onCriteriasPageChanged.bind(this);
     this._onDatasetsPageChanged = this._onDatasetsPageChanged.bind(this);
