@@ -1,9 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { actions as researchAPIActionsCreators } from '../../redux/modules/ResearchAPI';
 import { actions as researchActionsCreators } from './../../redux/modules/Research';
 
-export class Research extends React.Component {
+import SearchCatalog from './../../components/SearchCatalog';
+
+export class ResearchContainer extends React.Component {
   static propTypes = {
 
   }
@@ -14,22 +17,21 @@ export class Research extends React.Component {
 
 
   render () {
-    var yolo = this.props;
     return (
-      <div>
-        <h1>Research</h1>
-      </div>
+      <SearchCatalog {...this.props} />
     )
   }
 }
 
 const mapStateToProps = (state) => {
   return {
-    researchs: state.researchs
+    researchAPIResults: state.researchAPI,
+    research: state.research
   }
 };
 const mapDispatchToProps = (dispatch) => {
   return {
+    researchAPIActions: bindActionCreators({...researchAPIActionsCreators}, dispatch),
     researchActions: bindActionCreators({...researchActionsCreators}, dispatch)
   };
 };
@@ -37,4 +39,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Research)
+)(ResearchContainer)

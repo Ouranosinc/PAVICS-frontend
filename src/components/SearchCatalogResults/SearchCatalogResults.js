@@ -1,5 +1,5 @@
 import React from 'react';
-import * as constants from './../../constants';
+import * as constants from '../../constants';
 import Loader from './../../components/Loader';
 import Pagination from './../../components/Pagination';
 import {Alert} from 'react-bootstrap';

@@ -1,9 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Paper from 'material-ui/Paper';
-import classes from './AccountManagement.scss';
+import AccountManagement from './../../components/AccountManagement';
 
-export class AccountManagement extends React.Component {
+export class AccountManagementContainer extends React.Component {
   static propTypes = {
 
   };
@@ -12,25 +11,22 @@ export class AccountManagement extends React.Component {
     super(props);
   }
 
+
   render () {
     return (
-      <div className={classes['AccountManagement']} style={{ margin: 20 }}>
-        <Paper>
-          AccountManagement (TODO)
-        </Paper>
-      </div>
-    );
+      <AccountManagement {...this.props} />
+    )
   }
 }
 
 const mapStateToProps = (state) => {
-  return {};
+  return {}
 };
 const mapDispatchToProps = (dispatch) => {
-  return {};
+  return {}
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(AccountManagement);
+)(AccountManagementContainer)

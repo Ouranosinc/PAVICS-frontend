@@ -1,2 +1,2 @@
-import ProcessMonitoring from './ProcessMonitoring';
-export default ProcessMonitoring;
+import ProcessMonitoringContainer from './ProcessMonitoring'
+export default ProcessMonitoringContainer

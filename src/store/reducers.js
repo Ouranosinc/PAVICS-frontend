@@ -1,7 +1,8 @@
 import { combineReducers } from 'redux';
 import { routerReducer as router } from 'react-router-redux';
 import projectReducer from './../redux/modules/Project';
-import { reducers as researchReducer } from './../redux/modules/Research';
+import { reducers as ResearchAPIReducer } from '../redux/modules/ResearchAPI';
+import researchReducer from './../redux/modules/Research';
 import researcherReducer from './../redux/modules/Researcher';
 
 export const makeRootReducer = (asyncReducers) => {
@@ -10,7 +11,8 @@ export const makeRootReducer = (asyncReducers) => {
     'router': router,
     'project': projectReducer,
     'researcher': researcherReducer,
-    'researchs': researchReducer,
+    'researchAPI': ResearchAPIReducer,
+    'research': researchReducer,
     // Add sync reducers here
     ...asyncReducers
   });

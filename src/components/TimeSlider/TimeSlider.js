@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import * as constants from './../../constants';
+import * as constants from '../../constants';
 require('rc-slider/assets/index.css');
 import classes from './TimeSlider.scss';
 import Slider  from 'rc-slider';

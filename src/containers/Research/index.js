@@ -1,2 +1,2 @@
-import Research from './Research'
-export default Research
+import ResearchContainer from './Research'
+export default ResearchContainer

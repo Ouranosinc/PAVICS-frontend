@@ -39,13 +39,13 @@ function fetchResearcherProjectsFailure (error) {
     }
   };
 }
-export function setCurrentProject (project) {
+function setCurrentProject (project) {
   return {
     type: constants.PROJECT_SET_CURRENT_PROJECT,
     currentProject: project
   };
 }
-export function fetchResearcherProjects (reseacherId) {
+function fetchResearcherProjects (reseacherId) {
   return dispatch => {
     dispatch(fetchResearcherProjectsRequest());
     const filter = {

@@ -1,6 +1,6 @@
 import React from 'react';
 import Loader from './../../components/Loader';
-import SearchCatalogResults from './../../containers/SearchCatalogResults';
+import SearchCatalogResults from './../../components/SearchCatalogResults';
 import CriteriaSelection from './../../components/CriteriaSelection';
 import {Alert} from 'react-bootstrap';
 import SelectField from 'material-ui/SelectField';
@@ -20,9 +20,8 @@ export class SearchCatalog extends React.Component {
     clickTogglePanel: React.PropTypes.func.isRequired,
     addSearchCriteriasToProject: React.PropTypes.func.isRequired,
     addDatasetsToProject: React.PropTypes.func.isRequired,
-    addFacetKeyValue: React.PropTypes.func.isRequired,
-    removeFacetKeyValue: React.PropTypes.func.isRequired,
-    removeAllFacetKeyValue: React.PropTypes.func.isRequired,
+    research: React.PropTypes.object.isRequired,
+    researchActions: React.PropTypes.object.isRequired,
     fetchFacets: React.PropTypes.func.isRequired,
     fetchDataset: React.PropTypes.func.isRequired,
     fetchEsgfDatasets: React.PropTypes.func.isRequired,
@@ -205,9 +204,8 @@ export class SearchCatalog extends React.Component {
                           return x.key === facetKey;
                         })}
                         menuStyle="HERE!!!!"
-                        selectedFacets={this.props.selectedFacets}
-                        addFacetKeyValue={this.props.addFacetKeyValue}
-                        removeFacetKeyValue={this.props.removeFacetKeyValue}
+                        research={this.props.research}
+                        researchActions={this.props.researchActions}
                         fetchPavicsDatasets={this.props.fetchPavicsDatasets}
                         fetchEsgfDatasets={this.props.fetchEsgfDatasets} />;
                     })

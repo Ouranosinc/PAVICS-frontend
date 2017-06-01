@@ -1,2 +1,2 @@
-import WorkflowWizard from './WorkflowWizard';
-export default WorkflowWizard;
+import WorkflowWizardContainer from '../../components/WorkflowWizard/WorkflowWizard';
+export default WorkflowWizardContainer;

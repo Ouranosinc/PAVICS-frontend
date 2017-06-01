@@ -4,16 +4,15 @@ import {bindActionCreators} from 'redux';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import * as actionCreators from './../modules/Pavics';
 import * as projectActionCreators from './../../../redux/modules/Project';
-import { actions as researchActionsCreators } from './../../../redux/modules/Research';
+import { actions as researchActionsCreators } from '../../../redux/modules/ResearchAPI';
 import * as constants from './../../../constants';
 import {
-  AccountManagement,
-  ExperienceManagement,
-  SearchCatalog,
-  Research,
-  WorkflowWizard,
-  ProcessMonitoring,
-  Visualize } from './../../../containers';
+  AccountManagementContainer,
+  ExperienceManagementContainer,
+  ResearchContainer,
+  WorkflowWizardContainer,
+  ProcessMonitoringContainer,
+  VisualizeContainer } from './../../../containers';
 import { SectionalPanel } from './../../../components/SectionalPanel';
 
 class Pavics extends React.Component {
@@ -31,21 +30,19 @@ class Pavics extends React.Component {
     switch (this.props.platform.section) {
       case constants.PLATFORM_SECTION_SEARCH_DATASETS:
         return (
-          <div>
-            <SearchCatalog {...this.props} />
-          </div>
+          <ResearchContainer {...this.props} />
         );
       case constants.PLATFORM_SECTION_EXPERIENCE_MANAGEMENT:
         return (
-          <ExperienceManagement {...this.props} />
+          <ExperienceManagementContainer {...this.props} />
         );
       case constants.PLATFORM_SECTION_WORKFLOWS:
         return (
-          <WorkflowWizard {...this.props} />
+          <WorkflowWizardContainer {...this.props} />
         );
       case constants.PLATFORM_SECTION_MONITOR:
         return (
-          <ProcessMonitoring
+          <ProcessMonitoringContainer
             addDatasetLayersToVisualize={this.props.addDatasetLayersToVisualize}
             fetchWPSJobs={this.props.fetchWPSJobs}
             monitor={this.props.monitor}
@@ -53,7 +50,7 @@ class Pavics extends React.Component {
         );
       case constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT:
         return (
-          <AccountManagement {...this.props} />
+          <AccountManagementContainer {...this.props} />
         );
       default:
         return null;
@@ -64,14 +61,13 @@ class Pavics extends React.Component {
     return (
       <MuiThemeProvider>
         <div>
-          <Visualize {...this.props} />
+          <VisualizeContainer {...this.props} />
           <SectionalPanel
             section={this.props.platform.section}
             goToSection={this.props.goToSection}
             chooseStep={this.props.chooseStep}
             showContent={this.makeSection() !== null}
             currentContent={this.makeSection()} />
-          <Research {...this.props}/>
         </div>
       </MuiThemeProvider>
     );
@@ -92,7 +88,8 @@ const mapStateToProps = state => {
     ...state.pavics.visualize,
     platform: state.pavics.platform,
     monitor: state.pavics.monitor,
-    project: state.project
+    project: state.project,
+    research: state.research
   };
 };
 export default connect(mapStateToProps, mapActionCreators)(Pavics);

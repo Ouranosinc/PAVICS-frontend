@@ -17,9 +17,6 @@ const REMOVE_FEATURE_FROM_SELECTED_REGIONS = 'Visualize.REMOVE_FEATURE_FROM_SELE
 const RESET_SELECTED_REGIONS = 'Visualize.RESET_SELECTED_REGIONS';
 const REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS = 'Visualize.REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS';
 const ADD_DATASETS_TO_PROJECTS = 'Visualize.ADD_DATASETS_TO_PROJECTS';
-const ADD_FACET_KEY_VALUE_PAIR = 'Visualize.ADD_FACET_KEY_VALUE_PAIR';
-const REMOVE_FACET_KEY_VALUE_PAIR = 'Visualize.REMOVE_FACET_KEY_VALUE_PAIR';
-const REMOVE_ALL_FACET_KEY_VALUE = 'Visualize.REMOVE_ALL_FACET_KEY_VALUE';
 const CLICK_TOGGLE_PANEL = 'Visualize.CLICK_TOGGLE_PANEL';
 const SET_CURRENT_TIME_ISO = 'Visualize.SET_CURRENT_TIME_ISO';
 const RESTORE_PAVICS_DATASETS = 'Visualize.RESTORE_PAVICS_DATASETS';
@@ -88,25 +85,6 @@ export function addDatasetLayersToVisualize (datasets) {
   return {
     type: ADD_DATASET_LAYERS_TO_VISUALIZE,
     datasets: datasets
-  };
-}
-export function addFacetKeyValue (key, value) {
-  return {
-    type: ADD_FACET_KEY_VALUE_PAIR,
-    key: key,
-    value: value
-  };
-}
-export function removeFacetKeyValue (key, value) {
-  return {
-    type: REMOVE_FACET_KEY_VALUE_PAIR,
-    key: key,
-    value: value
-  };
-}
-export function removeAllFacetKeyValue () {
-  return {
-    type: REMOVE_ALL_FACET_KEY_VALUE
   };
 }
 export function clickTogglePanel (panel, show) {
@@ -1145,30 +1123,6 @@ const VISUALIZE_HANDLERS = {
   [ADD_DATASET_LAYERS_TO_VISUALIZE]: (state, action) => {
     let newDatasetLayers = state.currentVisualizedDatasetLayers.concat(action.datasets);
     return ({...state, currentVisualizedDatasetLayers: newDatasetLayers});
-  },
-  [ADD_FACET_KEY_VALUE_PAIR]: (state, action) => {
-    let facets = state.selectedFacets.concat({key: action.key, value: action.value});
-    facets.sort(function (a, b) {
-      if (a.key + a.value < b.key + b.value) {
-        return -1;
-      }
-      if (a.key + a.value > b.key + b.value) {
-        return 1;
-      }
-      return 0;
-    });
-    return ({...state, selectedFacets: facets});
-  },
-  [REMOVE_FACET_KEY_VALUE_PAIR]: (state, action) => {
-    let selectedFacets = state.selectedFacets.slice();
-    let index = selectedFacets.findIndex(x => x.key === action.key && x.value === action.value);
-    if (index > -1) {
-      selectedFacets.splice(index, 1);
-    }
-    return ({...state, selectedFacets: selectedFacets});
-  },
-  [REMOVE_ALL_FACET_KEY_VALUE]: (state, action) => {
-    return ({...state, selectedFacets: []});
   },
   [SET_CURRENT_TIME_ISO]: (state, action) => {
     return ({...state, currentDateTime: action.currentDateTime});

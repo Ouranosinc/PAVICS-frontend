@@ -1,2 +1,2 @@
-import ExperienceManagement from './ExperienceManagement'
-export default ExperienceManagement
+import ExperienceManagementContainer from './ExperienceManagement'
+export default ExperienceManagementContainer

@@ -1,24 +1,17 @@
-import AccountManagement from './AccountManagement';
-import ExperienceManagement from './ExperienceManagement';
-import Research from './Research';
-import SearchCatalog from './SearchCatalog';
-import SearchCatalogResults from './SearchCatalogResults';
-import TimeSlider from './TimeSlider';
-import {ClimateIndicators, Visualize} from './Visualize';
-import WorkflowWizard from './WorkflowWizard';
-import ProcessMonitoring from './ProcessMonitoring';
+import AccountManagementContainer from './AccountManagement';
+import ExperienceManagementContainer from './ExperienceManagement';
+import ResearchContainer from './Research';
+import VisualizeContainer from './Visualize';
+import WorkflowWizardContainer from './WorkflowWizard';
+import ProcessMonitoringContainer from './ProcessMonitoring';
 
 export {
-  AccountManagement,
-  ExperienceManagement,
-  Research,
-  SearchCatalog,
-  SearchCatalogResults,
-  ClimateIndicators,
-  ProcessMonitoring,
-  TimeSlider,
-  Visualize,
-  WorkflowWizard
+  AccountManagementContainer,
+  ExperienceManagementContainer,
+  ResearchContainer,
+  ProcessMonitoringContainer,
+  VisualizeContainer,
+  WorkflowWizardContainer
 };
 export default () => {
   throw new Error('you must import a specific container');

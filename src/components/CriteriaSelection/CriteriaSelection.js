@@ -9,9 +9,8 @@ class CriteriaSelection extends React.Component {
   static propTypes = {
     criteriaName: React.PropTypes.string.isRequired,
     variables: React.PropTypes.object.isRequired,
-    selectedFacets: React.PropTypes.array.isRequired,
-    addFacetKeyValue: React.PropTypes.func.isRequired,
-    removeFacetKeyValue: React.PropTypes.func.isRequired,
+    research: React.PropTypes.object.isRequired,
+    researchActions: React.PropTypes.object.isRequired,
     fetchEsgfDatasets: React.PropTypes.func.isRequired,
     fetchPavicsDatasets: React.PropTypes.func.isRequired
   };
@@ -30,15 +29,15 @@ class CriteriaSelection extends React.Component {
   }
 
   _onRemoveFacet (facet) {
-    this.props.removeFacetKeyValue(facet.key, facet.value);
+    this.props.researchActions.removeFacetKeyValuePair(facet.key, facet.value);
     this.props.fetchPavicsDatasets();
   }
 
   _onSelectRow (event) {
     if (event.target.checked) {
-      this.props.addFacetKeyValue(this.props.criteriaName, event.target.value);
+      this.props.researchActions.addFacetKeyValuePair(this.props.criteriaName, event.target.value);
     } else {
-      this.props.removeFacetKeyValue(this.props.criteriaName, event.target.value);
+      this.props.researchActions.removeFacetKeyValuePair(this.props.criteriaName, event.target.value);
     }
     this.props.fetchPavicsDatasets();
   }
@@ -84,7 +83,7 @@ class CriteriaSelection extends React.Component {
             nestedItems={
               this._formatRows().map((row, i) => {
                 let checked = false;
-                this.props.selectedFacets.map(x => {
+                this.props.research.selectedFacets.map(x => {
                   if (x.value === row[0]) {
                     checked = true;
                   }
@@ -102,7 +101,7 @@ class CriteriaSelection extends React.Component {
         </List>
         <div>
           {
-            this.props.selectedFacets.map((x, i) =>
+            this.props.research.selectedFacets.map((x, i) =>
               x.key === this.props.criteriaName
                 ? <Chip key={i + 1} onRequestDelete={() => this._onRemoveFacet(x)}
                   style={{marginBottom: '5px', width: '100%'}} labelStyle={{width: '95%'}}>
