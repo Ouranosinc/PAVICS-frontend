@@ -365,7 +365,7 @@ const initialState = {
     items: [],
     error: null,
     archive: false
-  },
+  }
 };
 export default function (state = initialState, action) {
   const handler = HANDLERS[action.type];

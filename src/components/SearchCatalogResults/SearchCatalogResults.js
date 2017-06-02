@@ -16,7 +16,7 @@ import AddIcon from 'material-ui/svg-icons/content/add-box';
 export class SearchCatalogResults extends React.Component {
   static propTypes = {
     clickTogglePanel: React.PropTypes.func.isRequired,
-    addDatasetsToProject: React.PropTypes.func.isRequired,
+    projectAPIActions: React.PropTypes.object.isRequired,
     research: React.PropTypes.object.isRequired
   };
 
@@ -67,7 +67,11 @@ export class SearchCatalogResults extends React.Component {
   }
 
   _onAddCheckedDatasetsToProject () {
-    this.props.addDatasetsToProject(this.state.checkedDatasets);
+    this.state.checkedDatasets.forEach((dataset) => {
+      dataset.projectId = this.props.project.currentProject.id;
+      this.props.projectAPIActions.createProjectDatasets(dataset);
+    });
+    // this.props.addDatasetsToProject(this.state.checkedDatasets);
     this.setState({
       checkedDatasets: [],
       confirm: true

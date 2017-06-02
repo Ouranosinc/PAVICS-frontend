@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { actions as projectActionsCreators } from './../../redux/modules/Project';
+import { actions as projectAPIActionsCreators } from '../../redux/modules/ProjectAPI';
 import { actions as researchActionsCreators } from './../../redux/modules/Research';
 import { actions as researchAPIActionsCreators } from '../../redux/modules/ResearchAPI';
 
@@ -27,13 +28,15 @@ export class ResearchContainer extends React.Component {
 const mapStateToProps = (state) => {
   return {
     project: state.project,
+    projectAPI: state.projectAPI,
+    research: state.research,
     researchAPI: state.researchAPI,
-    research: state.research
   }
 };
 const mapDispatchToProps = (dispatch) => {
   return {
     projectActions: bindActionCreators({...projectActionsCreators}, dispatch),
+    projectAPIActions: bindActionCreators({...projectAPIActionsCreators}, dispatch),
     researchAPIActions: bindActionCreators({...researchAPIActionsCreators}, dispatch),
     researchActions: bindActionCreators({...researchActionsCreators}, dispatch)
   };

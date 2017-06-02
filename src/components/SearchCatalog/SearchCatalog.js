@@ -20,8 +20,10 @@ export class SearchCatalog extends React.Component {
     clickTogglePanel: React.PropTypes.func.isRequired,
     addSearchCriteriasToProject: React.PropTypes.func.isRequired,
     addDatasetsToProject: React.PropTypes.func.isRequired,
-    project: React.PropTypes.func.isRequired,
-    projectActions: React.PropTypes.func.isRequired,
+    project: React.PropTypes.object.isRequired,
+    projectActions: React.PropTypes.object.isRequired,
+    projectAPI: React.PropTypes.object.isRequired,
+    projectAPIActions: React.PropTypes.object.isRequired,
     research: React.PropTypes.object.isRequired,
     researchActions: React.PropTypes.object.isRequired,
     researchAPI: React.PropTypes.object.isRequired,
@@ -124,6 +126,15 @@ export class SearchCatalog extends React.Component {
           projectId: this.props.project.currentProject.id,
           facets: this.props.research.selectedFacets,
           results: this.props.research.pavicsDatasets.items
+        });
+        this.props.researchAPIActions.getResearch({
+          id: 1
+        });
+        this.props.researchAPIActions.updateResearch({
+          id: 1
+        });
+        this.props.researchAPIActions.deleteResearch({
+          id: 1
         });
         this.setState({
           confirmation: <Alert bsStyle="info" style={{marginTop: 20}}>
@@ -237,8 +248,9 @@ export class SearchCatalog extends React.Component {
             {this.state.confirmation}
             <SearchCatalogResults
               clickTogglePanel={this.props.clickTogglePanel}
-              addDatasetsToProject={this.props.addDatasetsToProject}
-              research={this.props.research} />
+              research={this.props.research}
+              project={this.props.project}
+              projectAPIActions={this.props.projectAPIActions} />
           </div>
         )
       );

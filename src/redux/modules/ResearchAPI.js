@@ -3,14 +3,16 @@ const TOKEN = 'xvDjirE9MCIi800xMxi4EKeTm8e9FUBR';
 
 const research = createResource({
   name: 'research',
-  url: `${__LOOPBACK_API_PATH__}/Researchs/:id?access_token=${TOKEN}`
+  url: `${__LOOPBACK_API_PATH__}/Researchs/:id?filter=%7B%22where%22%3A%7B%22:projectId%22%3A2%7D%7D`
 });
 const researchDataset = createResource({
-  name: 'researchDataset',
+  name: 'researchDatasets',
+  pluralName: 'researchDatasets',
   url: `${__LOOPBACK_API_PATH__}/Researchs/:researchId/datasets`
 });
 const researchFacet = createResource({
-  name: 'researchAsset',
+  name: 'researchAssets',
+  pluralName: 'researchAssets',
   url: `${__LOOPBACK_API_PATH__}/Researchs/:researchId/facets`
 });
 
