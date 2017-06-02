@@ -82,28 +82,7 @@ const initialState = {
       data: {},
       error: null
     },
-    facets: {
-      requestedAt: null,
-      receivedAt: null,
-      isFetching: false,
-      items: [],
-      error: null
-    },
     climateIndicators: {
-      requestedAt: null,
-      receivedAt: null,
-      isFetching: false,
-      items: [],
-      error: null
-    },
-    esgfDatasets: {
-      requestedAt: null,
-      receivedAt: null,
-      isFetching: false,
-      items: [],
-      error: null
-    },
-    pavicsDatasets: {
       requestedAt: null,
       receivedAt: null,
       isFetching: false,

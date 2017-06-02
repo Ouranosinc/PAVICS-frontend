@@ -19,7 +19,6 @@ const REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS = 'Visualize.REMOVE_SEARCH_CRITERIAS
 const ADD_DATASETS_TO_PROJECTS = 'Visualize.ADD_DATASETS_TO_PROJECTS';
 const CLICK_TOGGLE_PANEL = 'Visualize.CLICK_TOGGLE_PANEL';
 const SET_CURRENT_TIME_ISO = 'Visualize.SET_CURRENT_TIME_ISO';
-const RESTORE_PAVICS_DATASETS = 'Visualize.RESTORE_PAVICS_DATASETS';
 // ASYNC
 const FETCH_WORKFLOWS_REQUEST = 'WorkflowWizard.FETCH_WORKFLOWS_REQUEST';
 const FETCH_WORKFLOWS_FAILURE = 'WorkflowWizard.FETCH_WORKFLOWS_FAILURE';
@@ -36,18 +35,6 @@ const FETCH_PLOTLY_DATA_SUCCESS = 'Visualize.FETCH_PLOTLY_DATA_SUCCESS';
 const FETCH_CLIMATE_INDICATORS_REQUEST = 'Visualize.FETCH_CLIMATE_INDICATORS_REQUEST';
 const FETCH_CLIMATE_INDICATORS_FAILURE = 'Visualize.FETCH_CLIMATE_INDICATORS_FAILURE';
 const FETCH_CLIMATE_INDICATORS_SUCCESS = 'Visualize.FETCH_CLIMATE_INDICATORS_SUCCESS';
-const FETCH_FACETS_REQUEST = 'Visualize.FETCH_FACETS_REQUEST';
-const FETCH_FACETS_FAILURE = 'Visualize.FETCH_FACETS_FAILURE';
-const FETCH_FACETS_SUCCESS = 'Visualize.FETCH_FACETS_SUCCESS';
-const FETCH_DATASET_REQUEST = 'Visualize.FETCH_DATASET_REQUEST';
-const FETCH_DATASET_FAILURE = 'Visualize.FETCH_DATASET_FAILURE';
-const FETCH_DATASET_SUCCESS = 'Visualize.FETCH_DATASET_SUCCESS';
-const FETCH_ESGF_DATASETS_REQUEST = 'Visualize.FETCH_ESGF_DATASETS_REQUEST';
-const FETCH_ESGF_DATASETS_FAILURE = 'Visualize.FETCH_ESGF_DATASETS_FAILURE';
-const FETCH_ESGF_DATASETS_SUCCESS = 'Visualize.FETCH_ESGF_DATASETS_SUCCESS';
-const FETCH_PAVICS_DATASETS_REQUEST = 'Visualize.FETCH_PAVICS_DATASETS_REQUEST';
-const FETCH_PAVICS_DATASETS_FAILURE = 'Visualize.FETCH_PAVICS_DATASETS_FAILURE';
-const FETCH_PAVICS_DATASETS_SUCCESS = 'Visualize.FETCH_PAVICS_DATASETS_SUCCESS';
 const FETCH_WMS_LAYER_DETAILS_REQUEST = 'Visualize.FETCH_WMS_LAYER_DETAILS_REQUEST';
 const FETCH_WMS_LAYER_DETAILS_FAILURE = 'Visualize.FETCH_WMS_LAYER_DETAILS_FAILURE';
 const FETCH_WMS_LAYER_DETAILS_SUCCESS = 'Visualize.FETCH_WMS_LAYER_DETAILS_SUCCESS';
@@ -187,151 +174,6 @@ export function receiveScalarValue (data) {
       receivedAt: Date.now(),
       isFetching: false,
       data: data
-    }
-  };
-}
-export function requestFacets () {
-  return {
-    type: FETCH_FACETS_REQUEST,
-    facets: {
-      receivedAt: 1, // TODO: Fix
-      requestedAt: Date.now(),
-      isFetching: true,
-      items: []
-    }
-  };
-}
-export function receiveFacetsFailure (error) {
-  return {
-    type: FETCH_FACETS_FAILURE,
-    facets: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      items: [],
-      error: error
-    }
-  };
-}
-export function receiveFacets (facets) {
-  return {
-    type: FETCH_FACETS_SUCCESS,
-    facets: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      items: facets,
-      error: null
-    }
-  };
-}
-export function requestDataset () {
-  return {
-    type: FETCH_DATASET_REQUEST,
-    selectedDatasets: {
-      receivedAt: 1, // TODO: Fix
-      requestedAt: Date.now(),
-      isFetching: true,
-      items: []
-    }
-  };
-}
-export function receiveDatasetFailure (error) {
-  return {
-    type: FETCH_DATASET_FAILURE,
-    selectedDatasets: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      items: [],
-      error: error
-    }
-  };
-}
-export function receiveDataset (dataset) {
-  return {
-    type: FETCH_DATASET_SUCCESS,
-    selectedDatasets: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      items: [dataset],
-      error: null
-    }
-  };
-}
-export function restorePavicsDatasets (searchCriteria) {
-  return {
-    type: RESTORE_PAVICS_DATASETS,
-    pavicsDatasets: {
-      requestedAt: searchCriteria.date,
-      receivedAt: searchCriteria.date,
-      archive: true,
-      isFetching: false,
-      items: searchCriteria.results
-    }
-  };
-}
-export function requestPavicsDatasets () {
-  return {
-    type: FETCH_PAVICS_DATASETS_REQUEST,
-    pavicsDatasets: {
-      requestedAt: Date.now(),
-      isFetching: true,
-      archive: false,
-      items: []
-    }
-  };
-}
-export function receivePavicsDatasetsFailure (error) {
-  return {
-    type: FETCH_PAVICS_DATASETS_FAILURE,
-    pavicsDatasets: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      archive: false,
-      items: [],
-      error: error
-    }
-  };
-}
-export function receivePavicsDatasets (datasets) {
-  return {
-    type: FETCH_PAVICS_DATASETS_SUCCESS,
-    pavicsDatasets: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      archive: false,
-      items: datasets,
-      error: null
-    }
-  };
-}
-export function requestEsgfDatasets () {
-  return {
-    type: FETCH_ESGF_DATASETS_REQUEST,
-    esgfDatasets: {
-      requestedAt: Date.now(),
-      isFetching: true,
-      items: []
-    }
-  };
-}
-export function receiveEsgfDatasetsFailure (error) {
-  return {
-    type: FETCH_ESGF_DATASETS_FAILURE,
-    esgfDatasets: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      items: [],
-      error: error
-    }
-  };
-}
-export function receiveEsgfDatasets (datasets) {
-  return {
-    type: FETCH_ESGF_DATASETS_SUCCESS,
-    esgfDatasets: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      items: datasets,
-      error: null
     }
   };
 }
@@ -570,15 +412,6 @@ export function fetchClimateIndicators () {
       .catch(error => dispatch(receiveClimateIndicatorsFailure(error)));
   };
 }
-export function fetchFacets () {
-  return function (dispatch) {
-    dispatch(requestFacets());
-    return fetch('/api/facets')
-      .then(response => response.json())
-      .then(json => dispatch(receiveFacets(json)))
-      .catch(error => dispatch(receiveFacetsFailure(error)));
-  };
-}
 export function fetchPlotlyData (
   opendapUrl,
   variableName,
@@ -607,60 +440,6 @@ export function fetchPlotlyData (
         err => {
           dispatch(receivePlotlyDataFailure(err));
         }
-      );
-  };
-}
-export function fetchDataset (url) {
-  return function (dispatch) {
-    dispatch(requestDataset());
-    return fetch(`/api/dataset?url=${url}`)
-      .then(response => response.json())
-      .then(json =>
-        dispatch(receiveDataset(json))
-      );
-    // TODO FIX THIS HAPPEN FOR NO REASON
-    /* .catch(error =>
-     dispatch(receiveDatasetFailure(error))
-     ) */
-  };
-}
-// OUR PAVICS DATASETS CATALOG 2.0
-export function fetchPavicsDatasets () {
-  return function (dispatch, getState) {
-    dispatch(requestPavicsDatasets());
-    // Get current added facets by querying store
-    let facets = getState().pavics.visualize.selectedFacets;
-    let constraints = '';
-    facets.forEach(function (facet, i) {
-      constraints += `${(i > 0) ? ',' : ''}${facet.key}:${facet.value}`;
-    });
-    return fetch(`/api/datasets/pavics?constraints=${constraints}`)
-      .then(response => response.json())
-      .then(json =>
-        dispatch(receivePavicsDatasets(json))
-      )
-      .catch(error =>
-        dispatch(receivePavicsDatasetsFailure(error))
-      );
-  };
-}
-// EXTERNAL ESGF CATALOG
-export function fetchEsgfDatasets () {
-  return function (dispatch, getState) {
-    dispatch(requestEsgfDatasets());
-    // Get current added facets by querying store
-    let facets = getState().pavics.visualize.selectedFacets;
-    let constraints = '';
-    facets.forEach(function (facet, i) {
-      constraints += `${(i > 0) ? ',' : ''}${facet.key}:${facet.value}`;
-    });
-    return fetch(`/api/datasets/esgf?constraints=${constraints}`)
-      .then(response => response.json())
-      .then(json =>
-        dispatch(receiveEsgfDatasets(json))
-      )
-      .catch(error =>
-        dispatch(receiveEsgfDatasetsFailure(error))
       );
   };
 }
@@ -1133,24 +912,6 @@ const VISUALIZE_HANDLERS = {
     panelControls[action.panel].show = action.show;
     return ({...state, panelControls: panelControls});
   },
-  [FETCH_DATASET_REQUEST]: (state, action) => {
-    return ({...state, selectedDatasets: action.selectedDatasets});
-  },
-  [FETCH_DATASET_FAILURE]: (state, action) => {
-    return ({...state, selectedDatasets: action.selectedDatasets});
-  },
-  [FETCH_DATASET_SUCCESS]: (state, action) => {
-    return ({...state, selectedDatasets: action.selectedDatasets});
-  },
-  [FETCH_FACETS_REQUEST]: (state, action) => {
-    return ({...state, facets: action.facets});
-  },
-  [FETCH_FACETS_FAILURE]: (state, action) => {
-    return ({...state, facets: action.facets});
-  },
-  [FETCH_FACETS_SUCCESS]: (state, action) => {
-    return ({...state, facets: action.facets});
-  },
   [FETCH_PLOTLY_DATA_REQUEST]: (state, action) => {
     return ({...state, plotlyData: Object.assign({}, state.plotlyData, action.plotlyData)});
   },
@@ -1177,27 +938,6 @@ const VISUALIZE_HANDLERS = {
   },
   [FETCH_SCALAR_VALUE_SUCCESS]: (state, action) => {
     return ({...state, currentScalarValue: action.currentScalarValue});
-  },
-  [FETCH_ESGF_DATASETS_REQUEST]: (state, action) => {
-    return ({...state, esgfDatasets: action.esgfDatasets});
-  },
-  [FETCH_ESGF_DATASETS_FAILURE]: (state, action) => {
-    return ({...state, esgfDatasets: action.esgfDatasets});
-  },
-  [FETCH_ESGF_DATASETS_SUCCESS]: (state, action) => {
-    return ({...state, esgfDatasets: action.esgfDatasets});
-  },
-  [FETCH_PAVICS_DATASETS_REQUEST]: (state, action) => {
-    return ({...state, pavicsDatasets: action.pavicsDatasets});
-  },
-  [FETCH_PAVICS_DATASETS_FAILURE]: (state, action) => {
-    return ({...state, pavicsDatasets: action.pavicsDatasets});
-  },
-  [RESTORE_PAVICS_DATASETS]: (state, action) => {
-    return ({...state, pavicsDatasets: action.pavicsDatasets});
-  },
-  [FETCH_PAVICS_DATASETS_SUCCESS]: (state, action) => {
-    return ({...state, pavicsDatasets: action.pavicsDatasets});
   },
   [FETCH_WMS_LAYER_DETAILS_REQUEST]: (state, action) => {
     return ({...state, selectedWMSLayerDetails: action.selectedWMSLayerDetails});

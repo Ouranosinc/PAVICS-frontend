@@ -20,16 +20,12 @@ export class SearchCatalog extends React.Component {
     clickTogglePanel: React.PropTypes.func.isRequired,
     addSearchCriteriasToProject: React.PropTypes.func.isRequired,
     addDatasetsToProject: React.PropTypes.func.isRequired,
+    project: React.PropTypes.func.isRequired,
+    projectActions: React.PropTypes.func.isRequired,
     research: React.PropTypes.object.isRequired,
     researchActions: React.PropTypes.object.isRequired,
-    fetchFacets: React.PropTypes.func.isRequired,
-    fetchDataset: React.PropTypes.func.isRequired,
-    fetchEsgfDatasets: React.PropTypes.func.isRequired,
-    fetchPavicsDatasets: React.PropTypes.func.isRequired,
-    esgfDatasets: React.PropTypes.object.isRequired,
-    pavicsDatasets: React.PropTypes.object.isRequired,
-    facets: React.PropTypes.object.isRequired,
-    selectedFacets: React.PropTypes.array.isRequired,
+    researchAPI: React.PropTypes.object.isRequired,
+    researchAPIActions: React.PropTypes.object.isRequired,
     panelControls: React.PropTypes.object.isRequired
   };
 
@@ -56,6 +52,14 @@ export class SearchCatalog extends React.Component {
     this._onSetSearchCriteriasName = this._onSetSearchCriteriasName.bind(this);
   }
 
+  componentWillMount() {
+    this.props.researchActions.fetchFacets();
+    this.props.projectActions.setCurrentProject({
+      id: 1,
+      name: "project-renaud-1"
+    })
+  }
+
   _onChangeSearchType (value) {
     alert('TODO: refetch Catalog API with type=' + value);
     this.setState({
@@ -70,7 +74,7 @@ export class SearchCatalog extends React.Component {
     });
     this.props.removeAllFacetKeyValue();
     searchCriteria.criterias.forEach((criteria) => {
-      this.props.addFacetKeyValue(criteria.key, criteria.value);
+      this.props.addFacetKeyValuePair(criteria.key, criteria.value);
     });
     this._onSetSearchCriteriasName = this._onSetSearchCriteriasName.bind(this);
   }
@@ -102,12 +106,12 @@ export class SearchCatalog extends React.Component {
       confirmation: null,
       searchCriteriasName: ''
     });
-    this.props.removeAllFacetKeyValue();
-    this.props.fetchPavicsDatasets();
+    this.props.researchActions.clearFacetKeyValuePairs();
+    this.props.researchActions.fetchPavicsDatasets();
   }
 
   _SaveCriterias () {
-    if (this.state.searchCriteriasName.length && this.props.selectedFacets.length) {
+    if (this.state.searchCriteriasName.length && this.props.research.selectedFacets.length) {
       if (this.props.currentProjectSearchCriterias.find( x => x.name === this.state.searchCriteriasName)) {
         this.setState({
           confirmation: <Alert bsStyle="danger" style={{marginTop: 20}}>
@@ -115,11 +119,11 @@ export class SearchCatalog extends React.Component {
           </Alert>
         });
       } else {
-        this.props.addSearchCriteriasToProject({
+        this.props.researchAPIActions.createResearch({
           name: this.state.searchCriteriasName,
-          date: new Date(),
-          criterias: this.props.selectedFacets,
-          results: this.props.pavicsDatasets.items
+          projectId: this.props.project.currentProject.id,
+          facets: this.props.research.selectedFacets,
+          results: this.props.research.pavicsDatasets.items
         });
         this.setState({
           confirmation: <Alert bsStyle="info" style={{marginTop: 20}}>
@@ -139,11 +143,11 @@ export class SearchCatalog extends React.Component {
 
   _mainComponent () {
     let mainComponent;
-    if (this.props.facets.isFetching) {
+    if (this.props.research.facets.isFetching) {
       mainComponent = <Loader name="facets" />;
     } else {
       mainComponent = (
-        (this.props.facets.items.length === 0) ?
+        (this.props.research.facets.items.length === 0) ?
           <Paper style={{ marginTop: 20 }}>
             <List>
               <Subheader>No facets found.</Subheader>
@@ -185,7 +189,7 @@ export class SearchCatalog extends React.Component {
                       value={this.state.selectedKey}
                       onChange={(event, index, value) => this._onAddCriteriaKey(value)}>
                       {
-                        this.props.facets.items.map((x, i) => {
+                        this.props.research.facets.items.map((x, i) => {
                           return (this.state.criteriaKeys.includes(x.key))
                             ? null
                             : <MenuItem key={i} value={x.key} primaryText={x.key} />;
@@ -200,14 +204,12 @@ export class SearchCatalog extends React.Component {
                       return <CriteriaSelection
                         key={i}
                         criteriaName={facetKey}
-                        variables={this.props.facets.items.find((x) => {
+                        variables={this.props.research.facets.items.find((x) => {
                           return x.key === facetKey;
                         })}
                         menuStyle="HERE!!!!"
                         research={this.props.research}
-                        researchActions={this.props.researchActions}
-                        fetchPavicsDatasets={this.props.fetchPavicsDatasets}
-                        fetchEsgfDatasets={this.props.fetchEsgfDatasets} />;
+                        researchActions={this.props.researchActions} />;
                     })
                   }
                 </Row>
@@ -224,19 +226,19 @@ export class SearchCatalog extends React.Component {
               onClick={this._SaveCriterias}
               label="Save search criteria(s)"
               icon={<SaveIcon />}
-              disabled={!this.props.selectedFacets.length}
+              disabled={!this.props.research.selectedFacets.length}
               style={{marginTop: 20}} />
             <RaisedButton
               onClick={this._ResetCriterias}
               label="Reset"
               icon={<RefreshIcon />}
-              disabled={!this.props.selectedFacets.length}
+              disabled={!this.props.research.selectedFacets.length}
               style={{marginTop: 20, marginLeft: 20}} />
             {this.state.confirmation}
             <SearchCatalogResults
               clickTogglePanel={this.props.clickTogglePanel}
               addDatasetsToProject={this.props.addDatasetsToProject}
-              pavicsDatasets={this.props.pavicsDatasets} />
+              research={this.props.research} />
           </div>
         )
       );

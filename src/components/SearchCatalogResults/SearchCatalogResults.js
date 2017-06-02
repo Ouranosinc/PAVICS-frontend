@@ -17,7 +17,7 @@ export class SearchCatalogResults extends React.Component {
   static propTypes = {
     clickTogglePanel: React.PropTypes.func.isRequired,
     addDatasetsToProject: React.PropTypes.func.isRequired,
-    pavicsDatasets: React.PropTypes.object.isRequired
+    research: React.PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -41,7 +41,7 @@ export class SearchCatalogResults extends React.Component {
   }
 
   _onCheckedDataset (event) {
-    let dataset = this.props.pavicsDatasets.items.find(x => x.dataset_id === event.target.value);
+    let dataset = this.props.research.pavicsDatasets.items.find(x => x.dataset_id === event.target.value);
     let index = this.state.checkedDatasets.findIndex(x => x.dataset_id === event.target.value);
     let oldDatasets = this.state.checkedDatasets;
     if (dataset) {
@@ -77,22 +77,22 @@ export class SearchCatalogResults extends React.Component {
   render () {
     // console.log("render SearchCatalogResults");
     let mainComponent;
-    if (this.props.pavicsDatasets.isFetching) {
+    if (this.props.research.pavicsDatasets.isFetching) {
       mainComponent =
         <Paper style={{ marginTop: 20 }}>
           <Loader name="datasets" />
         </Paper>;
     } else {
       let archive = null;
-      if (this.props.pavicsDatasets.archive) {
+      if (this.props.research.pavicsDatasets.archive) {
         archive =
           <Alert bsStyle="warning" style={{ margin: 20 }}>
-            These are <strong>ARCHIVED</strong> results from a request made on {this.props.pavicsDatasets.requestedAt.toString()}
+            These are <strong>ARCHIVED</strong> results from a request made on {this.props.research.pavicsDatasets.requestedAt.toString()}
           </Alert>;
       }
-      if (this.props.pavicsDatasets.items.length) {
+      if (this.props.research.pavicsDatasets.items.length) {
         let start = (this.state.pageNumber - 1) * this.state.numberPerPage;
-        let paginated = this.props.pavicsDatasets.items.slice(start, start + this.state.numberPerPage);
+        let paginated = this.props.research.pavicsDatasets.items.slice(start, start + this.state.numberPerPage);
         let confirmation = null;
         if (this.state.confirm) {
           confirmation =
@@ -105,7 +105,7 @@ export class SearchCatalogResults extends React.Component {
             <Paper style={{ marginTop: 20 }}>
               <List>
                 {archive}
-                <Subheader inset={true}>Found <strong>{this.props.pavicsDatasets.items.length}</strong> results</Subheader>
+                <Subheader inset={true}>Found <strong>{this.props.research.pavicsDatasets.items.length}</strong> results</Subheader>
                 {paginated.map((x, i) =>
                   <ListItem
                     key={i}
@@ -142,7 +142,7 @@ export class SearchCatalogResults extends React.Component {
                 )}
               </List>
               <Pagination
-                total={this.props.pavicsDatasets.items.length}
+                total={this.props.research.pavicsDatasets.items.length}
                 initialPerPageOptionIndex={constants.PER_PAGE_INITIAL_INDEX}
                 perPageOptions={constants.PER_PAGE_OPTIONS}
                 onChange={this._onPageChanged} />
@@ -156,7 +156,7 @@ export class SearchCatalogResults extends React.Component {
             {confirmation}
           </div>;
       } else {
-        if (this.props.pavicsDatasets.receivedAt) {
+        if (this.props.research.pavicsDatasets.receivedAt) {
           mainComponent =
             <Paper style={{ marginTop: 20 }}>
               <List>

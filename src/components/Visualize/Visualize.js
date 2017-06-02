@@ -22,7 +22,7 @@ class Visualize extends React.Component {
     selectDatasetLayer: React.PropTypes.func.isRequired,
     selectShapefile: React.PropTypes.func.isRequired,
     selectBasemap: React.PropTypes.func.isRequired,
-    fetchFacets: React.PropTypes.func.isRequired,
+    // fetchFacets: React.PropTypes.func.isRequired,
     fetchPlotlyData: React.PropTypes.func.isRequired,
     panelControls: React.PropTypes.object.isRequired,
     plotlyData: React.PropTypes.object.isRequired,
@@ -61,7 +61,7 @@ class Visualize extends React.Component {
       mapPanelStatus: mapPanelStatus,
       OLComponentReference: {}
     };
-    this.props.fetchFacets();
+    // this.props.fetchFacets();
   }
 
   _onToggleMapPanel (panel) {

@@ -61,13 +61,13 @@ function fetchResearcherProjects (reseacherId) {
 }
 
 // Exported Action Creators
-export const projectActions = {
+export const actions = {
   setCurrentProject,
   fetchResearcherProjects
 };
 
 // Handlers
-const PROJECT_HANDLERS = {
+const HANDLERS = {
   [constants.PROJECT_SET_CURRENT_PROJECT]: (state, action) => {
     return ({...state, currentProject: action.currentProject});
   },
@@ -94,6 +94,6 @@ const initialState = {
   }
 };
 export default function (state = initialState, action) {
-  const handler = PROJECT_HANDLERS[action.type];
+  const handler = HANDLERS[action.type];
   return handler ? handler(state, action) : state;
 }

@@ -26,22 +26,18 @@ import ShareIcon from 'material-ui/svg-icons/social/person-add';
 
 export class ExperienceManagement extends React.Component {
   static propTypes = {
+    projectActions: React.PropTypes.object.isRequired,
+    researchActions: React.PropTypes.object.isRequired,
     currentProjectDatasets: React.PropTypes.array.isRequired,
     currentProjectSearchCriterias: React.PropTypes.array.isRequired,
     currentVisualizedDatasetLayers: React.PropTypes.array.isRequired,
     addDatasetLayersToVisualize: React.PropTypes.func.isRequired,
     removeSearchCriteriasFromProject: React.PropTypes.func.isRequired,
     selectDatasetLayer: React.PropTypes.func.isRequired,
-    goToSection: React.PropTypes.func.isRequired,
-    addFacetKeyValue: React.PropTypes.func.isRequired,
-    removeAllFacetKeyValue: React.PropTypes.func.isRequired,
-    fetchPavicsDatasets: React.PropTypes.func.isRequired,
-    restorePavicsDatasets: React.PropTypes.func.isRequired,
-    fetchResearcherProjects: React.PropTypes.func.isRequired
+    goToSection: React.PropTypes.func.isRequired
   };
   constructor (props) {
     super(props);
-    // props.projectActions.fetchResearcherProjects(1);
     this._onVisualizeLayer = this._onVisualizeLayer.bind(this);
     this._onCriteriasPageChanged = this._onCriteriasPageChanged.bind(this);
     this._onDatasetsPageChanged = this._onDatasetsPageChanged.bind(this);
@@ -55,6 +51,10 @@ export class ExperienceManagement extends React.Component {
       criteriasPageNumber: 1,
       criteriasNumberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX]
     };
+  }
+
+  componentWillMoutn() {
+    this.props.projectActions.fetchResearcherProjects(1);
   }
 
   handleNestedListToggle = (item) => {
@@ -89,20 +89,20 @@ export class ExperienceManagement extends React.Component {
 
   onReloadSearchCriteria (searchCriteria) {
     this.props.goToSection(constants.PLATFORM_SECTION_SEARCH_DATASETS);
-    this.props.removeAllFacetKeyValue();
+    this.props.researchActions.clearFacetKeyValuePairs();
     searchCriteria.criterias.forEach((criteria) => {
-      this.props.addFacetKeyValue(criteria.key, criteria.value);
+      this.props.researchActions.addFacetKeyValuePair(criteria.key, criteria.value);
     });
   }
 
   _onRelaunchSearch (searchCriteria) {
     this.onReloadSearchCriteria(searchCriteria);
-    this.props.fetchPavicsDatasets();
+    this.props.researchActions.fetchPavicsDatasets();
   }
 
   _onRestoreSearchCriteria (searchCriteria) {
     this.onReloadSearchCriteria(searchCriteria);
-    this.props.restorePavicsDatasets(searchCriteria);
+    this.props.researchActions.restorePavicsDatasets(searchCriteria);
   }
 
   _onRemoveSearchCriteria (searchCriteria) {

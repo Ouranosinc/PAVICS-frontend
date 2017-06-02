@@ -11,8 +11,6 @@ class CriteriaSelection extends React.Component {
     variables: React.PropTypes.object.isRequired,
     research: React.PropTypes.object.isRequired,
     researchActions: React.PropTypes.object.isRequired,
-    fetchEsgfDatasets: React.PropTypes.func.isRequired,
-    fetchPavicsDatasets: React.PropTypes.func.isRequired
   };
 
   state = {
@@ -30,7 +28,7 @@ class CriteriaSelection extends React.Component {
 
   _onRemoveFacet (facet) {
     this.props.researchActions.removeFacetKeyValuePair(facet.key, facet.value);
-    this.props.fetchPavicsDatasets();
+    this.props.researchActions.fetchPavicsDatasets();
   }
 
   _onSelectRow (event) {
@@ -39,7 +37,7 @@ class CriteriaSelection extends React.Component {
     } else {
       this.props.researchActions.removeFacetKeyValuePair(this.props.criteriaName, event.target.value);
     }
-    this.props.fetchPavicsDatasets();
+    this.props.researchActions.fetchPavicsDatasets();
   }
 
   _formatRows () {
