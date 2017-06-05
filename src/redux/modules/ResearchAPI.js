@@ -1,9 +1,8 @@
 import {createResource, mergeReducers} from 'redux-rest-resource';
-const TOKEN = 'xvDjirE9MCIi800xMxi4EKeTm8e9FUBR';
 
 const research = createResource({
   name: 'research',
-  url: `${__LOOPBACK_API_PATH__}/Researchs/:id?filter=%7B%22where%22%3A%7B%22:projectId%22%3A2%7D%7D`
+  url: `${__LOOPBACK_API_PATH__}/Researchs/:id?filter=:filter`
 });
 const researchDataset = createResource({
   name: 'researchDatasets',

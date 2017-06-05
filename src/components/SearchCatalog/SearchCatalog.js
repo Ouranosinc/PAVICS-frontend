@@ -56,10 +56,6 @@ export class SearchCatalog extends React.Component {
 
   componentWillMount() {
     this.props.researchActions.fetchFacets();
-    this.props.projectActions.setCurrentProject({
-      id: 1,
-      name: "project-renaud-1"
-    })
   }
 
   _onChangeSearchType (value) {
@@ -128,13 +124,16 @@ export class SearchCatalog extends React.Component {
           results: this.props.research.pavicsDatasets.items
         });
         this.props.researchAPIActions.getResearch({
-          id: 1
+          id: 1,
+          filter: JSON.stringify({yolo:"yolo"})
         });
         this.props.researchAPIActions.updateResearch({
-          id: 1
+          id: 1,
+          filter: JSON.stringify({yolo:"yolo"})
         });
         this.props.researchAPIActions.deleteResearch({
-          id: 1
+          id: 1,
+          filter: JSON.stringify({yolo:"yolo"})
         });
         this.setState({
           confirmation: <Alert bsStyle="info" style={{marginTop: 20}}>

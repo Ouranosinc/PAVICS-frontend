@@ -68,10 +68,10 @@ export class SearchCatalogResults extends React.Component {
 
   _onAddCheckedDatasetsToProject () {
     this.state.checkedDatasets.forEach((dataset) => {
+      // TODO validate dataset_id unicity
       dataset.projectId = this.props.project.currentProject.id;
       this.props.projectAPIActions.createProjectDatasets(dataset);
     });
-    // this.props.addDatasetsToProject(this.state.checkedDatasets);
     this.setState({
       checkedDatasets: [],
       confirm: true

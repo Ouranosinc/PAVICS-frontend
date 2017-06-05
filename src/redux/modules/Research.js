@@ -3,7 +3,6 @@ export const constants = {
   CREATE_RESEARCH_REQUEST: 'RESEARCH.CREATE_RESEARCH_REQUEST',
   CREATE_RESEARCH_FAILURE: 'RESEARCH.CREATE_RESEARCH_FAILURE',
   CREATE_RESEARCH_SUCCESS: 'RESEARCH.CREATE_RESEARCH_SUCCESS',
-  ADD_SELECTION_TO_PROJECT: 'RESEARCH.ADD_SELECTION_TO_PROJECT',
   ADD_FACET_KEY_VALUE_PAIR: 'RESEARCH.ADD_FACET_KEY_VALUE_PAIR',
   REMOVE_FACET_KEY_VALUE_PAIR: 'RESEARCH.REMOVE_FACET_KEY_VALUE_PAIR',
   REMOVE_ALL_FACET_KEY_VALUE: 'RESEARCH.REMOVE_ALL_FACET_KEY_VALUE',
@@ -226,11 +225,6 @@ function fetchFacets () {
       .catch(error => dispatch(fetchFacetsFailure(error)));
   };
 }
-function addSelectionToProject () {
-  return {
-    type: constants.ADD_SELECTION_TO_PROJECT
-  };
-}
 function addFacetKeyValuePair (key, value) {
   return {
     type: constants.ADD_FACET_KEY_VALUE_PAIR,
@@ -258,7 +252,6 @@ export const actions = {
   fetchPavicsDatasets,
   fetchEsgfDatasets,
   restorePavicsDatasets,
-  addSelectionToProject,
   addFacetKeyValuePair,
   removeFacetKeyValuePair,
   clearFacetKeyValuePairs
@@ -274,9 +267,6 @@ const HANDLERS = {
   },
   [constants.FETCH_FACETS_FAILURE]: (state, action) => {
     return ({...state, facets: action.facets});
-  },
-  [constants.ADD_SELECTION_TO_PROJECT]: (state, action) => {
-    return ({...state, currentProject: action.currentProject});
   },
   [constants.ADD_FACET_KEY_VALUE_PAIR]: (state, action) => {
     let facets = state.selectedFacets.concat({key: action.key, value: action.value});

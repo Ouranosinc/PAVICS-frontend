@@ -45,7 +45,7 @@ export function login (credentials) {
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
     let request = new Request(
-      __LOOPBACK_API_PATH__ + '/researcher/login',
+      __LOOPBACK_API_PATH__ + '/Researcher/login',
       {
         method: 'POST',
         body: JSON.stringify(credentials),
