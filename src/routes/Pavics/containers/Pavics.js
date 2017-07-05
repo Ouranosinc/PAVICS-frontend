@@ -27,10 +27,11 @@ class Pavics extends React.Component {
   };
 
   componentWillMount () {
-    this.startErrorLog();
+    // this.startErrorLog();
   }
 
   startErrorLog () {
+    // Prototype that should catch and display every app errors (HTTP and other promises errors aren't catched properly tho)
     window.onerror = (message,file,line,column,errorObject) => {
       column = column || (window.event && window.event.errorCharacter);
       var stack = errorObject ? errorObject.stack : null;
@@ -56,10 +57,6 @@ class Pavics extends React.Component {
         column:column,
         errorStack:stack,
       };
-
-      //here I make a call to the server to log the error
-
-      //the error can still be triggered as usual, we just wanted to know what's happening on the client side
       return false;
     }
   }
