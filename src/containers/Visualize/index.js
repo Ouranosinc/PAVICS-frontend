@@ -1,3 +1,2 @@
-import ClimateIndicators from './ClimateIndicators';
-import Visualize from './Visualize';
-export {ClimateIndicators, Visualize};
+import VisualizeContainer from './Visualize'
+export default VisualizeContainer

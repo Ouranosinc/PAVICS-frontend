@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import * as constants from './../../constants';
+import * as constants from '../../constants';
 require('rc-slider/assets/index.css');
 import classes from './TimeSlider.scss';
 import Slider  from 'rc-slider';
@@ -690,14 +690,4 @@ export class TimeSlider extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {};
-};
-const mapDispatchToProps = (dispatch) => {
-  return {};
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(TimeSlider);
+export default TimeSlider

@@ -2,7 +2,8 @@
   "parser"  : "babel-eslint",
   "extends" : [
     "standard",
-    "standard-react"
+    "standard-react",
+    "loopback"
   ],
   "env"     : {
     "browser" : true
@@ -15,7 +16,8 @@
     "__BASENAME__" : false,
     "__PAVICS_NCWMS_PATH__" : false,
     "__PAVICS_PHOENIX_PATH__" : false,
-    "__PAVICS_GEOSERVER_PATH__" : false
+    "__PAVICS_GEOSERVER_PATH__" : false,
+    "__LOOPBACK_API_PATH__" : false
   },
   "rules": {
     "semi" : [2, "always"],

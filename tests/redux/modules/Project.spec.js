@@ -1,6 +1,6 @@
-import reducer, { initialState } from 'redux/modules/Testactions'
+import reducer, { initialState } from 'redux/modules/Project'
 
-describe('(Redux) Testactions', () => {
+describe('(Redux) Project', () => {
   describe('(Reducer)', () => {
     it('sets up initial state', () => {
       expect(reducer(undefined, {})).to.eql(initialState)

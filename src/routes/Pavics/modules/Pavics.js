@@ -17,31 +17,24 @@ const REMOVE_FEATURE_FROM_SELECTED_REGIONS = 'Visualize.REMOVE_FEATURE_FROM_SELE
 const RESET_SELECTED_REGIONS = 'Visualize.RESET_SELECTED_REGIONS';
 const REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS = 'Visualize.REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS';
 const ADD_DATASETS_TO_PROJECTS = 'Visualize.ADD_DATASETS_TO_PROJECTS';
-const ADD_FACET_KEY_VALUE_PAIR = 'Visualize.ADD_FACET_KEY_VALUE_PAIR';
-const REMOVE_FACET_KEY_VALUE_PAIR = 'Visualize.REMOVE_FACET_KEY_VALUE_PAIR';
-const REMOVE_ALL_FACET_KEY_VALUE = 'Visualize.REMOVE_ALL_FACET_KEY_VALUE';
 const CLICK_TOGGLE_PANEL = 'Visualize.CLICK_TOGGLE_PANEL';
 const SET_CURRENT_TIME_ISO = 'Visualize.SET_CURRENT_TIME_ISO';
-const RESTORE_PAVICS_DATASETS = 'Visualize.RESTORE_PAVICS_DATASETS';
 // ASYNC
+const FETCH_WORKFLOWS_REQUEST = 'WorkflowWizard.FETCH_WORKFLOWS_REQUEST';
+const FETCH_WORKFLOWS_FAILURE = 'WorkflowWizard.FETCH_WORKFLOWS_FAILURE';
+const FETCH_WORKFLOWS_SUCCESS = 'WorkflowWizard.FETCH_WORKFLOWS_SUCCESS';
+const SAVE_WORKFLOW_REQUEST = 'WorkflowWizard.SAVE_WORKFLOW_REQUEST';
+const SAVE_WORKFLOW_FAILURE = 'WorkflowWizard.SAVE_WORKFLOW_FAILURE';
+const SAVE_WORKFLOW_SUCCESS = 'WorkflowWizard.SAVE_WORKFLOW_SUCCESS';
+const DELETE_WORKFLOW_REQUEST = 'WorkflowWizard.DELETE_WORKFLOW_REQUEST';
+const DELETE_WORKFLOW_FAILURE = 'WorkflowWizard.DELETE_WORKFLOW_FAILURE';
+const DELETE_WORKFLOW_SUCCESS = 'WorkflowWizard.DELETE_WORKFLOW_SUCCESS';
 const FETCH_PLOTLY_DATA_REQUEST = 'Visualize.FETCH_PLOTLY_DATA_REQUEST';
 const FETCH_PLOTLY_DATA_FAILURE = 'Visualize.FETCH_PLOTLY_DATA_FAILURE';
 const FETCH_PLOTLY_DATA_SUCCESS = 'Visualize.FETCH_PLOTLY_DATA_SUCCESS';
 const FETCH_CLIMATE_INDICATORS_REQUEST = 'Visualize.FETCH_CLIMATE_INDICATORS_REQUEST';
 const FETCH_CLIMATE_INDICATORS_FAILURE = 'Visualize.FETCH_CLIMATE_INDICATORS_FAILURE';
 const FETCH_CLIMATE_INDICATORS_SUCCESS = 'Visualize.FETCH_CLIMATE_INDICATORS_SUCCESS';
-const FETCH_FACETS_REQUEST = 'Visualize.FETCH_FACETS_REQUEST';
-const FETCH_FACETS_FAILURE = 'Visualize.FETCH_FACETS_FAILURE';
-const FETCH_FACETS_SUCCESS = 'Visualize.FETCH_FACETS_SUCCESS';
-const FETCH_DATASET_REQUEST = 'Visualize.FETCH_DATASET_REQUEST';
-const FETCH_DATASET_FAILURE = 'Visualize.FETCH_DATASET_FAILURE';
-const FETCH_DATASET_SUCCESS = 'Visualize.FETCH_DATASET_SUCCESS';
-const FETCH_ESGF_DATASETS_REQUEST = 'Visualize.FETCH_ESGF_DATASETS_REQUEST';
-const FETCH_ESGF_DATASETS_FAILURE = 'Visualize.FETCH_ESGF_DATASETS_FAILURE';
-const FETCH_ESGF_DATASETS_SUCCESS = 'Visualize.FETCH_ESGF_DATASETS_SUCCESS';
-const FETCH_PAVICS_DATASETS_REQUEST = 'Visualize.FETCH_PAVICS_DATASETS_REQUEST';
-const FETCH_PAVICS_DATASETS_FAILURE = 'Visualize.FETCH_PAVICS_DATASETS_FAILURE';
-const FETCH_PAVICS_DATASETS_SUCCESS = 'Visualize.FETCH_PAVICS_DATASETS_SUCCESS';
 const FETCH_WMS_LAYER_DETAILS_REQUEST = 'Visualize.FETCH_WMS_LAYER_DETAILS_REQUEST';
 const FETCH_WMS_LAYER_DETAILS_FAILURE = 'Visualize.FETCH_WMS_LAYER_DETAILS_FAILURE';
 const FETCH_WMS_LAYER_DETAILS_SUCCESS = 'Visualize.FETCH_WMS_LAYER_DETAILS_SUCCESS';
@@ -79,25 +72,6 @@ export function addDatasetLayersToVisualize (datasets) {
   return {
     type: ADD_DATASET_LAYERS_TO_VISUALIZE,
     datasets: datasets
-  };
-}
-export function addFacetKeyValue (key, value) {
-  return {
-    type: ADD_FACET_KEY_VALUE_PAIR,
-    key: key,
-    value: value
-  };
-}
-export function removeFacetKeyValue (key, value) {
-  return {
-    type: REMOVE_FACET_KEY_VALUE_PAIR,
-    key: key,
-    value: value
-  };
-}
-export function removeAllFacetKeyValue () {
-  return {
-    type: REMOVE_ALL_FACET_KEY_VALUE
   };
 }
 export function clickTogglePanel (panel, show) {
@@ -203,151 +177,6 @@ export function receiveScalarValue (data) {
     }
   };
 }
-export function requestFacets () {
-  return {
-    type: FETCH_FACETS_REQUEST,
-    facets: {
-      receivedAt: 1, // TODO: Fix
-      requestedAt: Date.now(),
-      isFetching: true,
-      items: []
-    }
-  };
-}
-export function receiveFacetsFailure (error) {
-  return {
-    type: FETCH_FACETS_FAILURE,
-    facets: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      items: [],
-      error: error
-    }
-  };
-}
-export function receiveFacets (facets) {
-  return {
-    type: FETCH_FACETS_SUCCESS,
-    facets: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      items: facets,
-      error: null
-    }
-  };
-}
-export function requestDataset () {
-  return {
-    type: FETCH_DATASET_REQUEST,
-    selectedDatasets: {
-      receivedAt: 1, // TODO: Fix
-      requestedAt: Date.now(),
-      isFetching: true,
-      items: []
-    }
-  };
-}
-export function receiveDatasetFailure (error) {
-  return {
-    type: FETCH_DATASET_FAILURE,
-    selectedDatasets: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      items: [],
-      error: error
-    }
-  };
-}
-export function receiveDataset (dataset) {
-  return {
-    type: FETCH_DATASET_SUCCESS,
-    selectedDatasets: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      items: [dataset],
-      error: null
-    }
-  };
-}
-export function restorePavicsDatasets (searchCriteria) {
-  return {
-    type: RESTORE_PAVICS_DATASETS,
-    pavicsDatasets: {
-      requestedAt: searchCriteria.date,
-      receivedAt: searchCriteria.date,
-      archive: true,
-      isFetching: false,
-      items: searchCriteria.results
-    }
-  };
-}
-export function requestPavicsDatasets () {
-  return {
-    type: FETCH_PAVICS_DATASETS_REQUEST,
-    pavicsDatasets: {
-      requestedAt: Date.now(),
-      isFetching: true,
-      archive: false,
-      items: []
-    }
-  };
-}
-export function receivePavicsDatasetsFailure (error) {
-  return {
-    type: FETCH_PAVICS_DATASETS_FAILURE,
-    pavicsDatasets: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      archive: false,
-      items: [],
-      error: error
-    }
-  };
-}
-export function receivePavicsDatasets (datasets) {
-  return {
-    type: FETCH_PAVICS_DATASETS_SUCCESS,
-    pavicsDatasets: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      archive: false,
-      items: datasets,
-      error: null
-    }
-  };
-}
-export function requestEsgfDatasets () {
-  return {
-    type: FETCH_ESGF_DATASETS_REQUEST,
-    esgfDatasets: {
-      requestedAt: Date.now(),
-      isFetching: true,
-      items: []
-    }
-  };
-}
-export function receiveEsgfDatasetsFailure (error) {
-  return {
-    type: FETCH_ESGF_DATASETS_FAILURE,
-    esgfDatasets: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      items: [],
-      error: error
-    }
-  };
-}
-export function receiveEsgfDatasets (datasets) {
-  return {
-    type: FETCH_ESGF_DATASETS_SUCCESS,
-    esgfDatasets: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      items: datasets,
-      error: null
-    }
-  };
-}
 export function requestWMSLayerDetails (layer, url) {
   return {
     type: FETCH_WMS_LAYER_DETAILS_REQUEST,
@@ -393,6 +222,115 @@ export function requestWMSLayerTimesteps (layer, url, day) {
       isFetching: true,
       data: {}
     }
+  };
+}
+function saveWorkflowRequest () {
+  return {
+    type: SAVE_WORKFLOW_REQUEST
+  };
+}
+function saveWorkflowSuccess () {
+  return {
+    type: SAVE_WORKFLOW_SUCCESS
+  };
+}
+function saveWorkflowFailure () {
+  return {
+    type: SAVE_WORKFLOW_FAILURE
+  };
+}
+export function saveWorkflow (json) {
+  return dispatch => {
+    dispatch(saveWorkflowRequest());
+    let workflow = {
+      json: json
+    };
+    let headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    let request = new Request(
+      __LOOPBACK_API_PATH__ + '/workflows',
+      {
+        method: 'POST',
+        body: JSON.stringify(workflow),
+        headers: headers
+      }
+    );
+    fetch(request)
+      .then(res => res.json(), err => console.log(err))
+      .then(
+        () => {
+          dispatch(saveWorkflowSuccess());
+          dispatch(fetchWorkflows());
+        },
+        err => dispatch(saveWorkflowFailure())
+      );
+  };
+}
+function fetchWorkflowsRequest () {
+  return {
+    type: FETCH_WORKFLOWS_REQUEST
+  };
+}
+function fetchWorkflowsSuccess (workflows) {
+  return {
+    type: FETCH_WORKFLOWS_SUCCESS,
+    items: workflows
+  };
+}
+function fetchWorkflowsFailure () {
+  return {
+    type: FETCH_WORKFLOWS_FAILURE
+  };
+}
+export function fetchWorkflows () {
+  return dispatch => {
+    dispatch(fetchWorkflowsRequest());
+    fetch(__LOOPBACK_API_PATH__+'/workflows')
+      .then(res => res.json(), err => console.log(err))
+      .then(
+        json => dispatch(fetchWorkflowsSuccess(json)),
+        err => {
+          console.log(err);
+          dispatch(fetchWorkflowsFailure())
+        }
+      );
+  };
+}
+function deleteWorkflowRequest () {
+  return {
+    type: DELETE_WORKFLOW_REQUEST
+  };
+}
+function deleteWorkflowSuccess () {
+  return {
+    type: DELETE_WORKFLOW_SUCCESS
+  };
+}
+function deleteWorkflowFailure () {
+  return {
+    type: DELETE_WORKFLOW_FAILURE
+  };
+}
+export function deleteWorkflow (id) {
+  return dispatch => {
+    dispatch(deleteWorkflowRequest());
+    let request = new Request(
+      __LOOPBACK_API_PATH__+'/Workflows/'+id,
+      {
+        method: 'DELETE'
+      }
+    );
+    fetch(request)
+      .then(
+        () => {
+          dispatch(deleteWorkflowSuccess());
+          dispatch(fetchWorkflows());
+        },
+        err => {
+          console.log(err);
+          dispatch(deleteWorkflowFailure());
+        }
+      );
   };
 }
 export function receiveWMSLayerTimestepsFailure (error) {
@@ -474,15 +412,6 @@ export function fetchClimateIndicators () {
       .catch(error => dispatch(receiveClimateIndicatorsFailure(error)));
   };
 }
-export function fetchFacets () {
-  return function (dispatch) {
-    dispatch(requestFacets());
-    return fetch('/api/facets')
-      .then(response => response.json())
-      .then(json => dispatch(receiveFacets(json)))
-      .catch(error => dispatch(receiveFacetsFailure(error)));
-  };
-}
 export function fetchPlotlyData (
   opendapUrl,
   variableName,
@@ -511,60 +440,6 @@ export function fetchPlotlyData (
         err => {
           dispatch(receivePlotlyDataFailure(err));
         }
-      );
-  };
-}
-export function fetchDataset (url) {
-  return function (dispatch) {
-    dispatch(requestDataset());
-    return fetch(`/api/dataset?url=${url}`)
-      .then(response => response.json())
-      .then(json =>
-        dispatch(receiveDataset(json))
-      );
-    // TODO FIX THIS HAPPEN FOR NO REASON
-    /* .catch(error =>
-     dispatch(receiveDatasetFailure(error))
-     ) */
-  };
-}
-// OUR PAVICS DATASETS CATALOG 2.0
-export function fetchPavicsDatasets () {
-  return function (dispatch, getState) {
-    dispatch(requestPavicsDatasets());
-    // Get current added facets by querying store
-    let facets = getState().pavics.visualize.selectedFacets;
-    let constraints = '';
-    facets.forEach(function (facet, i) {
-      constraints += `${(i > 0) ? ',' : ''}${facet.key}:${facet.value}`;
-    });
-    return fetch(`/api/datasets/pavics?constraints=${constraints}`)
-      .then(response => response.json())
-      .then(json =>
-        dispatch(receivePavicsDatasets(json))
-      )
-      .catch(error =>
-        dispatch(receivePavicsDatasetsFailure(error))
-      );
-  };
-}
-// EXTERNAL ESGF CATALOG
-export function fetchEsgfDatasets () {
-  return function (dispatch, getState) {
-    dispatch(requestEsgfDatasets());
-    // Get current added facets by querying store
-    let facets = getState().pavics.visualize.selectedFacets;
-    let constraints = '';
-    facets.forEach(function (facet, i) {
-      constraints += `${(i > 0) ? ',' : ''}${facet.key}:${facet.value}`;
-    });
-    return fetch(`/api/datasets/esgf?constraints=${constraints}`)
-      .then(response => response.json())
-      .then(json =>
-        dispatch(receiveEsgfDatasets(json))
-      )
-      .catch(error =>
-        dispatch(receiveEsgfDatasetsFailure(error))
       );
   };
 }
@@ -911,6 +786,33 @@ export function executeProcess (provider, process, inputValues) {
   };
 }
 const WORKFLOW_WIZARD_HANDLERS = {
+  [FETCH_WORKFLOWS_REQUEST]: (state) => {
+    return {...state, workflows: {...state.workflows, isFetching: true}};
+  },
+  [FETCH_WORKFLOWS_SUCCESS]: (state, action) => {
+    return {...state, workflows: {...state.workflows, isFetching: false, items: action.items}};
+  },
+  [FETCH_WORKFLOWS_FAILURE]: (state) => {
+    return {...state, workflows: {...state.workflows, isFetching: false}};
+  },
+  [SAVE_WORKFLOW_REQUEST]: (state) => {
+    return {...state, workflows: {...state.workflows, isSaving: true}};
+  },
+  [SAVE_WORKFLOW_SUCCESS]: (state) => {
+    return {...state, workflows: {...state.workflows, isSaving: false}};
+  },
+  [SAVE_WORKFLOW_FAILURE]: (state) => {
+    return {...state, workflows: {...state.workflows, isSaving: false}};
+  },
+  [DELETE_WORKFLOW_REQUEST]: (state) => {
+    return {...state, workflows: {...state.workflows, isDeleting: true}};
+  },
+  [DELETE_WORKFLOW_SUCCESS]: (state) => {
+    return {...state, workflows: {...state.workflows, isDeleting: false}};
+  },
+  [DELETE_WORKFLOW_FAILURE]: (state) => {
+    return {...state, workflows: {...state.workflows, isDeleting: false}};
+  },
   [constants.WORKFLOW_SET_WPS_PROVIDER]: (state, action) => {
     return {...state, selectedProvider: action.provider};
   },
@@ -1001,30 +903,6 @@ const VISUALIZE_HANDLERS = {
     let newDatasetLayers = state.currentVisualizedDatasetLayers.concat(action.datasets);
     return ({...state, currentVisualizedDatasetLayers: newDatasetLayers});
   },
-  [ADD_FACET_KEY_VALUE_PAIR]: (state, action) => {
-    let facets = state.selectedFacets.concat({key: action.key, value: action.value});
-    facets.sort(function (a, b) {
-      if (a.key + a.value < b.key + b.value) {
-        return -1;
-      }
-      if (a.key + a.value > b.key + b.value) {
-        return 1;
-      }
-      return 0;
-    });
-    return ({...state, selectedFacets: facets});
-  },
-  [REMOVE_FACET_KEY_VALUE_PAIR]: (state, action) => {
-    let selectedFacets = state.selectedFacets.slice();
-    let index = selectedFacets.findIndex(x => x.key === action.key && x.value === action.value);
-    if (index > -1) {
-      selectedFacets.splice(index, 1);
-    }
-    return ({...state, selectedFacets: selectedFacets});
-  },
-  [REMOVE_ALL_FACET_KEY_VALUE]: (state, action) => {
-    return ({...state, selectedFacets: []});
-  },
   [SET_CURRENT_TIME_ISO]: (state, action) => {
     return ({...state, currentDateTime: action.currentDateTime});
   },
@@ -1033,24 +911,6 @@ const VISUALIZE_HANDLERS = {
     let panelControls = JSON.parse(JSON.stringify(state.panelControls));
     panelControls[action.panel].show = action.show;
     return ({...state, panelControls: panelControls});
-  },
-  [FETCH_DATASET_REQUEST]: (state, action) => {
-    return ({...state, selectedDatasets: action.selectedDatasets});
-  },
-  [FETCH_DATASET_FAILURE]: (state, action) => {
-    return ({...state, selectedDatasets: action.selectedDatasets});
-  },
-  [FETCH_DATASET_SUCCESS]: (state, action) => {
-    return ({...state, selectedDatasets: action.selectedDatasets});
-  },
-  [FETCH_FACETS_REQUEST]: (state, action) => {
-    return ({...state, facets: action.facets});
-  },
-  [FETCH_FACETS_FAILURE]: (state, action) => {
-    return ({...state, facets: action.facets});
-  },
-  [FETCH_FACETS_SUCCESS]: (state, action) => {
-    return ({...state, facets: action.facets});
   },
   [FETCH_PLOTLY_DATA_REQUEST]: (state, action) => {
     return ({...state, plotlyData: Object.assign({}, state.plotlyData, action.plotlyData)});
@@ -1078,27 +938,6 @@ const VISUALIZE_HANDLERS = {
   },
   [FETCH_SCALAR_VALUE_SUCCESS]: (state, action) => {
     return ({...state, currentScalarValue: action.currentScalarValue});
-  },
-  [FETCH_ESGF_DATASETS_REQUEST]: (state, action) => {
-    return ({...state, esgfDatasets: action.esgfDatasets});
-  },
-  [FETCH_ESGF_DATASETS_FAILURE]: (state, action) => {
-    return ({...state, esgfDatasets: action.esgfDatasets});
-  },
-  [FETCH_ESGF_DATASETS_SUCCESS]: (state, action) => {
-    return ({...state, esgfDatasets: action.esgfDatasets});
-  },
-  [FETCH_PAVICS_DATASETS_REQUEST]: (state, action) => {
-    return ({...state, pavicsDatasets: action.pavicsDatasets});
-  },
-  [FETCH_PAVICS_DATASETS_FAILURE]: (state, action) => {
-    return ({...state, pavicsDatasets: action.pavicsDatasets});
-  },
-  [RESTORE_PAVICS_DATASETS]: (state, action) => {
-    return ({...state, pavicsDatasets: action.pavicsDatasets});
-  },
-  [FETCH_PAVICS_DATASETS_SUCCESS]: (state, action) => {
-    return ({...state, pavicsDatasets: action.pavicsDatasets});
   },
   [FETCH_WMS_LAYER_DETAILS_REQUEST]: (state, action) => {
     return ({...state, selectedWMSLayerDetails: action.selectedWMSLayerDetails});

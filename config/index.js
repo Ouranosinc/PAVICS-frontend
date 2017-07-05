@@ -11,6 +11,7 @@ debug('Creating default configuration.');
 // ========================================================
 let serverHost = process.env.PAVICS_FRONTEND_IP || localip;
 let birdhouseHost = process.env.BIRDHOUSE_HOST || 'outarde.crim.ca';
+let loopbackHost = process.env.LOOPBACK_HOST || 'outarde.crim.ca:3005';
 let serverPort = process.env.PORT || 3000;
 const config = {
   env: process.env.NODE_ENV || 'development',
@@ -27,6 +28,7 @@ const config = {
   pavics_geoserver_path: `http://${birdhouseHost}:8087/geoserver`,
   pavics_ncwms_path: `http://${birdhouseHost}:8080/ncWMS2/wms`,
   pavics_pywps_path: `http://${birdhouseHost}:8086/pywps`,
+  loopback_api_path: `http://${loopbackHost}/api`,
   // ----------------------------------
   // Project Structure
   // ----------------------------------
@@ -91,7 +93,8 @@ config.globals = {
   '__BASENAME__': JSON.stringify(process.env.BASENAME || ''),
   '__PAVICS_NCWMS_PATH__': JSON.stringify(config.pavics_ncwms_path),
   '__PAVICS_PHOENIX_PATH__': JSON.stringify(config.pavics_phoenix_path),
-  '__PAVICS_GEOSERVER_PATH__': JSON.stringify(config.pavics_geoserver_path)
+  '__PAVICS_GEOSERVER_PATH__': JSON.stringify(config.pavics_geoserver_path),
+  '__LOOPBACK_API_PATH__': JSON.stringify(config.loopback_api_path)
 };
 // ------------------------------------
 // Validate Vendor Dependencies

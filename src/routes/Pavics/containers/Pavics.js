@@ -1,15 +1,18 @@
 import React from 'react';
 import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import * as actionCreators from './../modules/Pavics';
+import * as projectActionCreators from './../../../redux/modules/Project';
+import { actions as researchActionsCreators } from '../../../redux/modules/ResearchAPI';
 import * as constants from './../../../constants';
 import {
-  AccountManagement,
-  ExperienceManagement,
-  SearchCatalog,
-  WorkflowWizard,
-  ProcessMonitoring,
-  Visualize } from './../../../containers';
+  AccountManagementContainer,
+  ExperienceManagementContainer,
+  ResearchContainer,
+  WorkflowWizardContainer,
+  ProcessMonitoringContainer,
+  VisualizeContainer } from './../../../containers';
 import { SectionalPanel } from './../../../components/SectionalPanel';
 
 class Pavics extends React.Component {
@@ -23,25 +26,58 @@ class Pavics extends React.Component {
     fetchVisualizableData: React.PropTypes.func.isRequired
   };
 
+  componentWillMount () {
+    // this.startErrorLog();
+  }
+
+  startErrorLog () {
+    // Prototype that should catch and display every app errors (HTTP and other promises errors aren't catched properly tho)
+    window.onerror = (message,file,line,column,errorObject) => {
+      column = column || (window.event && window.event.errorCharacter);
+      var stack = errorObject ? errorObject.stack : null;
+
+      //trying to get stack from IE
+      if(!stack)
+      {
+        var stack = [];
+        var f = arguments.callee.caller;
+        while (f)
+        {
+          stack.push(f.name);
+          f = f.caller;
+        }
+        errorObject['stack'] = stack;
+      }
+
+      alert(message);
+      var data = {
+        message:message,
+        file:file,
+        line:line,
+        column:column,
+        errorStack:stack,
+      };
+      return false;
+    }
+  }
+
   makeSection () {
     switch (this.props.platform.section) {
       case constants.PLATFORM_SECTION_SEARCH_DATASETS:
         return (
-          <div>
-            <SearchCatalog {...this.props} />
-          </div>
+          <ResearchContainer {...this.props} />
         );
       case constants.PLATFORM_SECTION_EXPERIENCE_MANAGEMENT:
         return (
-          <ExperienceManagement {...this.props} />
+          <ExperienceManagementContainer {...this.props} />
         );
       case constants.PLATFORM_SECTION_WORKFLOWS:
         return (
-          <WorkflowWizard {...this.props} />
+          <WorkflowWizardContainer {...this.props} />
         );
       case constants.PLATFORM_SECTION_MONITOR:
         return (
-          <ProcessMonitoring
+          <ProcessMonitoringContainer
             addDatasetLayersToVisualize={this.props.addDatasetLayersToVisualize}
             fetchWPSJobs={this.props.fetchWPSJobs}
             monitor={this.props.monitor}
@@ -49,7 +85,7 @@ class Pavics extends React.Component {
         );
       case constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT:
         return (
-          <AccountManagement {...this.props} />
+          <AccountManagementContainer {...this.props} />
         );
       default:
         return null;
@@ -60,7 +96,7 @@ class Pavics extends React.Component {
     return (
       <MuiThemeProvider>
         <div>
-          <Visualize {...this.props} />
+          <VisualizeContainer {...this.props} />
           <SectionalPanel
             section={this.props.platform.section}
             goToSection={this.props.goToSection}
@@ -72,13 +108,23 @@ class Pavics extends React.Component {
     );
   }
 }
-const mapActionCreators = {...actionCreators};
+
+// const mapActionCreators = dispatch => ({
+//   researchActions: bindActionCreators({...researchActionsCreators}, dispatch)
+// });
+
+const mapActionCreators = {
+  ...actionCreators,
+  ...projectActionCreators
+};
 const mapStateToProps = state => {
   return {
     ...state.pavics.workflowWizard,
     ...state.pavics.visualize,
     platform: state.pavics.platform,
-    monitor: state.pavics.monitor
+    monitor: state.pavics.monitor,
+    project: state.project,
+    research: state.research
   };
 };
 export default connect(mapStateToProps, mapActionCreators)(Pavics);

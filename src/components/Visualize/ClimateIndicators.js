@@ -1,7 +1,7 @@
 import React from 'react';
 import Panel, {PanelHeader} from './../../components/Panel';
 import Table, {TableHeader, TableBody} from './../../components/Table';
-import * as constants from './../../constants';
+import * as constants from '../../constants';
 class ClimateIndicators extends React.Component {
   static propTypes = {
     fetchClimateIndicators: React.PropTypes.func.isRequired,
