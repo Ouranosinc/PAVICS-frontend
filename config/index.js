@@ -11,7 +11,7 @@ debug('Creating default configuration.');
 // ========================================================
 let serverHost = process.env.PAVICS_FRONTEND_IP || localip;
 let birdhouseHost = process.env.BIRDHOUSE_HOST || 'outarde.crim.ca';
-let loopbackHost = process.env.LOOPBACK_HOST || 'outarde.crim.ca:3001';
+let loopbackHost = process.env.LOOPBACK_HOST || 'outarde.crim.ca:3005';
 let serverPort = process.env.PORT || 3000;
 const config = {
   env: process.env.NODE_ENV || 'development',
