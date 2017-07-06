@@ -20,6 +20,7 @@ export default class WorkflowWizard extends React.Component {
     fetchWorkflows: React.PropTypes.func.isRequired,
     deleteWorkflow: React.PropTypes.func.isRequired,
     fetchProcesses: React.PropTypes.func.isRequired,
+    setProcessInputs: React.PropTypes.func.isRequired,
     fetchProcessInputs: React.PropTypes.func.isRequired,
     selectWpsProvider: React.PropTypes.func.isRequired,
     providers: React.PropTypes.object.isRequired,
@@ -92,6 +93,7 @@ export default class WorkflowWizard extends React.Component {
         <Tabs>
           <Tab label="Scientific Workflows">
             <ScientificWorkflowStepper
+              setProcessInputs={this.props.setProcessInputs}
               showDialog={this.showDialog}
               providers={this.props.providers}
               selectedRegions={this.props.selectedRegions}
@@ -100,10 +102,10 @@ export default class WorkflowWizard extends React.Component {
               goToSection={this.props.goToSection}
               executeProcess={this.props.executeProcess}
               handleSelectedProcessValueChange={this.props.handleSelectedProcessValueChange}
-              selectedProcess={this.props.selectedProcess}
+              selectedProcess={{identifier: 'workflow'}}
               selectedProcessInputs={this.props.selectedProcessInputs}
               selectedProcessValues={this.props.selectedProcessValues}
-              selectedProvider={this.props.selectedProvider}
+              selectedProvider="malleefowl"
               workflows={this.props.workflows}
               saveWorkflow={this.props.saveWorkflow}
               deleteWorkflowCallback={this.deleteWorkflowCallback}/>

@@ -3,9 +3,7 @@ import { connect } from 'react-redux';
 import WorkflowWizard from './../../components/WorkflowWizard';
 
 export class WorkflowWizardContainer extends React.Component {
-  static propTypes = {
-
-  }
+  static propTypes = {}
 
   constructor(props) {
     super(props);

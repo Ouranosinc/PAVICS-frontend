@@ -23,6 +23,15 @@ export default class WpsProcessForm extends React.Component {
     selectedRegions: React.PropTypes.array.isRequired
   };
 
+  /*
+  ATTENTION
+
+  while it does seem like there is data handling and stuff
+  it's all lies
+  actually, the data is captured in the workflow wizard stepper, with a FormData built directly from a document.querySelector
+  likewise, the handleSelectedProcessValueChange was never fully implemented
+   */
+
 
   constructor (props) {
     super(props);
@@ -172,6 +181,7 @@ export default class WpsProcessForm extends React.Component {
   render () {
     return (
       <DeformWrapper
+        execute={this.props.executeProcess}
         selectedProcessIdentifier={this.props.selectedProcess.identifier}
         selectedProvider={this.props.selectedProvider}>
         {
