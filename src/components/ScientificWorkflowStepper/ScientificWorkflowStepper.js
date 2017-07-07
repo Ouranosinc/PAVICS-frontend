@@ -63,13 +63,16 @@ export default class ScientificWorkflowStepper extends Component {
   }
 
   /*
-  I'm sorry
-  they made me do this against my will
+  "I'm sorry, they made me do this against my will"
+    - says a disrupted soul
    */
   parseScientificWorkflow = async (workflow) => {
     if (workflow.json && workflow.json.tasks) {
-      let tasks = workflow.json.tasks;
       let inputsThatShouldBeProvided = [];
+      let tasks = workflow.json.tasks;
+      workflow.json.parallel_groups.forEach((group) => {
+        tasks = tasks.concat(group.tasks);
+      });
       let validProviders = [];
       this.props.providers.items.map(elem => validProviders.push(elem.identifier));
       // validate that each task has a valid provider
@@ -85,6 +88,7 @@ export default class ScientificWorkflowStepper extends Component {
         // also we use tasks[i] because we want the original array to be modified
         // not the local thisTask
         tasks[i]['url'] = providerDescription.url.substring(0, providerDescription.url.indexOf('?'));
+        delete tasks[i]['provider'];
         let validProcessIdentifiers = [];
         providerDescription.items.map(elem => validProcessIdentifiers.push(elem.identifier));
         // validate that this task has a valid identifier (that is, the provider provides that identifier)
@@ -97,23 +101,25 @@ export default class ScientificWorkflowStepper extends Component {
           let processDescription = await this.request(`/phoenix/inputs?provider=${thisTaskProvider}&process=${thisTaskProcessIdentifier}`);
           let validInputNames = [];
           processDescription.inputs.map(elem => validInputNames.push(elem.name));
-          for (let j = 0, nbInputs = thisTask.inputs.length; j !== nbInputs; j++) {
-             let thisInputName = thisTask.inputs[j][0];
-             let validInputIndex = validInputNames.indexOf(thisInputName);
-             if (validInputIndex === -1) {
-               throw new Error(`The input ${thisInputName} is not a valid input for the process ${thisTaskProcessIdentifier}, it should be one of ${validInputNames.join(', ')}.`);
-             }
-             console.log('process description:', processDescription);
-             inputsThatShouldBeProvided.push({
-               name: `${thisTaskProcessIdentifier}.${thisInputName}`,
-               dataType: processDescription.inputs[validInputIndex].dataType,
-               description: processDescription.inputs[validInputIndex].description
-             });
+          for(let inputName in thisTask.inputs) {
+            if(thisTask.inputs.hasOwnProperty(inputName)) {
+              let validInputIndex = validInputNames.indexOf(inputName);
+              if (validInputIndex === -1) {
+                throw new Error(`The input ${inputName} is not a valid input for the process ${thisTaskProcessIdentifier}, it should be one of ${validInputNames.join(', ')}.`);
+              }
+              console.log('process description:', processDescription);
+              inputsThatShouldBeProvided.push({
+                name: `${thisTaskProcessIdentifier}.${inputName}`,
+                dataType: processDescription.inputs[validInputIndex].dataType,
+                description: processDescription.inputs[validInputIndex].description
+              });
+            }
           }
         }
-        console.log('inputs that should be provided:', inputsThatShouldBeProvided);
-        this.props.setProcessInputs(inputsThatShouldBeProvided);
       }
+      console.log('inputs that should be provided:', inputsThatShouldBeProvided);
+      this.props.setProcessInputs(inputsThatShouldBeProvided);
+
     } else {
       throw new Error('The workflow is invalid, it lacks a json member.');
     }
@@ -178,28 +184,35 @@ export default class ScientificWorkflowStepper extends Component {
       }
       console.log('this pair', pair);
       let keys = pair[0].split('.');
-      for (let i = 0, nb = toFillWorkflow.tasks.length; i !== nb; i++) {
+      let tasks = toFillWorkflow.tasks;
+      toFillWorkflow.parallel_groups.forEach((group) => {
+        tasks = tasks.concat(group.tasks);
+      });
+      for (let i = 0, nb = tasks.length; i !== nb; i++) {
         // if the process identifier is not the same, we know it's not the right input
-        if (toFillWorkflow.tasks[i].inputs && toFillWorkflow.tasks[i].identifier === keys[0]) {
-          for (let j = 0, nbInputs = toFillWorkflow.tasks[i].inputs.length; j !== nbInputs; j++) {
-            // validate the input name, then associate the user input to the workflow
-            // the workflow inputs are arrays with two entries, the first being the key, the second the value
-            // so while this seem like
-            if (toFillWorkflow.tasks[i].inputs[j][0] === keys[1]) {
-              console.log('this input:', toFillWorkflow.tasks[i].inputs[j]);
-              toFillWorkflow.tasks[i].inputs[j][1] = pair[1];
-            }
-            // hardcoding false value for mosaic input
-            // TODO this should be somewhat dynamic, once the inputs sent from workflow are not key value pairs anymore
-            if (toFillWorkflow.tasks[i].inputs[j][0] === 'mosaic') {
-              toFillWorkflow.tasks[i].inputs[j][1] = 'False';
+        if (tasks[i].inputs && tasks[i].identifier === keys[0]) {
+          for (let inputName in tasks[i].inputs) {
+            if(tasks[i].inputs.hasOwnProperty(inputName)) {
+              if (inputName === keys[1]) {
+                console.log('this input:', tasks[i].inputs[inputName]);
+                tasks[i].inputs[inputName] = pair[1];
+              }
+              // hardcoding false value for mosaic input
+              // TODO this should be somewhat dynamic, once the inputs sent from workflow are not key value pairs anymore
+              if (tasks[i].inputs[inputName] === 'mosaic') {
+                tasks[i].inputs[inputName] = 'False';
+              }
             }
           }
         }
       }
     }
-    toSendData.append('workflow_string', JSON.stringify(toFillWorkflow));
-    console.log('workflow json:', JSON.stringify(toFillWorkflow));
+    let stringified = JSON.stringify(toFillWorkflow);
+    let sample = stringified.replace(/pluvier.crim.ca/g, "192.168.101.46");
+    // let sample = '{"name":"workflow_demo_1","tasks":[{"name":"Downloading","url":"http://192.168.101.46:8091/wps","identifier":"thredds_download","inputs":{"url":"http://192.168.101.46:8083/thredds/catalog/birdhouse/CMIP5/CCCMA/CanESM2/historical/mon/atmos/r1i1p1/pr/catalog.xml"},"progress_range":[0,40]}],"parallel_groups":[{"name":"SubsetterGroup","max_processes":2,"map":{"task":"Downloading","output":"output","as_reference":false},"reduce":{"task":"Indexing","output":"crawler_result","as_reference":false},"tasks":[{"name":"Subsetting","url":"http://192.168.101.46:8093/wps","identifier":"subset_WFS","inputs":{"typename":"ADMINBOUNDARIES:canada_admin_boundaries","featureids":"canada_admin_boundaries.5","mosaic":"False"},"linked_inputs":{"resource":{"task":"SubsetterGroup"}},"progress_range":[40,80]},{"name":"Indexing","url":"http://192.168.101.46:8086/pywps","identifier":"pavicrawler","linked_inputs":{"target_files":{"task":"Subsetting","output":"ncout","as_reference":true}},"progress_range":[80,100]}]}]}'
+    // let sample = '{"name":"wizard_subset_WFS","tasks":[{"name":"Downloading","provider":"malleefowl","identifier":"thredds_download","inputs":{"url":"http://192.168.101.46:8083/thredds/catalog/birdhouse/CMIP5/CCCMA/CanESM2/rcp85/day/atmos/r1i1p1/pr/catalog.xml"},"progress_range":[0,40],"url":"https://192.168.101.46:8443/ows/proxy/malleefowl"},{"name":"Subsetting","provider":"flying_public","identifier":"subset_WFS","inputs":{"typename":"ADMINBOUNDARIES:canada_admin_boundaries","featureids":"canada_admin_boundaries.5","mosaic":"False"},"linked_inputs":{"resource":{"task":"Downloading","output":"output","as_reference":false}},"progress_range":[40,80],"url":"https://192.168.101.46:8443/ows/proxy/flying_public"},{"name":"Indexing","provider":"catalog","identifier":"pavicrawler","linked_inputs":{"target_files":{"task":"Subsetting","output":"ncout","as_reference":true}},"progress_range":[80,100],"url":"https://192.168.101.46:8443/ows/proxy/catalog"}]}';
+    toSendData.append('workflow_string', sample);
+    console.log('workflow json:', sample);
     this.execute(toSendData);
   }
 
