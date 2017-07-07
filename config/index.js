@@ -105,7 +105,7 @@ config.globals = {
   '__PAVICS_PHOENIX_PATH__': JSON.stringify(config.pavics_phoenix_path),
   '__PAVICS_GEOSERVER_PATH__': JSON.stringify(config.pavics_geoserver_path),
   '__LOOPBACK_API_PATH__': JSON.stringify(config.loopback_api_path),
-  '__PAVICS_WORKFLOW_PROVIDER__': JSON.stringify(config.__PAVICS_WORKFLOW_PROVIDER__),
+  '__PAVICS_WORKFLOW_PROVIDER__': JSON.stringify(config.PAVICS_WORKFLOW_PROVIDER),
   '__PAVICS_RUN_WORKFLOW_IDENTIFIER__': JSON.stringify(config.PAVICS_RUN_WORKFLOW_IDENTIFIER),
   '__PAVICS_VISUALIZE_IDENTIFIER__': JSON.stringify(config.PAVICS_VISUALIZE_IDENTIFIER),
   '__PAVICS_PERSIST_IDENTIFIER__': JSON.stringify(config.PAVICS_PERSIST_IDENTIFIER),

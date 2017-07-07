@@ -102,10 +102,10 @@ export default class WorkflowWizard extends React.Component {
               goToSection={this.props.goToSection}
               executeProcess={this.props.executeProcess}
               handleSelectedProcessValueChange={this.props.handleSelectedProcessValueChange}
-              selectedProcess={{identifier: '__PAVICS_RUN_WORKFLOW_IDENTIFIER__'}}
+              selectedProcess={{identifier: __PAVICS_RUN_WORKFLOW_IDENTIFIER__}}
               selectedProcessInputs={this.props.selectedProcessInputs}
               selectedProcessValues={this.props.selectedProcessValues}
-              selectedProvider="__PAVICS_WORKFLOW_PROVIDER__"
+              selectedProvider={__PAVICS_WORKFLOW_PROVIDER__}
               workflows={this.props.workflows}
               saveWorkflow={this.props.saveWorkflow}
               deleteWorkflowCallback={this.deleteWorkflowCallback}/>
