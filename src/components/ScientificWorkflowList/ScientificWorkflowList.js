@@ -89,7 +89,8 @@ export default class ScientificWorkflowList extends Component {
   }
 
   onRunWorkflowClick (workflow) {
-    this.props.goToConfigureAndRunStep(workflow);
+    // Deep clone workflow object so modifications (provider names, url, inputs) won't affect it's state if reloaded from the list
+    this.props.goToConfigureAndRunStep(JSON.parse(JSON.stringify(workflow)));
   }
 
   onEditWorkflowClick () {

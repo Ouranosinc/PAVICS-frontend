@@ -6,6 +6,9 @@ import WpsProcessDetails from './../../components/WpsProcessDetails';
 import WpsProcessForm from './../../components/WpsProcessForm';
 import RaisedButton from 'material-ui/RaisedButton';
 import BackIcon from 'material-ui/svg-icons/navigation/arrow-back';
+
+const FORM_PROCESS_ID = "form-individual-process";
+
 export default class WorkflowWizardStepper extends React.Component {
   static propTypes = {
     stepIndex: React.PropTypes.number.isRequired,
@@ -36,9 +39,7 @@ export default class WorkflowWizardStepper extends React.Component {
   execute () {
     // ugly hack to workaround making one extra trip to the backend
     // we already have had to put strange __start__ and __end__ inputs to work nicely with phoenix
-    let test = document.querySelector('#process-form');
-    console.log(test);
-    let formData = new FormData(document.querySelector('#process-form'));
+    let formData = new FormData(document.querySelector(`#${FORM_PROCESS_ID}`));
     for (let pair of formData) {
       console.log(pair);
     }
@@ -107,6 +108,7 @@ export default class WorkflowWizardStepper extends React.Component {
                 this.props.selectedProcessInputs.length === 0
                   ? null
                   : <WpsProcessForm
+                    formId={FORM_PROCESS_ID}
                     selectedRegions={this.props.selectedRegions}
                     selectedDatasetLayer={this.props.selectedDatasetLayer}
                     selectedShapefile={this.props.selectedShapefile}

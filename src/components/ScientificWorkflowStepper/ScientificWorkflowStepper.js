@@ -14,6 +14,7 @@ const styles = {
     color: 'white'
   }
 };
+const FORM_WORKFLOW_ID = "form-workflow-process";
 export default class ScientificWorkflowStepper extends Component {
   static propTypes = {
     workflows: React.PropTypes.object.isRequired,
@@ -269,6 +270,7 @@ export default class ScientificWorkflowStepper extends Component {
                     onClick={this.handlePrev}
                     icon={<BackIcon />}/>
                   <WpsProcessForm
+                    formId={FORM_WORKFLOW_ID}
                     selectedRegions={this.props.selectedRegions}
                     selectedDatasetLayer={this.props.selectedDatasetLayer}
                     selectedShapefile={this.props.selectedShapefile}

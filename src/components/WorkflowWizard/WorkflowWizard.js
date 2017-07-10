@@ -4,6 +4,10 @@ import WorkflowWizardStepper from '../../components/WorkflowWizard';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import { Tabs, Tab } from 'material-ui/Tabs';
+
+const WORKFLOW_TAB_VALUE = "WORKFLOW_TAB_VALUE";
+const PROCESS_TAB_VALUE = "PROCESS_TAB_VALUE";
+
 export default class WorkflowWizard extends React.Component {
   static propTypes = {
     processes: React.PropTypes.array.isRequired,
@@ -25,6 +29,7 @@ export default class WorkflowWizard extends React.Component {
     selectWpsProvider: React.PropTypes.func.isRequired,
     providers: React.PropTypes.object.isRequired,
     goToSection: React.PropTypes.func.isRequired,
+    getFirstStep: React.PropTypes.func.isRequired,
     getLastStep: React.PropTypes.func.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
@@ -46,7 +51,8 @@ export default class WorkflowWizard extends React.Component {
       dialogOpened: false,
       dialogTitle: '',
       dialogContent: '',
-      dialogActions: []
+      dialogActions: [],
+      activeTab: WORKFLOW_TAB_VALUE
     };
   }
 
@@ -87,48 +93,65 @@ export default class WorkflowWizard extends React.Component {
     });
   }
 
+  handleTabChange(value) {
+    if(value === WORKFLOW_TAB_VALUE){
+      this.props.getFirstStep(); // Force Process Tab to go back to step 0 on re-rendering
+    }
+    this.setState({
+      activeTab: value
+    })
+  }
+
   render () {
     return (
       <div>
-        <Tabs>
-          <Tab label="Scientific Workflows">
-            <ScientificWorkflowStepper
-              setProcessInputs={this.props.setProcessInputs}
-              showDialog={this.showDialog}
-              providers={this.props.providers}
-              selectedRegions={this.props.selectedRegions}
-              selectedDatasetLayer={this.props.selectedDatasetLayer}
-              selectedShapefile={this.props.selectedShapefile}
-              goToSection={this.props.goToSection}
-              executeProcess={this.props.executeProcess}
-              handleSelectedProcessValueChange={this.props.handleSelectedProcessValueChange}
-              selectedProcess={{identifier: __PAVICS_RUN_WORKFLOW_IDENTIFIER__}}
-              selectedProcessInputs={this.props.selectedProcessInputs}
-              selectedProcessValues={this.props.selectedProcessValues}
-              selectedProvider={__PAVICS_WORKFLOW_PROVIDER__}
-              workflows={this.props.workflows}
-              saveWorkflow={this.props.saveWorkflow}
-              deleteWorkflowCallback={this.deleteWorkflowCallback}/>
+        <Tabs
+          onChange={(value) => this.handleTabChange(value)}
+          value={this.state.activeTab}>
+          <Tab value={WORKFLOW_TAB_VALUE} label="Scientific Workflows">
+            {
+              (this.state.activeTab === WORKFLOW_TAB_VALUE) ?
+                <ScientificWorkflowStepper
+                  setProcessInputs={this.props.setProcessInputs}
+                  showDialog={this.showDialog}
+                  providers={this.props.providers}
+                  selectedRegions={this.props.selectedRegions}
+                  selectedDatasetLayer={this.props.selectedDatasetLayer}
+                  selectedShapefile={this.props.selectedShapefile}
+                  goToSection={this.props.goToSection}
+                  executeProcess={this.props.executeProcess}
+                  handleSelectedProcessValueChange={this.props.handleSelectedProcessValueChange}
+                  selectedProcess={{identifier: __PAVICS_RUN_WORKFLOW_IDENTIFIER__}}
+                  selectedProcessInputs={this.props.selectedProcessInputs}
+                  selectedProcessValues={this.props.selectedProcessValues}
+                  selectedProvider={__PAVICS_WORKFLOW_PROVIDER__}
+                  workflows={this.props.workflows}
+                  saveWorkflow={this.props.saveWorkflow}
+                  deleteWorkflowCallback={this.deleteWorkflowCallback}/> : null
+            }
           </Tab>
-          <Tab label="WPS Processes">
-            <WorkflowWizardStepper
-              selectedRegions={this.props.selectedRegions}
-              selectedDatasetLayer={this.props.selectedDatasetLayer}
-              selectedShapefile={this.props.selectedShapefile}
-              stepIndex={this.props.stepIndex}
-              processes={this.props.processes}
-              chooseProcess={this.props.chooseProcess}
-              fetchProcessInputs={this.props.fetchProcessInputs}
-              selectWpsProvider={this.props.selectWpsProvider}
-              providers={this.props.providers}
-              selectedProvider={this.props.selectedProvider}
-              getLastStep={this.props.getLastStep}
-              selectedProcess={this.props.selectedProcess}
-              selectedProcessValues={this.props.selectedProcessValues}
-              selectedProcessInputs={this.props.selectedProcessInputs}
-              goToSection={this.props.goToSection}
-              executeProcess={this.props.executeProcess}
-              handleSelectedProcessValueChange={this.props.handleSelectedProcessValueChange}/>
+          <Tab value={PROCESS_TAB_VALUE} label="WPS Processes">
+            {
+              (this.state.activeTab === PROCESS_TAB_VALUE) ?
+                <WorkflowWizardStepper
+                  selectedRegions={this.props.selectedRegions}
+                  selectedDatasetLayer={this.props.selectedDatasetLayer}
+                  selectedShapefile={this.props.selectedShapefile}
+                  stepIndex={this.props.stepIndex}
+                  processes={this.props.processes}
+                  chooseProcess={this.props.chooseProcess}
+                  fetchProcessInputs={this.props.fetchProcessInputs}
+                  selectWpsProvider={this.props.selectWpsProvider}
+                  providers={this.props.providers}
+                  selectedProvider={this.props.selectedProvider}
+                  getLastStep={this.props.getLastStep}
+                  selectedProcess={this.props.selectedProcess}
+                  selectedProcessValues={this.props.selectedProcessValues}
+                  selectedProcessInputs={this.props.selectedProcessInputs}
+                  goToSection={this.props.goToSection}
+                  executeProcess={this.props.executeProcess}
+                  handleSelectedProcessValueChange={this.props.handleSelectedProcessValueChange}/> : null
+            }
           </Tab>
         </Tabs>
         <Dialog

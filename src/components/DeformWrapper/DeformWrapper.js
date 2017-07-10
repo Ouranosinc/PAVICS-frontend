@@ -10,6 +10,7 @@ const gridStyle = {
 };
 export default class DeformWrapper extends Component {
   static propTypes = {
+    formId: React.PropTypes.string.isRequired,
     selectedProvider: React.PropTypes.string.isRequired,
     selectedProcessIdentifier: React.PropTypes.string.isRequired,
     execute: React.PropTypes.func.isRequired
@@ -22,7 +23,7 @@ export default class DeformWrapper extends Component {
     return (
       // this id="process-form" is used when submitting the form.
       // don't change or remove it, or make sure you update it in the execute function as well
-      <Form id="process-form" horizontal>
+      <Form id={this.props.formId} horizontal>
         <Card style={gridStyle}>
           <CardHeader title="Required inputs" />
           <CardText>

@@ -542,6 +542,11 @@ export function chooseStep (step) {
     step: step
   };
 }
+export function getFirstStep () {
+  return {
+    type: constants.WORKFLOW_GET_FIRST_STEP
+  };
+}
 export function getLastStep () {
   return {
     type: constants.WORKFLOW_GET_LAST_STEP
@@ -831,6 +836,9 @@ const WORKFLOW_WIZARD_HANDLERS = {
   },
   [constants.WORKFLOW_CHANGE_STEP]: (state, action) => {
     return {...state, currentStep: action.step};
+  },
+  [constants.WORKFLOW_GET_FIRST_STEP]: (state) => {
+    return {...state, stepIndex: 0};
   },
   [constants.WORKFLOW_GET_LAST_STEP]: (state) => {
     return {...state, stepIndex: (state.stepIndex - 1)};
