@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { NotificationManager } from 'react-notifications';
 import ScientificWorkflowList from '../../components/ScientificWorkflowList';
 import ScientificWorkflowForm from '../../components/ScientificWorkflowForm';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -149,9 +150,12 @@ export default class ScientificWorkflowStepper extends Component {
     // we already have had to put strange __start__ and __end__ inputs to work nicely with phoenix
     let url = `${__PAVICS_PHOENIX_PATH__}/processes/execute?wps=${this.props.selectedProvider}&process=${this.props.selectedProcess.identifier}`;
     // let url = `/phoenix/execute?wps=${this.props.selectedProvider}&process=${this.props.selectedProcess.identifier}`;
-    this.makePostRequest(url, formData, (res) => {
-      // TODO actually do something once the post have been done
-      // console.log(res);
+    this.makePostRequest(url, formData, (xhr, params) => {
+      if(xhr.status === 200){
+        NotificationManager.success('Workflow has been launched with success, you can now monitor workflow execution in the monitoring panel', 'Success', 10000);
+      }else{
+        NotificationManager.error('Workflow hasn\'t been launched as intended. Make sure the workflow and required inputs are defined properly', 'Error', 10000);
+      }
     });
     // this.props.executeProcess(provider, identifier, values);
     // this.props.goToSection(constants.PLATFORM_SECTION_MONITOR);
@@ -161,7 +165,7 @@ export default class ScientificWorkflowStepper extends Component {
     let xhr = new XMLHttpRequest();
     xhr.onload = function () {
       if (callable !== undefined) {
-        callable(xhr.responseText, params);
+        callable(xhr, params);
       }
     };
     xhr.open('POST', url);

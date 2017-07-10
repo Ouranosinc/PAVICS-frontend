@@ -15,8 +15,8 @@ import {
   VisualizeContainer } from './../../../containers';
 import { SectionalPanel } from './../../../components/SectionalPanel';
 // import Snackbar from 'material-ui/Snackbar';
-// require('react-notifications/lib/notifications.css');
-// import { NotificationContainer, NotificationManager } from 'react-notifications';
+require('react-notifications/lib/notifications.css');
+import { NotificationContainer, NotificationManager } from 'react-notifications';
 
 class Pavics extends React.Component {
   static propTypes = {
@@ -30,7 +30,7 @@ class Pavics extends React.Component {
   };
 
   componentWillMount () {
-    // this.startErrorLog();
+    this.startErrorLog();
   }
 
   startErrorLog () {
@@ -51,7 +51,7 @@ class Pavics extends React.Component {
         }
         errorObject['stack'] = stack;
       }
-      // NotificationManager.warning('Warning message', 'Close after 3000ms', 3000);
+      NotificationManager.warning('Warning message', 'Close after 3000ms', 3000);
       alert(message);
       var data = {
         message:message,
@@ -94,15 +94,7 @@ class Pavics extends React.Component {
         return null;
     }
   }
-  /*<NotificationContainer />
-   <Snackbar
-   style={{background: 'red'}}
-   open={true}
-   message="Event added to your calendar"
-   autoHideDuration={4000}
-   onRequestClose={this.handleRequestClose}>
-   allo
-   </Snackbar>*/
+
 
   render () {
     return (
@@ -115,6 +107,7 @@ class Pavics extends React.Component {
             chooseStep={this.props.chooseStep}
             showContent={this.makeSection() !== null}
             currentContent={this.makeSection()} />
+          <NotificationContainer />
         </div>
       </MuiThemeProvider>
     );
