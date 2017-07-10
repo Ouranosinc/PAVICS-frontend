@@ -12,8 +12,7 @@ export default class WpsProcessDetails extends React.Component {
       <Card style={marginated}>
         <CardHeader title={this.props.process.title} />
         <CardText>
-          <p>label: {this.props.process.id}</p>
-          <p>{this.props.process.description}</p>
+          {this.props.process.description}
         </CardText>
       </Card>
     );

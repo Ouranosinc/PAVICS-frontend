@@ -111,7 +111,9 @@ export default class ScientificWorkflowStepper extends Component {
               inputsThatShouldBeProvided.push({
                 name: `${thisTaskProcessIdentifier}.${inputName}`,
                 dataType: processDescription.inputs[validInputIndex].dataType,
-                description: processDescription.inputs[validInputIndex].description
+                description: processDescription.inputs[validInputIndex].description,
+                title: processDescription.inputs[validInputIndex].title,
+                defaultValue: thisTask.inputs[inputName]
               });
             }
           }
@@ -208,11 +210,11 @@ export default class ScientificWorkflowStepper extends Component {
       }
     }
     let stringified = JSON.stringify(toFillWorkflow);
-    let sample = stringified.replace(/pluvier.crim.ca/g, "192.168.101.46");
+    // let sample = stringified.replace(/pluvier.crim.ca/g, "192.168.101.46");
     // let sample = '{"name":"workflow_demo_1","tasks":[{"name":"Downloading","url":"http://192.168.101.46:8091/wps","identifier":"thredds_download","inputs":{"url":"http://192.168.101.46:8083/thredds/catalog/birdhouse/CMIP5/CCCMA/CanESM2/historical/mon/atmos/r1i1p1/pr/catalog.xml"},"progress_range":[0,40]}],"parallel_groups":[{"name":"SubsetterGroup","max_processes":2,"map":{"task":"Downloading","output":"output","as_reference":false},"reduce":{"task":"Indexing","output":"crawler_result","as_reference":false},"tasks":[{"name":"Subsetting","url":"http://192.168.101.46:8093/wps","identifier":"subset_WFS","inputs":{"typename":"ADMINBOUNDARIES:canada_admin_boundaries","featureids":"canada_admin_boundaries.5","mosaic":"False"},"linked_inputs":{"resource":{"task":"SubsetterGroup"}},"progress_range":[40,80]},{"name":"Indexing","url":"http://192.168.101.46:8086/pywps","identifier":"pavicrawler","linked_inputs":{"target_files":{"task":"Subsetting","output":"ncout","as_reference":true}},"progress_range":[80,100]}]}]}'
     // let sample = '{"name":"wizard_subset_WFS","tasks":[{"name":"Downloading","provider":"malleefowl","identifier":"thredds_download","inputs":{"url":"http://192.168.101.46:8083/thredds/catalog/birdhouse/CMIP5/CCCMA/CanESM2/rcp85/day/atmos/r1i1p1/pr/catalog.xml"},"progress_range":[0,40],"url":"https://192.168.101.46:8443/ows/proxy/malleefowl"},{"name":"Subsetting","provider":"flying_public","identifier":"subset_WFS","inputs":{"typename":"ADMINBOUNDARIES:canada_admin_boundaries","featureids":"canada_admin_boundaries.5","mosaic":"False"},"linked_inputs":{"resource":{"task":"Downloading","output":"output","as_reference":false}},"progress_range":[40,80],"url":"https://192.168.101.46:8443/ows/proxy/flying_public"},{"name":"Indexing","provider":"catalog","identifier":"pavicrawler","linked_inputs":{"target_files":{"task":"Subsetting","output":"ncout","as_reference":true}},"progress_range":[80,100],"url":"https://192.168.101.46:8443/ows/proxy/catalog"}]}';
-    toSendData.append('workflow_string', sample);
-    console.log('workflow json:', sample);
+    toSendData.append('workflow_string', stringified);
+    console.log('workflow json:', stringified);
     this.execute(toSendData);
   }
 

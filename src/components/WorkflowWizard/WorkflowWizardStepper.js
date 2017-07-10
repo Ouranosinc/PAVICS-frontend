@@ -36,7 +36,13 @@ export default class WorkflowWizardStepper extends React.Component {
   execute () {
     // ugly hack to workaround making one extra trip to the backend
     // we already have had to put strange __start__ and __end__ inputs to work nicely with phoenix
+    let test = document.querySelector('#process-form');
+    console.log(test);
     let formData = new FormData(document.querySelector('#process-form'));
+    for (let pair of formData) {
+      console.log(pair);
+    }
+
     let url = `${__PAVICS_PHOENIX_PATH__}/processes/execute?wps=${this.props.selectedProvider}&process=${this.props.selectedProcessIdentifier}`;
     // let url = `/phoenix/execute?wps=${this.props.selectedProvider}&process=${this.props.selectedProcess.identifier}`;
     this.makePostRequest(url, formData, (res) => {

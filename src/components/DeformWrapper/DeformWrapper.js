@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Form } from 'react-bootstrap';
 import { ExecuteButton } from '../WorkflowWizard';
-import Paper from 'material-ui/Paper';
+import {Card, CardHeader, CardText} from 'material-ui/Card';
 const gridStyle = {
   'height': '450px',
   'overflowY': 'auto',
@@ -23,12 +23,15 @@ export default class DeformWrapper extends Component {
       // this id="process-form" is used when submitting the form.
       // don't change or remove it, or make sure you update it in the execute function as well
       <Form id="process-form" horizontal>
-        <Paper zDepth={2} style={gridStyle}>
-          <input type="hidden" name="_charset_" value="UTF-8"/>
-          <input type="hidden" name="__formid__" value="deform"/>
-          <input type="hidden" name="_async_check" value="true"/>
-          {this.props.children}
-        </Paper>
+        <Card style={gridStyle}>
+          <CardHeader title="Required inputs" />
+          <CardText>
+            <input type="hidden" name="_charset_" value="UTF-8"/>
+            <input type="hidden" name="__formid__" value="deform"/>
+            <input type="hidden" name="_async_check" value="true"/>
+            {this.props.children}
+          </CardText>
+        </Card>
         <ExecuteButton executeProcess={this.props.execute}/>
         <input type="hidden" name="submit" value="submit"/>
       </Form>

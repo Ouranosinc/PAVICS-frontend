@@ -1,5 +1,6 @@
 import React from 'react';
-import {FormGroup, Col, FormControl} from 'react-bootstrap';
+import Checkbox from 'material-ui/Checkbox';
+import TextField from 'material-ui/TextField';
 import classes from '../WorkflowWizard/WorkflowWizard.scss';
 import DeformWrapper from '../DeformWrapper/DeformWrapper';
 const BOOLEAN = '//www.w3.org/TR/xmlschema-2/#boolean';
@@ -102,77 +103,87 @@ export default class WpsProcessForm extends React.Component {
   makeInput (input) {
     switch (input.dataType) {
       case BOOLEAN:
+        // TODO Default Boolean value
+        {/*checked={this.state.formData[input.name] === "True"}*/}
         return (
           <div>
-            <FormControl
-              bsClass={classes.checkbox}
+            <Checkbox
               id={input.name}
-              type="checkbox"
-              name={input.name} />
-            <p>{input.description}</p>
+              name={input.name}
+              label={input.title}
+              labelPosition="right"
+              labelStyle={{textAlign: "left"}}
+              value={this.state.formData[input.name]}
+              onCheck={this._onSelectRow} />
+            <small>{input.description}</small>
           </div>
         );
       case NETCDF:
         return (
           <div>
             <input type="hidden" name="__start__" value="resource:sequence" />
-            <FormControl
-              name="resource"
+            <TextField
               id={LABEL_NETCDF}
-              type="text"
-              onChange={this.handleChange}
-              value={this.state.formData[LABEL_NETCDF]} />
+              name={LABEL_NETCDF}
+              fullWidth={true}
+              defaultValue={this.state.formData[LABEL_NETCDF]}
+              onChange={(event, value) => this.handleChange(event)}
+              hintText={input.description}
+              floatingLabelText={input.title} />
             <input type="hidden" name="__end__" value="resource:sequence" />
-            <p>{input.description}</p>
           </div>
         );
       case STRING:
         if (input.name === 'typename') {
           return (
             <div>
-              <FormControl
+              <TextField
                 id={LABEL_SHAPEFILE}
-                type="text"
-                name={input.name}
-                onChange={this.handleChange}
-                value={this.state.formData[LABEL_SHAPEFILE]} />
-              <p>{input.description}</p>
+                name={LABEL_SHAPEFILE}
+                fullWidth={true}
+                defaultValue={this.state.formData[LABEL_SHAPEFILE]}
+                onChange={(event, value) => this.handleChange(event)}
+                hintText={input.description}
+                floatingLabelText={input.title} />
             </div>
           );
         } else if (input.name === 'featureids') {
           return (
             <div>
-              <FormControl
+              <TextField
                 id={LABEL_FEATURE_IDS}
-                type="text"
-                name={input.name}
-                onChange={this.handleChange}
-                value={this.state.formData[LABEL_FEATURE_IDS]} />
-              <p>{input.description}</p>
+                name={LABEL_FEATURE_IDS}
+                fullWidth={true}
+                defaultValue={this.state.formData[LABEL_FEATURE_IDS]}
+                onChange={(event, value) => this.handleChange(event)}
+                hintText={input.description}
+                floatingLabelText={input.title} />
             </div>
           );
         }
         return (
           <div>
-            <FormControl
+            <TextField
               id={input.name}
-              type="text"
               name={input.name}
-              value={this.state.formData[input.name]}
-              onChange={this.handleChange} />
-            <p>{input.description}</p>
+              fullWidth={true}
+              defaultValue={this.state.formData[input.name]}
+              onChange={(event, value) => this.handleChange(event)}
+              hintText={input.description}
+              floatingLabelText={input.title} />
           </div>
         );
       default:
         return (
           <div>
-            <FormControl
+            <TextField
               id={input.name}
-              type="text"
               name={input.name}
-              value={this.state.formData[input.name]}
-              onChange={this.handleChange} />
-            <p>{input.description}</p>
+              fullWidth={true}
+              defaultValue={this.state.formData[input.name]}
+              onChange={(event, value) => this.handleChange(event)}
+              hintText={input.description}
+              floatingLabelText={input.title} />
           </div>
         );
     }
@@ -187,14 +198,9 @@ export default class WpsProcessForm extends React.Component {
         {
           this.props.selectedProcessInputs.map((elem, i) => {
             return (
-              <Col key={i} sm={12}>
-                <FormGroup key={i}>
-                  <Col sm={2}>{elem.title}</Col>
-                  <Col sm={10}>
-                    {this.makeInput(elem)}
-                  </Col>
-                </FormGroup>
-              </Col>
+              <div key={i}>
+                {this.makeInput(elem)}
+              </div>
             );
           })
         }
