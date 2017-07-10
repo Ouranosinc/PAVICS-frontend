@@ -21,7 +21,7 @@ export default class DeformWrapper extends Component {
   render () {
     // TODO validate that async is really something we want each time
     return (
-      // this id="process-form" is used when submitting the form.
+      // this id="FORM_ID" is used when submitting the form.
       // don't change or remove it, or make sure you update it in the execute function as well
       <Form id={this.props.formId} horizontal>
         <Card style={gridStyle}>

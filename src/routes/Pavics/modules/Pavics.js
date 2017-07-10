@@ -527,7 +527,7 @@ function setSelectedProcessValues (key, value) {
   return {
     type: constants.WORKFLOW_SET_ACTIVE_PROCESS_VALUES,
     key: key,
-    value: value
+    value: valuefv
   };
 }
 function setSection (section) {

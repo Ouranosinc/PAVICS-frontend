@@ -37,9 +37,16 @@ export default class WpsProcessForm extends React.Component {
 
   constructor (props) {
     super(props);
+
+    // Initially fill formData with input defaultValues if any
+    let formData = {};
+    this.props.selectedProcessInputs.forEach((input) => {
+      formData[input.name] = input.defaultValue || "";
+    });
     this.state = {
-      formData: {}
+      formData: formData
     };
+    this.handleCheckBoxChange = this.handleCheckBoxChange.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
@@ -93,7 +100,6 @@ export default class WpsProcessForm extends React.Component {
     // so use the handleProcessFormValueChange func passed in props
     let elem = event.target;
     this.setState({
-      ...this.state,
       formData: {
         ...this.state.formData,
         [elem.id]: elem.value
@@ -101,11 +107,26 @@ export default class WpsProcessForm extends React.Component {
     });
   }
 
+  handleCheckBoxChange(event) {
+    this.setState({
+      formData: {
+        ...this.state.formData,
+        [event.target.id]: event.target.checked
+      }
+    });
+  }
+
   makeInput (input) {
     switch (input.dataType) {
       case BOOLEAN:
-        // TODO Default Boolean value
-        {/*checked={this.state.formData[input.name] === "True"}*/}
+        let value = false;
+        if(typeof(this.state.formData[input.name]) === "boolean"){
+          value = this.state.formData[input.name]
+        }else if(typeof(this.state.formData[input.name]) === "string"){
+          if(this.state.formData[input.name] === "True"){
+            value= true;
+          }
+        }
         return (
           <div>
             <Checkbox
@@ -114,8 +135,9 @@ export default class WpsProcessForm extends React.Component {
               label={input.title}
               labelPosition="right"
               labelStyle={{textAlign: "left"}}
-              value={this.state.formData[input.name]}
-              onCheck={this._onSelectRow} />
+              checked={value}
+              onCheck={(event, value) => this.handleCheckBoxChange(event)}
+              value={value} />
             <small>{input.description}</small>
           </div>
         );
@@ -125,9 +147,9 @@ export default class WpsProcessForm extends React.Component {
             <input type="hidden" name="__start__" value="resource:sequence" />
             <TextField
               id={LABEL_NETCDF}
-              name={LABEL_NETCDF}
+              name="resource"
               fullWidth={true}
-              defaultValue={this.state.formData[LABEL_NETCDF]}
+              value={this.state.formData[LABEL_NETCDF]}
               onChange={(event, value) => this.handleChange(event)}
               hintText={input.description}
               floatingLabelText={input.title} />
@@ -140,9 +162,9 @@ export default class WpsProcessForm extends React.Component {
             <div>
               <TextField
                 id={LABEL_SHAPEFILE}
-                name={LABEL_SHAPEFILE}
+                name={input.name}
                 fullWidth={true}
-                defaultValue={this.state.formData[LABEL_SHAPEFILE]}
+                value={this.state.formData[LABEL_SHAPEFILE]}
                 onChange={(event, value) => this.handleChange(event)}
                 hintText={input.description}
                 floatingLabelText={input.title} />
@@ -153,9 +175,9 @@ export default class WpsProcessForm extends React.Component {
             <div>
               <TextField
                 id={LABEL_FEATURE_IDS}
-                name={LABEL_FEATURE_IDS}
+                name={input.name}
                 fullWidth={true}
-                defaultValue={this.state.formData[LABEL_FEATURE_IDS]}
+                value={this.state.formData[LABEL_FEATURE_IDS]}
                 onChange={(event, value) => this.handleChange(event)}
                 hintText={input.description}
                 floatingLabelText={input.title} />
@@ -168,7 +190,7 @@ export default class WpsProcessForm extends React.Component {
               id={input.name}
               name={input.name}
               fullWidth={true}
-              defaultValue={this.state.formData[input.name]}
+              value={this.state.formData[input.name]}
               onChange={(event, value) => this.handleChange(event)}
               hintText={input.description}
               floatingLabelText={input.title} />
@@ -181,7 +203,7 @@ export default class WpsProcessForm extends React.Component {
               id={input.name}
               name={input.name}
               fullWidth={true}
-              defaultValue={this.state.formData[input.name]}
+              value={this.state.formData[input.name]}
               onChange={(event, value) => this.handleChange(event)}
               hintText={input.description}
               floatingLabelText={input.title} />

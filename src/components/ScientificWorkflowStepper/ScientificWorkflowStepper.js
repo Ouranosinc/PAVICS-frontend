@@ -151,7 +151,7 @@ export default class ScientificWorkflowStepper extends Component {
     // let url = `/phoenix/execute?wps=${this.props.selectedProvider}&process=${this.props.selectedProcess.identifier}`;
     this.makePostRequest(url, formData, (res) => {
       // TODO actually do something once the post have been done
-      console.log(res);
+      // console.log(res);
     });
     // this.props.executeProcess(provider, identifier, values);
     // this.props.goToSection(constants.PLATFORM_SECTION_MONITOR);
@@ -175,9 +175,14 @@ export default class ScientificWorkflowStepper extends Component {
    so that when filling the workflow, I can validate processIdentifier and inputName and have some kind of insurance that I am filling the right value
    */
   catchAndWrapExecuteProcess() {
-    let data = new FormData(document.querySelector('#process-form'));
+    let data = new FormData(document.querySelector(`#${FORM_WORKFLOW_ID}`));
     let toSendData = new FormData();
     let toFillWorkflow = this.state.workflow.json;
+
+    // If mosaic unchecked, no key will be in FormData
+    if(!data.get("subset_WFS.mosaic")){
+      data.append("subset_WFS.mosaic", "False");
+    }
     for (let pair of data) {
       // if there is no dot, the input is deform related, leave it as is
       // but put it in the to be sent data
@@ -197,23 +202,26 @@ export default class ScientificWorkflowStepper extends Component {
           for (let inputName in tasks[i].inputs) {
             if(tasks[i].inputs.hasOwnProperty(inputName)) {
               if (inputName === keys[1]) {
-                console.log('this input:', tasks[i].inputs[inputName]);
-                tasks[i].inputs[inputName] = pair[1];
+                // console.log('this input:', tasks[i].inputs[inputName]);
+                if (inputName === 'mosaic') {
+                  // mosaic value must always be a "True" of "False" string
+                  if(typeof(tasks[i].inputs[inputName] ) === "boolean"){
+                    tasks[i].inputs[inputName] = (tasks[i].inputs[inputName] === true)? 'True':'False';
+                  }else if(typeof(tasks[i].inputs[inputName]) === "string"){
+                    tasks[i].inputs[inputName] = (tasks[i].inputs[inputName] === "True")? 'True':'False';
+                  }
+                }else{
+                  // console.log('this input:', tasks[i].inputs[inputName]);
+                  tasks[i].inputs[inputName] = pair[1];
+                }
               }
-              // hardcoding false value for mosaic input
-              // TODO this should be somewhat dynamic, once the inputs sent from workflow are not key value pairs anymore
-              if (tasks[i].inputs[inputName] === 'mosaic') {
-                tasks[i].inputs[inputName] = 'False';
-              }
+
             }
           }
         }
       }
     }
     let stringified = JSON.stringify(toFillWorkflow);
-    // let sample = stringified.replace(/pluvier.crim.ca/g, "192.168.101.46");
-    // let sample = '{"name":"workflow_demo_1","tasks":[{"name":"Downloading","url":"http://192.168.101.46:8091/wps","identifier":"thredds_download","inputs":{"url":"http://192.168.101.46:8083/thredds/catalog/birdhouse/CMIP5/CCCMA/CanESM2/historical/mon/atmos/r1i1p1/pr/catalog.xml"},"progress_range":[0,40]}],"parallel_groups":[{"name":"SubsetterGroup","max_processes":2,"map":{"task":"Downloading","output":"output","as_reference":false},"reduce":{"task":"Indexing","output":"crawler_result","as_reference":false},"tasks":[{"name":"Subsetting","url":"http://192.168.101.46:8093/wps","identifier":"subset_WFS","inputs":{"typename":"ADMINBOUNDARIES:canada_admin_boundaries","featureids":"canada_admin_boundaries.5","mosaic":"False"},"linked_inputs":{"resource":{"task":"SubsetterGroup"}},"progress_range":[40,80]},{"name":"Indexing","url":"http://192.168.101.46:8086/pywps","identifier":"pavicrawler","linked_inputs":{"target_files":{"task":"Subsetting","output":"ncout","as_reference":true}},"progress_range":[80,100]}]}]}'
-    // let sample = '{"name":"wizard_subset_WFS","tasks":[{"name":"Downloading","provider":"malleefowl","identifier":"thredds_download","inputs":{"url":"http://192.168.101.46:8083/thredds/catalog/birdhouse/CMIP5/CCCMA/CanESM2/rcp85/day/atmos/r1i1p1/pr/catalog.xml"},"progress_range":[0,40],"url":"https://192.168.101.46:8443/ows/proxy/malleefowl"},{"name":"Subsetting","provider":"flying_public","identifier":"subset_WFS","inputs":{"typename":"ADMINBOUNDARIES:canada_admin_boundaries","featureids":"canada_admin_boundaries.5","mosaic":"False"},"linked_inputs":{"resource":{"task":"Downloading","output":"output","as_reference":false}},"progress_range":[40,80],"url":"https://192.168.101.46:8443/ows/proxy/flying_public"},{"name":"Indexing","provider":"catalog","identifier":"pavicrawler","linked_inputs":{"target_files":{"task":"Subsetting","output":"ncout","as_reference":true}},"progress_range":[80,100],"url":"https://192.168.101.46:8443/ows/proxy/catalog"}]}';
     toSendData.append('workflow_string', stringified);
     console.log('workflow json:', stringified);
     this.execute(toSendData);
