@@ -18,9 +18,9 @@ const styles = {
 const FORM_WORKFLOW_ID = "form-workflow-process";
 export default class ScientificWorkflowStepper extends Component {
   static propTypes = {
-    workflows: React.PropTypes.object.isRequired,
-    saveWorkflow: React.PropTypes.func.isRequired,
-    deleteWorkflowCallback: React.PropTypes.func.isRequired,
+    // workflows: React.PropTypes.object.isRequired,
+    // saveWorkflow: React.PropTypes.func.isRequired,
+    // deleteWorkflowCallback: React.PropTypes.func.isRequired,
     setProcessInputs: React.PropTypes.func.isRequired,
     selectedProvider: React.PropTypes.string.isRequired,
     selectedProcessInputs: React.PropTypes.array.isRequired,
@@ -33,7 +33,9 @@ export default class ScientificWorkflowStepper extends Component {
     selectedShapefile: React.PropTypes.object.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
     selectedRegions: React.PropTypes.array.isRequired,
-    providers: React.PropTypes.object.isRequired
+    providers: React.PropTypes.object.isRequired,
+    workflowAPI: React.PropTypes.object.isRequired,
+    workflowAPIActions: React.PropTypes.object.isRequired,
   };
 
   constructor (props) {
@@ -256,11 +258,11 @@ export default class ScientificWorkflowStepper extends Component {
           <StepContent>
             <ScientificWorkflowList
               goToConfigureAndRunStep={this.goToConfigureAndRunStep}
-              deleteWorkflow={this.props.deleteWorkflowCallback}
-              workflows={this.props.workflows}/>
+              workflowAPI={this.props.workflowAPI}
+              workflowAPIActions={this.props.workflowAPIActions} />
             <p style={styles.orParagraph}>Or add a new workflow</p>
             <ScientificWorkflowForm
-              saveWorkflow={this.props.saveWorkflow}/>
+              workflowAPIActions={this.props.workflowAPIActions}/>
           </StepContent>
         </Step>
         <Step>

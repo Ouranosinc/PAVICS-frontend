@@ -18,11 +18,11 @@ export default class WorkflowWizard extends React.Component {
     selectedProcessInputs: React.PropTypes.array.isRequired,
     selectedProcessValues: React.PropTypes.object.isRequired,
     executeProcess: React.PropTypes.func.isRequired,
-    saveWorkflow: React.PropTypes.func.isRequired,
+    // saveWorkflow: React.PropTypes.func.isRequired,
     handleSelectedProcessValueChange: React.PropTypes.func.isRequired,
     fetchProviders: React.PropTypes.func.isRequired,
-    fetchWorkflows: React.PropTypes.func.isRequired,
-    deleteWorkflow: React.PropTypes.func.isRequired,
+    // fetchWorkflows: React.PropTypes.func.isRequired,
+    // deleteWorkflow: React.PropTypes.func.isRequired,
     fetchProcesses: React.PropTypes.func.isRequired,
     setProcessInputs: React.PropTypes.func.isRequired,
     fetchProcessInputs: React.PropTypes.func.isRequired,
@@ -34,7 +34,11 @@ export default class WorkflowWizard extends React.Component {
     selectedShapefile: React.PropTypes.object.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
     selectedRegions: React.PropTypes.array.isRequired,
-    workflows: React.PropTypes.object.isRequired
+    project: React.PropTypes.object.isRequired,
+    workflow: React.PropTypes.object.isRequired,
+    workflowAPI: React.PropTypes.object.isRequired,
+    workflowActions: React.PropTypes.object.isRequired,
+    workflowAPIActions: React.PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -57,11 +61,12 @@ export default class WorkflowWizard extends React.Component {
   }
 
   componentDidMount () {
-    this.props.fetchWorkflows();
+    this.props.workflowAPIActions.fetchWorkflows({ projectId: this.props.project.currentProject.id});
   }
 
   deleteWorkflowCallback (id) {
-    this.props.deleteWorkflow(id);
+    // this.props.deleteWorkflow(id);
+    this.props.workflowAPIActions.deleteWorkflow({id: id});
   }
 
   openDialog () {
@@ -125,9 +130,8 @@ export default class WorkflowWizard extends React.Component {
                   selectedProcessInputs={this.props.selectedProcessInputs}
                   selectedProcessValues={this.props.selectedProcessValues}
                   selectedProvider={__PAVICS_WORKFLOW_PROVIDER__}
-                  workflows={this.props.workflows}
-                  saveWorkflow={this.props.saveWorkflow}
-                  deleteWorkflowCallback={this.deleteWorkflowCallback}/> : null
+                  workflowAPI={this.props.workflowAPI}
+                  workflowAPIActions={this.props.workflowAPIActions} /> : null
             }
           </Tab>
           <Tab value={PROCESS_TAB_VALUE} label="WPS Processes">

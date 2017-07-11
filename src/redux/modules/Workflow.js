@@ -1,14 +1,28 @@
 // Constants
-// export const constants = { }
+export const constants = {
 
-// Action Creators
-// export const actions = { }
+};
+
+// Actions
+
+
+// Exported Action Creators
+export const actions = {
+  test: () => {
+
+  }
+};
+
+// Handlers
+const WORKFLOW_HANDLERS = {
+
+};
 
 // Reducer
-export const initialState = {}
+const initialState = {
+  yolo: "yolo"
+};
 export default function (state = initialState, action) {
-  switch (action.type) {
-    default:
-      return state
-  }
+  const handler = WORKFLOW_HANDLERS[action.type];
+  return handler ? handler(state, action) : state;
 }

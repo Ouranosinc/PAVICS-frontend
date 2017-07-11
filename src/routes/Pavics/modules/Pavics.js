@@ -20,15 +20,6 @@ const ADD_DATASETS_TO_PROJECTS = 'Visualize.ADD_DATASETS_TO_PROJECTS';
 const CLICK_TOGGLE_PANEL = 'Visualize.CLICK_TOGGLE_PANEL';
 const SET_CURRENT_TIME_ISO = 'Visualize.SET_CURRENT_TIME_ISO';
 // ASYNC
-const FETCH_WORKFLOWS_REQUEST = 'WorkflowWizard.FETCH_WORKFLOWS_REQUEST';
-const FETCH_WORKFLOWS_FAILURE = 'WorkflowWizard.FETCH_WORKFLOWS_FAILURE';
-const FETCH_WORKFLOWS_SUCCESS = 'WorkflowWizard.FETCH_WORKFLOWS_SUCCESS';
-const SAVE_WORKFLOW_REQUEST = 'WorkflowWizard.SAVE_WORKFLOW_REQUEST';
-const SAVE_WORKFLOW_FAILURE = 'WorkflowWizard.SAVE_WORKFLOW_FAILURE';
-const SAVE_WORKFLOW_SUCCESS = 'WorkflowWizard.SAVE_WORKFLOW_SUCCESS';
-const DELETE_WORKFLOW_REQUEST = 'WorkflowWizard.DELETE_WORKFLOW_REQUEST';
-const DELETE_WORKFLOW_FAILURE = 'WorkflowWizard.DELETE_WORKFLOW_FAILURE';
-const DELETE_WORKFLOW_SUCCESS = 'WorkflowWizard.DELETE_WORKFLOW_SUCCESS';
 const FETCH_PLOTLY_DATA_REQUEST = 'Visualize.FETCH_PLOTLY_DATA_REQUEST';
 const FETCH_PLOTLY_DATA_FAILURE = 'Visualize.FETCH_PLOTLY_DATA_FAILURE';
 const FETCH_PLOTLY_DATA_SUCCESS = 'Visualize.FETCH_PLOTLY_DATA_SUCCESS';
@@ -222,115 +213,6 @@ export function requestWMSLayerTimesteps (layer, url, day) {
       isFetching: true,
       data: {}
     }
-  };
-}
-function saveWorkflowRequest () {
-  return {
-    type: SAVE_WORKFLOW_REQUEST
-  };
-}
-function saveWorkflowSuccess () {
-  return {
-    type: SAVE_WORKFLOW_SUCCESS
-  };
-}
-function saveWorkflowFailure () {
-  return {
-    type: SAVE_WORKFLOW_FAILURE
-  };
-}
-export function saveWorkflow (json) {
-  return dispatch => {
-    dispatch(saveWorkflowRequest());
-    let workflow = {
-      json: json
-    };
-    let headers = new Headers();
-    headers.append('Content-Type', 'application/json');
-    let request = new Request(
-      __LOOPBACK_API_PATH__ + '/workflows',
-      {
-        method: 'POST',
-        body: JSON.stringify(workflow),
-        headers: headers
-      }
-    );
-    fetch(request)
-      .then(res => res.json(), err => console.log(err))
-      .then(
-        () => {
-          dispatch(saveWorkflowSuccess());
-          dispatch(fetchWorkflows());
-        },
-        err => dispatch(saveWorkflowFailure())
-      );
-  };
-}
-function fetchWorkflowsRequest () {
-  return {
-    type: FETCH_WORKFLOWS_REQUEST
-  };
-}
-function fetchWorkflowsSuccess (workflows) {
-  return {
-    type: FETCH_WORKFLOWS_SUCCESS,
-    items: workflows
-  };
-}
-function fetchWorkflowsFailure () {
-  return {
-    type: FETCH_WORKFLOWS_FAILURE
-  };
-}
-export function fetchWorkflows () {
-  return dispatch => {
-    dispatch(fetchWorkflowsRequest());
-    fetch(__LOOPBACK_API_PATH__+'/workflows')
-      .then(res => res.json(), err => console.log(err))
-      .then(
-        json => dispatch(fetchWorkflowsSuccess(json)),
-        err => {
-          console.log(err);
-          dispatch(fetchWorkflowsFailure())
-        }
-      );
-  };
-}
-function deleteWorkflowRequest () {
-  return {
-    type: DELETE_WORKFLOW_REQUEST
-  };
-}
-function deleteWorkflowSuccess () {
-  return {
-    type: DELETE_WORKFLOW_SUCCESS
-  };
-}
-function deleteWorkflowFailure () {
-  return {
-    type: DELETE_WORKFLOW_FAILURE
-  };
-}
-export function deleteWorkflow (id) {
-  return dispatch => {
-    dispatch(deleteWorkflowRequest());
-    let request = new Request(
-      __LOOPBACK_API_PATH__+'/Workflows/'+id,
-      {
-        method: 'DELETE'
-      }
-    );
-    fetch(request)
-      .then(
-        () => {
-          dispatch(deleteWorkflowSuccess());
-          dispatch(fetchWorkflows());
-        },
-        err => {
-          console.log(err);
-          dispatch(deleteWorkflowFailure());
-        }
-      );
   };
 }
 export function receiveWMSLayerTimestepsFailure (error) {
@@ -791,33 +673,6 @@ export function executeProcess (provider, process, inputValues) {
   };
 }
 const WORKFLOW_WIZARD_HANDLERS = {
-  [FETCH_WORKFLOWS_REQUEST]: (state) => {
-    return {...state, workflows: {...state.workflows, isFetching: true}};
-  },
-  [FETCH_WORKFLOWS_SUCCESS]: (state, action) => {
-    return {...state, workflows: {...state.workflows, isFetching: false, items: action.items}};
-  },
-  [FETCH_WORKFLOWS_FAILURE]: (state) => {
-    return {...state, workflows: {...state.workflows, isFetching: false}};
-  },
-  [SAVE_WORKFLOW_REQUEST]: (state) => {
-    return {...state, workflows: {...state.workflows, isSaving: true}};
-  },
-  [SAVE_WORKFLOW_SUCCESS]: (state) => {
-    return {...state, workflows: {...state.workflows, isSaving: false}};
-  },
-  [SAVE_WORKFLOW_FAILURE]: (state) => {
-    return {...state, workflows: {...state.workflows, isSaving: false}};
-  },
-  [DELETE_WORKFLOW_REQUEST]: (state) => {
-    return {...state, workflows: {...state.workflows, isDeleting: true}};
-  },
-  [DELETE_WORKFLOW_SUCCESS]: (state) => {
-    return {...state, workflows: {...state.workflows, isDeleting: false}};
-  },
-  [DELETE_WORKFLOW_FAILURE]: (state) => {
-    return {...state, workflows: {...state.workflows, isDeleting: false}};
-  },
   [constants.WORKFLOW_SET_WPS_PROVIDER]: (state, action) => {
     return {...state, selectedProvider: action.provider};
   },

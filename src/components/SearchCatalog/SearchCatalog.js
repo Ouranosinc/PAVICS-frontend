@@ -123,18 +123,18 @@ export class SearchCatalog extends React.Component {
           facets: this.props.research.selectedFacets,
           results: this.props.research.pavicsDatasets.items
         });
-        this.props.researchAPIActions.getResearch({
-          id: 1,
-          filter: JSON.stringify({yolo:"yolo"})
-        });
-        this.props.researchAPIActions.updateResearch({
-          id: 1,
-          filter: JSON.stringify({yolo:"yolo"})
-        });
-        this.props.researchAPIActions.deleteResearch({
-          id: 1,
-          filter: JSON.stringify({yolo:"yolo"})
-        });
+        // this.props.researchAPIActions.getResearch({
+        //   id: 1,
+        //   filter: JSON.stringify({yolo:"yolo"})
+        // });
+        // this.props.researchAPIActions.updateResearch({
+        //   id: 1,
+        //   filter: JSON.stringify({yolo:"yolo"})
+        // });
+        // this.props.researchAPIActions.deleteResearch({
+        //   id: 1,
+        //   filter: JSON.stringify({yolo:"yolo"})
+        // });
         this.setState({
           confirmation: <Alert bsStyle="info" style={{marginTop: 20}}>
             Search criteria(s) was saved with success. <br />

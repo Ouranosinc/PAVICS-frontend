@@ -6,6 +6,8 @@ import researchReducer from './../redux/modules/Research';
 import { reducers as ResearchAPIReducer } from '../redux/modules/ResearchAPI';
 import researcherReducer from './../redux/modules/Researcher';
 import { reducers as researcherAPIReducer } from '../redux/modules/ResearcherAPI';
+import workflowReducer from './../redux/modules/Workflow';
+import { reducers as workflowAPIReducer } from '../redux/modules/WorkflowAPI';
 
 export const makeRootReducer = (asyncReducers) => {
   return combineReducers({
@@ -17,6 +19,8 @@ export const makeRootReducer = (asyncReducers) => {
     'researchAPI': ResearchAPIReducer,
     'researcher': researcherReducer,
     'researcherAPI': researcherAPIReducer,
+    'workflow': workflowReducer,
+    'workflowAPI': workflowAPIReducer,
     // Add async reducers here
     ...asyncReducers
   });

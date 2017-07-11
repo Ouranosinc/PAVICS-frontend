@@ -10,9 +10,9 @@ import {
   AccountManagementContainer,
   ExperienceManagementContainer,
   ResearchContainer,
-  WorkflowWizardContainer,
   ProcessMonitoringContainer,
-  VisualizeContainer } from './../../../containers';
+  VisualizeContainer,
+  WorkflowWizardContainer } from './../../../containers';
 import { SectionalPanel } from './../../../components/SectionalPanel';
 // import Snackbar from 'material-ui/Snackbar';
 require('react-notifications/lib/notifications.css');
@@ -119,16 +119,14 @@ class Pavics extends React.Component {
 
 const mapActionCreators = {
   ...actionCreators,
-  ...projectActionCreators
+  // ...projectActionCreators,
 };
 const mapStateToProps = state => {
   return {
     ...state.pavics.workflowWizard,
     ...state.pavics.visualize,
     platform: state.pavics.platform,
-    monitor: state.pavics.monitor,
-    project: state.project,
-    research: state.research
+    monitor: state.pavics.monitor
   };
 };
 export default connect(mapStateToProps, mapActionCreators)(Pavics);

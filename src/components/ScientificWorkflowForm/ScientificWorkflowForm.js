@@ -21,7 +21,7 @@ const styles = {
 
 export default class ScientificWorkflowForm extends Component {
   static propTypes = {
-    saveWorkflow: React.PropTypes.func.isRequired
+    workflowAPIActions: React.PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -76,7 +76,10 @@ export default class ScientificWorkflowForm extends Component {
   handleSaveWorkflow () {
     let parsed = this.tryParseJson();
     if(parsed && this.validateAdvancedWorkflowSchema(parsed)) {
-      this.props.saveWorkflow(parsed);
+      this.props.workflowAPIActions.createWorkflow({
+        json: parsed
+      });
+      // this.props.saveWorkflow(parsed);
       NotificationManager.success('Workflow has been created with success', 'Success', 10000);
       this.setState({
         json: ''
