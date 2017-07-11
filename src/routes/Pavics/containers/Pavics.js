@@ -51,15 +51,14 @@ class Pavics extends React.Component {
         }
         errorObject['stack'] = stack;
       }
-      NotificationManager.warning('Warning message', 'Close after 3000ms', 3000);
-      alert(message);
-      var data = {
-        message:message,
-        file:file,
-        line:line,
-        column:column,
-        errorStack:stack,
-      };
+      NotificationManager.error(message, 'Error', 10000);
+      // var data = {
+      //   message:message,
+      //   file:file,
+      //   line:line,
+      //   column:column,
+      //   errorStack:stack,
+      // };
       return false;
     }
   }
