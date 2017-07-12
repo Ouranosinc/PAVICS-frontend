@@ -11,6 +11,7 @@ const LABEL_SHAPEFILE = 'LABEL_SHAPEFILE';
 const LABEL_FEATURE_IDS = 'LABEL_FEATURE_IDS';
 export default class WpsProcessForm extends React.Component {
   static propTypes = {
+    executeProcess: React.PropTypes.func.isRequired,
     formId: React.PropTypes.string.isRequired,
     goToSection: React.PropTypes.func.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
@@ -211,7 +212,7 @@ export default class WpsProcessForm extends React.Component {
     return (
       <DeformWrapper
         formId={this.props.formId}
-        execute={this.props.workflowActions.executeProcess}>
+        execute={this.props.executeProcess}>
         {
           this.props.workflow.selectedProcessInputs.map((elem, i) => {
             return (

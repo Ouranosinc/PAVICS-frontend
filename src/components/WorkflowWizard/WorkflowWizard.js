@@ -103,6 +103,7 @@ export default class WorkflowWizard extends React.Component {
                   selectedShapefile={this.props.selectedShapefile}
                   goToSection={this.props.goToSection}
                   selectedProvider={__PAVICS_WORKFLOW_PROVIDER__}
+                  selectedProcess={{identifier: __PAVICS_RUN_WORKFLOW_IDENTIFIER__}}
                   workflow={this.props.workflow}
                   workflowActions={this.props.workflowActions}
                   workflowAPI={this.props.workflowAPI}

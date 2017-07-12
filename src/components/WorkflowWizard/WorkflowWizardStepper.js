@@ -95,6 +95,7 @@ export default class WorkflowWizardStepper extends React.Component {
                 this.props.workflow.selectedProcessInputs.length === 0
                   ? null
                   : <WpsProcessForm
+                    executeProcess={this.execute}
                     formId={FORM_PROCESS_ID}
                     goToSection={this.props.goToSection}
                     selectedRegions={this.props.selectedRegions}

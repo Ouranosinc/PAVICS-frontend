@@ -23,6 +23,8 @@ export default class ScientificWorkflowStepper extends Component {
     selectedShapefile: React.PropTypes.object.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
     selectedRegions: React.PropTypes.array.isRequired,
+    selectedProcess: React.PropTypes.object.isRequired,
+    selectedProvider: React.PropTypes.string.isRequired,
     workflow: React.PropTypes.object.isRequired,
     workflowActions: React.PropTypes.object.isRequired,
     workflowAPI: React.PropTypes.object.isRequired,
@@ -141,7 +143,7 @@ export default class ScientificWorkflowStepper extends Component {
   execute (formData) {
     // ugly hack to workaround making one extra trip to the backend
     // we already have had to put strange __start__ and __end__ inputs to work nicely with phoenix
-    let url = `${__PAVICS_PHOENIX_PATH__}/processes/execute?wps=${this.props.workflow.selectedProvider}&process=${this.props.workflow.selectedProcess.identifier}`;
+    let url = `${__PAVICS_PHOENIX_PATH__}/processes/execute?wps=${this.props.selectedProvider}&process=${this.props.selectedProcess.identifier}`;
     this.makePostRequest(url, formData, (xhr, params) => {
       if(xhr.status === 200){
         NotificationManager.success('Workflow has been launched with success, you can now monitor workflow execution in the monitoring panel', 'Success', 10000);
@@ -272,6 +274,7 @@ export default class ScientificWorkflowStepper extends Component {
                     onClick={this.handlePrev}
                     icon={<BackIcon />}/>
                   <WpsProcessForm
+                    executeProcess={this.catchAndWrapExecuteProcess}
                     formId={FORM_WORKFLOW_ID}
                     selectedRegions={this.props.selectedRegions}
                     selectedDatasetLayer={this.props.selectedDatasetLayer}
