@@ -202,9 +202,9 @@ export default class ScientificWorkflowStepper extends Component {
                 if (inputName === 'mosaic') {
                   // mosaic value must always be a "True" of "False" string
                   if(typeof(tasks[i].inputs[inputName] ) === "boolean"){
-                    tasks[i].inputs[inputName] = (tasks[i].inputs[inputName] === true)? 'True':'False';
+                    tasks[i].inputs[inputName] = (pair[1] === true)? 'True':'False';
                   }else if(typeof(tasks[i].inputs[inputName]) === "string"){
-                    tasks[i].inputs[inputName] = (tasks[i].inputs[inputName] === "True")? 'True':'False';
+                    tasks[i].inputs[inputName] = (pair[1] === "True")? 'True':'False';
                   }
                 }else{
                   // console.log('this input:', tasks[i].inputs[inputName]);
