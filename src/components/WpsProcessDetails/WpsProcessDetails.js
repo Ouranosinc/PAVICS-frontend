@@ -10,9 +10,9 @@ export default class WpsProcessDetails extends React.Component {
     };
     return (
       <Card style={marginated}>
-        <CardHeader title={this.props.workflow.process.title} />
+        <CardHeader title={this.props.workflow.selectedProcess.title} />
         <CardText>
-          {this.props.workflow.process.description}
+          {this.props.workflow.selectedProcess.description}
         </CardText>
       </Card>
     );

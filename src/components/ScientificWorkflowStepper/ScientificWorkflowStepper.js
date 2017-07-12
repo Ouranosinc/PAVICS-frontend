@@ -175,7 +175,7 @@ export default class ScientificWorkflowStepper extends Component {
     let toSendData = new FormData();
     let toFillWorkflow = this.state.workflow.json;
 
-    // If mosaic unchecked, no key will be in FormData
+    // If mosaic unchecked, no key will be in FormData, TODO same exception for every boolean/checkbox values I guess
     if(!data.get("subset_WFS.mosaic")){
       data.append("subset_WFS.mosaic", "False");
     }
@@ -198,7 +198,6 @@ export default class ScientificWorkflowStepper extends Component {
           for (let inputName in tasks[i].inputs) {
             if(tasks[i].inputs.hasOwnProperty(inputName)) {
               if (inputName === keys[1]) {
-                // console.log('this input:', tasks[i].inputs[inputName]);
                 if (inputName === 'mosaic') {
                   // mosaic value must always be a "True" of "False" string
                   if(typeof(tasks[i].inputs[inputName] ) === "boolean"){
@@ -207,7 +206,6 @@ export default class ScientificWorkflowStepper extends Component {
                     tasks[i].inputs[inputName] = (pair[1] === "True")? 'True':'False';
                   }
                 }else{
-                  // console.log('this input:', tasks[i].inputs[inputName]);
                   tasks[i].inputs[inputName] = pair[1];
                 }
               }

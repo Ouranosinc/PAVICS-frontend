@@ -33,7 +33,7 @@ export default class WorkflowWizardStepper extends React.Component {
       console.log(pair);
     }
 
-    let url = `${__PAVICS_PHOENIX_PATH__}/processes/execute?wps=${this.props.workflow.selectedProvider}&process=${this.props.workflow.selectedProcessIdentifier}`;
+    let url = `${__PAVICS_PHOENIX_PATH__}/processes/execute?wps=${this.props.workflow.selectedProvider}&process=${this.props.workflow.selectedProcess.identifier}`;
     // let url = `/phoenix/execute?wps=${this.props.selectedProvider}&process=${this.props.selectedProcess.identifier}`;
     this.makePostRequest(url, formData, (res) => {
       // TODO actually do something once the post have been done
