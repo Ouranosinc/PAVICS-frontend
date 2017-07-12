@@ -10,7 +10,7 @@ import {white} from 'material-ui/styles/colors';
 
 class SectionalMenu extends React.Component {
   static propTypes = {
-    chooseStep: React.PropTypes.func.isRequired,
+    // chooseStep: React.PropTypes.func.isRequired,
     goToSection: React.PropTypes.func.isRequired,
     section: React.PropTypes.string.isRequired
   };
@@ -41,7 +41,7 @@ class SectionalMenu extends React.Component {
     } else {
       this.props.goToSection('');
     }
-    this.props.chooseStep(constants.WORKFLOW_STEP_PROCESS);
+    // this.props.workflowActions.chooseStep(constants.WORKFLOW_STEP_PROCESS);
   };
   account = () => {
     if (constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT !== this.props.section) {

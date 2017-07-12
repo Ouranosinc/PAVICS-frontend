@@ -79,7 +79,6 @@ export default class ScientificWorkflowForm extends Component {
       this.props.workflowAPIActions.createWorkflow({
         json: parsed
       });
-      // this.props.saveWorkflow(parsed);
       NotificationManager.success('Workflow has been created with success', 'Success', 10000);
       this.setState({
         json: ''

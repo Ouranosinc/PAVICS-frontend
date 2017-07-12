@@ -3,13 +3,13 @@ import {List, ListItem} from 'material-ui/List';
 import Paper from 'material-ui/Paper';
 export default class WpsProviderSelector extends React.Component {
   static propTypes = {
-    selectWpsProvider: React.PropTypes.func.isRequired,
-    providers: React.PropTypes.object.isRequired
+    workflow: React.PropTypes.object.isRequired,
+    workflowActions: React.PropTypes.object.isRequired
   }
 
   makeChangeProviderCallback (identifier) {
     return () => {
-      this.props.selectWpsProvider(identifier);
+      this.props.workflowActions.selectWpsProvider(identifier);
     };
   }
 
@@ -18,7 +18,7 @@ export default class WpsProviderSelector extends React.Component {
       <Paper zDepth={2}>
         <List>
           {
-            this.props.providers.items.map((provider, i) => {
+            this.props.workflow.providers.items.map((provider, i) => {
               return (
                 <ListItem key={i} onClick={this.makeChangeProviderCallback(provider.identifier)}>
                   {provider.title}

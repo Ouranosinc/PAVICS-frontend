@@ -11,23 +11,12 @@ const FORM_PROCESS_ID = "form-individual-process";
 
 export default class WorkflowWizardStepper extends React.Component {
   static propTypes = {
-    stepIndex: React.PropTypes.number.isRequired,
-    processes: React.PropTypes.array.isRequired,
-    chooseProcess: React.PropTypes.func.isRequired,
-    fetchProcessInputs: React.PropTypes.func.isRequired,
-    selectWpsProvider: React.PropTypes.func.isRequired,
-    providers: React.PropTypes.object.isRequired,
-    selectedProvider: React.PropTypes.string.isRequired,
-    getLastStep: React.PropTypes.func.isRequired,
-    selectedProcessInputs: React.PropTypes.array.isRequired,
-    executeProcess: React.PropTypes.func.isRequired,
     goToSection: React.PropTypes.func.isRequired,
-    handleSelectedProcessValueChange: React.PropTypes.func.isRequired,
-    selectedProcessValues: React.PropTypes.object.isRequired,
-    selectedProcess: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
-    selectedRegions: React.PropTypes.array.isRequired
+    selectedRegions: React.PropTypes.array.isRequired,
+    workflow: React.PropTypes.object.isRequired,
+    workflowActions: React.PropTypes.object.isRequired
   };
 
   constructor(props) {
@@ -44,7 +33,7 @@ export default class WorkflowWizardStepper extends React.Component {
       console.log(pair);
     }
 
-    let url = `${__PAVICS_PHOENIX_PATH__}/processes/execute?wps=${this.props.selectedProvider}&process=${this.props.selectedProcessIdentifier}`;
+    let url = `${__PAVICS_PHOENIX_PATH__}/processes/execute?wps=${this.props.workflow.selectedProvider}&process=${this.props.workflow.selectedProcessIdentifier}`;
     // let url = `/phoenix/execute?wps=${this.props.selectedProvider}&process=${this.props.selectedProcess.identifier}`;
     this.makePostRequest(url, formData, (res) => {
       // TODO actually do something once the post have been done
@@ -71,13 +60,13 @@ export default class WorkflowWizardStepper extends React.Component {
       color: 'white'
     };
     return (
-      <Stepper activeStep={this.props.stepIndex} orientation="vertical">
+      <Stepper activeStep={this.props.workflow.stepIndex} orientation="vertical">
         <Step>
           <StepLabel style={styleStepLabel}>Select WPS Provider</StepLabel>
           <StepContent>
             <WpsProviderSelector
-              selectWpsProvider={this.props.selectWpsProvider}
-              providers={this.props.providers} />
+              workflow={this.props.workflow}
+              workflowActions={this.props.workflowActions} />
           </StepContent>
         </Step>
         <Step>
@@ -85,13 +74,11 @@ export default class WorkflowWizardStepper extends React.Component {
           <StepContent>
             <RaisedButton
               label="Back"
-              onClick={this.props.getLastStep}
+              onClick={this.props.workflowActions.getLastStep}
               icon={<BackIcon />} />
             <WpsProcessSelector
-              processes={this.props.processes}
-              chooseProcess={this.props.chooseProcess}
-              fetchProcessInputs={this.props.fetchProcessInputs}
-              selectedProvider={this.props.selectedProvider} />
+              workflow={this.props.workflow}
+              workflowActions={this.props.workflowActions} />
           </StepContent>
         </Step>
         <Step>
@@ -100,25 +87,21 @@ export default class WorkflowWizardStepper extends React.Component {
             <div>
               <RaisedButton
                 label="Back"
-                onClick={this.props.getLastStep}
+                onClick={this.props.workflowActions.getLastStep}
                 icon={<BackIcon />} />
               <WpsProcessDetails
-                process={this.props.selectedProcess} />
+                workflow={this.props.workflow} />
               {
-                this.props.selectedProcessInputs.length === 0
+                this.props.workflow.selectedProcessInputs.length === 0
                   ? null
                   : <WpsProcessForm
                     formId={FORM_PROCESS_ID}
+                    goToSection={this.props.goToSection}
                     selectedRegions={this.props.selectedRegions}
                     selectedDatasetLayer={this.props.selectedDatasetLayer}
                     selectedShapefile={this.props.selectedShapefile}
-                    goToSection={this.props.goToSection}
-                    executeProcess={this.execute}
-                    handleSelectedProcessValueChange={this.props.handleSelectedProcessValueChange}
-                    selectedProcess={this.props.selectedProcess}
-                    selectedProcessInputs={this.props.selectedProcessInputs}
-                    selectedProcessValues={this.props.selectedProcessValues}
-                    selectedProvider={this.props.selectedProvider} />
+                    workflow={this.props.workflow}
+                    workflowActions={this.props.workflowActions} />
               }
             </div>
           </StepContent>

@@ -11,8 +11,6 @@ const gridStyle = {
 export default class DeformWrapper extends Component {
   static propTypes = {
     formId: React.PropTypes.string.isRequired,
-    selectedProvider: React.PropTypes.string.isRequired,
-    selectedProcessIdentifier: React.PropTypes.string.isRequired,
     execute: React.PropTypes.func.isRequired
   };
 

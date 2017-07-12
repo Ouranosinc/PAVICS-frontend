@@ -31,8 +31,8 @@ const infoStyle = {
 class ProcessMonitoring extends React.Component {
   static propTypes = {
     addDatasetLayersToVisualize: React.PropTypes.func.isRequired,
-    fetchWPSJobs: React.PropTypes.func.isRequired,
     monitor: React.PropTypes.object.isRequired,
+    monitorActions: React.PropTypes.object.isRequired,
     fetchVisualizableData: React.PropTypes.func.isRequired
   };
 
@@ -42,7 +42,7 @@ class ProcessMonitoring extends React.Component {
       pageNumber: 1,
       numberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX]
     };
-    this.props.fetchWPSJobs();
+    this.props.monitorActions.fetchWPSJobs();
     this._onRefreshResults = this._onRefreshResults.bind(this);
     this._onPageChanged = this._onPageChanged.bind(this);
     this._onVisualiseDataset = this._onVisualiseDataset.bind(this);
@@ -52,7 +52,7 @@ class ProcessMonitoring extends React.Component {
     this.setState({
       pageNumber: 1
     });
-    this.props.fetchWPSJobs();
+    this.props.monitorActions.fetchWPSJobs();
   }
 
   _onPageChanged (pageNumber, numberPerPage) {

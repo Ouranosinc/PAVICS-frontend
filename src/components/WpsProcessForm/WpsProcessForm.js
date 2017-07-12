@@ -12,17 +12,12 @@ const LABEL_FEATURE_IDS = 'LABEL_FEATURE_IDS';
 export default class WpsProcessForm extends React.Component {
   static propTypes = {
     formId: React.PropTypes.string.isRequired,
-    selectedProcess: React.PropTypes.object.isRequired,
-    selectedProcessInputs: React.PropTypes.array.isRequired,
-    selectedProcessValues: React.PropTypes.object.isRequired,
-    // keep the handleSelected[...] func for now, might use it later
-    handleSelectedProcessValueChange: React.PropTypes.func.isRequired,
-    executeProcess: React.PropTypes.func.isRequired,
-    selectedProvider: React.PropTypes.string.isRequired,
     goToSection: React.PropTypes.func.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
-    selectedRegions: React.PropTypes.array.isRequired
+    selectedRegions: React.PropTypes.array.isRequired,
+    workflow: React.PropTypes.object.isRequired,
+    workflowActions: React.PropTypes.object.isRequired
   };
 
   /*
@@ -40,7 +35,7 @@ export default class WpsProcessForm extends React.Component {
 
     // Initially fill formData with input defaultValues if any
     let formData = {};
-    this.props.selectedProcessInputs.forEach((input) => {
+    this.props.workflow.selectedProcessInputs.forEach((input) => {
       formData[input.name] = input.defaultValue || "";
     });
     this.state = {
@@ -216,11 +211,9 @@ export default class WpsProcessForm extends React.Component {
     return (
       <DeformWrapper
         formId={this.props.formId}
-        execute={this.props.executeProcess}
-        selectedProcessIdentifier={this.props.selectedProcess.identifier}
-        selectedProvider={this.props.selectedProvider}>
+        execute={this.props.workflowActions.executeProcess}>
         {
-          this.props.selectedProcessInputs.map((elem, i) => {
+          this.props.workflow.selectedProcessInputs.map((elem, i) => {
             return (
               <div key={i}>
                 {this.makeInput(elem)}

@@ -1,40 +1,8 @@
 import * as constants from './../constants';
 
 const initialState = {
-  workflowWizard: {
-    selectedProcess: {
-      url: '',
-      identifier: '',
-      description: '',
-      title: ''
-    },
-    stepIndex: 0,
-    selectedProcessInputs: [],
-    selectedProcessValues: {},
-    currentStep: constants.WORKFLOW_STEP_PROCESS,
-    processes: [],
-    providers: {
-      items: []
-    },
-    selectedProvider: '',
-    workflows: {
-      isFetching: false,
-      isSaving: false,
-      isDeleting: false,
-      items: []
-    }
-  },
   platform: {
     section: ''
-  },
-  monitor: {
-    jobs: {
-      requestedAt: null,
-      receivedAt: null,
-      isFetching: false,
-      items: [],
-      error: null
-    }
   },
   visualize: {
     mapManipulationMode: constants.VISUALIZE_MODE_VISUALIZE,

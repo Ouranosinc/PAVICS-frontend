@@ -18,22 +18,13 @@ const styles = {
 const FORM_WORKFLOW_ID = "form-workflow-process";
 export default class ScientificWorkflowStepper extends Component {
   static propTypes = {
-    // workflows: React.PropTypes.object.isRequired,
-    // saveWorkflow: React.PropTypes.func.isRequired,
-    // deleteWorkflowCallback: React.PropTypes.func.isRequired,
-    setProcessInputs: React.PropTypes.func.isRequired,
-    selectedProvider: React.PropTypes.string.isRequired,
-    selectedProcessInputs: React.PropTypes.array.isRequired,
-    selectedProcessValues: React.PropTypes.object.isRequired,
-    executeProcess: React.PropTypes.func.isRequired,
     showDialog: React.PropTypes.func.isRequired,
     goToSection: React.PropTypes.func.isRequired,
-    handleSelectedProcessValueChange: React.PropTypes.func.isRequired,
-    selectedProcess: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
     selectedRegions: React.PropTypes.array.isRequired,
-    providers: React.PropTypes.object.isRequired,
+    workflow: React.PropTypes.object.isRequired,
+    workflowActions: React.PropTypes.object.isRequired,
     workflowAPI: React.PropTypes.object.isRequired,
     workflowAPIActions: React.PropTypes.object.isRequired,
   };
@@ -78,7 +69,7 @@ export default class ScientificWorkflowStepper extends Component {
         tasks = tasks.concat(group.tasks);
       });
       let validProviders = [];
-      this.props.providers.items.map(elem => validProviders.push(elem.identifier));
+      this.props.workflow.providers.items.map(elem => validProviders.push(elem.identifier));
       // validate that each task has a valid provider
       for (let i = 0, nbTasks = tasks.length; i !== nbTasks; i++) {
         let thisTask = tasks[i];
@@ -124,7 +115,7 @@ export default class ScientificWorkflowStepper extends Component {
         }
       }
       console.log('inputs that should be provided:', inputsThatShouldBeProvided);
-      this.props.setProcessInputs(inputsThatShouldBeProvided);
+      this.props.workflowActions.setProcessInputs(inputsThatShouldBeProvided);
 
     } else {
       throw new Error('The workflow is invalid, it lacks a json member.');
@@ -150,8 +141,7 @@ export default class ScientificWorkflowStepper extends Component {
   execute (formData) {
     // ugly hack to workaround making one extra trip to the backend
     // we already have had to put strange __start__ and __end__ inputs to work nicely with phoenix
-    let url = `${__PAVICS_PHOENIX_PATH__}/processes/execute?wps=${this.props.selectedProvider}&process=${this.props.selectedProcess.identifier}`;
-    // let url = `/phoenix/execute?wps=${this.props.selectedProvider}&process=${this.props.selectedProcess.identifier}`;
+    let url = `${__PAVICS_PHOENIX_PATH__}/processes/execute?wps=${this.props.workflow.selectedProvider}&process=${this.props.workflow.selectedProcess.identifier}`;
     this.makePostRequest(url, formData, (xhr, params) => {
       if(xhr.status === 200){
         NotificationManager.success('Workflow has been launched with success, you can now monitor workflow execution in the monitoring panel', 'Success', 10000);
@@ -159,8 +149,6 @@ export default class ScientificWorkflowStepper extends Component {
         NotificationManager.error('Workflow hasn\'t been launched as intended. Make sure the workflow and required inputs are defined properly', 'Error', 10000);
       }
     });
-    // this.props.executeProcess(provider, identifier, values);
-    // this.props.goToSection(constants.PLATFORM_SECTION_MONITOR);
   }
 
   makePostRequest (url, data, callable, params) {
@@ -289,12 +277,8 @@ export default class ScientificWorkflowStepper extends Component {
                     selectedDatasetLayer={this.props.selectedDatasetLayer}
                     selectedShapefile={this.props.selectedShapefile}
                     goToSection={this.props.goToSection}
-                    executeProcess={this.catchAndWrapExecuteProcess}
-                    handleSelectedProcessValueChange={this.props.handleSelectedProcessValueChange}
-                    selectedProcess={this.props.selectedProcess}
-                    selectedProcessInputs={this.props.selectedProcessInputs}
-                    selectedProcessValues={this.props.selectedProcessValues}
-                    selectedProvider={this.props.selectedProvider}/>
+                    workflow={this.props.workflow}
+                    workflowActions={this.props.workflowActions}/>
                 </StepContent>
               )
           }
