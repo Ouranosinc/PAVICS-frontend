@@ -5,7 +5,7 @@ import ExecuteIcon from 'material-ui/svg-icons/action/done';
 class ExecuteButton extends React.Component {
   static propTypes = {
     executeProcess: React.PropTypes.func.isRequired
-  }
+  };
 
   render () {
     return (

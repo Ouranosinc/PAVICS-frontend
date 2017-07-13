@@ -3,16 +3,14 @@ import {Card, CardHeader, CardActions, CardText} from 'material-ui/Card';
 import RaisedButton from 'material-ui/RaisedButton';
 export default class WpsProcessSelector extends React.Component {
   static propTypes = {
-    processes: React.PropTypes.array.isRequired,
-    chooseProcess: React.PropTypes.func.isRequired,
-    fetchProcessInputs: React.PropTypes.func.isRequired,
-    selectedProvider: React.PropTypes.string.isRequired
-  }
+    workflow: React.PropTypes.object.isRequired,
+    workflowActions: React.PropTypes.object.isRequired
+  };
 
   makeChooseProcessCallback (process) {
     return () => {
-      this.props.chooseProcess(process);
-      this.props.fetchProcessInputs(this.props.selectedProvider, process.identifier);
+      this.props.workflowActions.chooseProcess(process);
+      this.props.workflowActions.fetchProcessInputs(this.props.workflow.selectedProvider, process.identifier);
     };
   }
 
@@ -26,7 +24,7 @@ export default class WpsProcessSelector extends React.Component {
       <div>
         <div style={gridStyle}>
           {
-            this.props.processes.map((process, i) => {
+            this.props.workflow.processes.map((process, i) => {
               return (
                 <Card key={i}>
                   <CardHeader

@@ -22,8 +22,8 @@ const style = {
 };
 export default class ScientificWorkflowList extends Component {
   static propTypes = {
-    workflows: React.PropTypes.object.isRequired,
-    deleteWorkflow: React.PropTypes.func.isRequired,
+    workflowAPI: React.PropTypes.object.isRequired,
+    workflowAPIActions: React.PropTypes.object.isRequired,
     goToConfigureAndRunStep: React.PropTypes.func.isRequired
   };
 
@@ -48,7 +48,7 @@ export default class ScientificWorkflowList extends Component {
   openConfirmWorkflowDeletionDialog (id, name) {
     this.setState({
       dialogOpened: true,
-      dialogContent: 'Voulez-vous vraiment supprimer le workflow ' + name + '?',
+      dialogContent: 'Do you really want to delete the workflow ' + name + '?',
       dialogActions: this.makeConfirmWorkflowDeletionDialogActions(id)
     });
   }
@@ -60,7 +60,7 @@ export default class ScientificWorkflowList extends Component {
   }
 
   confirmWorkflowDeletion (id) {
-    this.props.deleteWorkflow(id);
+    this.props.workflowAPIActions.deleteWorkflow({ id: id });
     this.closeDialog();
   }
 
@@ -81,6 +81,7 @@ export default class ScientificWorkflowList extends Component {
     ]
   }
 
+
   onPageChanged (pageNumber, numberPerPage) {
     this.setState({
       pageNumber: pageNumber,
@@ -89,7 +90,8 @@ export default class ScientificWorkflowList extends Component {
   }
 
   onRunWorkflowClick (workflow) {
-    this.props.goToConfigureAndRunStep(workflow);
+    // Deep clone workflow object so modifications (provider names, url, inputs) won't affect it's state if reloaded from the list
+    this.props.goToConfigureAndRunStep(JSON.parse(JSON.stringify(workflow)));
   }
 
   onEditWorkflowClick () {
@@ -100,13 +102,13 @@ export default class ScientificWorkflowList extends Component {
   }
 
   render () {
-    if (this.props.workflows.isFetching) {
+    if (this.props.workflowAPI.isFetching) {
       return (
         <div><Paper><CircularProgress /></Paper></div>
       );
-    } else if (this.props.workflows.items.length > 0) {
+    } else if (this.props.workflowAPI.items.length > 0) {
       let start = (this.state.pageNumber - 1) * this.state.numberPerPage;
-      let paginated = this.props.workflows.items.slice(start, start + this.state.numberPerPage);
+      let paginated = this.props.workflowAPI.items.slice(start, start + this.state.numberPerPage);
       return (
         <div>
           <Paper>
@@ -136,7 +138,7 @@ export default class ScientificWorkflowList extends Component {
               }
             </List>
             <Pagination
-              total={this.props.workflows.items.length}
+              total={this.props.workflowAPI.items.length}
               initialPerPageOptionIndex={constants.PER_PAGE_INITIAL_INDEX}
               perPageOptions={constants.PER_PAGE_OPTIONS}
               onChange={this.onPageChanged}/>

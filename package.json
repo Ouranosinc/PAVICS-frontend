@@ -78,6 +78,7 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
+    "ajv": "^5.2.0",
     "babel-cli": "^6.5.1",
     "babel-core": "^6.3.17",
     "babel-loader": "^6.2.0",
@@ -126,6 +127,7 @@
     "react-bootstrap-slider": "^1.1.2",
     "react-data-grid": "^1.0.23",
     "react-dom": "^15.5.4",
+    "react-notifications": "^1.4.3",
     "react-redux": "^4.0.0",
     "react-router": "^2.2.0",
     "react-router-redux": "^4.0.0",

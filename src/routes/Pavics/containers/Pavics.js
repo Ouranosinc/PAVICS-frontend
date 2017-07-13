@@ -3,31 +3,32 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import * as actionCreators from './../modules/Pavics';
-import * as projectActionCreators from './../../../redux/modules/Project';
+import * as workflowActionCreators from './../../../redux/modules/Workflow';
 import { actions as researchActionsCreators } from '../../../redux/modules/ResearchAPI';
 import * as constants from './../../../constants';
 import {
   AccountManagementContainer,
   ExperienceManagementContainer,
   ResearchContainer,
-  WorkflowWizardContainer,
   ProcessMonitoringContainer,
-  VisualizeContainer } from './../../../containers';
+  VisualizeContainer,
+  WorkflowWizardContainer } from './../../../containers';
 import { SectionalPanel } from './../../../components/SectionalPanel';
+// import Snackbar from 'material-ui/Snackbar';
+require('react-notifications/lib/notifications.css');
+import { NotificationContainer, NotificationManager } from 'react-notifications';
 
 class Pavics extends React.Component {
   static propTypes = {
     addDatasetLayersToVisualize: React.PropTypes.func.isRequired,
-    chooseStep: React.PropTypes.func.isRequired,
+    // chooseStep: React.PropTypes.func.isRequired,
     goToSection: React.PropTypes.func.isRequired,
     platform: React.PropTypes.object.isRequired,
-    fetchWPSJobs: React.PropTypes.func.isRequired,
-    monitor: React.PropTypes.object.isRequired,
     fetchVisualizableData: React.PropTypes.func.isRequired
   };
 
   componentWillMount () {
-    // this.startErrorLog();
+    this.startErrorLog();
   }
 
   startErrorLog () {
@@ -48,15 +49,14 @@ class Pavics extends React.Component {
         }
         errorObject['stack'] = stack;
       }
-
-      alert(message);
-      var data = {
-        message:message,
-        file:file,
-        line:line,
-        column:column,
-        errorStack:stack,
-      };
+      NotificationManager.error(message, 'Error', 10000);
+      // var data = {
+      //   message:message,
+      //   file:file,
+      //   line:line,
+      //   column:column,
+      //   errorStack:stack,
+      // };
       return false;
     }
   }
@@ -79,8 +79,8 @@ class Pavics extends React.Component {
         return (
           <ProcessMonitoringContainer
             addDatasetLayersToVisualize={this.props.addDatasetLayersToVisualize}
-            fetchWPSJobs={this.props.fetchWPSJobs}
-            monitor={this.props.monitor}
+            workflow={this.props.workflow}
+            workflowActions={this.props.workflowActions}
             fetchVisualizableData={this.props.fetchVisualizableData} />
         );
       case constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT:
@@ -92,6 +92,7 @@ class Pavics extends React.Component {
     }
   }
 
+
   render () {
     return (
       <MuiThemeProvider>
@@ -100,9 +101,10 @@ class Pavics extends React.Component {
           <SectionalPanel
             section={this.props.platform.section}
             goToSection={this.props.goToSection}
-            chooseStep={this.props.chooseStep}
+            // chooseStep={this.props.workflowActions.chooseStep}
             showContent={this.makeSection() !== null}
             currentContent={this.makeSection()} />
+          <NotificationContainer />
         </div>
       </MuiThemeProvider>
     );
@@ -115,16 +117,12 @@ class Pavics extends React.Component {
 
 const mapActionCreators = {
   ...actionCreators,
-  ...projectActionCreators
+  ...workflowActionCreators
 };
 const mapStateToProps = state => {
   return {
-    ...state.pavics.workflowWizard,
     ...state.pavics.visualize,
-    platform: state.pavics.platform,
-    monitor: state.pavics.monitor,
-    project: state.project,
-    research: state.research
+    platform: state.pavics.platform
   };
 };
 export default connect(mapStateToProps, mapActionCreators)(Pavics);

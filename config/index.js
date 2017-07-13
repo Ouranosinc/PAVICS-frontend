@@ -12,6 +12,11 @@ debug('Creating default configuration.');
 let serverHost = process.env.PAVICS_FRONTEND_IP || localip;
 let birdhouseHost = process.env.BIRDHOUSE_HOST || 'outarde.crim.ca';
 let loopbackHost = process.env.LOOPBACK_HOST || 'outarde.crim.ca:3005';
+let PAVICS_WORKFLOW_PROVIDER = process.env.PAVICS_WORKFLOW_PROVIDER || 'mallee';
+let PAVICS_RUN_WORKFLOW_IDENTIFIER = process.env.PAVICS_RUN_WORKFLOW_IDENTIFIER || 'custom_workflow';
+let PAVICS_VISUALIZE_IDENTIFIER = process.env.PAVICS_VISUALIZE_IDENTIFIER || 'TODO';
+let PAVICS_PERSIST_IDENTIFIER = process.env.PAVICS_PERSIST_IDENTIFIER || 'thredds_download';
+let PAVICS_PUBLISH_IDENTIFIER = process.env.PAVICS_PUBLISH_IDENTIFIER || 'TODO';
 let serverPort = process.env.PORT || 3000;
 const config = {
   env: process.env.NODE_ENV || 'development',
@@ -29,6 +34,11 @@ const config = {
   pavics_ncwms_path: `http://${birdhouseHost}:8080/ncWMS2/wms`,
   pavics_pywps_path: `http://${birdhouseHost}:8086/pywps`,
   loopback_api_path: `http://${loopbackHost}/api`,
+  PAVICS_WORKFLOW_PROVIDER: PAVICS_WORKFLOW_PROVIDER,
+  PAVICS_RUN_WORKFLOW_IDENTIFIER: PAVICS_RUN_WORKFLOW_IDENTIFIER,
+  PAVICS_VISUALIZE_IDENTIFIER: PAVICS_VISUALIZE_IDENTIFIER,
+  PAVICS_PERSIST_IDENTIFIER: PAVICS_PERSIST_IDENTIFIER,
+  PAVICS_PUBLISH_IDENTIFIER: PAVICS_PUBLISH_IDENTIFIER,
   // ----------------------------------
   // Project Structure
   // ----------------------------------
@@ -94,7 +104,12 @@ config.globals = {
   '__PAVICS_NCWMS_PATH__': JSON.stringify(config.pavics_ncwms_path),
   '__PAVICS_PHOENIX_PATH__': JSON.stringify(config.pavics_phoenix_path),
   '__PAVICS_GEOSERVER_PATH__': JSON.stringify(config.pavics_geoserver_path),
-  '__LOOPBACK_API_PATH__': JSON.stringify(config.loopback_api_path)
+  '__LOOPBACK_API_PATH__': JSON.stringify(config.loopback_api_path),
+  '__PAVICS_WORKFLOW_PROVIDER__': JSON.stringify(config.PAVICS_WORKFLOW_PROVIDER),
+  '__PAVICS_RUN_WORKFLOW_IDENTIFIER__': JSON.stringify(config.PAVICS_RUN_WORKFLOW_IDENTIFIER),
+  '__PAVICS_VISUALIZE_IDENTIFIER__': JSON.stringify(config.PAVICS_VISUALIZE_IDENTIFIER),
+  '__PAVICS_PERSIST_IDENTIFIER__': JSON.stringify(config.PAVICS_PERSIST_IDENTIFIER),
+  '__PAVICS_PUBLISH_IDENTIFIER__': JSON.stringify(config.PAVICS_PUBLISH_IDENTIFIER),
 };
 // ------------------------------------
 // Validate Vendor Dependencies
