@@ -10,14 +10,15 @@ import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 import {grey400, darkBlack} from 'material-ui/styles/colors';
 import IconButton from 'material-ui/IconButton';
-import ShareIcon from 'material-ui/svg-icons/social/person-add';
+import PublishIcon from 'material-ui/svg-icons/social/public';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import VisualizeIcon from 'material-ui/svg-icons/image/remove-red-eye';
 import RaisedButton from 'material-ui/RaisedButton';
 import RefreshIcon from 'material-ui/svg-icons/navigation/refresh';
 import FileIcon from 'material-ui/svg-icons/editor/insert-drive-file';
 import DownloadIcon from 'material-ui/svg-icons/file/file-download';
-import AddToProjectIcon from 'material-ui/svg-icons/av/playlist-add';
+import PersistIcon from 'material-ui/svg-icons/content/save';
+import InputIcon from 'material-ui/svg-icons/action/input';
 
 const dateFormat = moment().format('YYYY-MM-DD HH:mm:ss');
 const successStyle = {
@@ -67,6 +68,7 @@ class ProcessMonitoring extends React.Component {
 
   _onVisualiseDataset (url) {
     // TODO Remove hardcoded path
+    alert('TODO: Call Visualize WPS, temporary built WMS URL so the result can be seen but TimeSlider and other features won\'t work');
     let prefix = __PAVICS_NCWMS_PATH__ + '?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&DATASET=outputs/wps_outputs/';
     let index = url.indexOf('flyingpigeon');
     let suffix = url.substring(index, url.length);
@@ -118,52 +120,165 @@ class ProcessMonitoring extends React.Component {
                   status = <strong style={infoStyle}>IN PROGRESS ({(x.progress) ? x.progress : 0}%)</strong>;
                   break;
               }
-              return <ListItem
-                key={i}
-                primaryText={x.title + ': ' + x.abstract}
-                leftIcon={<FileIcon />}
-                secondaryText={
-                  <p>
-                    <span
-                      style={{color: darkBlack}}>Launched on <strong>{moment(x.created).format(dateFormat)}</strong> using service <strong>{x.service}</strong>.</span><br />
-                    <strong>Status: </strong>{status}
-                  </p>
+              if(x.status === constants.JOB_STARTED_STATUS) {
+                // No actions available if in progress
+                return <ListItem
+                  key={i}
+                  primaryText={x.title + ': ' + x.abstract}
+                  secondaryText={
+                    <p>
+                      <span
+                        style={{color: darkBlack}}>Launched on <strong>{moment(x.created).format(dateFormat)}</strong> using service <strong>{x.service}</strong>.</span><br />
+                      <strong>Status: </strong>{status}, <strong>Duration: </strong>{x.duration}
+                    </p>
+                  }
+                  secondaryTextLines={2} />;
+              }else {
+                if (x.process_id === __PAVICS_RUN_WORKFLOW_IDENTIFIER__) {
+                  //Threat as a Workflow
+                  let tasks = JSON.parse(x["response_to_json"]['wps:ExecuteResponse']['wps:ProcessOutputs'][0]['wps:Output'][0]['wps:Data'][0]['wps:ComplexData'][0]['_'])
+
+                  return <ListItem
+                    key={i}
+                    primaryText={x.title + ': ' + x.abstract}
+                    secondaryText={
+                      <p>
+                      <span
+                        style={{color: darkBlack}}>Launched on <strong>{moment(x.created).format(dateFormat)}</strong> using service <strong>{x.service}</strong>.</span><br />
+                        <strong>Status: </strong>{status}, <strong>Duration: </strong>{x.duration}
+                      </p>
+                    }
+                    secondaryTextLines={2}
+                    initiallyOpen={false}
+                    primaryTogglesNestedList={true}
+                    nestedItems={
+                      tasks.map((task, j) => {
+                        let taskName = Object.keys(task)[0];
+                        let taskDetails = task[taskName][0];
+                        let status = null;
+                        if(taskDetails.status === constants.JOB_SUCCESS_STATUS) {
+                          status = <strong style={successStyle}>COMPLETED</strong>;
+                        }else if(taskDetails.status === constants.JOB_FAILED_STATUS) {
+                          status = <strong style={errorStyle}>FAILED</strong>;
+                        }
+                        let types = "";
+                        let isMapVisualisable = false;
+                        let netcdfUrl = "";
+                        let isGraphVisualisable = false;
+                        let isDownloadable = false;
+                        taskDetails.outputs.forEach((output) => {
+                          types += output.mimeType + " ";
+                          if(output.mimeType === "application/x-netcdf"){
+                            isMapVisualisable = true;
+                            netcdfUrl = output.reference;
+                          }
+                          if(output.mimeType === "application/json") {
+                            // TODO
+                          }
+                        });
+
+                        return (
+                          <ListItem
+                            style={{width: '98%'}}
+                            key={j}
+                            primaryText={taskName + ": " + taskDetails.outputs[0].title}
+                            secondaryText={
+                              <p>
+                                <span
+                                  style={{color: darkBlack}}>Output types ({taskDetails.outputs.length}): <strong>{types}</strong>
+                                </span><br />
+                                <strong>Status: </strong>{status}
+                              </p>
+                            }
+                            secondaryTextLines={2}
+                            rightIconButton={
+                              <IconMenu iconButtonElement={
+                                <IconButton
+                                  touch={true}
+                                  tooltipPosition="bottom-left">
+                                  <MoreVertIcon color={grey400}/>
+                                </IconButton>
+                              }>
+                                <MenuItem
+                                  primaryText="Show XML Status File"
+                                  onTouchTap={(event) => window.open(taskDetails.status_location, '_blank')}
+                                  leftIcon={<FileIcon />}/>
+                                <MenuItem
+                                  primaryText="Visualize"
+                                  disabled={!isMapVisualisable}
+                                  onTouchTap={(event) => this._onVisualiseDataset(netcdfUrl)}
+                                  leftIcon={<VisualizeIcon />}/>
+                                <MenuItem
+                                  primaryText="Download"
+                                  disabled={x.status !== constants.JOB_SUCCESS_STATUS}
+                                  onTouchTap={(event) => window.open(netctaskDetails.output[0].reference, '_blank')}
+                                  leftIcon={<DownloadIcon />}/>
+                                <MenuItem
+                                  primaryText="Publish (TODO)"
+                                  disabled={x.status !== constants.JOB_SUCCESS_STATUS}
+                                  onTouchTap={(event) => alert('TODO: Publish')}
+                                  leftIcon={<PublishIcon />}/>
+                                <MenuItem
+                                  primaryText="Persist (TODO)"
+                                  disabled={x.status !== constants.JOB_SUCCESS_STATUS}
+                                  onTouchTap={(event) => alert('TODO: Persist')}
+                                  leftIcon={<PersistIcon />}/>
+                              </IconMenu>
+                            }
+                          />
+                        );
+                      })
+                    }
+                  />;
+                } else {
+                  //Threat as a Single Process
+                  return <ListItem
+                    key={i}
+                    primaryText={x.title + ': ' + x.abstract}
+                    secondaryText={
+                      <p>
+                      <span
+                        style={{color: darkBlack}}>Launched on <strong>{moment(x.created).format(dateFormat)}</strong> using service <strong>{x.service}</strong>.</span><br />
+                        <strong>Status: </strong>{status}
+                      </p>
+                    }
+                    secondaryTextLines={2}
+                    rightIconButton={
+                      <IconMenu iconButtonElement={
+                        <IconButton
+                          touch={true}
+                          tooltipPosition="bottom-left">
+                          <MoreVertIcon color={grey400}/>
+                        </IconButton>}>
+                        <MenuItem
+                          primaryText="Show XML Status File"
+                          onTouchTap={(event) => window.open(x.status_location, '_blank')}
+                          leftIcon={<FileIcon />}/>
+                        <MenuItem
+                          primaryText="Visualize"
+                          disabled={x.status !== constants.JOB_SUCCESS_STATUS}
+                          onTouchTap={(event) => this._onVisualiseDataset(netcdfUrl)}
+                          leftIcon={<VisualizeIcon />}/>
+                        <MenuItem
+                          primaryText="Download"
+                          disabled={x.status !== constants.JOB_SUCCESS_STATUS}
+                          onTouchTap={(event) => window.open(netcdfUrl, '_blank')}
+                          leftIcon={<DownloadIcon />}/>
+                        <MenuItem
+                          primaryText="Publish (TODO)"
+                          disabled={x.status !== constants.JOB_SUCCESS_STATUS}
+                          onTouchTap={(event) => alert('TODO: Call Publish WPS')}
+                          leftIcon={<PublishIcon />}/>
+                        <MenuItem
+                          primaryText="Persist (TODO)"
+                          disabled={x.status !== constants.JOB_SUCCESS_STATUS}
+                          onTouchTap={(event) => alert('TODO: Call Persist WPS')}
+                          leftIcon={<PersistIcon  />}/>
+                      </IconMenu>
+                    }
+                  />;
                 }
-                secondaryTextLines={2}
-                rightIconButton={
-                  <IconMenu iconButtonElement={
-                    <IconButton
-                      touch={true}
-                      tooltipPosition="bottom-left">
-                      <MoreVertIcon color={grey400} />
-                    </IconButton>}>
-                    <MenuItem
-                      primaryText="Show XML Status File"
-                      onTouchTap={(event) => window.open(x.status_location, '_blank')}
-                      leftIcon={<FileIcon />} />
-                    <MenuItem
-                      primaryText="Visualize"
-                      disabled={x.status !== constants.JOB_SUCCESS_STATUS}
-                      onTouchTap={(event) => this._onVisualiseDataset(netcdfUrl)}
-                      leftIcon={<VisualizeIcon />} />
-                    <MenuItem
-                      primaryText="Download"
-                      disabled={x.status !== constants.JOB_SUCCESS_STATUS}
-                      onTouchTap={(event) => window.open(netcdfUrl, '_blank')}
-                      leftIcon={<DownloadIcon />} />
-                    <MenuItem
-                      primaryText="Share (TODO)"
-                      disabled={x.status !== constants.JOB_SUCCESS_STATUS}
-                      onTouchTap={(event) => alert('share: launch crawler')}
-                      leftIcon={<ShareIcon />} />
-                    <MenuItem
-                      primaryText="Add to current project (TODO)"
-                      disabled={x.status !== constants.JOB_SUCCESS_STATUS}
-                      onTouchTap={(event) => alert('add to current project')}
-                      leftIcon={<AddToProjectIcon />} />
-                  </IconMenu>
-                }
-              />;
+              }
             }
             )}
           </List>;

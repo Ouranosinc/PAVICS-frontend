@@ -26,8 +26,9 @@ let phoenix = (() => {
           let limit = this.request.query.limit;
           let page = this.request.query.page;
           let sort = this.request.query.sort;
+          // WTF is going on with the Phoenix pagination?
           options = {
-            url: config.pavics_phoenix_path + `/monitor?limit=${limit}&page=${page}&sort=${sort}`,
+            url: config.pavics_phoenix_path + `/monitor?limit=99999`, // ${limit}&page=${page}&sort=${sort}`,
             headers: {
               Accept: 'application/json'
             },
@@ -35,15 +36,19 @@ let phoenix = (() => {
           };
           response = yield request(options);
           let json = JSON.parse(response.body);
-          for (let i = 0; i < json.jobs.length; ++i) {
-            json.jobs[i]['response_to_json'] = yield Utils.parseXMLThunk(json.jobs[i]['response']);
-            json.jobs[i]['request_to_json'] = yield Utils.parseXMLThunk(json.jobs[i]['request']);
+          // Workaround because phoenix pagination suck and is unpredictable
+          let start = (page - 1) * limit;
+          let paginatedJobs = json.jobs.slice(start, start + limit);
+          for (let i = 0; i < paginatedJobs.length; ++i) {
+            paginatedJobs[i]['response_to_json'] = yield Utils.parseXMLThunk(paginatedJobs[i]['response']);
+            paginatedJobs[i]['request_to_json'] = yield Utils.parseXMLThunk(paginatedJobs[i]['request']);
           }
+          json.jobs = paginatedJobs;
           this.body = json;
           break;
         case 'jobsCount' :
           options = {
-            url: config.pavics_phoenix_path + `/monitor?limit=99999`,
+            url: config.pavics_phoenix_path + `/monitor?limit=99999`, // phoenix needs a limit, else it's 10 by default
             headers: {
               Accept: 'application/json'
             },
@@ -51,7 +56,6 @@ let phoenix = (() => {
           };
           response = yield request(options);
           let parsed = JSON.parse(response.body);
-          console.log(parsed.jobs.length);
           this.body = { count: parsed.jobs.length };
           break;
         case 'processes' :
