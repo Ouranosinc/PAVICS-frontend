@@ -23,10 +23,11 @@ let phoenix = (() => {
           this.body = response.body;
           break;
         case 'jobs' :
+          let limit = this.request.query.limit;
+          let page = this.request.query.page;
+          let sort = this.request.query.sort;
           options = {
-            // PARAMS ARE ACTUALLY WORKING
-            /* url: config.pavics_phoenix_path + '/monitor?page=1&limit=10&sort=duration', */
-            url: config.pavics_phoenix_path + '/monitor?limit=1000',
+            url: config.pavics_phoenix_path + `/monitor?limit=${limit}&page=${page}&sort=${sort}`,
             headers: {
               Accept: 'application/json'
             },
@@ -39,6 +40,19 @@ let phoenix = (() => {
             json.jobs[i]['request_to_json'] = yield Utils.parseXMLThunk(json.jobs[i]['request']);
           }
           this.body = json;
+          break;
+        case 'jobsCount' :
+          options = {
+            url: config.pavics_phoenix_path + `/monitor?limit=99999`,
+            headers: {
+              Accept: 'application/json'
+            },
+            rejectUnauthorized: false
+          };
+          response = yield request(options);
+          let parsed = JSON.parse(response.body);
+          console.log(parsed.jobs.length);
+          this.body = { count: parsed.jobs.length };
           break;
         case 'processes' :
           options = {

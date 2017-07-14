@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import * as constants from '../../constants';
 import Loader from './../../components/Loader';
 import Pagination from './../../components/Pagination';
@@ -18,6 +19,7 @@ import FileIcon from 'material-ui/svg-icons/editor/insert-drive-file';
 import DownloadIcon from 'material-ui/svg-icons/file/file-download';
 import AddToProjectIcon from 'material-ui/svg-icons/av/playlist-add';
 
+const dateFormat = moment().format('YYYY-MM-DD HH:mm:ss');
 const successStyle = {
   color: '#4caf50'
 };
@@ -42,17 +44,16 @@ class ProcessMonitoring extends React.Component {
       pageNumber: 1,
       numberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX]
     };
-    this.props.monitorActions.fetchWPSJobs();
+    this.props.monitorActions.fetchWPSJobs(constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX], 1);
+    this.props.monitorActions.fetchWPSJobsCount();
     this._onRefreshResults = this._onRefreshResults.bind(this);
     this._onPageChanged = this._onPageChanged.bind(this);
     this._onVisualiseDataset = this._onVisualiseDataset.bind(this);
   }
 
   _onRefreshResults () {
-    this.setState({
-      pageNumber: 1
-    });
-    this.props.monitorActions.fetchWPSJobs();
+    this.props.monitorActions.fetchWPSJobs(this.state.numberPerPage, this.state.pageNumber);
+    this.props.monitorActions.fetchWPSJobsCount();
   }
 
   _onPageChanged (pageNumber, numberPerPage) {
@@ -60,6 +61,8 @@ class ProcessMonitoring extends React.Component {
       pageNumber: pageNumber,
       numberPerPage: numberPerPage
     });
+    this.props.monitorActions.fetchWPSJobs(numberPerPage, pageNumber);
+    this.props.monitorActions.fetchWPSJobsCount();
   }
 
   _onVisualiseDataset (url) {
@@ -77,108 +80,107 @@ class ProcessMonitoring extends React.Component {
 
   render () {
     let mainComponent;
-    if (this.props.monitor.jobs.isFetching) {
+    // Ensure pagination component doesn't get destroyed or we lost pageIndex and perPageIndex values that are in the component
+    let pagination =
+      <Pagination
+        total={this.props.monitor.jobsCount.data.count}
+        initialPerPageOptionIndex={constants.PER_PAGE_INITIAL_INDEX}
+        perPageOptions={constants.PER_PAGE_OPTIONS}
+        onChange={this._onPageChanged} />;
+    if (this.props.monitor.jobs.isFetching || this.props.monitor.jobsCount.isFetching) {
       mainComponent =
-        <Paper style={{ marginTop: 20 }}>
-          <Loader name="wps jobs" />
-        </Paper>;
+        <Loader name="wps jobs" />;
     } else {
-      if (this.props.monitor.jobs.items.length) {
-        let start = (this.state.pageNumber - 1) * this.state.numberPerPage;
-        let paginated = this.props.monitor.jobs.items.slice(start, start + this.state.numberPerPage);
+      if (this.props.monitor.jobs.items.length && this.props.monitor.jobsCount.data.count) {
+        // Backend Phoenix pagination now
+        // let start = (this.state.pageNumber - 1) * this.state.numberPerPage;
+        // let paginated = this.props.monitor.jobs.items.slice(start, start + this.state.numberPerPage);
         mainComponent =
-          <div>
-            <Paper style={{ marginTop: 20 }}>
-              <List>
-                <Subheader>Launched Jobs</Subheader>
-                {paginated.map((x, i) => {
-                  let status = null;
-                  let netcdfUrl = '';
-                  try {
-                    netcdfUrl = x.response_to_json['wps:ExecuteResponse']['wps:ProcessOutputs'][0]['wps:Output'][1]['wps:Reference'][0]['$']['href'];
-                    console.log(netcdfUrl);
-                  } catch (error) {
+          <List>
+            <Subheader>Launched Jobs</Subheader>
+            {this.props.monitor.jobs.items.map((x, i) => {
+              let status = null;
+              let netcdfUrl = '';
+              try {
+                netcdfUrl = x.response_to_json['wps:ExecuteResponse']['wps:ProcessOutputs'][0]['wps:Output'][1]['wps:Reference'][0]['$']['href'];
+                console.log(netcdfUrl);
+              } catch (error) {
 
-                  }
-                  switch (x.status) {
-                    case constants.JOB_SUCCESS_STATUS:
-                      status = <strong style={successStyle}>COMPLETED</strong>;
-                      break;
-                    case constants.JOB_FAILED_STATUS:
-                      status = <strong style={errorStyle}>FAILED</strong>;
-                      break;
-                    default:
-                      status = <strong style={infoStyle}>IN PROGRESS ({(x.progress) ? x.progress : 0}%)</strong>;
-                      break;
-                  }
-                  return <ListItem
-                    key={i}
-                    primaryText={x.title + ': ' + x.abstract}
-                    secondaryText={
-                      <p>
-                        <span
-                          style={{color: darkBlack}}>Launched on <strong>{x.created}</strong> using service <strong>{x.service}</strong>.</span><br />
-                        <strong>Status: </strong>{status}
-                      </p>
-                    }
-                    secondaryTextLines={2}
-                    rightIconButton={
-                      <IconMenu iconButtonElement={
-                        <IconButton
-                          touch={true}
-                          tooltipPosition="bottom-left">
-                          <MoreVertIcon color={grey400} />
-                        </IconButton>}>
-                        <MenuItem
-                          primaryText="Show XML Status File"
-                          onTouchTap={(event) => window.open(x.status_location, '_blank')}
-                          leftIcon={<FileIcon />} />
-                        <MenuItem
-                          primaryText="Visualize"
-                          disabled={x.status !== constants.JOB_SUCCESS_STATUS}
-                          onTouchTap={(event) => this._onVisualiseDataset(netcdfUrl)}
-                          leftIcon={<VisualizeIcon />} />
-                        <MenuItem
-                          primaryText="Download"
-                          disabled={x.status !== constants.JOB_SUCCESS_STATUS}
-                          onTouchTap={(event) => window.open(netcdfUrl, '_blank')}
-                          leftIcon={<DownloadIcon />} />
-                        <MenuItem
-                          primaryText="Share (TODO)"
-                          disabled={x.status !== constants.JOB_SUCCESS_STATUS}
-                          onTouchTap={(event) => alert('share: launch crawler')}
-                          leftIcon={<ShareIcon />} />
-                        <MenuItem
-                          primaryText="Add to current project (TODO)"
-                          disabled={x.status !== constants.JOB_SUCCESS_STATUS}
-                          onTouchTap={(event) => alert('add to current project')}
-                          leftIcon={<AddToProjectIcon />} />
-                      </IconMenu>
-                    }
-                  />;
+              }
+              switch (x.status) {
+                case constants.JOB_SUCCESS_STATUS:
+                  status = <strong style={successStyle}>COMPLETED</strong>;
+                  break;
+                case constants.JOB_FAILED_STATUS:
+                  status = <strong style={errorStyle}>FAILED</strong>;
+                  break;
+                default:
+                  status = <strong style={infoStyle}>IN PROGRESS ({(x.progress) ? x.progress : 0}%)</strong>;
+                  break;
+              }
+              return <ListItem
+                key={i}
+                primaryText={x.title + ': ' + x.abstract}
+                leftIcon={<FileIcon />}
+                secondaryText={
+                  <p>
+                    <span
+                      style={{color: darkBlack}}>Launched on <strong>{moment(x.created).format(dateFormat)}</strong> using service <strong>{x.service}</strong>.</span><br />
+                    <strong>Status: </strong>{status}
+                  </p>
                 }
-                )}
-              </List>
-              <Pagination
-                total={this.props.monitor.jobs.items.length}
-                initialPerPageOptionIndex={constants.PER_PAGE_INITIAL_INDEX}
-                perPageOptions={constants.PER_PAGE_OPTIONS}
-                onChange={this._onPageChanged} />
-            </Paper>
-          </div>;
+                secondaryTextLines={2}
+                rightIconButton={
+                  <IconMenu iconButtonElement={
+                    <IconButton
+                      touch={true}
+                      tooltipPosition="bottom-left">
+                      <MoreVertIcon color={grey400} />
+                    </IconButton>}>
+                    <MenuItem
+                      primaryText="Show XML Status File"
+                      onTouchTap={(event) => window.open(x.status_location, '_blank')}
+                      leftIcon={<FileIcon />} />
+                    <MenuItem
+                      primaryText="Visualize"
+                      disabled={x.status !== constants.JOB_SUCCESS_STATUS}
+                      onTouchTap={(event) => this._onVisualiseDataset(netcdfUrl)}
+                      leftIcon={<VisualizeIcon />} />
+                    <MenuItem
+                      primaryText="Download"
+                      disabled={x.status !== constants.JOB_SUCCESS_STATUS}
+                      onTouchTap={(event) => window.open(netcdfUrl, '_blank')}
+                      leftIcon={<DownloadIcon />} />
+                    <MenuItem
+                      primaryText="Share (TODO)"
+                      disabled={x.status !== constants.JOB_SUCCESS_STATUS}
+                      onTouchTap={(event) => alert('share: launch crawler')}
+                      leftIcon={<ShareIcon />} />
+                    <MenuItem
+                      primaryText="Add to current project (TODO)"
+                      disabled={x.status !== constants.JOB_SUCCESS_STATUS}
+                      onTouchTap={(event) => alert('add to current project')}
+                      leftIcon={<AddToProjectIcon />} />
+                  </IconMenu>
+                }
+              />;
+            }
+            )}
+          </List>;
       } else {
         mainComponent =
-          <Paper style={{ marginTop: 20 }}>
             <List>
               <Subheader>No results found.</Subheader>
-            </List>
-          </Paper>;
+            </List>;
       }
     }
     return (
       <div>
         <div className="container">
-          {mainComponent}
+          <Paper style={{ marginTop: 20 }}>
+            {mainComponent}
+            {pagination}
+          </Paper>
           <RaisedButton
             onClick={(event) => this._onRefreshResults()}
             label="Refresh"

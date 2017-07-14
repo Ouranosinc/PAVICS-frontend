@@ -113,6 +113,7 @@
     "koa-router": "^5.4.0",
     "koa-static": "^2.0.0",
     "material-ui": "^0.18.0",
+    "moment": "^2.18.1",
     "node-sass": "^4.5.3",
     "normalize.css": "^4.1.1",
     "ol-react": "0.0.4",
