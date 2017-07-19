@@ -66,12 +66,7 @@ export default class ScientificWorkflowList extends Component {
 
   makeConfirmWorkflowDeletionDialogActions (id) {
     return [
-      <FlatButton
-        label="Cancel"
-        primary={false}
-        keyboardFocused={true}
-        onTouchTap={this.closeDialog}
-      />,
+      LogDialogContent,
       <FlatButton
         label="OK"
         primary={true}

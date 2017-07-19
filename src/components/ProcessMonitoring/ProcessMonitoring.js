@@ -5,6 +5,7 @@ import Loader from './../../components/Loader';
 import Pagination from './../../components/Pagination';
 import StatusElement from './StatusElement';
 import ProcessListItem from './ProcessListItem';
+import Dialog from 'material-ui/Dialog';
 import {List, ListItem} from 'material-ui/List';
 import Subheader from 'material-ui/Subheader';
 import Paper from 'material-ui/Paper';
@@ -12,23 +13,14 @@ import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 import {grey400, darkBlack} from 'material-ui/styles/colors';
 import IconButton from 'material-ui/IconButton';
-import PublishIcon from 'material-ui/svg-icons/social/public';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-import VisualizeIcon from 'material-ui/svg-icons/image/remove-red-eye';
 import RaisedButton from 'material-ui/RaisedButton';
 import RefreshIcon from 'material-ui/svg-icons/navigation/refresh';
 import FileIcon from 'material-ui/svg-icons/editor/insert-drive-file';
 import LogIcon from 'material-ui/svg-icons/action/receipt';
-import DownloadIcon from 'material-ui/svg-icons/file/file-download';
-import PersistIcon from 'material-ui/svg-icons/content/save';
-import InputIcon from 'material-ui/svg-icons/action/input';
-import FolderIcon from 'material-ui/svg-icons/file/folder';
-import ExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more';
-import ExpandLessIcon from 'material-ui/svg-icons/navigation/expand-less';
 import ExpandableIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-down';
 import NotExpandableIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-right';
-import Checkbox from 'material-ui/Checkbox';
-
+import NoActionIcon from 'material-ui/svg-icons/av/not-interested';
 
 const dateFormat = moment().format('YYYY-MM-DD HH:mm:ss');
 
@@ -43,11 +35,15 @@ class ProcessMonitoring extends React.Component {
   constructor (props) {
     super(props);
     this.state = {
+      LogDialogArray: [],
+      logDialogOpened: false,
       pageNumber: 1,
       numberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX]
     };
     this.props.monitorActions.fetchWPSJobs(constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX], 1);
     this.props.monitorActions.fetchWPSJobsCount();
+    this._closeDialog = this._closeDialog.bind(this);
+    this._onShowLogDialog = this._onShowLogDialog.bind(this);
     this._onRefreshResults = this._onRefreshResults.bind(this);
     this._onPageChanged = this._onPageChanged.bind(this);
     this._onVisualiseDataset = this._onVisualiseDataset.bind(this);
@@ -80,6 +76,21 @@ class ProcessMonitoring extends React.Component {
       }
     ]);
   }
+
+  _onShowLogDialog (log) {
+    this.setState({
+      logDialogOpened: true,
+      LogDialogArray: log
+    });
+  }
+
+  _closeDialog () {
+    this.setState({
+      logDialogOpened: false,
+      LogDialogArray: ''
+    });
+  }
+
 
   buildNotCompletedListItem(job, index) {
     return <ListItem
@@ -130,7 +141,7 @@ class ProcessMonitoring extends React.Component {
                   </p>;
                 let logMenuItem = <MenuItem
                   primaryText="Show Logs"
-                  onTouchTap={(event) => alert("TODO FORMATTING: " + x.log)}
+                  onTouchTap={(event) => this._onShowLogDialog(x.log)}
                   leftIcon={<LogIcon />}/>;
                 if(x.status === constants.JOB_ACCEPTED_STATUS){
                   secondaryText =
@@ -157,7 +168,7 @@ class ProcessMonitoring extends React.Component {
                       </IconButton>
                     }>
                       <MenuItem
-                        primaryText="Show XML Status File"
+                        primaryText="Browse XML Status File"
                         onTouchTap={(event) => window.open(x.status_location, '_blank')}
                         leftIcon={<FileIcon />}/>
                       {logMenuItem}
@@ -166,25 +177,35 @@ class ProcessMonitoring extends React.Component {
               }else {
                 if (x.process_id === __PAVICS_RUN_WORKFLOW_IDENTIFIER__) {
                   //Threat as a Workflow
-                  let outputs = x["response_to_json"]['wps:ExecuteResponse']['wps:ProcessOutputs'];
                   let tasks = [];
-                  if(outputs) {
-                    let data = outputs[0]['wps:Output'][0]['wps:Data'];
-                    if(data){
-                      tasks = JSON.parse(data[0]['wps:ComplexData'][0]['_']);
-                    }
-                  }
-
                   let logMenu = <MenuItem
                     primaryText="Show Logs"
-                    onTouchTap={(event) => alert("TODO FORMATTING: " + x.log)}
+                    onTouchTap={(event) => this._onShowLogDialog(x.log)}
                     leftIcon={<LogIcon />}/>;
-                  if (x.process_id === __PAVICS_RUN_WORKFLOW_IDENTIFIER__ && x.status === constants.JOB_SUCCESS_STATUS){
+
+                  if(x.status === constants.JOB_SUCCESS_STATUS) {
+                    let outputs = x["response_to_json"]['wps:ExecuteResponse']['wps:ProcessOutputs'];
+                    tasks = [];
+                    if (outputs) {
+                      let data = outputs[0]['wps:Output'][0]['wps:Data'];
+                      if (data) {
+                        tasks = JSON.parse(data[0]['wps:ComplexData'][0]['_']);
+                      }
+                    }
+
                     let LogFileURL = outputs[0]['wps:Output'][1]['wps:Reference'][0]['$']['xlink:href'];
                     logMenu = <MenuItem
-                      primaryText="Show Log File"
+                      primaryText="Browse Log File"
                       onTouchTap={(event) => window.open(LogFileURL, '_blank')}
                       leftIcon={<FileIcon />}/>
+                  }else if(x.status === constants.JOB_FAILED_STATUS){
+                    let exception = x["response_to_json"]['wps:ExecuteResponse']['wps:Status'][0]['wps:ProcessFailed'][0]['wps:ExceptionReport'][0]['ows:Exception'][0]['ows:ExceptionText'][0];
+                    let searchvalue = 'Workflow result:';
+                    let startIndex = exception.indexOf(searchvalue) + searchvalue.length;
+                    let toBeParsed = exception.substring(startIndex);
+                    tasks = JSON.parse(toBeParsed);
+                  }else{
+                    // Should never happen
                   }
 
 
@@ -208,7 +229,7 @@ class ProcessMonitoring extends React.Component {
                         </IconButton>
                       }>
                         <MenuItem
-                          primaryText="Show XML Status File"
+                          primaryText="Browse XML Status File"
                           onTouchTap={(event) => window.open(x.status_location, '_blank')}
                           leftIcon={<FileIcon />}/>
                         {logMenu}
@@ -237,6 +258,7 @@ class ProcessMonitoring extends React.Component {
                               isWorkflowTask={true}
                               key={j}
                               job={taskDetails}
+                              onShowLogDialog={this._onShowLogDialog}
                               onVisualiseDataset={this._onVisualiseDataset} />
                           );
                         }else{
@@ -255,6 +277,7 @@ class ProcessMonitoring extends React.Component {
                             initiallyOpen={false}
                             primaryTogglesNestedList={true}
                             leftIcon={<ExpandableIcon />}
+                            rightIcon={<NoActionIcon />}
                             nestedItems={
                               parrallelTasks.map((task, k) => {
                                 task.title = taskName;
@@ -264,6 +287,7 @@ class ProcessMonitoring extends React.Component {
                                   isWorkflowTask={true}
                                   key={k}
                                   job={task}
+                                  onShowLogDialog={this._onShowLogDialog}
                                   onVisualiseDataset={this._onVisualiseDataset} />
                               })
                             }
@@ -304,6 +328,7 @@ class ProcessMonitoring extends React.Component {
                   }
                   return <ProcessListItem job={x}
                                           key={i}
+                                          onShowLogDialog={this._onShowLogDialog}
                                           onVisualiseDataset={this._onVisualiseDataset}/>
                 }
               }
@@ -329,6 +354,26 @@ class ProcessMonitoring extends React.Component {
             label="Refresh"
             icon={<RefreshIcon />}
             style={{marginTop: 20}} />
+          <Dialog
+            title="Log informations"
+            modal={false}
+            open={this.state.logDialogOpened}
+            onRequestClose={this._closeLogDialog}
+            actions={
+              <RaisedButton
+                label="Close"
+                primary={false}
+                keyboardFocused={true}
+                onTouchTap={this._closeDialog} />
+            }
+            autoScrollBodyContent={true}>
+            {
+              (this.state.LogDialogArray.length) ?
+              this.state.LogDialogArray.map((log, i) => {
+                return <p key={i}>{log}</p>
+              }) : null
+            }
+          </Dialog>
         </div>
       </div>
     );

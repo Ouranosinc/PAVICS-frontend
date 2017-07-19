@@ -24,6 +24,7 @@ export class ProcessListItem extends React.Component {
     indentationLevel:  React.PropTypes.number,
     isWorkflowTask:  React.PropTypes.bool,
     job: React.PropTypes.object.isRequired,
+    onShowLogDialog: React.PropTypes.func.isRequired,
     onVisualiseDataset: React.PropTypes.func.isRequired,
   };
 
@@ -37,6 +38,13 @@ export class ProcessListItem extends React.Component {
   }
 
   buildMinimalIconMenuActions() {
+    let logMenuItem = <MenuItem
+      primaryText="Show Logs"
+      onTouchTap={(event) => this.props.onShowLogDialog(this.props.job.log)}
+      leftIcon={<LogIcon />}/>;
+    if (this.props.isWorkflowTask){
+      logMenuItem = null;
+    }
     return (
       <IconMenu iconButtonElement={
           <IconButton
@@ -46,13 +54,10 @@ export class ProcessListItem extends React.Component {
           </IconButton>
         }>
         <MenuItem
-          primaryText="Show XML Status File"
+          primaryText="Browse XML Status File"
           onTouchTap={(event) => window.open(this.props.job.status_location, '_blank')}
           leftIcon={<FileIcon />}/>
-        <MenuItem
-          primaryText="Show Logs"
-          onTouchTap={(event) => alert("TODO FORMATTING: " + this.props.job.log)}
-          leftIcon={<LogIcon />}/>
+        {logMenuItem}
       </IconMenu>
     );
   }
