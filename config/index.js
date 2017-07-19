@@ -12,7 +12,7 @@ debug('Creating default configuration.');
 let serverHost = process.env.PAVICS_FRONTEND_IP || localip;
 let birdhouseHost = process.env.BIRDHOUSE_HOST || 'outarde.crim.ca';
 let loopbackHost = process.env.LOOPBACK_HOST || 'outarde.crim.ca:3005';
-let PAVICS_WORKFLOW_PROVIDER = process.env.PAVICS_WORKFLOW_PROVIDER || 'mallee';
+let PAVICS_WORKFLOW_PROVIDER = process.env.PAVICS_WORKFLOW_PROVIDER || 'malleefowl';
 let PAVICS_RUN_WORKFLOW_IDENTIFIER = process.env.PAVICS_RUN_WORKFLOW_IDENTIFIER || 'custom_workflow';
 let PAVICS_VISUALIZE_IDENTIFIER = process.env.PAVICS_VISUALIZE_IDENTIFIER || 'TODO';
 let PAVICS_PERSIST_IDENTIFIER = process.env.PAVICS_PERSIST_IDENTIFIER || 'thredds_download';

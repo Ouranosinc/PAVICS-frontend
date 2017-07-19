@@ -17,6 +17,7 @@ export const VISUALIZE_MAP_CONTROLS_PANEL = 'MAP_CONTROLS_PANEL';
 export const VISUALIZE_TIME_SLIDER_PANEL = 'TIME_SLIDER_PANEL';
 // monitor
 export const MONITOR_SET_JOBS = 'MONITOR_SET_JOBS';
+export const JOB_ACCEPTED_STATUS = 'ProcessAccepted';
 export const JOB_FAILED_STATUS = 'ProcessFailed';
 export const JOB_SUCCESS_STATUS = 'ProcessSucceeded';
 export const JOB_STARTED_STATUS = 'ProcessStarted';
