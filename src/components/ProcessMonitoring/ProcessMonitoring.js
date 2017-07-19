@@ -41,7 +41,6 @@ class ProcessMonitoring extends React.Component {
       numberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX]
     };
     this.props.monitorActions.fetchWPSJobs(constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX], 1);
-    this.props.monitorActions.fetchWPSJobsCount();
     this._closeDialog = this._closeDialog.bind(this);
     this._onShowLogDialog = this._onShowLogDialog.bind(this);
     this._onRefreshResults = this._onRefreshResults.bind(this);
@@ -51,7 +50,6 @@ class ProcessMonitoring extends React.Component {
 
   _onRefreshResults () {
     this.props.monitorActions.fetchWPSJobs(this.state.numberPerPage, this.state.pageNumber);
-    this.props.monitorActions.fetchWPSJobsCount();
   }
 
   _onPageChanged (pageNumber, numberPerPage) {
@@ -60,7 +58,6 @@ class ProcessMonitoring extends React.Component {
       numberPerPage: numberPerPage
     });
     this.props.monitorActions.fetchWPSJobs(numberPerPage, pageNumber);
-    this.props.monitorActions.fetchWPSJobsCount();
   }
 
   _onVisualiseDataset (url) {
@@ -111,15 +108,15 @@ class ProcessMonitoring extends React.Component {
     // Ensure pagination component doesn't get destroyed or we lost pageIndex and perPageIndex values that are in the component
     let pagination =
       <Pagination
-        total={this.props.monitor.jobsCount.data.count}
+        total={this.props.monitor.jobs.count}
         initialPerPageOptionIndex={constants.PER_PAGE_INITIAL_INDEX}
         perPageOptions={constants.PER_PAGE_OPTIONS}
         onChange={this._onPageChanged} />;
-    if (this.props.monitor.jobs.isFetching || this.props.monitor.jobsCount.isFetching) {
+    if (this.props.monitor.jobs.isFetching) {
       mainComponent =
         <Loader name="wps jobs" />;
     } else {
-      if (this.props.monitor.jobs.items.length && this.props.monitor.jobsCount.data.count) {
+      if (this.props.monitor.jobs.items.length && this.props.monitor.jobs.count) {
         // Backend Phoenix pagination now
         // let start = (this.state.pageNumber - 1) * this.state.numberPerPage;
         // let paginated = this.props.monitor.jobs.items.slice(start, start + this.state.numberPerPage);

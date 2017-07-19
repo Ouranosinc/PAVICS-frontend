@@ -23,8 +23,8 @@ let phoenix = (() => {
           this.body = response.body;
           break;
         case 'jobs' :
-          let limit = this.request.query.limit;
-          let page = this.request.query.page;
+          let limit = parseInt(this.request.query.limit, 10);
+          let page = parseInt(this.request.query.page, 10);
           let sort = this.request.query.sort;
           // WTF is going on with the Phoenix pagination?
           options = {
@@ -43,20 +43,10 @@ let phoenix = (() => {
             paginatedJobs[i]['response_to_json'] = yield Utils.parseXMLThunk(paginatedJobs[i]['response']);
             paginatedJobs[i]['request_to_json'] = yield Utils.parseXMLThunk(paginatedJobs[i]['request']);
           }
+          // Over-writting phoenix count value return
+          json.count = json.jobs.length;
           json.jobs = paginatedJobs;
           this.body = json;
-          break;
-        case 'jobsCount' :
-          options = {
-            url: config.pavics_phoenix_path + `/monitor?limit=99999`, // phoenix needs a limit, else it's 10 by default
-            headers: {
-              Accept: 'application/json'
-            },
-            rejectUnauthorized: false
-          };
-          response = yield request(options);
-          let parsed = JSON.parse(response.body);
-          this.body = { count: parsed.jobs.length };
           break;
         case 'processes' :
           options = {
