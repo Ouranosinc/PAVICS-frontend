@@ -49,11 +49,11 @@ function receiveWPSJobs (data) {
   };
 }
 
-function fetchWPSJobs (limit = 5, page = 1, sort = 'created') {
+function fetchWPSJobs (projectId, limit = 5, page = 1, sort = 'created') {
   // Error handling as intended EXAMPLE !!
   return (dispatch) => {
     dispatch(requestWPSJobs());
-    return fetch(`/phoenix/jobs?limit=${limit}&page=${page}&sort=${sort}`)
+    return fetch(`/phoenix/jobs?projectId=${projectId}&limit=${limit}&page=${page}&sort=${sort}`)
       .then(response => {
         if(!response.ok){
           dispatch(receiveWPSJobsFailure({

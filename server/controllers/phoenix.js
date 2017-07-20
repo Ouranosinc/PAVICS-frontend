@@ -23,6 +23,7 @@ let phoenix = (() => {
           this.body = response.body;
           break;
         case 'jobs' :
+          let projectId = parseInt(this.request.query.projectId, 10);
           let limit = parseInt(this.request.query.limit, 10);
           let page = parseInt(this.request.query.page, 10);
           let sort = this.request.query.sort;
@@ -36,20 +37,32 @@ let phoenix = (() => {
             rejectUnauthorized: false
           };
           response = yield request(options);
-          // console.log(`URL fetched: ${config.pavics_phoenix_path}/monitor?limit=99999`);
-          // console.log(response.body);
           let json = JSON.parse(response.body);
-          // Workaround because phoenix pagination suck and is unpredictable
+
+          // Fetch loopback jobs for this project
+          let filter = JSON.stringify({where: {projectId: projectId}});
+          let loopbackResponse = yield request(`${config.loopback_api_path}/Jobs?filter=${filter}`);
+          let lbProjectJobs = JSON.parse(loopbackResponse.body);
+          // console.log(JSON.parse(loopbackResponse.body));
+
+          // Filter phoenix returned job with loopback results
+          let filteredJobs = json.jobs.filter( (job) => lbProjectJobs.find((lbJob) => lbJob.phoenixTaskId === job.task_id));
+          // console.log(filteredJobs.length);
+
+          // Custom pagination because phoenix pagination suck and is unpredictable
+          // And we need loopback project filtering anyway ...
           let start = (page - 1) * limit;
-          let paginatedJobs = json.jobs.slice(start, start + limit);
+          let paginatedJobs = filteredJobs.slice(start, start + limit);
           for (let i = 0; i < paginatedJobs.length; ++i) {
             paginatedJobs[i]['response_to_json'] = yield Utils.parseXMLThunk(paginatedJobs[i]['response']);
             paginatedJobs[i]['request_to_json'] = yield Utils.parseXMLThunk(paginatedJobs[i]['request']);
           }
-          // Over-writting phoenix count value return
-          json.count = json.jobs.length;
-          json.jobs = paginatedJobs;
-          this.body = json;
+
+          // Over-writting phoenix values return with what interests us
+          let result = {};
+          result.count = filteredJobs.length;
+          result.jobs = paginatedJobs;
+          this.body = result;
           break;
         case 'processes' :
           options = {

@@ -28,6 +28,7 @@ class ProcessMonitoring extends React.Component {
     addDatasetLayersToVisualize: React.PropTypes.func.isRequired,
     monitor: React.PropTypes.object.isRequired,
     monitorActions: React.PropTypes.object.isRequired,
+    project: React.PropTypes.object.isRequired,
     fetchVisualizableData: React.PropTypes.func.isRequired
   };
 
@@ -39,7 +40,7 @@ class ProcessMonitoring extends React.Component {
       pageNumber: 1,
       numberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX]
     };
-    this.props.monitorActions.fetchWPSJobs(constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX], 1);
+    this.props.monitorActions.fetchWPSJobs(this.props.project.currentProject.id, constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX], 1);
     this._closeDialog = this._closeDialog.bind(this);
     this._onShowLogDialog = this._onShowLogDialog.bind(this);
     this._onRefreshResults = this._onRefreshResults.bind(this);
@@ -48,7 +49,7 @@ class ProcessMonitoring extends React.Component {
   }
 
   _onRefreshResults () {
-    this.props.monitorActions.fetchWPSJobs(this.state.numberPerPage, this.state.pageNumber);
+    this.props.monitorActions.fetchWPSJobs(this.props.project.currentProject.id, this.state.numberPerPage, this.state.pageNumber);
   }
 
   _onPageChanged (pageNumber, numberPerPage) {
@@ -56,7 +57,7 @@ class ProcessMonitoring extends React.Component {
       pageNumber: pageNumber,
       numberPerPage: numberPerPage
     });
-    this.props.monitorActions.fetchWPSJobs(numberPerPage, pageNumber);
+    this.props.monitorActions.fetchWPSJobs(this.props.project.currentProject.id, numberPerPage, pageNumber);
   }
 
   _onVisualiseDataset (url) {
