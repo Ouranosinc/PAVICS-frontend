@@ -1,3 +1,5 @@
+import { NotificationManager } from 'react-notifications';
+
 // Constants
 export const constants = {
   MONITOR_FETCH_WPS_JOBS_REQUEST: 'MONITOR_FETCH_WPS_JOBS_REQUEST',
@@ -20,6 +22,7 @@ function requestWPSJobs () {
 }
 
 function receiveWPSJobsFailure (error) {
+  NotificationManager.error(`Failed at fetching Phoenix Jobs at address ${error.url}. Returned Status ${error.status}: ${error.message}`);
   return {
     type: constants.MONITOR_FETCH_WPS_JOBS_FAILURE,
     jobs: {
@@ -33,6 +36,7 @@ function receiveWPSJobsFailure (error) {
 }
 
 function receiveWPSJobs (data) {
+  // NotificationManager.success('Test Success');
   return {
     type: constants.MONITOR_FETCH_WPS_JOBS_SUCCESS,
     jobs: {
@@ -46,16 +50,31 @@ function receiveWPSJobs (data) {
 }
 
 function fetchWPSJobs (limit = 5, page = 1, sort = 'created') {
-  return function (dispatch) {
+  // Error handling as intended EXAMPLE !!
+  return (dispatch) => {
     dispatch(requestWPSJobs());
     return fetch(`/phoenix/jobs?limit=${limit}&page=${page}&sort=${sort}`)
-      .then(response => response.json())
-      .then(json =>
-        dispatch(receiveWPSJobs(json))
-      )
-      .catch(error => {
-        console.log(error);
-        dispatch(receiveWPSJobsFailure(error));
+      .then(response => {
+        if(!response.ok){
+          dispatch(receiveWPSJobsFailure({
+            status: response.status,
+            message: response.statusText,
+            url: response.url
+          }));
+        }else{
+          return response.json();
+        }
+      })
+      .then(json => {
+        if(json) dispatch(receiveWPSJobs(json));
+      }, err => {
+        // Not sure it'll ever happen
+        // throw new Error(err);
+        // dispatch(receiveWPSJobsFailure({
+        //   status: 200,
+        //   message: err.message,
+        //   stack: err.stack
+        // }));
       });
   };
 }

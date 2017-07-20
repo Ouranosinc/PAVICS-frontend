@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import { NotificationManager } from 'react-notifications';
 import * as constants from '../../constants';
 import Loader from './../../components/Loader';
 import Pagination from './../../components/Pagination';
@@ -108,56 +109,21 @@ class ProcessMonitoring extends React.Component {
             <Subheader>Launched Jobs</Subheader>
             {this.props.monitor.jobs.items.map((x, i) => {
 
-              if(x.status === constants.JOB_ACCEPTED_STATUS ||
+              if(x.status === null ||
+                x.status === constants.JOB_ACCEPTED_STATUS ||
                 x.status === constants.JOB_STARTED_STATUS ||
                 (x.status === constants.JOB_FAILED_STATUS && x.process_id !== __PAVICS_RUN_WORKFLOW_IDENTIFIER__)){
-                // These status are not expandable and show a minimum set of actions
-                // Note that failed workflow are expandable.
-                let secondaryText =
-                  <p>
-                    <span style={{color: darkBlack}}>
-                      Launched on <strong>{moment(x.created).format(constants.MONITOR_DATE_FORMAT)}</strong> using provider <strong>{x.service}</strong>.
-                    </span><br />
-                    <StatusElement job={x} />, <strong>Duration: </strong>{x.duration}
-                  </p>;
-                let logMenuItem = <MenuItem
-                  primaryText="Show Logs"
-                  onTouchTap={(event) => this._onShowLogDialog(x.log)}
-                  leftIcon={<LogIcon />}/>;
-                if(x.status === constants.JOB_ACCEPTED_STATUS){
-                  secondaryText =
-                    <p>
-                      <span style={{color: darkBlack}}>
-                        Will be launched soon using provider <strong>{x.service}</strong>.
-                      </span><br />
-                      <StatusElement job={x} />
-                    </p>;
-                  logMenuItem = null
-                }
-                return <ListItem
-                  key={i}
-                  primaryText={x.title + ': ' + x.abstract}
-                  leftIcon={<NotExpandableIcon />}
-                  secondaryText={secondaryText}
-                  secondaryTextLines={2}
-                  rightIconButton={
-                    <IconMenu iconButtonElement={
-                      <IconButton
-                        touch={true}
-                        tooltipPosition="bottom-left">
-                        <MoreVertIcon color={grey400}/>
-                      </IconButton>
-                    }>
-                      <MenuItem
-                        primaryText="Browse XML Status File"
-                        onTouchTap={(event) => window.open(x.status_location, '_blank')}
-                        leftIcon={<FileIcon />}/>
-                      {logMenuItem}
-                    </IconMenu>
-                  }/>
+                // Threat UNKNOWN process & workflow
+                //        PENDING process & workflow
+                //        STARTED process & workflow
+                //        FAILED process
+                return <ProcessListItem job={x}
+                                        key={i}
+                                        onShowLogDialog={this._onShowLogDialog}
+                                        onVisualiseDataset={this._onVisualiseDataset}/>;
               }else {
                 if (x.process_id === __PAVICS_RUN_WORKFLOW_IDENTIFIER__) {
-                  //Threat as a Workflow
+                  //Threat FAILED and SUCCESSFULL workflow (both are expandable)
                   let tasks = [];
                   let logMenu = <MenuItem
                     primaryText="Show Logs"
@@ -165,6 +131,7 @@ class ProcessMonitoring extends React.Component {
                     leftIcon={<LogIcon />}/>;
 
                   if(x.status === constants.JOB_SUCCESS_STATUS) {
+                    // If a SUCCESSFULL workflow, JSON Result is a WPS Output
                     let outputs = x["response_to_json"]['wps:ExecuteResponse']['wps:ProcessOutputs'];
                     tasks = [];
                     if (outputs) {
@@ -180,16 +147,20 @@ class ProcessMonitoring extends React.Component {
                       onTouchTap={(event) => window.open(LogFileURL, '_blank')}
                       leftIcon={<FileIcon />}/>
                   }else if(x.status === constants.JOB_FAILED_STATUS){
+                    // If a FAILED workflow, JSON Result is in an ExceptionText and IS EXPANDABLE
                     let exception = x["response_to_json"]['wps:ExecuteResponse']['wps:Status'][0]['wps:ProcessFailed'][0]['wps:ExceptionReport'][0]['ows:Exception'][0]['ows:ExceptionText'][0];
-                    let searchvalue = 'Workflow result:';
-                    // TODO Manage -1 returns (?)
-                    let startIndex = exception.indexOf(searchvalue) + searchvalue.length;
-                    let toBeParsed = exception.substring(startIndex);
-                    tasks = JSON.parse(toBeParsed);
+                    const SEARCH_VALUE = 'Workflowz result:';
+                    let startIndex = exception.indexOf(SEARCH_VALUE);
+                    if(startIndex > -1){
+                      let toBeParsed = exception.substring(startIndex + SEARCH_VALUE.length);
+                      tasks = JSON.parse(toBeParsed);
+                    }else{
+                      NotificationManager.error(`A listed failed workflow doesn't contain attented string in ows:Exception.ows:ExceptionText result: '${SEARCH_VALUE}'`);
+                    }
                   }else{
                     // Should never happen
+                    NotificationManager.error(`A workflow with status ${x.status} isn't managed properly by the platform`);
                   }
-
 
                   return <ListItem
                     key={i}
@@ -206,7 +177,7 @@ class ProcessMonitoring extends React.Component {
                       <IconMenu iconButtonElement={
                         <IconButton
                           touch={true}
-                          tooltipPosition="bottom-left">
+                          tooltipPosition="bottom-left">AoN
                           <MoreVertIcon color={grey400}/>
                         </IconButton>
                       }>
@@ -246,6 +217,7 @@ class ProcessMonitoring extends React.Component {
                         }else{
                           // No actions
                           let completedTasks = parrallelTasks.filter(x => x.status === constants.JOB_SUCCESS_STATUS);
+                          // TODO Visualize all for subtasks
                           return  (
                           <ListItem
                             key={j}
@@ -281,7 +253,7 @@ class ProcessMonitoring extends React.Component {
                     }
                   />;
                 } else {
-                  //Threat as a Single Process
+                  //Threat  SUCCESSFULL process
                   let job = {
                     data_id: 0,
                     outputs: [],
@@ -304,7 +276,7 @@ class ProcessMonitoring extends React.Component {
                           abstract: output['ows:Abstract'][0]
                         });
                       }catch(error){
-                        throw new Error("Bad WPS XML Status Output format");
+                        NotificationManager.error("Bad WPS XML Status Output format");
                       }
                     });
                   }

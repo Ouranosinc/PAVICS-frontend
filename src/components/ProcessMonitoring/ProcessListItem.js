@@ -16,6 +16,7 @@ import DownloadIcon from 'material-ui/svg-icons/file/file-download';
 import PersistIcon from 'material-ui/svg-icons/content/save';
 import ExpandableIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-down';
 import NotExpandableIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-right';
+import NoActionIcon from 'material-ui/svg-icons/av/not-interested';
 
 export class ProcessListItem extends React.Component {
   static propTypes = {
@@ -40,6 +41,7 @@ export class ProcessListItem extends React.Component {
       primaryText="Show Logs"
       onTouchTap={(event) => this.props.onShowLogDialog(this.props.job.log)}
       leftIcon={<LogIcon />}/>;
+    // TODO logMenuItem depends on status
     if (this.props.isWorkflowTask){
       logMenuItem = null;
     }
@@ -109,33 +111,60 @@ export class ProcessListItem extends React.Component {
           <StatusElement job={this.props.job} />
         </span>;
     }
-    return <ListItem
-      style={{marginLeft: (this.props.indentationLevel * 18) + "px"}}
-      primaryText={this.props.job.title + ': ' + this.props.job.abstract}
-      secondaryText={secondaryText}
-      secondaryTextLines={2}
-      rightIconButton={
-        this.buildMinimalIconMenuActions()
+    if(this.props.job.status === constants.JOB_SUCCESS_STATUS){
+      return <ListItem
+        style={{marginLeft: (this.props.indentationLevel * 18) + "px"}}
+        primaryText={this.props.job.title + ': ' + this.props.job.abstract}
+        secondaryText={secondaryText}
+        secondaryTextLines={2}
+        rightIconButton={
+          this.buildMinimalIconMenuActions()
+        }
+        initiallyOpen={false}
+        primaryTogglesNestedList={true}
+        leftIcon={<ExpandableIcon />}
+        nestedItems={
+          this.props.job.outputs.map((output, k) => {
+            return <ListItem
+              key={k}
+              style={{marginLeft: ((this.props.indentationLevel + 1) * 18) + "px"}}
+              primaryText={<p>{output.title}: {output.abstract}</p>}
+              secondaryText={<p>Type: <strong>{output.mimeType}</strong></p>}
+              secondaryTextLines={1}
+              leftIcon={<FileIcon />}
+              rightIconButton={
+                this.buildBasicIconMenuActions(output)
+              }
+            />;
+          })
+        }
+      />;
+    }else{
+      // Not a success has typically no outputs and only a log file to be shown
+      let logMenuItem = <MenuItem
+        primaryText="Show Logs"
+        onTouchTap={(event) => this._onShowLogDialog(x.log)}
+        leftIcon={<LogIcon />}/>;
+      if(this.props.job.status === constants.JOB_ACCEPTED_STATUS){
+        secondaryText =
+          <span style={{color: darkBlack}}>
+            <span>Will be launched soon using provider using provider <strong>{this.props.job.service}</strong>.</span><br/>
+            <StatusElement job={this.props.job} />
+          </span>;
+        logMenuItem = null
       }
-      initiallyOpen={false}
-      primaryTogglesNestedList={true}
-      leftIcon={<ExpandableIcon />}
-      nestedItems={
-        this.props.job.outputs.map((output, k) => {
-          return <ListItem
-            key={k}
-            style={{marginLeft: ((this.props.indentationLevel + 1) * 18) + "px"}}
-            primaryText={<p>{output.title}: {output.abstract}</p>}
-            secondaryText={<p>Type: <strong>{output.mimeType}</strong></p>}
-            secondaryTextLines={1}
-            leftIcon={<FileIcon />}
-            rightIconButton={
-              this.buildBasicIconMenuActions(output)
-            }
-          />;
-        })
-      }
-    />;
+
+      return <ListItem
+        style={{marginLeft: (this.props.indentationLevel * 18) + "px"}}
+        primaryText={this.props.job.title + ': ' + this.props.job.abstract}
+        secondaryText={secondaryText}
+        secondaryTextLines={2}
+        rightIcon={this.buildMinimalIconMenuActions()}
+        initiallyOpen={false}
+        primaryTogglesNestedList={true}
+        leftIcon={<NotExpandableIcon />}
+      />;
+    }
   }
 }
 export default ProcessListItem;
