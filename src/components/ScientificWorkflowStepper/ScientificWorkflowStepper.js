@@ -145,7 +145,8 @@ export default class ScientificWorkflowStepper extends Component {
     // we already have had to put strange __start__ and __end__ inputs to work nicely with phoenix
     let url = `${__PAVICS_PHOENIX_PATH__}/processes/execute?wps=${this.props.selectedProvider}&process=${this.props.selectedProcess.identifier}`;
     this.makePostRequest(url, formData, (xhr, params) => {
-      if(xhr.status === 200){
+      // xhr.status will always be 200
+      if(xhr.responseURL.indexOf('/processes/loading') !== -1){
         NotificationManager.success('Workflow has been launched with success, you can now monitor workflow execution in the monitoring panel', 'Success', 10000);
       }else{
         NotificationManager.error('Workflow hasn\'t been launched as intended. Make sure the workflow and required inputs are defined properly', 'Error', 10000);

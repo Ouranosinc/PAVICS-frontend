@@ -17,8 +17,6 @@ import PersistIcon from 'material-ui/svg-icons/content/save';
 import ExpandableIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-down';
 import NotExpandableIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-right';
 
-const dateFormat = moment().format('YYYY-MM-DD HH:mm:ss');
-
 export class ProcessListItem extends React.Component {
   static propTypes = {
     indentationLevel:  React.PropTypes.number,
@@ -100,10 +98,9 @@ export class ProcessListItem extends React.Component {
   }
 
   render () {
-    console.log("Those datatimes should be equals: "+ this.props.job.created + "=" + moment(this.props.job.created).format(dateFormat)) // TODO FIX THis....
     let secondaryText =
       <span style={{color: darkBlack}}>
-        <span>Launched on <strong>{this.props.job.created}</strong> using provider <strong>{this.props.job.service}</strong>.</span><br/>
+        <span>Launched on <strong>{moment(this.props.job.created).format(constants.MONITOR_DATE_FORMAT)}</strong> using provider <strong>{this.props.job.service}</strong>.</span><br/>
         <StatusElement job={this.props.job} />, <strong>Duration: </strong>{this.props.job.duration}
       </span>;
     if (this.props.isWorkflowTask) {

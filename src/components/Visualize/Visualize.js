@@ -50,7 +50,6 @@ class Visualize extends React.Component {
     console.log(props);
     this._onToggleMapPanel = this._onToggleMapPanel.bind(this);
     this.setOLComponentReference = this.setOLComponentReference.bind(this);
-    // this.props.researchActions.createResearchAsset({yolo: 'yolo1', researchId: 1});
     let mapPanelStatus = {};
     mapPanelStatus[constants.VISUALIZE_INFO_PANEL] = false;
     mapPanelStatus[constants.VISUALIZE_MAP_CONTROLS_PANEL] = true;
@@ -61,7 +60,6 @@ class Visualize extends React.Component {
       mapPanelStatus: mapPanelStatus,
       OLComponentReference: {}
     };
-    // this.props.fetchFacets();
   }
 
   _onToggleMapPanel (panel) {

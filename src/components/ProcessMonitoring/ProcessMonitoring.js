@@ -22,8 +22,6 @@ import ExpandableIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-down';
 import NotExpandableIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-right';
 import NoActionIcon from 'material-ui/svg-icons/av/not-interested';
 
-const dateFormat = moment().format('YYYY-MM-DD HH:mm:ss');
-
 class ProcessMonitoring extends React.Component {
   static propTypes = {
     addDatasetLayersToVisualize: React.PropTypes.func.isRequired,
@@ -88,21 +86,6 @@ class ProcessMonitoring extends React.Component {
     });
   }
 
-
-  buildNotCompletedListItem(job, index) {
-    return <ListItem
-      key={index}
-      primaryText={x.title + ': ' + x.abstract}
-      secondaryText={
-        <p>
-                      <span
-                        style={{color: darkBlack}}>Launched on <strong>{moment(x.created).format(dateFormat)}</strong> using provider <strong>{x.service}</strong>.</span><br />
-          <StatusElement job={x} />, <strong>Duration: </strong>{x.duration}
-        </p>
-      }
-      secondaryTextLines={2} />;
-  }
-
   render () {
     let mainComponent;
     // Ensure pagination component doesn't get destroyed or we lost pageIndex and perPageIndex values that are in the component
@@ -124,6 +107,7 @@ class ProcessMonitoring extends React.Component {
           <List>
             <Subheader>Launched Jobs</Subheader>
             {this.props.monitor.jobs.items.map((x, i) => {
+
               if(x.status === constants.JOB_ACCEPTED_STATUS ||
                 x.status === constants.JOB_STARTED_STATUS ||
                 (x.status === constants.JOB_FAILED_STATUS && x.process_id !== __PAVICS_RUN_WORKFLOW_IDENTIFIER__)){
@@ -132,7 +116,7 @@ class ProcessMonitoring extends React.Component {
                 let secondaryText =
                   <p>
                     <span style={{color: darkBlack}}>
-                      Launched on <strong>{moment(x.created).format(dateFormat)}</strong> using provider <strong>{x.service}</strong>.
+                      Launched on <strong>{moment(x.created).format(constants.MONITOR_DATE_FORMAT)}</strong> using provider <strong>{x.service}</strong>.
                     </span><br />
                     <StatusElement job={x} />, <strong>Duration: </strong>{x.duration}
                   </p>;
@@ -198,6 +182,7 @@ class ProcessMonitoring extends React.Component {
                   }else if(x.status === constants.JOB_FAILED_STATUS){
                     let exception = x["response_to_json"]['wps:ExecuteResponse']['wps:Status'][0]['wps:ProcessFailed'][0]['wps:ExceptionReport'][0]['ows:Exception'][0]['ows:ExceptionText'][0];
                     let searchvalue = 'Workflow result:';
+                    // TODO Manage -1 returns (?)
                     let startIndex = exception.indexOf(searchvalue) + searchvalue.length;
                     let toBeParsed = exception.substring(startIndex);
                     tasks = JSON.parse(toBeParsed);
@@ -212,7 +197,7 @@ class ProcessMonitoring extends React.Component {
                     secondaryText={
                       <p>
                       <span
-                        style={{color: darkBlack}}>Launched on <strong>{moment(x.created).format(dateFormat)}</strong> using service <strong>{x.service}</strong>.</span><br />
+                        style={{color: darkBlack}}>Launched on <strong>{moment(x.created).format(constants.MONITOR_DATE_FORMAT)}</strong> using provider <strong>{x.service}</strong>.</span><br />
                         <StatusElement job={x} />, <strong>Duration: </strong>{x.duration}
                       </p>
                     }

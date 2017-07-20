@@ -1,4 +1,5 @@
 import React from 'react';
+import { NotificationManager } from 'react-notifications';
 import {Stepper, Step, StepLabel, StepContent} from 'material-ui/Stepper';
 import WpsProviderSelector from './../../components/WpsProviderSelector';
 import WpsProcessSelector from './../../components/WpsProcessSelector';
@@ -34,20 +35,21 @@ export default class WorkflowWizardStepper extends React.Component {
     }
 
     let url = `${__PAVICS_PHOENIX_PATH__}/processes/execute?wps=${this.props.workflow.selectedProvider}&process=${this.props.workflow.selectedProcess.identifier}`;
-    // let url = `/phoenix/execute?wps=${this.props.selectedProvider}&process=${this.props.selectedProcess.identifier}`;
-    this.makePostRequest(url, formData, (res) => {
-      // TODO actually do something once the post have been done
-      console.log(res);
+    this.makePostRequest(url, formData, (xhr, params) => {
+      // xhr.status will always be 200
+      if(xhr.responseURL.indexOf('/processes/loading') !== -1){
+        NotificationManager.success('Process has been launched with success, you can now monitor process execution in the monitoring panel', 'Success', 10000);
+      }else{
+        NotificationManager.error('Process hasn\'t been launched as intended. Make sure the process and required inputs are defined properly', 'Error', 10000);
+      }
     });
-    // this.props.executeProcess(provider, identifier, values);
-    // this.props.goToSection(constants.PLATFORM_SECTION_MONITOR);
   }
 
   makePostRequest (url, data, callable, params) {
     let xhr = new XMLHttpRequest();
     xhr.onload = function () {
       if (callable !== undefined) {
-        callable(xhr.responseText, params);
+        callable(xhr, params);
       }
     };
     xhr.open('POST', url);

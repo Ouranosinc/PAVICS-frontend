@@ -30,11 +30,14 @@ let phoenix = (() => {
           options = {
             url: config.pavics_phoenix_path + `/monitor?limit=99999`, // ${limit}&page=${page}&sort=${sort}`,
             headers: {
+              // Cookie: "phoenix_session=687473a9e273b666aa3e310341fbb86df41ceedbbffc637c3dd6493badbf26256efa4f3e",
               Accept: 'application/json'
             },
             rejectUnauthorized: false
           };
           response = yield request(options);
+          // console.log(`URL fetched: ${config.pavics_phoenix_path}/monitor?limit=99999`);
+          // console.log(response.body);
           let json = JSON.parse(response.body);
           // Workaround because phoenix pagination suck and is unpredictable
           let start = (page - 1) * limit;
