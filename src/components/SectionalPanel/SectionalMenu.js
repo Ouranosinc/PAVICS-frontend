@@ -77,8 +77,8 @@ class SectionalMenu extends React.Component {
               <InputIcon color={white} />
             </a>
           </OverlayTrigger>
-          <OverlayTrigger placement="left" overlay={this.tooltip('Workboard')} delay={10}>
-            <a onClick={this.monitor} title="Workboard"
+          <OverlayTrigger placement="left" overlay={this.tooltip('Monitoring Jobs')} delay={10}>
+            <a onClick={this.monitor} title="Monitoring Jobs"
               className={(this.props.section === constants.PLATFORM_SECTION_MONITOR) ? classes['active'] : ''}>
               <Glyphicon glyph="tasks" />
             </a>

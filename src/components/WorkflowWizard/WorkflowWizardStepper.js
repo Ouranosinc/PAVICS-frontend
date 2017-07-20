@@ -13,6 +13,8 @@ const FORM_PROCESS_ID = "form-individual-process";
 export default class WorkflowWizardStepper extends React.Component {
   static propTypes = {
     goToSection: React.PropTypes.func.isRequired,
+    jobAPIActions: React.PropTypes.object.isRequired,
+    project: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
     selectedRegions: React.PropTypes.array.isRequired,
@@ -36,10 +38,17 @@ export default class WorkflowWizardStepper extends React.Component {
 
     let url = `${__PAVICS_PHOENIX_PATH__}/processes/execute?wps=${this.props.workflow.selectedProvider}&process=${this.props.workflow.selectedProcess.identifier}`;
     this.makePostRequest(url, formData, (xhr, params) => {
-      // xhr.status will always be 200
-      if(xhr.responseURL.indexOf('/processes/loading') !== -1){
-        NotificationManager.success('Process has been launched with success, you can now monitor process execution in the monitoring panel', 'Success', 10000);
-      }else{
+      // status is always 200
+      // if(xhr.responseURL.indexOf('/processes/loading') !== -1){ // Deprecated but workek well with phoenix execute() Accept text/html
+      try {
+        let response = JSON.parse(xhr.responseText);
+        if (response.status === 200) {
+          this.props.jobAPIActions.createJob({ projectId: this.props.project.currentProject.id, phoenixTaskId: response.task_id });
+          NotificationManager.success('Process has been launched with success, you can now monitor process execution in the monitoring panel', 'Success', 10000);
+        }else{
+          NotificationManager.error('Process hasn\'t been launched as intended. Make sure the process and required inputs are defined properly', 'Error', 10000);
+        }
+      }catch(error){
         NotificationManager.error('Process hasn\'t been launched as intended. Make sure the process and required inputs are defined properly', 'Error', 10000);
       }
     });
@@ -53,7 +62,7 @@ export default class WorkflowWizardStepper extends React.Component {
       }
     };
     xhr.open('POST', url);
-    xhr.setRequestHeader('accept', 'text/html');
+    xhr.setRequestHeader('accept', 'application/json'); // Old: 'text/html'
     xhr.send(data);
   }
 

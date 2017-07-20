@@ -11,6 +11,7 @@ const PROCESS_TAB_VALUE = "PROCESS_TAB_VALUE";
 export default class WorkflowWizard extends React.Component {
   static propTypes = {
     goToSection: React.PropTypes.func.isRequired,
+    jobAPIActions: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
     selectedRegions: React.PropTypes.array.isRequired,
@@ -98,6 +99,7 @@ export default class WorkflowWizard extends React.Component {
               (this.state.activeTab === WORKFLOW_TAB_VALUE) ?
                 <ScientificWorkflowStepper
                   goToSection={this.props.goToSection}
+                  jobAPIActions={this.props.jobAPIActions}
                   project={this.props.project}
                   showDialog={this.showDialog}
                   selectedRegions={this.props.selectedRegions}
@@ -115,10 +117,12 @@ export default class WorkflowWizard extends React.Component {
             {
               (this.state.activeTab === PROCESS_TAB_VALUE) ?
                 <WorkflowWizardStepper
+                  goToSection={this.props.goToSection}
+                  jobAPIActions={this.props.jobAPIActions}
+                  project={this.props.project}
                   selectedRegions={this.props.selectedRegions}
                   selectedDatasetLayer={this.props.selectedDatasetLayer}
                   selectedShapefile={this.props.selectedShapefile}
-                  goToSection={this.props.goToSection}
                   workflow={this.props.workflow}
                   workflowActions={this.props.workflowActions}
                 /> : null
