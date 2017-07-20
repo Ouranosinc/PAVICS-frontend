@@ -21,6 +21,7 @@ const styles = {
 
 export default class ScientificWorkflowForm extends Component {
   static propTypes = {
+    project: React.PropTypes.object.isRequired,
     workflowAPIActions: React.PropTypes.object.isRequired
   };
 
@@ -77,6 +78,7 @@ export default class ScientificWorkflowForm extends Component {
     let parsed = this.tryParseJson();
     if(parsed && this.validateAdvancedWorkflowSchema(parsed)) {
       this.props.workflowAPIActions.createWorkflow({
+        projectId: this.props.project.currentProject.id,
         json: parsed
       });
       NotificationManager.success('Workflow has been created with success', 'Success', 10000);

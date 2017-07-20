@@ -20,6 +20,7 @@ export default class ScientificWorkflowStepper extends Component {
   static propTypes = {
     showDialog: React.PropTypes.func.isRequired,
     goToSection: React.PropTypes.func.isRequired,
+    project: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
     selectedRegions: React.PropTypes.array.isRequired,
@@ -251,6 +252,7 @@ export default class ScientificWorkflowStepper extends Component {
               workflowAPIActions={this.props.workflowAPIActions} />
             <p style={styles.orParagraph}>Or add a new workflow</p>
             <ScientificWorkflowForm
+              project={this.props.project}
               workflowAPIActions={this.props.workflowAPIActions}/>
           </StepContent>
         </Step>

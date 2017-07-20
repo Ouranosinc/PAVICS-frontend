@@ -41,7 +41,7 @@ export default class WorkflowWizard extends React.Component {
   }
 
   componentDidMount () {
-    this.props.workflowAPIActions.fetchWorkflows({ projectId: this.props.project.currentProject.id});
+    this.props.workflowAPIActions.fetchWorkflows({ filter:JSON.stringify({ where: {projectId: this.props.project.currentProject.id}})});
   }
 
   deleteWorkflowCallback (id) {
@@ -97,11 +97,12 @@ export default class WorkflowWizard extends React.Component {
             {
               (this.state.activeTab === WORKFLOW_TAB_VALUE) ?
                 <ScientificWorkflowStepper
+                  goToSection={this.props.goToSection}
+                  project={this.props.project}
                   showDialog={this.showDialog}
                   selectedRegions={this.props.selectedRegions}
                   selectedDatasetLayer={this.props.selectedDatasetLayer}
                   selectedShapefile={this.props.selectedShapefile}
-                  goToSection={this.props.goToSection}
                   selectedProvider={__PAVICS_WORKFLOW_PROVIDER__}
                   selectedProcess={{identifier: __PAVICS_RUN_WORKFLOW_IDENTIFIER__}}
                   workflow={this.props.workflow}

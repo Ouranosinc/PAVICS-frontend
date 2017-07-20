@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { actions as projectActionsCreators } from '../../redux/modules/Project';
 import { Visualize }from './../../components/Visualize';
 
 export class VisualizeContainer extends React.Component {
@@ -20,10 +22,14 @@ export class VisualizeContainer extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  return {}
+  return {
+    project: state.project
+  }
 };
 const mapDispatchToProps = (dispatch) => {
-  return {}
+  return {
+    projectActions: bindActionCreators({...projectActionsCreators}, dispatch)
+  };
 };
 
 export default connect(
