@@ -22,8 +22,8 @@ class SectionalMenu extends React.Component {
     }
   };
   experience = () => {
-    if (constants.PLATFORM_SECTION_EXPERIENCE_MANAGEMENT !== this.props.section) {
-      this.props.goToSection(constants.PLATFORM_SECTION_EXPERIENCE_MANAGEMENT);
+    if (constants.PLATFORM_SECTION_PROJECT_MANAGEMENT !== this.props.section) {
+      this.props.goToSection(constants.PLATFORM_SECTION_PROJECT_MANAGEMENT);
     } else {
       this.props.goToSection('');
     }
@@ -65,9 +65,9 @@ class SectionalMenu extends React.Component {
               <SearchIcon color={white} />
             </a>
           </OverlayTrigger>
-          <OverlayTrigger placement="left" overlay={this.tooltip('Experience Management')} delay={10}>
-            <a onClick={this.experience} title="Experience Management"
-              className={(this.props.section === constants.PLATFORM_SECTION_EXPERIENCE_MANAGEMENT) ? classes['active'] : ''}>
+          <OverlayTrigger placement="left" overlay={this.tooltip('Project Management')} delay={10}>
+            <a onClick={this.experience} title="Project Management"
+              className={(this.props.section === constants.PLATFORM_SECTION_PROJECT_MANAGEMENT) ? classes['active'] : ''}>
               <AssignmentIcon color={white} />
             </a>
           </OverlayTrigger>

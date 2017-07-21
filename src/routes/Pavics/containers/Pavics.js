@@ -14,7 +14,6 @@ import {
   VisualizeContainer,
   WorkflowWizardContainer } from './../../../containers';
 import { SectionalPanel } from './../../../components/SectionalPanel';
-// import Snackbar from 'material-ui/Snackbar';
 require('react-notifications/lib/notifications.css');
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 
@@ -67,7 +66,7 @@ class Pavics extends React.Component {
         return (
           <ResearchContainer {...this.props} />
         );
-      case constants.PLATFORM_SECTION_EXPERIENCE_MANAGEMENT:
+      case constants.PLATFORM_SECTION_PROJECT_MANAGEMENT:
         return (
           <ExperienceManagementContainer {...this.props} />
         );
