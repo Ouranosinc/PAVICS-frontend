@@ -34,8 +34,9 @@ class ProcessMonitoring extends React.Component {
 
   constructor (props) {
     super(props);
+    this.loop = null;
     this.state = {
-      LogDialogArray: [],
+      logDialogArray: [],
       logDialogOpened: false,
       pageNumber: 1,
       numberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX]
@@ -46,6 +47,28 @@ class ProcessMonitoring extends React.Component {
     this._onRefreshResults = this._onRefreshResults.bind(this);
     this._onPageChanged = this._onPageChanged.bind(this);
     this._onVisualiseDataset = this._onVisualiseDataset.bind(this);
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.monitor.jobs && nextProps.monitor.jobs.items.length) {
+      // Removed previous launched timeout if any
+      clearTimeout(this.loop);
+
+      // Launch polling only if any job is UNKNOWN, ACCEPTED or IN_PROGRESS
+      if(nextProps.monitor.jobs.items.find(job =>
+        job.status === constants.JOB_UNKNOWN_STATUS ||
+        job.status === constants.JOB_ACCEPTED_STATUS ||
+        job.status === constants.JOB_STARTED_STATUS )){
+        this.pollWPSJobs();
+      }
+    }
+  }
+
+  pollWPSJobs () {
+    this.loop = setTimeout( () => {
+      console.log(moment());
+      this.props.monitorActions.pollWPSJobs(this.props.project.currentProject.id, this.state.numberPerPage, this.state.pageNumber);
+    }, 3000);
   }
 
   _onRefreshResults () {
@@ -77,14 +100,14 @@ class ProcessMonitoring extends React.Component {
   _onShowLogDialog (log) {
     this.setState({
       logDialogOpened: true,
-      LogDialogArray: log
+      logDialogArray: log
     });
   }
 
   _closeDialog () {
     this.setState({
       logDialogOpened: false,
-      LogDialogArray: ''
+      logDialogArray: ''
     });
   }
 
@@ -323,8 +346,8 @@ class ProcessMonitoring extends React.Component {
             }
             autoScrollBodyContent={true}>
             {
-              (this.state.LogDialogArray.length) ?
-              this.state.LogDialogArray.map((log, i) => {
+              (this.state.logDialogArray.length) ?
+              this.state.logDialogArray.map((log, i) => {
                 return <p key={i}>{log}</p>
               }) : null
             }

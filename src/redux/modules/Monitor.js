@@ -4,7 +4,10 @@ import { NotificationManager } from 'react-notifications';
 export const constants = {
   MONITOR_FETCH_WPS_JOBS_REQUEST: 'MONITOR_FETCH_WPS_JOBS_REQUEST',
   MONITOR_FETCH_WPS_JOBS_FAILURE: 'MONITOR_FETCH_WPS_JOBS_FAILURE',
-  MONITOR_FETCH_WPS_JOBS_SUCCESS: 'MONITOR_FETCH_WPS_JOBS_SUCCESS'
+  MONITOR_FETCH_WPS_JOBS_SUCCESS: 'MONITOR_FETCH_WPS_JOBS_SUCCESS',
+  MONITOR_POLL_WPS_JOBS_REQUEST: 'MONITOR_POLL_WPS_JOBS_REQUEST',
+  MONITOR_POLL_WPS_JOBS_FAILURE: 'MONITOR_POLL_WPS_JOBS_FAILURE',
+  MONITOR_POLL_WPS_JOBS_SUCCESS: 'MONITOR_POLL_WPS_JOBS_SUCCESS',
 };
 
 //Actions Creators
@@ -79,9 +82,37 @@ function fetchWPSJobs (projectId, limit = 5, page = 1, sort = 'created') {
   };
 }
 
+function receivePollWPSJobs (data) {
+  return {
+    type: constants.MONITOR_FETCH_WPS_JOBS_SUCCESS,
+    jobs: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      items: data.jobs,
+      count: data.count,
+      error: null
+    }
+  };
+}
+
+function pollWPSJobs (projectId, limit = 5, page = 1, sort = 'created') {
+  return (dispatch) => {
+    return fetch(`/phoenix/jobs?projectId=${projectId}&limit=${limit}&page=${page}&sort=${sort}`)
+      .then(response => {
+        if(response.ok){
+          return response.json();
+        }
+      })
+      .then(json => {
+        if(json) dispatch(receivePollWPSJobs(json));
+      });
+  };
+}
+
 // Exported Action Creators
 export const actions = {
-  fetchWPSJobs: fetchWPSJobs
+  fetchWPSJobs: fetchWPSJobs,
+  pollWPSJobs: pollWPSJobs
 };
 
 export const initialState = {
@@ -106,14 +137,12 @@ const MONITOR_HANDLERS = {
     [constants.MONITOR_FETCH_WPS_JOBS_SUCCESS]: (state, action) => {
     return ({...state, jobs: action.jobs});
   },
-  [constants.MONITOR_FETCH_WPS_JOBS_COUNT_REQUEST]: (state, action) => {
-    return ({...state, jobsCount: action.jobsCount});
-  },
-  [constants.MONITOR_FETCH_WPS_JOBS_COUNT_FAILURE]: (state, action) => {
-    return ({...state, jobsCount: action.jobsCount});
-  },
-  [constants.MONITOR_FETCH_WPS_JOBS_COUNT_SUCCESS]: (state, action) => {
-    return ({...state, jobsCount: action.jobsCount});
+  [constants.MONITOR_POLL_WPS_JOBS_SUCCESS]: (state, action) => {
+    if(JSON.stringify(state.jobs) !== JSON.stringify(action.jobs)){
+      return ({...state, jobs: action.jobs});
+    }else {
+      return ({...state});
+    }
   },
 };
 
