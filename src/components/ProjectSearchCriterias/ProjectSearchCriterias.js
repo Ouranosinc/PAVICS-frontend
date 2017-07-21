@@ -38,11 +38,15 @@ export class ProjectSearchCriterias extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.project.currentProject && nextProps.project.currentProject !== this.props.project.currentProject) {
+      let filter = JSON.stringify({where: { projectId: this.props.project.currentProject.id}});
+      this.props.researchAPIActions.fetchResearchs({filter: filter});
       this.props.projectAPIActions.fetchProjectResearchs({ projectId: nextProps.project.currentProject.id});
     }
   }
 
   componentWillMount() {
+    let filter = JSON.stringify({where: { projectId: this.props.project.currentProject.id}});
+    this.props.researchAPIActions.fetchResearchs({filter: filter});
     this.props.projectAPIActions.fetchProjectResearchs({ projectId: this.props.project.currentProject.id});
   }
 
@@ -73,12 +77,12 @@ export class ProjectSearchCriterias extends React.Component {
   }
 
   _onRemoveSearchCriteria (research) {
-    this.props.removeSearchCriteriasFromProject(research);
+    this.props.researchAPIActions.deleteResearch({id: research.id});
   }
 
   render () {
     let criteriasStart = (this.state.criteriasPageNumber - 1) * this.state.criteriasNumberPerPage;
-    let criteriasPaginated = this.props.projectAPI.researchs.items.slice(criteriasStart, criteriasStart + this.state.criteriasNumberPerPage);
+    let criteriasPaginated = this.props.researchAPI.items.slice(criteriasStart, criteriasStart + this.state.criteriasNumberPerPage);
     return (
       <div className={classes['ProjectSearchCriterias']}>
         <Paper style={{marginTop: 20}}>
