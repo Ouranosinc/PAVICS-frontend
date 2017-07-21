@@ -24,6 +24,7 @@ export class CurrentProjectSnackbar extends React.Component {
   render () {
     return (
       <Snackbar className={classes['CurrentProjectSnackbar']}
+          contentStyle={{fontWeight: 'bold'}}
           open={this.state.isSnackbarOpen}
           message={`Current Project: ${this.props.project.currentProject.name}`}
           action="change"

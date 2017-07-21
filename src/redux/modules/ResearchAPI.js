@@ -10,8 +10,8 @@ const researchDataset = createResource({
   url: `${__LOOPBACK_API_PATH__}/Researchs/:researchId/datasets`
 });
 const researchFacet = createResource({
-  name: 'researchAssets',
-  pluralName: 'researchAssets',
+  name: 'researchFacets',
+  pluralName: 'researchFacets',
   url: `${__LOOPBACK_API_PATH__}/Researchs/:researchId/facets`
 });
 

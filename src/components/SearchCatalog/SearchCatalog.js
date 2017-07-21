@@ -56,6 +56,8 @@ export class SearchCatalog extends React.Component {
 
   componentWillMount() {
     this.props.researchActions.fetchFacets();
+    let filter = JSON.stringify({ where: {projectId: this.props.project.currentProject.id}});
+    this.props.researchAPIActions.fetchResearchs({ filter: filter });
   }
 
   _onChangeSearchType (value) {
@@ -65,16 +67,15 @@ export class SearchCatalog extends React.Component {
     });
   }
 
-  _onLoadSavedCriteria (value) {
-    let searchCriteria = this.props.currentProjectSearchCriterias.find(x => x.name === value);
+  _onLoadSavedCriteria (id) {
+    let searchCriteria = this.props.researchAPI.items.find(x => x.id === id);
     this.setState({
-      selectedSavedCriteria: value
+      selectedSavedCriteria: id
     });
-    this.props.removeAllFacetKeyValue();
-    searchCriteria.criterias.forEach((criteria) => {
-      this.props.addFacetKeyValuePair(criteria.key, criteria.value);
+    this.props.researchActions.clearFacetKeyValuePairs();
+    searchCriteria.facets.forEach((facet) => {
+      this.props.researchActions.addFacetKeyValuePair(facet.key, facet.value);
     });
-    this._onSetSearchCriteriasName = this._onSetSearchCriteriasName.bind(this);
   }
 
   _onAddCriteriaKey (value) {
@@ -101,6 +102,7 @@ export class SearchCatalog extends React.Component {
         'variable',
         'frequency'
       ],
+      selectedSavedCriteria: '',
       confirmation: null,
       searchCriteriasName: ''
     });
@@ -110,7 +112,7 @@ export class SearchCatalog extends React.Component {
 
   _SaveCriterias () {
     if (this.state.searchCriteriasName.length && this.props.research.selectedFacets.length) {
-      if (this.props.currentProjectSearchCriterias.find( x => x.name === this.state.searchCriteriasName)) {
+      if (this.props.researchAPI.items.find( x => x.name === this.state.searchCriteriasName)) {
         this.setState({
           confirmation: <Alert bsStyle="danger" style={{marginTop: 20}}>
             Search criteria(s) already exists with the same name. Please specify another name.
@@ -176,8 +178,8 @@ export class SearchCatalog extends React.Component {
                       value={this.state.selectedSavedCriteria}
                       onChange={(event, index, value) => this._onLoadSavedCriteria(value)}>
                       {
-                        this.props.currentProjectSearchCriterias.map((search, i) => {
-                          return <MenuItem key={i} value={search.name} primaryText={search.name} />;
+                        this.props.researchAPI.items.map((search, i) => {
+                          return <MenuItem key={i} value={search.id} primaryText={search.name} />;
                         })
                       }
                     </SelectField>

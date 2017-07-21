@@ -91,6 +91,22 @@ class Pavics extends React.Component {
     }
   }
 
+  makeTitle () {
+    switch (this.props.platform.section) {
+      case constants.PLATFORM_SECTION_SEARCH_DATASETS:
+        return "Search Datasets";
+      case constants.PLATFORM_SECTION_PROJECT_MANAGEMENT:
+        return "Project Management";
+      case constants.PLATFORM_SECTION_WORKFLOWS:
+        return "Workflow Wizard";
+      case constants.PLATFORM_SECTION_MONITOR:
+        return "Processes Monitoring";
+      case constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT:
+        return "Account Management";
+      default:
+        return "";
+    }
+  }
 
   render () {
     return (
@@ -102,7 +118,8 @@ class Pavics extends React.Component {
             goToSection={this.props.goToSection}
             // chooseStep={this.props.workflowActions.chooseStep}
             showContent={this.makeSection() !== null}
-            currentContent={this.makeSection()} />
+            currentContent={this.makeSection()}
+            currentTitle={this.makeTitle()}/>
           <NotificationContainer />
         </div>
       </MuiThemeProvider>
