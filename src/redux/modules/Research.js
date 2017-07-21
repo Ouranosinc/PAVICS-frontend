@@ -101,9 +101,8 @@ export function restorePavicsDatasets (searchCriteria) {
   return {
     type: constants.RESTORE_PAVICS_DATASETS,
     pavicsDatasets: {
-      requestedAt: searchCriteria.date,
-      receivedAt: searchCriteria.date,
-      archive: true,
+      requestedAt: searchCriteria.createdOn,
+      receivedAt: searchCriteria.createdOn,
       isFetching: false,
       items: searchCriteria.results
     }
@@ -115,7 +114,6 @@ function requestPavicsDatasets () {
     pavicsDatasets: {
       requestedAt: Date.now(),
       isFetching: true,
-      archive: false,
       items: []
     }
   };
@@ -126,7 +124,6 @@ export function receivePavicsDatasetsFailure (error) {
     pavicsDatasets: {
       receivedAt: Date.now(),
       isFetching: false,
-      archive: false,
       items: [],
       error: error
     }
@@ -138,7 +135,6 @@ export function receivePavicsDatasets (datasets) {
     pavicsDatasets: {
       receivedAt: Date.now(),
       isFetching: false,
-      archive: false,
       items: datasets,
       error: null
     }
@@ -353,8 +349,7 @@ const initialState = {
     receivedAt: null,
     isFetching: false,
     items: [],
-    error: null,
-    archive: false
+    error: null
   }
 };
 export default function (state = initialState, action) {

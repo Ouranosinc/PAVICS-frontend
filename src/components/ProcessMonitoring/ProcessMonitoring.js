@@ -195,7 +195,7 @@ class ProcessMonitoring extends React.Component {
                     secondaryText={
                       <p>
                       <span
-                        style={{color: darkBlack}}>Launched on <strong>{moment(x.created).format(constants.MONITOR_DATE_FORMAT)}</strong> using provider <strong>{x.service}</strong>.</span><br />
+                        style={{color: darkBlack}}>Launched on <strong>{moment(x.created).format(constants.PAVICS_DATE_FORMAT)}</strong> using provider <strong>{x.service}</strong>.</span><br />
                         <StatusElement job={x} />, <strong>Duration: </strong>{x.duration}
                       </p>
                     }

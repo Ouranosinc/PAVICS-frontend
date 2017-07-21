@@ -22,7 +22,7 @@ export const JOB_FAILED_STATUS = 'ProcessFailed';
 export const JOB_SUCCESS_STATUS = 'ProcessSucceeded';
 export const JOB_STARTED_STATUS = 'ProcessStarted';
 export const JOB_PAUSED_STATUS = 'ProcessPaused';
-export const MONITOR_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+export const PAVICS_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 // Visualize
 // TODO Delete
 export const PANEL_SEARCH_CATALOG = 'Visualize.SearchCatalog';

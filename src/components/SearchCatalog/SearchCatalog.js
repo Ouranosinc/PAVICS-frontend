@@ -1,8 +1,8 @@
 import React from 'react';
 import Loader from './../../components/Loader';
+import { NotificationManager } from 'react-notifications';
 import SearchCatalogResults from './../../components/SearchCatalogResults';
 import CriteriaSelection from './../../components/CriteriaSelection';
-import {Alert} from 'react-bootstrap';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import Paper from 'material-ui/Paper';
@@ -33,7 +33,6 @@ export class SearchCatalog extends React.Component {
 
   state = {
     type: 'dataset',
-    confirmation: null,
     searchCriteriasName: '',
     selectedKey: '',
     criteriaKeys: [
@@ -83,7 +82,6 @@ export class SearchCatalog extends React.Component {
     arr.push(value);
     this.setState({
       criteriaKeys: arr,
-      confirmation: null,
       searchCriteriasName: ''
     });
   }
@@ -103,7 +101,6 @@ export class SearchCatalog extends React.Component {
         'frequency'
       ],
       selectedSavedCriteria: '',
-      confirmation: null,
       searchCriteriasName: ''
     });
     this.props.researchActions.clearFacetKeyValuePairs();
@@ -113,11 +110,7 @@ export class SearchCatalog extends React.Component {
   _SaveCriterias () {
     if (this.state.searchCriteriasName.length && this.props.research.selectedFacets.length) {
       if (this.props.researchAPI.items.find( x => x.name === this.state.searchCriteriasName)) {
-        this.setState({
-          confirmation: <Alert bsStyle="danger" style={{marginTop: 20}}>
-            Search criteria(s) already exists with the same name. Please specify another name.
-          </Alert>
-        });
+        NotificationManager.warning(`Search criteria(s) already exists with the same name. Please specify another name.`);
       } else {
         this.props.researchAPIActions.createResearch({
           name: this.state.searchCriteriasName,
@@ -137,19 +130,10 @@ export class SearchCatalog extends React.Component {
         //   id: 1,
         //   filter: JSON.stringify({yolo:"yolo"})
         // });
-        this.setState({
-          confirmation: <Alert bsStyle="info" style={{marginTop: 20}}>
-            Search criteria(s) was saved with success. <br />
-            Navigate to 'Experience Management' section to manage saved search criteria(s).
-          </Alert>
-        });
+        NotificationManager.success("Search criteria(s) was saved with success. Navigate to 'Project Management' section to manage saved search criteria(s).");
       }
     } else {
-      this.setState({
-        confirmation: <Alert bsStyle="danger" style={{marginTop: 20}}>
-          You need to specify a name and at least one criteria to be able to save the current search criteria(s).
-        </Alert>
-      });
+      NotificationManager.error("You need to specify a name and at least one criteria to be able to save the current search criteria(s).");
     }
   }
 
@@ -246,7 +230,6 @@ export class SearchCatalog extends React.Component {
               icon={<RefreshIcon />}
               disabled={!this.props.research.selectedFacets.length}
               style={{marginTop: 20, marginLeft: 20}} />
-            {this.state.confirmation}
             <SearchCatalogResults
               clickTogglePanel={this.props.clickTogglePanel}
               research={this.props.research}

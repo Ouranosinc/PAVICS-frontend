@@ -1,4 +1,6 @@
 import React from 'react';
+import moment from 'moment';
+import { NotificationManager } from 'react-notifications';
 import * as constants from '../../constants';
 import Loader from './../../components/Loader';
 import Pagination from './../../components/Pagination';
@@ -48,8 +50,7 @@ export class SearchCatalogResults extends React.Component {
       if (event.target.checked) {
         if (index === -1) {
           this.setState({
-            checkedDatasets: oldDatasets.concat([dataset]),
-            confirm: false
+            checkedDatasets: oldDatasets.concat([dataset])
           });
         }
       } else {
@@ -59,9 +60,6 @@ export class SearchCatalogResults extends React.Component {
             checkedDatasets: oldDatasets
           });
         }
-        this.setState({
-          confirm: false
-        });
       }
     }
   }
@@ -73,9 +71,9 @@ export class SearchCatalogResults extends React.Component {
       this.props.projectAPIActions.createProjectDatasets(dataset);
     });
     this.setState({
-      checkedDatasets: [],
-      confirm: true
+      checkedDatasets: []
     });
+    NotificationManager.success("Dataset(s) added to current project with success. Navigate to 'Project Management' section to see selected dataset(s).");
   }
 
   render () {
@@ -87,28 +85,14 @@ export class SearchCatalogResults extends React.Component {
           <Loader name="datasets" />
         </Paper>;
     } else {
-      let archive = null;
-      if (this.props.research.pavicsDatasets.archive) {
-        archive =
-          <Alert bsStyle="warning" style={{ margin: 20 }}>
-            These are <strong>ARCHIVED</strong> results from a request made on {this.props.research.pavicsDatasets.requestedAt.toString()}
-          </Alert>;
-      }
       if (this.props.research.pavicsDatasets.items.length) {
         let start = (this.state.pageNumber - 1) * this.state.numberPerPage;
         let paginated = this.props.research.pavicsDatasets.items.slice(start, start + this.state.numberPerPage);
         let confirmation = null;
-        if (this.state.confirm) {
-          confirmation =
-            <Alert bsStyle="info" style={{marginTop: 20}}>
-              Dataset(s) added to current project with success. Navigate to 'Experience Management' section to see selected dataset(s).
-            </Alert>;
-        }
         mainComponent =
           <div>
             <Paper style={{ marginTop: 20 }}>
               <List>
-                {archive}
                 <Subheader inset={true}>Found <strong>{this.props.research.pavicsDatasets.items.length}</strong> results</Subheader>
                 {paginated.map((x, i) =>
                   <ListItem
@@ -157,14 +141,12 @@ export class SearchCatalogResults extends React.Component {
               icon={<AddIcon />}
               label="Add selection(s)"
               style={{marginTop: '20px'}} />
-            {confirmation}
           </div>;
       } else {
         if (this.props.research.pavicsDatasets.receivedAt) {
           mainComponent =
             <Paper style={{ marginTop: 20 }}>
               <List>
-                {archive}
                 <Subheader>No results found.</Subheader>
               </List>
             </Paper>;

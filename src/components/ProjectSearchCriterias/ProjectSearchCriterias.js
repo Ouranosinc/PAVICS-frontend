@@ -1,4 +1,6 @@
 import React from 'react';
+import moment from 'moment';
+import { NotificationManager } from 'react-notifications';
 import classes from './ProjectSearchCriterias.scss';
 import * as constants from '../../constants';
 import Pagination from './../../components/Pagination';
@@ -67,6 +69,7 @@ export class ProjectSearchCriterias extends React.Component {
   _onRestoreSearchCriteria (research) {
     this.onReloadSearchCriteria(research);
     this.props.researchActions.restorePavicsDatasets(research);
+    NotificationManager.warning(`These are ARCHIVED results from a request made on ${moment(research.createdOn).format(constants.PAVICS_DATE_FORMAT)}`);
   }
 
   _onRemoveSearchCriteria (research) {
@@ -88,7 +91,7 @@ export class ProjectSearchCriterias extends React.Component {
                   primaryText={research.name}
                   secondaryText={
                     <p>
-                      <span style={{color: darkBlack}}>{research.results.length} results on {research.createdOn.toString()}</span><br />
+                      <span style={{color: darkBlack}}>{research.results.length} results on {moment(research.createdOn).format(constants.PAVICS_DATE_FORMAT)}</span><br />
                       <strong>Facets: </strong>
                       <span>
                         {

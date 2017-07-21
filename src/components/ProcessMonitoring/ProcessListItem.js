@@ -112,7 +112,7 @@ export class ProcessListItem extends React.Component {
   render () {
     let secondaryText =
       <span style={{color: darkBlack}}>
-        <span>Launched on <strong>{moment(this.props.job.created).format(constants.MONITOR_DATE_FORMAT)}</strong> using provider <strong>{this.props.job.service}</strong>.</span><br/>
+        <span>Launched on <strong>{moment(this.props.job.created).format(constants.PAVICS_DATE_FORMAT)}</strong> using provider <strong>{this.props.job.service}</strong>.</span><br/>
         <StatusElement job={this.props.job} />, <strong>Duration: </strong>{this.props.job.duration}
       </span>;
     if (this.props.isWorkflowTask) {
