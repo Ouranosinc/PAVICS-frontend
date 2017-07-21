@@ -20,8 +20,7 @@ import RefreshIcon from 'material-ui/svg-icons/navigation/refresh';
 import FileIcon from 'material-ui/svg-icons/editor/insert-drive-file';
 import LogIcon from 'material-ui/svg-icons/action/receipt';
 import ExpandableIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-down';
-import NotExpandableIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-right';
-import NoActionIcon from 'material-ui/svg-icons/av/not-interested';
+import VisualizeIcon from 'material-ui/svg-icons/image/remove-red-eye';
 
 class ProcessMonitoring extends React.Component {
   static propTypes = {
@@ -46,7 +45,7 @@ class ProcessMonitoring extends React.Component {
     this._onShowLogDialog = this._onShowLogDialog.bind(this);
     this._onRefreshResults = this._onRefreshResults.bind(this);
     this._onPageChanged = this._onPageChanged.bind(this);
-    this._onVisualiseDataset = this._onVisualiseDataset.bind(this);
+    this._onVisualiseDatasets = this._onVisualiseDatasets.bind(this);
   }
 
   componentWillReceiveProps (nextProps) {
@@ -83,18 +82,20 @@ class ProcessMonitoring extends React.Component {
     this.props.monitorActions.fetchWPSJobs(this.props.project.currentProject.id, numberPerPage, pageNumber);
   }
 
-  _onVisualiseDataset (url) {
+  _onVisualiseDatasets (urlArray) {
     // TODO Remove hardcoded path
-    alert('TODO: Call Visualize WPS, temporary built WMS URL so the result can be seen but TimeSlider and other features won\'t work');
-    let prefix = __PAVICS_NCWMS_PATH__ + '?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&DATASET=outputs/wps_outputs/';
-    let index = url.indexOf('flyingpigeon');
-    let suffix = url.substring(index, url.length);
-    this.props.addDatasetLayersToVisualize([
-      {
-        wms_url: prefix + suffix,
-        dataset_id: suffix
-      }
-    ]);
+    console.log('TODO: Call Visualize WPS, temporary built WMS URL so the result can be seen but TimeSlider and other features won\'t work');
+    urlArray.forEach((url) => {
+      let prefix = __PAVICS_NCWMS_PATH__ + '?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&DATASET=outputs/wps_outputs/';
+      let index = url.indexOf('flyingpigeon');
+      let suffix = url.substring(index, url.length);
+      this.props.addDatasetLayersToVisualize([
+        {
+          wms_url: prefix + suffix,
+          dataset_id: suffix
+        }
+      ]);
+    });
   }
 
   _onShowLogDialog (log) {
@@ -146,7 +147,7 @@ class ProcessMonitoring extends React.Component {
                 return <ProcessListItem job={x}
                                         key={i}
                                         onShowLogDialog={this._onShowLogDialog}
-                                        onVisualiseDataset={this._onVisualiseDataset}/>;
+                                        onVisualiseDatasets={this._onVisualiseDatasets}/>;
               }else {
                 if (x.process_id === __PAVICS_RUN_WORKFLOW_IDENTIFIER__) {
                   //Threat FAILED and SUCCESSFULL workflow (both are expandable)
@@ -238,11 +239,19 @@ class ProcessMonitoring extends React.Component {
                               key={j}
                               job={taskDetails}
                               onShowLogDialog={this._onShowLogDialog}
-                              onVisualiseDataset={this._onVisualiseDataset} />
+                              onVisualiseDatasets={this._onVisualiseDatasets} />
                           );
                         }else{
                           // No actions
                           let completedTasks = parrallelTasks.filter(x => x.status === constants.JOB_SUCCESS_STATUS);
+                          let visualizableOutputs = []
+                          parrallelTasks.forEach((task)=> {
+                            task.outputs.forEach((output) => {
+                              if(output.mimeType === 'application/x-netcdf') {
+                                visualizableOutputs.push(output.reference);
+                              }
+                            });
+                          });
                           // TODO Visualize all for subtasks
                           return  (
                           <ListItem
@@ -253,11 +262,25 @@ class ProcessMonitoring extends React.Component {
                                 Parallel tasks completed with success: <strong>{completedTasks.length} / {parrallelTasks.length}</strong>
                               </p>
                             }
-                            secondaryTextLines={1}
+                            secondaryTextLines={2}
                             initiallyOpen={false}
                             primaryTogglesNestedList={true}
                             leftIcon={<ExpandableIcon />}
-                            rightIcon={<NoActionIcon />}
+                            rightIcon={
+                              <IconMenu iconButtonElement={
+                                <IconButton
+                                  touch={true}
+                                  tooltipPosition="bottom-left">
+                                  <MoreVertIcon color={grey400}/>
+                                </IconButton>
+                              }>
+                                <MenuItem
+                                  primaryText="Visualize All"
+                                  disabled={!visualizableOutputs.length}
+                                  onTouchTap={(event) => this._onVisualiseDatasets(visualizableOutputs)}
+                                  leftIcon={<VisualizeIcon />}/>
+                              </IconMenu>
+                            }
                             nestedItems={
                               parrallelTasks.map((task, k) => {
                                 task.title = taskName;
@@ -268,7 +291,7 @@ class ProcessMonitoring extends React.Component {
                                   key={k}
                                   job={task}
                                   onShowLogDialog={this._onShowLogDialog}
-                                  onVisualiseDataset={this._onVisualiseDataset} />
+                                  onVisualiseDatasets={this._onVisualiseDatasets} />
                               })
                             }
                             />
@@ -309,7 +332,7 @@ class ProcessMonitoring extends React.Component {
                   return <ProcessListItem job={x}
                                           key={i}
                                           onShowLogDialog={this._onShowLogDialog}
-                                          onVisualiseDataset={this._onVisualiseDataset}/>
+                                          onVisualiseDatasets={this._onVisualiseDatasets}/>
                 }
               }
             }

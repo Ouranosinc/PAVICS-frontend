@@ -24,7 +24,7 @@ export class ProcessListItem extends React.Component {
     isWorkflowTask:  React.PropTypes.bool,
     job: React.PropTypes.object.isRequired,
     onShowLogDialog: React.PropTypes.func.isRequired,
-    onVisualiseDataset: React.PropTypes.func.isRequired,
+    onVisualiseDatasets: React.PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -32,8 +32,18 @@ export class ProcessListItem extends React.Component {
     isWorkflowTask: false
   };
 
-  constructor(props) {
+  constructor (props) {
     super(props);
+  }
+
+  extractFileId (reference) {
+    const SEARCH_VALUE = "wpsoutputs/";
+    let fileId = "";
+    let index = reference.indexOf(SEARCH_VALUE);
+    if(index > -1) {
+      fileId = reference.substring(index + SEARCH_VALUE.length);
+    }
+    return fileId;
   }
 
   buildMinimalIconMenuActions() {
@@ -79,7 +89,7 @@ export class ProcessListItem extends React.Component {
       <MenuItem
         primaryText="Visualize"
         disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS || !isVisualisableOnMap}
-        onTouchTap={(event) => this.props.onVisualiseDataset(output.reference)}
+        onTouchTap={(event) => this.props.onVisualiseDatasets([output.reference])}
         leftIcon={<VisualizeIcon />}/>
       <MenuItem
         primaryText="Download"
@@ -129,8 +139,8 @@ export class ProcessListItem extends React.Component {
               key={k}
               style={{marginLeft: ((this.props.indentationLevel + 1) * 18) + "px"}}
               primaryText={<p>{output.title}: {output.abstract}</p>}
-              secondaryText={<p>Type: <strong>{output.mimeType}</strong></p>}
-              secondaryTextLines={1}
+              secondaryText={<p>File: {this.extractFileId(output.reference)} <br/>Type: <strong>{output.mimeType}</strong></p>}
+              secondaryTextLines={2}
               leftIcon={<FileIcon />}
               rightIconButton={
                 this.buildBasicIconMenuActions(output)
