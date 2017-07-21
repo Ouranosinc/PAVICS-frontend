@@ -21,7 +21,7 @@ export const JOB_ACCEPTED_STATUS = 'ProcessAccepted';
 export const JOB_FAILED_STATUS = 'ProcessFailed';
 export const JOB_SUCCESS_STATUS = 'ProcessSucceeded';
 export const JOB_STARTED_STATUS = 'ProcessStarted';
-export const JOB_UNKNOWN_STATUS = null;
+export const JOB_PAUSED_STATUS = 'ProcessPaused';
 export const MONITOR_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 // Visualize
 // TODO Delete

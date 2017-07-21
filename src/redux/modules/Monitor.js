@@ -138,11 +138,7 @@ const MONITOR_HANDLERS = {
     return ({...state, jobs: action.jobs});
   },
   [constants.MONITOR_POLL_WPS_JOBS_SUCCESS]: (state, action) => {
-    if(JSON.stringify(state.jobs) !== JSON.stringify(action.jobs)){
-      return ({...state, jobs: action.jobs});
-    }else {
-      return ({...state});
-    }
+    return ({...state, jobs: action.jobs});
   },
 };
 

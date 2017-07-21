@@ -39,6 +39,9 @@ export class StatusElement extends React.Component {
       case constants.JOB_FAILED_STATUS:
         status = <strong style={errorStyle}>FAILED</strong>;
         break;
+      case constants.JOB_PAUSED_STATUS:
+        status = <strong style={warningStyle}>PAUSED</strong>;
+        break;
       default:
         status = <strong >UNKNOWN STATUS</strong>;
         break;

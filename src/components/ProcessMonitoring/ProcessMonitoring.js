@@ -56,9 +56,9 @@ class ProcessMonitoring extends React.Component {
 
       // Launch polling only if any job is UNKNOWN, ACCEPTED or IN_PROGRESS
       if(nextProps.monitor.jobs.items.find(job =>
-        job.status === constants.JOB_UNKNOWN_STATUS ||
-        job.status === constants.JOB_ACCEPTED_STATUS ||
-        job.status === constants.JOB_STARTED_STATUS )){
+          !job.status || job.status === constants.JOB_PAUSED_STATUS ||
+          job.status === constants.JOB_ACCEPTED_STATUS || job.status === constants.JOB_STARTED_STATUS
+        )){
         this.pollWPSJobs();
       }
     }
@@ -134,10 +134,12 @@ class ProcessMonitoring extends React.Component {
             {this.props.monitor.jobs.items.map((x, i) => {
 
               if(x.status === null ||
+                x.status === constants.JOB_PAUSED_STATUS ||
                 x.status === constants.JOB_ACCEPTED_STATUS ||
                 x.status === constants.JOB_STARTED_STATUS ||
                 (x.status === constants.JOB_FAILED_STATUS && x.process_id !== __PAVICS_RUN_WORKFLOW_IDENTIFIER__)){
                 // Threat UNKNOWN process & workflow
+                //        PAUSED process & workflow
                 //        PENDING process & workflow
                 //        STARTED process & workflow
                 //        FAILED process
