@@ -42,6 +42,8 @@ export class ProcessListItem extends React.Component {
     let index = reference.indexOf(SEARCH_VALUE);
     if(index > -1) {
       fileId = reference.substring(index + SEARCH_VALUE.length);
+    }else{
+      fileId = reference;
     }
     return fileId;
   }
