@@ -20,6 +20,8 @@ export default class ScientificWorkflowStepper extends Component {
   static propTypes = {
     showDialog: React.PropTypes.func.isRequired,
     goToSection: React.PropTypes.func.isRequired,
+    jobAPIActions: React.PropTypes.object.isRequired,
+    project: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
     selectedRegions: React.PropTypes.array.isRequired,
@@ -78,7 +80,7 @@ export default class ScientificWorkflowStepper extends Component {
         let thisTaskProvider = thisTask.provider;
         let thisTaskProcessIdentifier = thisTask.identifier;
         if (validProviders.indexOf(thisTaskProvider) === -1) {
-          throw new Error(`The provider ${thisTaskProvider} is not a valid provider. Please edit the workflow accordingly.`);
+          NotificationManager.error(`The provider ${thisTaskProvider} is not a valid provider. Please edit the workflow accordingly.`);
         }
         let providerDescription = await this.request(`/phoenix/processesList?provider=${thisTaskProvider}`);
         // we want only the part before the ?
@@ -90,7 +92,7 @@ export default class ScientificWorkflowStepper extends Component {
         providerDescription.items.map(elem => validProcessIdentifiers.push(elem.identifier));
         // validate that this task has a valid identifier (that is, the provider provides that identifier)
         if (validProcessIdentifiers.indexOf(thisTaskProcessIdentifier) === -1) {
-          throw new Error(`The identifier ${thisTaskProcessIdentifier} is not a valid process identifier of the provider ${thisTaskProvider}. Please provide valid process identifiers`);
+          NotificationManager.error(`The identifier ${thisTaskProcessIdentifier} is not a valid process identifier of the provider ${thisTaskProvider}. Please provide valid process identifiers`);
         }
         // if the task has inputs (a task can have only linked_inputs, that are provided by other tasks. those tasks need nothing from the user)
         // here, we validate that all inputs actually exist in the process
@@ -102,7 +104,7 @@ export default class ScientificWorkflowStepper extends Component {
             if(thisTask.inputs.hasOwnProperty(inputName)) {
               let validInputIndex = validInputNames.indexOf(inputName);
               if (validInputIndex === -1) {
-                throw new Error(`The input ${inputName} is not a valid input for the process ${thisTaskProcessIdentifier}, it should be one of ${validInputNames.join(', ')}.`);
+                NotificationManager.error(`The input ${inputName} is not a valid input for the process ${thisTaskProcessIdentifier}, it should be one of ${validInputNames.join(', ')}.`);
               }
               console.log('process description:', processDescription);
               inputsThatShouldBeProvided.push({
@@ -120,7 +122,7 @@ export default class ScientificWorkflowStepper extends Component {
       this.props.workflowActions.setProcessInputs(inputsThatShouldBeProvided);
 
     } else {
-      throw new Error('The workflow is invalid, it lacks a json member.');
+      NotificationManager.error('The workflow is invalid, it lacks a json member.');
     }
   };
 
@@ -145,9 +147,17 @@ export default class ScientificWorkflowStepper extends Component {
     // we already have had to put strange __start__ and __end__ inputs to work nicely with phoenix
     let url = `${__PAVICS_PHOENIX_PATH__}/processes/execute?wps=${this.props.selectedProvider}&process=${this.props.selectedProcess.identifier}`;
     this.makePostRequest(url, formData, (xhr, params) => {
-      if(xhr.status === 200){
-        NotificationManager.success('Workflow has been launched with success, you can now monitor workflow execution in the monitoring panel', 'Success', 10000);
-      }else{
+      // status is always 200
+      // if(xhr.responseURL.indexOf('/processes/loading') !== -1){ // Deprecated but workek well with phoenix execute() Accept text/html
+      try {
+        let response = JSON.parse(xhr.responseText);
+        if (response.status === 200) {
+          this.props.jobAPIActions.createJob({ projectId: this.props.project.currentProject.id, phoenixTaskId: response.task_id });
+          NotificationManager.success('Workflow has been launched with success, you can now monitor workflow execution in the monitoring panel', 'Success', 10000);
+        }else{
+          NotificationManager.error('Workflow hasn\'t been launched as intended. Make sure the workflow and required inputs are defined properly', 'Error', 10000);
+        }
+      }catch(error){
         NotificationManager.error('Workflow hasn\'t been launched as intended. Make sure the workflow and required inputs are defined properly', 'Error', 10000);
       }
     });
@@ -161,7 +171,7 @@ export default class ScientificWorkflowStepper extends Component {
       }
     };
     xhr.open('POST', url);
-    xhr.setRequestHeader('accept', 'text/html');
+    xhr.setRequestHeader('accept', 'application/json');  // Old: 'text/html'
     xhr.send(data);
   }
 
@@ -250,6 +260,7 @@ export default class ScientificWorkflowStepper extends Component {
               workflowAPIActions={this.props.workflowAPIActions} />
             <p style={styles.orParagraph}>Or add a new workflow</p>
             <ScientificWorkflowForm
+              project={this.props.project}
               workflowAPIActions={this.props.workflowAPIActions}/>
           </StepContent>
         </Step>

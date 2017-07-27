@@ -1,8 +1,8 @@
 import React from 'react';
 import Loader from './../../components/Loader';
+import { NotificationManager } from 'react-notifications';
 import SearchCatalogResults from './../../components/SearchCatalogResults';
 import CriteriaSelection from './../../components/CriteriaSelection';
-import {Alert} from 'react-bootstrap';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import Paper from 'material-ui/Paper';
@@ -33,7 +33,6 @@ export class SearchCatalog extends React.Component {
 
   state = {
     type: 'dataset',
-    confirmation: null,
     searchCriteriasName: '',
     selectedKey: '',
     criteriaKeys: [
@@ -56,6 +55,8 @@ export class SearchCatalog extends React.Component {
 
   componentWillMount() {
     this.props.researchActions.fetchFacets();
+    let filter = JSON.stringify({ where: {projectId: this.props.project.currentProject.id}});
+    this.props.researchAPIActions.fetchResearchs({ filter: filter });
   }
 
   _onChangeSearchType (value) {
@@ -65,16 +66,15 @@ export class SearchCatalog extends React.Component {
     });
   }
 
-  _onLoadSavedCriteria (value) {
-    let searchCriteria = this.props.currentProjectSearchCriterias.find(x => x.name === value);
+  _onLoadSavedCriteria (id) {
+    let searchCriteria = this.props.researchAPI.items.find(x => x.id === id);
     this.setState({
-      selectedSavedCriteria: value
+      selectedSavedCriteria: id
     });
-    this.props.removeAllFacetKeyValue();
-    searchCriteria.criterias.forEach((criteria) => {
-      this.props.addFacetKeyValuePair(criteria.key, criteria.value);
+    this.props.researchActions.clearFacetKeyValuePairs();
+    searchCriteria.facets.forEach((facet) => {
+      this.props.researchActions.addFacetKeyValuePair(facet.key, facet.value);
     });
-    this._onSetSearchCriteriasName = this._onSetSearchCriteriasName.bind(this);
   }
 
   _onAddCriteriaKey (value) {
@@ -82,7 +82,6 @@ export class SearchCatalog extends React.Component {
     arr.push(value);
     this.setState({
       criteriaKeys: arr,
-      confirmation: null,
       searchCriteriasName: ''
     });
   }
@@ -101,7 +100,7 @@ export class SearchCatalog extends React.Component {
         'variable',
         'frequency'
       ],
-      confirmation: null,
+      selectedSavedCriteria: '',
       searchCriteriasName: ''
     });
     this.props.researchActions.clearFacetKeyValuePairs();
@@ -110,12 +109,8 @@ export class SearchCatalog extends React.Component {
 
   _SaveCriterias () {
     if (this.state.searchCriteriasName.length && this.props.research.selectedFacets.length) {
-      if (this.props.currentProjectSearchCriterias.find( x => x.name === this.state.searchCriteriasName)) {
-        this.setState({
-          confirmation: <Alert bsStyle="danger" style={{marginTop: 20}}>
-            Search criteria(s) already exists with the same name. Please specify another name.
-          </Alert>
-        });
+      if (this.props.researchAPI.items.find( x => x.name === this.state.searchCriteriasName)) {
+        NotificationManager.warning(`Search criteria(s) already exists with the same name. Please specify another name.`);
       } else {
         this.props.researchAPIActions.createResearch({
           name: this.state.searchCriteriasName,
@@ -135,19 +130,10 @@ export class SearchCatalog extends React.Component {
         //   id: 1,
         //   filter: JSON.stringify({yolo:"yolo"})
         // });
-        this.setState({
-          confirmation: <Alert bsStyle="info" style={{marginTop: 20}}>
-            Search criteria(s) was saved with success. <br />
-            Navigate to 'Experience Management' section to manage saved search criteria(s).
-          </Alert>
-        });
+        NotificationManager.success("Search criteria(s) was saved with success. Navigate to 'Project Management' section to manage saved search criteria(s).");
       }
     } else {
-      this.setState({
-        confirmation: <Alert bsStyle="danger" style={{marginTop: 20}}>
-          You need to specify a name and at least one criteria to be able to save the current search criteria(s).
-        </Alert>
-      });
+      NotificationManager.error("You need to specify a name and at least one criteria to be able to save the current search criteria(s).");
     }
   }
 
@@ -176,8 +162,8 @@ export class SearchCatalog extends React.Component {
                       value={this.state.selectedSavedCriteria}
                       onChange={(event, index, value) => this._onLoadSavedCriteria(value)}>
                       {
-                        this.props.currentProjectSearchCriterias.map((search, i) => {
-                          return <MenuItem key={i} value={search.name} primaryText={search.name} />;
+                        this.props.researchAPI.items.map((search, i) => {
+                          return <MenuItem key={i} value={search.id} primaryText={search.name} />;
                         })
                       }
                     </SelectField>
@@ -244,7 +230,6 @@ export class SearchCatalog extends React.Component {
               icon={<RefreshIcon />}
               disabled={!this.props.research.selectedFacets.length}
               style={{marginTop: 20, marginLeft: 20}} />
-            {this.state.confirmation}
             <SearchCatalogResults
               clickTogglePanel={this.props.clickTogglePanel}
               research={this.props.research}

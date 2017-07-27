@@ -23,22 +23,46 @@ let phoenix = (() => {
           this.body = response.body;
           break;
         case 'jobs' :
+          let projectId = parseInt(this.request.query.projectId, 10);
+          let limit = parseInt(this.request.query.limit, 10);
+          let page = parseInt(this.request.query.page, 10);
+          let sort = this.request.query.sort;
+          // WTF is going on with the Phoenix pagination?
           options = {
-            // PARAMS ARE ACTUALLY WORKING
-            /* url: config.pavics_phoenix_path + '/monitor?page=1&limit=10&sort=duration', */
-            url: config.pavics_phoenix_path + '/monitor?limit=1000',
+            url: config.pavics_phoenix_path + `/monitor?limit=99999`, // ${limit}&page=${page}&sort=${sort}`,
             headers: {
+              // Cookie: "phoenix_session=687473a9e273b666aa3e310341fbb86df41ceedbbffc637c3dd6493badbf26256efa4f3e",
               Accept: 'application/json'
             },
             rejectUnauthorized: false
           };
           response = yield request(options);
           let json = JSON.parse(response.body);
-          for (let i = 0; i < json.jobs.length; ++i) {
-            json.jobs[i]['response_to_json'] = yield Utils.parseXMLThunk(json.jobs[i]['response']);
-            json.jobs[i]['request_to_json'] = yield Utils.parseXMLThunk(json.jobs[i]['request']);
+
+          // Fetch loopback jobs for this project
+          let filter = JSON.stringify({where: {projectId: projectId}});
+          let loopbackResponse = yield request(`${config.loopback_api_path}/Jobs?filter=${filter}`);
+          let lbProjectJobs = JSON.parse(loopbackResponse.body);
+          // console.log(JSON.parse(loopbackResponse.body));
+
+          // Filter phoenix returned job with loopback results
+          let filteredJobs = json.jobs.filter( (job) => lbProjectJobs.find((lbJob) => lbJob.phoenixTaskId === job.task_id));
+          // console.log(filteredJobs.length);
+
+          // Custom pagination because phoenix pagination suck and is unpredictable
+          // And we need loopback project filtering anyway ...
+          let start = (page - 1) * limit;
+          let paginatedJobs = filteredJobs.slice(start, start + limit);
+          for (let i = 0; i < paginatedJobs.length; ++i) {
+            paginatedJobs[i]['response_to_json'] = yield Utils.parseXMLThunk(paginatedJobs[i]['response']);
+            paginatedJobs[i]['request_to_json'] = yield Utils.parseXMLThunk(paginatedJobs[i]['request']);
           }
-          this.body = json;
+
+          // Over-writting phoenix values return with what interests us
+          let result = {};
+          result.count = filteredJobs.length;
+          result.jobs = paginatedJobs;
+          this.body = result;
           break;
         case 'processes' :
           options = {

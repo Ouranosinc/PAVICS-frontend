@@ -1,4 +1,5 @@
 import React from 'react';
+import { NotificationManager } from 'react-notifications';
 import {Stepper, Step, StepLabel, StepContent} from 'material-ui/Stepper';
 import WpsProviderSelector from './../../components/WpsProviderSelector';
 import WpsProcessSelector from './../../components/WpsProcessSelector';
@@ -12,6 +13,8 @@ const FORM_PROCESS_ID = "form-individual-process";
 export default class WorkflowWizardStepper extends React.Component {
   static propTypes = {
     goToSection: React.PropTypes.func.isRequired,
+    jobAPIActions: React.PropTypes.object.isRequired,
+    project: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
     selectedRegions: React.PropTypes.array.isRequired,
@@ -34,24 +37,32 @@ export default class WorkflowWizardStepper extends React.Component {
     }
 
     let url = `${__PAVICS_PHOENIX_PATH__}/processes/execute?wps=${this.props.workflow.selectedProvider}&process=${this.props.workflow.selectedProcess.identifier}`;
-    // let url = `/phoenix/execute?wps=${this.props.selectedProvider}&process=${this.props.selectedProcess.identifier}`;
-    this.makePostRequest(url, formData, (res) => {
-      // TODO actually do something once the post have been done
-      console.log(res);
+    this.makePostRequest(url, formData, (xhr, params) => {
+      // status is always 200
+      // if(xhr.responseURL.indexOf('/processes/loading') !== -1){ // Deprecated but workek well with phoenix execute() Accept text/html
+      try {
+        let response = JSON.parse(xhr.responseText);
+        if (response.status === 200) {
+          this.props.jobAPIActions.createJob({ projectId: this.props.project.currentProject.id, phoenixTaskId: response.task_id });
+          NotificationManager.success('Process has been launched with success, you can now monitor process execution in the monitoring panel', 'Success', 10000);
+        }else{
+          NotificationManager.error('Process hasn\'t been launched as intended. Make sure the process and required inputs are defined properly', 'Error', 10000);
+        }
+      }catch(error){
+        NotificationManager.error('Process hasn\'t been launched as intended. Make sure the process and required inputs are defined properly', 'Error', 10000);
+      }
     });
-    // this.props.executeProcess(provider, identifier, values);
-    // this.props.goToSection(constants.PLATFORM_SECTION_MONITOR);
   }
 
   makePostRequest (url, data, callable, params) {
     let xhr = new XMLHttpRequest();
     xhr.onload = function () {
       if (callable !== undefined) {
-        callable(xhr.responseText, params);
+        callable(xhr, params);
       }
     };
     xhr.open('POST', url);
-    xhr.setRequestHeader('accept', 'text/html');
+    xhr.setRequestHeader('accept', 'application/json'); // Old: 'text/html'
     xhr.send(data);
   }
 

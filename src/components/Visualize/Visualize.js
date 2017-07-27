@@ -1,7 +1,7 @@
 import React from 'react';
 import classes from './Visualize.scss';
-// TODO: Fix, we should only import containers here
 import OLComponent from '../../components/OLComponent';
+import CurrentProjectSnackbar from '../../components/CurrentProjectSnackbar';
 import {PieMenu} from '../PieMenu/PieMenu';
 import TimeSlider from '../../components/TimeSlider';
 import InformationPanel from '../../components/InformationPanel';
@@ -11,6 +11,9 @@ import MapControls from './../../components/MapControls';
 import * as constants from '../../constants';
 class Visualize extends React.Component {
   static propTypes = {
+    goToSection: React.PropTypes.func.isRequired,
+    project: React.PropTypes.object.isRequired,
+    projectActions: React.PropTypes.object.isRequired,
     selectMapManipulationMode: React.PropTypes.func.isRequired,
     selectedDatasetCapabilities: React.PropTypes.object.isRequired,
     selectedDatasetLayer: React.PropTypes.object.isRequired,
@@ -50,7 +53,7 @@ class Visualize extends React.Component {
     console.log(props);
     this._onToggleMapPanel = this._onToggleMapPanel.bind(this);
     this.setOLComponentReference = this.setOLComponentReference.bind(this);
-    // this.props.researchActions.createResearchAsset({yolo: 'yolo1', researchId: 1});
+    this.props.projectActions.setCurrentProject({id: 1, name: 'project-renaud-1'});
     let mapPanelStatus = {};
     mapPanelStatus[constants.VISUALIZE_INFO_PANEL] = false;
     mapPanelStatus[constants.VISUALIZE_MAP_CONTROLS_PANEL] = true;
@@ -61,7 +64,6 @@ class Visualize extends React.Component {
       mapPanelStatus: mapPanelStatus,
       OLComponentReference: {}
     };
-    // this.props.fetchFacets();
   }
 
   _onToggleMapPanel (panel) {
@@ -175,6 +177,10 @@ class Visualize extends React.Component {
                 </div> : null
             }
           </div>
+          <CurrentProjectSnackbar
+            project={this.props.project}
+            goToSection={this.props.goToSection}
+          />
         </div>
       </div>
     );

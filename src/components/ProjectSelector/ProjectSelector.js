@@ -22,6 +22,8 @@ export class ProjectSelector extends React.Component {
   _onSetCurrentProject(id){
     let project = this.props.projectAPI.items.find(x => x.id === id);
     this.props.projectActions.setCurrentProject(project);
+    // TODO RESET DATASET SELECTION IN LAYER SWITCHER
+    // TODO RESET LAYER SWITCH DATASETS LIST
   }
 
   render () {

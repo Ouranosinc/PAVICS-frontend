@@ -14,7 +14,6 @@ import {
   VisualizeContainer,
   WorkflowWizardContainer } from './../../../containers';
 import { SectionalPanel } from './../../../components/SectionalPanel';
-// import Snackbar from 'material-ui/Snackbar';
 require('react-notifications/lib/notifications.css');
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 
@@ -67,7 +66,7 @@ class Pavics extends React.Component {
         return (
           <ResearchContainer {...this.props} />
         );
-      case constants.PLATFORM_SECTION_EXPERIENCE_MANAGEMENT:
+      case constants.PLATFORM_SECTION_PROJECT_MANAGEMENT:
         return (
           <ExperienceManagementContainer {...this.props} />
         );
@@ -92,6 +91,22 @@ class Pavics extends React.Component {
     }
   }
 
+  makeTitle () {
+    switch (this.props.platform.section) {
+      case constants.PLATFORM_SECTION_SEARCH_DATASETS:
+        return "Search Datasets";
+      case constants.PLATFORM_SECTION_PROJECT_MANAGEMENT:
+        return "Project Management";
+      case constants.PLATFORM_SECTION_WORKFLOWS:
+        return "Workflow Wizard";
+      case constants.PLATFORM_SECTION_MONITOR:
+        return "Processes Monitoring";
+      case constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT:
+        return "Account Management";
+      default:
+        return "";
+    }
+  }
 
   render () {
     return (
@@ -103,7 +118,8 @@ class Pavics extends React.Component {
             goToSection={this.props.goToSection}
             // chooseStep={this.props.workflowActions.chooseStep}
             showContent={this.makeSection() !== null}
-            currentContent={this.makeSection()} />
+            currentContent={this.makeSection()}
+            currentTitle={this.makeTitle()}/>
           <NotificationContainer />
         </div>
       </MuiThemeProvider>

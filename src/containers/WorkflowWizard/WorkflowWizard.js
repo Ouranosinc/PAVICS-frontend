@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { actions as jobAPIActionsCreators } from '../../redux/modules/JobAPI';
 import { actions as projectActionsCreators } from '../../redux/modules/Project';
 import { actions as workflowActionsCreators } from './../../redux/modules/Workflow';
 import { actions as workflowAPIActionsCreators } from '../../redux/modules/WorkflowAPI';
@@ -30,6 +31,7 @@ const mapStateToProps = (state) => {
 };
 const mapDispatchToProps = (dispatch) => {
   return {
+    jobAPIActions: bindActionCreators({...jobAPIActionsCreators}, dispatch),
     projectActions: bindActionCreators({...projectActionsCreators}, dispatch),
     workflowActions: bindActionCreators({...workflowActionsCreators}, dispatch),
     workflowAPIActions: bindActionCreators({...workflowAPIActionsCreators}, dispatch)

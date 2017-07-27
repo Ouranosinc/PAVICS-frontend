@@ -8,6 +8,7 @@ class SectionalPanel extends React.Component {
     goToSection: React.PropTypes.func.isRequired,
     section: React.PropTypes.string.isRequired,
     currentContent: React.PropTypes.object,
+    currentTitle: React.PropTypes.string.isRequired,
     showContent: React.PropTypes.bool.isRequired
   };
 
@@ -21,6 +22,7 @@ class SectionalPanel extends React.Component {
           {/*chooseStep={this.props.workflowActions.chooseStep}*/}
           <SectionalContent
             showContent={this.props.showContent}
+            title={this.props.currentTitle}
             currentContent={this.props.currentContent} />
         </div>
       </div>
