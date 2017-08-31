@@ -24,6 +24,7 @@ export class ProcessListItem extends React.Component {
     isWorkflowTask:  React.PropTypes.bool,
     job: React.PropTypes.object.isRequired,
     onShowLogDialog: React.PropTypes.func.isRequired,
+    onShowPersistDialog: React.PropTypes.func.isRequired,
     onVisualiseDatasets: React.PropTypes.func.isRequired,
   };
 
@@ -106,7 +107,7 @@ export class ProcessListItem extends React.Component {
       <MenuItem
         primaryText="Persist (TODO)"
         disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS}
-        onTouchTap={(event) => alert('TODO: Call Persist WPS')}
+        onTouchTap={(event) => this.props.onShowPersistDialog(output)}
         leftIcon={<PersistIcon  />}/>
     </IconMenu>
   }

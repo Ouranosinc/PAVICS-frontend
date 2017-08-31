@@ -37,12 +37,17 @@ class ProcessMonitoring extends React.Component {
     this.state = {
       logDialogArray: [],
       logDialogOpened: false,
+      persistDialogOutput: [],
+      persistDialogOpened: false,
       pageNumber: 1,
       numberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX]
     };
     this.props.monitorActions.fetchWPSJobs(this.props.project.currentProject.id, constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX], 1);
-    this._closeDialog = this._closeDialog.bind(this);
+    this._closeLogDialog = this._closeLogDialog.bind(this);
     this._onShowLogDialog = this._onShowLogDialog.bind(this);
+    this._closePersistDialog = this._closePersistDialog.bind(this);
+    this._onPersistOutputClicked = this._onPersistOutputClicked.bind(this);
+    this._onShowPersistDialog = this._onShowPersistDialog.bind(this);
     this._onRefreshResults = this._onRefreshResults.bind(this);
     this._onPageChanged = this._onPageChanged.bind(this);
     this._onVisualiseDatasets = this._onVisualiseDatasets.bind(this);
@@ -105,10 +110,30 @@ class ProcessMonitoring extends React.Component {
     });
   }
 
-  _closeDialog () {
+  _closeLogDialog () {
     this.setState({
       logDialogOpened: false,
       logDialogArray: ''
+    });
+  }
+
+  _onShowPersistDialog (output) {
+    this.setState({
+      persistDialogOpened: true,
+      persistDialogOutput: output
+    });
+  }
+
+  _onPersistOutputClicked () {
+    alert('call WPS')
+    // TODO PERSIST WPS CALL
+    this._closePersistDialog();
+  }
+
+  _closePersistDialog () {
+    this.setState({
+      persistDialogOpened: false,
+      persistDialogOutput: null
     });
   }
 
@@ -147,6 +172,7 @@ class ProcessMonitoring extends React.Component {
                 return <ProcessListItem job={x}
                                         key={i}
                                         onShowLogDialog={this._onShowLogDialog}
+                                        onShowPersistDialog={this._onShowPersistDialog}
                                         onVisualiseDatasets={this._onVisualiseDatasets}/>;
               }else {
                 if (x.process_id === __PAVICS_RUN_WORKFLOW_IDENTIFIER__) {
@@ -239,6 +265,7 @@ class ProcessMonitoring extends React.Component {
                               key={j}
                               job={taskDetails}
                               onShowLogDialog={this._onShowLogDialog}
+                              onShowPersistDialog={this._onShowPersistDialog}
                               onVisualiseDatasets={this._onVisualiseDatasets} />
                           );
                         }else{
@@ -291,6 +318,7 @@ class ProcessMonitoring extends React.Component {
                                   key={k}
                                   job={task}
                                   onShowLogDialog={this._onShowLogDialog}
+                                  onShowPersistDialog={this._onShowPersistDialog}
                                   onVisualiseDatasets={this._onVisualiseDatasets} />
                               })
                             }
@@ -332,6 +360,7 @@ class ProcessMonitoring extends React.Component {
                   return <ProcessListItem job={x}
                                           key={i}
                                           onShowLogDialog={this._onShowLogDialog}
+                                          onShowPersistDialog={this._onShowPersistDialog}
                                           onVisualiseDatasets={this._onVisualiseDatasets}/>
                 }
               }
@@ -367,7 +396,7 @@ class ProcessMonitoring extends React.Component {
                 label="Close"
                 primary={false}
                 keyboardFocused={true}
-                onTouchTap={this._closeDialog} />
+                onTouchTap={this._closeLogDialog} />
             }
             autoScrollBodyContent={true}>
             {
@@ -376,6 +405,33 @@ class ProcessMonitoring extends React.Component {
                 return <p key={i}>{log}</p>
               }) : null
             }
+          </Dialog>
+          <Dialog
+            title="Persist result"
+            modal={false}
+            open={this.state.persistDialogOpened}
+            onRequestClose={this._closePersistDialog}
+            actions={
+              [
+                <RaisedButton
+                  label="Launch Persist"
+                  primary={true}
+                  keyboardFocused={true}
+                  onTouchTap={this._onPersistOutputClicked}
+                  style={{marginRight: '10px' }} />,
+                <RaisedButton
+                  label="Close"
+                  primary={false}
+                  keyboardFocused={false}
+                  onTouchTap={this._closePersistDialog} />
+              ]
+            }
+            autoScrollBodyContent={true}>
+            TODO
+            Overwrite
+            -- Advanced ---
+            Location
+            Facets
           </Dialog>
         </div>
       </div>
