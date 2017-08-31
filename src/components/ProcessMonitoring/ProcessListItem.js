@@ -155,7 +155,7 @@ export class ProcessListItem extends React.Component {
       // Not a success has typically no outputs and only a log file to be shown
       let logMenuItem = <MenuItem
         primaryText="Show Logs"
-        onTouchTap={(event) => this._onShowLogDialog(x.log)}
+        onTouchTap={(event) => this.props.onShowLogDialog(this.props.job.log)}
         leftIcon={<LogIcon />}/>;
       if(this.props.job.status === constants.JOB_ACCEPTED_STATUS){
         secondaryText =
