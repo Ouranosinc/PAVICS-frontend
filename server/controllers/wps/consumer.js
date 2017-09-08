@@ -76,6 +76,26 @@ var consumer = (function () {
           // let jsonPath = Utils.extractWPSOutputPath(xml);
           // response = yield request(jsonPath);
           this.body = xml;
+        case 'persist':
+          // let dataset = this.request.query['dateset_id'];
+          url = `${config.pavics_malleefowl_path}?service=WPS&version=1.0.0&request=execute&identifier=persist&DataInputs=resource=http://pluvier.crim.ca:38093/wpsoutputs/flyingpigeon/ncout-5596d08c-8e76-11e7-bcf1-0242ac120006.nc;location=/workspaces/david/{yolo}/tata2.nc;overwrite=true;default_facets={yolo:valeur}`;
+          console.log('persist a file:', url);
+          let options = {
+            headers: {
+              'Cookie': "auth_tkt=813d148e733c8f0f13a22dd37b84df92ad894f1cfb8a97bc03692adba53af8ba2a0cf32a7fcd3cb95d8c07ca4bbf9da87acefac5b075f52d1547476072e7b91e59a86d314!userid_type:int; auth_tkt=813d148e733c8f0f13a22dd37b84df92ad894f1cfb8a97bc03692adba53af8ba2a0cf32a7fcd3cb95d8c07ca4bbf9da87acefac5b075f52d1547476072e7b91e59a86d314!userid_type:int"
+            },
+            url: url
+          };
+          response = yield request(options);
+          xml = yield Utils.parseXMLThunk(response.body);
+          console.log(xml);
+          console.log(xml['wps:ExecuteResponse']['wps:Status'][0]['wps:ProcessSucceeded'])
+          // TODO
+          // let jsonPath = Utils.extractWPSOutputPath(xml);
+          response = yield request('http://pluvier.crim.ca:38091/wpsoutputs/malleefowl/96a2748a-94b3-11e7-bd0a-0242ac120004/out_3RGGoU.json');
+          // Use and Encode double quotes!
+          // http://pluvier.crim.ca:8091/wps?service=WPS&version=1.0.0&request=execute&identifier=persist&DataInputs=resource=http://pluvier.crim.ca:38093/wpsoutputs/flyingpigeon/ncout-5596d08c-8e76-11e7-bcf1-0242ac120006.nc;location=/workspaces/david/{yolo}/tata2.nc;overwrite=true;default_facets=%7B%22yolo%22:%22valeur%22%7D
+          this.body = {url: JSON.parse(response.body)[0]};
       }
     }
   };

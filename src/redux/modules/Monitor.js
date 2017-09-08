@@ -5,9 +5,10 @@ export const constants = {
   MONITOR_FETCH_WPS_JOBS_REQUEST: 'MONITOR_FETCH_WPS_JOBS_REQUEST',
   MONITOR_FETCH_WPS_JOBS_FAILURE: 'MONITOR_FETCH_WPS_JOBS_FAILURE',
   MONITOR_FETCH_WPS_JOBS_SUCCESS: 'MONITOR_FETCH_WPS_JOBS_SUCCESS',
-  MONITOR_POLL_WPS_JOBS_REQUEST: 'MONITOR_POLL_WPS_JOBS_REQUEST',
-  MONITOR_POLL_WPS_JOBS_FAILURE: 'MONITOR_POLL_WPS_JOBS_FAILURE',
   MONITOR_POLL_WPS_JOBS_SUCCESS: 'MONITOR_POLL_WPS_JOBS_SUCCESS',
+  MONITOR_PERSIST_TEMPORARY_RESULT_REQUEST: 'MONITOR_PERSIST_TEMPORARY_RESULT_REQUEST',
+  MONITOR_PERSIST_TEMPORARY_RESULT_FAILURE: 'MONITOR_PERSIST_TEMPORARY_RESULT_FAILURE',
+  MONITOR_PERSIST_TEMPORARY_RESULT_SUCCESS: 'MONITOR_PERSIST_TEMPORARY_RESULT_SUCCESS',
 };
 
 //Actions Creators
@@ -47,6 +48,45 @@ function receiveWPSJobs (data) {
       isFetching: false,
       items: data.jobs,
       count: data.count,
+      error: null
+    }
+  };
+}
+
+function requestPersistTemporaryResult () {
+  return {
+    type: constants.MONITOR_PERSIST_TEMPORARY_RESULT_REQUEST,
+    persist: {
+      requestedAt: Date.now(),
+      isFetching: true,
+      data: {},
+      count: 0
+
+    }
+  };
+}
+
+function receivePersistTemporaryResultFailure (error) {
+  NotificationManager.error(`Failed at persisting a temporary result. Returned Status ${error.status}: ${error.message}`);
+  return {
+    type: constants.MONITOR_PERSIST_TEMPORARY_RESULT_FAILURE,
+    persist: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      data: {},
+      error: error
+    }
+  };
+}
+
+function receivePersistTemporaryResult (data) {
+  NotificationManager.success(`Persisted file with success at ${data.url}`);
+  return {
+    type: constants.MONITOR_PERSIST_TEMPORARY_RESULT_SUCCESS,
+    persist: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      data: data,
       error: null
     }
   };
@@ -108,11 +148,24 @@ function pollWPSJobs (projectId, limit = 5, page = 1, sort = 'created') {
       });
   };
 }
+export function persistTemporaryResult (opendapUrl, lat, lon, time, variable) {
+  return function (dispatch) {
+    dispatch(requestPersistTemporaryResult());
+    return fetch(`/wps/persist`)
+      .then(response => response.json())
+      .then(json => {
+        dispatch(receivePersistTemporaryResult(json));
+      })
+      .catch(error => dispatch(receivePersistTemporaryResultFailure(error)));
+  };
+}
+
 
 // Exported Action Creators
 export const actions = {
   fetchWPSJobs: fetchWPSJobs,
-  pollWPSJobs: pollWPSJobs
+  pollWPSJobs: pollWPSJobs,
+  persistTemporaryResult: persistTemporaryResult
 };
 
 export const initialState = {
@@ -123,7 +176,14 @@ export const initialState = {
     items: [],
     count: 0,
     error: null
-  }
+  },
+  persist: {
+    requestedAt: null,
+    receivedAt: null,
+    isFetching: false,
+    data: {},
+    error: null
+  },
 };
 
 // Reducer

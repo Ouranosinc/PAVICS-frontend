@@ -6,6 +6,7 @@ import Loader from './../../components/Loader';
 import Pagination from './../../components/Pagination';
 import StatusElement from './StatusElement';
 import ProcessListItem from './ProcessListItem';
+import PersistResultDialog from './PersistResultDialog';
 import Dialog from 'material-ui/Dialog';
 import {List, ListItem} from 'material-ui/List';
 import Subheader from 'material-ui/Subheader';
@@ -37,7 +38,7 @@ class ProcessMonitoring extends React.Component {
     this.state = {
       logDialogArray: [],
       logDialogOpened: false,
-      persistDialogOutput: [],
+      persistDialogOutput: {},
       persistDialogOpened: false,
       pageNumber: 1,
       numberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX]
@@ -125,15 +126,15 @@ class ProcessMonitoring extends React.Component {
   }
 
   _onPersistOutputClicked () {
-    alert('call WPS')
-    // TODO PERSIST WPS CALL
+    alert('call WPS');
     this._closePersistDialog();
+    this.props.monitorActions.persistTemporaryResult();
   }
 
   _closePersistDialog () {
     this.setState({
       persistDialogOpened: false,
-      persistDialogOutput: null
+      persistDialogOutput: {}
     });
   }
 
@@ -406,33 +407,12 @@ class ProcessMonitoring extends React.Component {
               }) : null
             }
           </Dialog>
-          <Dialog
-            title="Persist result"
-            modal={false}
-            open={this.state.persistDialogOpened}
-            onRequestClose={this._closePersistDialog}
-            actions={
-              [
-                <RaisedButton
-                  label="Launch Persist"
-                  primary={true}
-                  keyboardFocused={true}
-                  onTouchTap={this._onPersistOutputClicked}
-                  style={{marginRight: '10px' }} />,
-                <RaisedButton
-                  label="Close"
-                  primary={false}
-                  keyboardFocused={false}
-                  onTouchTap={this._closePersistDialog} />
-              ]
-            }
-            autoScrollBodyContent={true}>
-            TODO
-            Overwrite
-            -- Advanced ---
-            Location
-            Facets
-          </Dialog>
+          <PersistResultDialog
+            output={this.state.persistDialogOutput}
+            isOpen={this.state.persistDialogOpened}
+            onPersistOutputClicked={this._onPersistOutputClicked}
+            closePersistDialog={this._closePersistDialog}>
+          </PersistResultDialog>
         </div>
       </div>
     );

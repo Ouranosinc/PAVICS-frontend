@@ -28,7 +28,7 @@ const config = {
   // ----------------------------------
   // PAVICS Configs
   // ----------------------------------
-  pavics_solr_path: `http://${birdhouseHost}:8091`,
+  pavics_malleefowl_path: `http://${birdhouseHost}:8091/wps`,
   pavics_phoenix_path: `https://${birdhouseHost}:8443`,
   pavics_geoserver_path: `http://${birdhouseHost}:8087/geoserver`,
   pavics_ncwms_path: `http://${birdhouseHost}:8080/ncWMS2/wms`,
