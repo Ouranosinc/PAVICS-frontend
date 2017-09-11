@@ -21,8 +21,9 @@ export class PersistResultDialog extends React.Component {
   static propTypes = {
     output: React.PropTypes.object.isRequired,
     isOpen:  React.PropTypes.bool.isRequired,
+    onPersistConfirmed: React.PropTypes.func.isRequired,
     closePersistDialog: React.PropTypes.func.isRequired,
-    onPersistOutputClicked: React.PropTypes.func.isRequired
+    monitorActions: React.PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -30,9 +31,10 @@ export class PersistResultDialog extends React.Component {
     this.state = {
       expanded: false,
       key: '',
-      location: 'workspaces/',
+      location: 'workspaces/david/{yolo}/tata3.nc',
       value: '',
-      facets: []
+      facets: [],
+      overwrite: false
     };
   }
 
@@ -62,14 +64,32 @@ export class PersistResultDialog extends React.Component {
     });
   };
 
+  handleOverwriteChange = (e) => {
+    this.setState({
+      overwrite: !this.state.overwrite
+    });
+  };
+
+  onPersistOutputClicked = () => {
+    let defaultFacets = {};
+    this.state.facets.forEach((facet) => {
+      defaultFacets[facet.key] = facet.value;
+    });
+    this.props.monitorActions.persistTemporaryResult(this.props.output.reference,
+      this.state.location, this.state.overwrite, defaultFacets);
+    this.props.onPersistConfirmed();
+  };
+
   onAddedFacet = () => {
     let facets = this.state.facets;
-    facets.push({key: this.state.key, value: this.state.value});
-    this.setState({
-      facets: facets,
-      key: '',
-      value: ''
-    });
+    if (this.state.key.length ||this.state.value.length){
+      facets.push({key: this.state.key, value: this.state.value});
+      this.setState({
+        facets: facets,
+        key: '',
+        value: ''
+      });
+    }
   };
 
   onRemovedFacet = (index) => {
@@ -95,7 +115,7 @@ export class PersistResultDialog extends React.Component {
               label="Launch Persist"
               primary={true}
               keyboardFocused={true}
-              onTouchTap={(event) => this.props.onPersistOutputClicked()}
+              onTouchTap={(event) => this.onPersistOutputClicked()}
               style={{marginRight: '10px' }} />,
             <RaisedButton
               label="Close"
@@ -117,7 +137,8 @@ export class PersistResultDialog extends React.Component {
               label="Overwrite destination"
               labelPosition="right"
               labelStyle={{textAlign: "left"}}
-              onCheck={(event, value) => {}}/>
+              checked={this.state.overwrite}
+              onCheck={this.handleOverwriteChange}/>
           </CardText>
           <CardText>
             <Toggle

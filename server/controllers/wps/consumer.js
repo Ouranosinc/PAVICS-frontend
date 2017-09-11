@@ -77,8 +77,12 @@ var consumer = (function () {
           // response = yield request(jsonPath);
           this.body = xml;
         case 'persist':
-          // let dataset = this.request.query['dateset_id'];
-          url = `${config.pavics_malleefowl_path}?service=WPS&version=1.0.0&request=execute&identifier=persist&DataInputs=resource=http://pluvier.crim.ca:38093/wpsoutputs/flyingpigeon/ncout-5596d08c-8e76-11e7-bcf1-0242ac120006.nc;location=/workspaces/david/{yolo}/tata2.nc;overwrite=true;default_facets={yolo:valeur}`;
+          let resource = this.request.query['resource'];
+          let location = this.request.query['location'];
+          let overwrite = this.request.query['overwrite'];
+          let default_facets = this.request.query['default_facets'];
+          url = `${config.pavics_malleefowl_path}?service=WPS&version=1.0.0&request=execute&identifier=persist&DataInputs=resource=${resource};location=${location};overwrite=${overwrite};default_facets=${default_facets}`;
+          // url = `${config.pavics_malleefowl_path}?service=WPS&version=1.0.0&request=execute&identifier=persist&DataInputs=resource=http://pluvier.crim.ca:38093/wpsoutputs/flyingpigeon/ncout-5596d08c-8e76-11e7-bcf1-0242ac120006.nc;location=/workspaces/david/{yolo}/tata2.nc;overwrite=true;default_facets={yolo:valeur}`;
           console.log('persist a file:', url);
           let options = {
             headers: {
@@ -88,14 +92,15 @@ var consumer = (function () {
           };
           response = yield request(options);
           xml = yield Utils.parseXMLThunk(response.body);
-          console.log(xml);
-          console.log(xml['wps:ExecuteResponse']['wps:Status'][0]['wps:ProcessSucceeded'])
-          // TODO
-          // let jsonPath = Utils.extractWPSOutputPath(xml);
-          response = yield request('http://pluvier.crim.ca:38091/wpsoutputs/malleefowl/96a2748a-94b3-11e7-bd0a-0242ac120004/out_3RGGoU.json');
-          // Use and Encode double quotes!
-          // http://pluvier.crim.ca:8091/wps?service=WPS&version=1.0.0&request=execute&identifier=persist&DataInputs=resource=http://pluvier.crim.ca:38093/wpsoutputs/flyingpigeon/ncout-5596d08c-8e76-11e7-bcf1-0242ac120006.nc;location=/workspaces/david/{yolo}/tata2.nc;overwrite=true;default_facets=%7B%22yolo%22:%22valeur%22%7D
-          this.body = {url: JSON.parse(response.body)[0]};
+          if (xml['wps:ExecuteResponse']['wps:Status'][0]['wps:ProcessSucceeded']) {
+            let jsonPath = Utils.extractWPSOutputPath(xml);
+            console.log('persist result path:', jsonPath);
+            response = yield request(jsonPath);
+            this.body = {url: JSON.parse(response.body)[0]};
+          } else {
+            this.status = 500;
+            this.body = {message: xml['wps:ExecuteResponse']['wps:Status'][0]['wps:ProcessFailed'][0]['wps:ExceptionReport'][0]['ows:Exception'][0]['ows:ExceptionText'][0]};
+          }
       }
     }
   };

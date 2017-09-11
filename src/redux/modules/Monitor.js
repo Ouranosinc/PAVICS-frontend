@@ -148,15 +148,27 @@ function pollWPSJobs (projectId, limit = 5, page = 1, sort = 'created') {
       });
   };
 }
-export function persistTemporaryResult (opendapUrl, lat, lon, time, variable) {
-  return function (dispatch) {
+export function persistTemporaryResult (resource, location, overwrite, defaultFacets) {
+  return (dispatch) => {
     dispatch(requestPersistTemporaryResult());
-    return fetch(`/wps/persist`)
-      .then(response => response.json())
-      .then(json => {
-        dispatch(receivePersistTemporaryResult(json));
+    return fetch(`/wps/persist?resource=${resource}&location=${location}&overwrite=${overwrite}&default_facets=${JSON.stringify(defaultFacets)}`)
+      .then(response => {
+        if(!response.ok){
+          // Real msg is there: response.body.message; but not working as intended
+          dispatch(receivePersistTemporaryResultFailure({
+            status: response.status,
+            message: response.statusText,
+            url: response.url
+          }));
+        }else{
+          return response.json();
+        }
       })
-      .catch(error => dispatch(receivePersistTemporaryResultFailure(error)));
+      .then(json => {
+        if(json) dispatch(receivePersistTemporaryResult(json));
+      }, err => {
+        // Not sure it'll ever happen
+      });
   };
 }
 

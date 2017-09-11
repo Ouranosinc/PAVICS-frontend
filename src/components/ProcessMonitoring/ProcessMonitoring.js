@@ -126,9 +126,8 @@ class ProcessMonitoring extends React.Component {
   }
 
   _onPersistOutputClicked () {
-    alert('call WPS');
+    alert('called WPS');
     this._closePersistDialog();
-    this.props.monitorActions.persistTemporaryResult();
   }
 
   _closePersistDialog () {
@@ -410,7 +409,8 @@ class ProcessMonitoring extends React.Component {
           <PersistResultDialog
             output={this.state.persistDialogOutput}
             isOpen={this.state.persistDialogOpened}
-            onPersistOutputClicked={this._onPersistOutputClicked}
+            monitorActions={this.props.monitorActions}
+            onPersistConfirmed={this._onPersistOutputClicked}>
             closePersistDialog={this._closePersistDialog}>
           </PersistResultDialog>
         </div>
