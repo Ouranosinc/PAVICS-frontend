@@ -9,5 +9,5 @@ export {
   wms,
   consumer,
   wps,
-  phoenix
+  phoenix,
 };

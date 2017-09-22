@@ -12,10 +12,9 @@ import webpackHMRMiddleware from './middleware/webpack-hmr';
 const debug = _debug('app:server');
 const paths = config.utils_paths;
 const app = new Koa();
-// Controllers
+const router = require('koa-router')();
 import {birdhouse, datasets, wms, consumer, wps, phoenix} from './controllers';
 // Routes
-let router = require('koa-router')();
 router.get('/wps/:identifier', consumer.resolve);
 router.get('/phoenix/:identifier', phoenix.consume);
 router.get('/api/wms/capabilities', birdhouse.getCapabilities);
@@ -26,6 +25,9 @@ router.get('/api/datasets/esgf', datasets.getExternalDatasets);
 router.get('/api/datasets/pavics', datasets.getDatasets);
 router.get('/api/dataset', datasets.getDataset);
 router.get('/api/climate_indicators', wps.getClimateIndicators);
+router.post('/login', proxy({
+  url: `${config.pavics_magpie_host}/signin`,
+}));
 app.use(router.routes());
 app.use(router.allowedMethods());
 // Enable koa-proxy if it has been enabled in the config.
@@ -37,7 +39,7 @@ if (config.proxy && config.proxy.enabled) {
 // (ignoring file requests). If you want to implement isomorphic
 // rendering, you'll want to remove this middleware.
 app.use(convert(historyApiFallback({
-  verbose: false
+  verbose: false,
 })));
 // ------------------------------------
 // Apply Webpack HMR Middleware
