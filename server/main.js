@@ -25,6 +25,9 @@ router.get('/api/datasets/esgf', datasets.getExternalDatasets);
 router.get('/api/datasets/pavics', datasets.getDatasets);
 router.get('/api/dataset', datasets.getDataset);
 router.get('/api/climate_indicators', wps.getClimateIndicators);
+router.get('/session', proxy({
+  url: `${config.pavics_magpie_host}/session`,
+}));
 router.post('/login', proxy({
   url: `${config.pavics_magpie_host}/signin`,
 }));

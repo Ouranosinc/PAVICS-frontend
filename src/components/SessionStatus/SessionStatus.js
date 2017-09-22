@@ -28,7 +28,7 @@ export default class SessionStatus extends Component {
   makeUserCard() {
     return (
       <div>
-        {this.props.sessionStatus.user.user_name}
+        Hello {this.props.sessionStatus.user.username}!
       </div>
     );
   }

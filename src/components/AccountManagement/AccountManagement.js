@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import Paper from 'material-ui/Paper';
 import classes from './AccountManagement.scss';
 import SessionStatus from '../SessionStatus';

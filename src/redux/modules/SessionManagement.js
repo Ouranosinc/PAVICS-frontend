@@ -5,6 +5,10 @@ export const constants = {
   ZIGGURAT_LOGIN_REQUEST: 'ZIGGURAT_LOGIN_REQUEST',
   ZIGGURAT_LOGIN_FAILURE: 'ZIGGURAT_LOGIN_FAILURE',
   ZIGGURAT_LOGIN_SUCCESS: 'ZIGGURAT_LOGIN_SUCCESS',
+  CHECK_LOGIN_REQUEST: 'CHECK_LOGIN_REQUEST',
+  CHECK_LOGIN_FAILURE: 'CHECK_LOGIN_FAILURE',
+  CHECK_LOGIN_SUCCESS: 'CHECK_LOGIN_SUCCESS',
+  SET_SESSION_INFORMATIONS: 'SET_SESSION_INFORMATIONS',
 };
 
 function zigguratLoginRequest() {
@@ -21,21 +25,47 @@ function zigguratLoginSuccess() {
 
 function zigguratLoginFailure() {
   return {
-    tpe: constants.ZIGGURAT_LOGIN_FAILURE,
+    type: constants.ZIGGURAT_LOGIN_FAILURE,
+  };
+}
+
+function checkLoginRequest() {
+  return {
+    type: constants.ZIGGURAT_LOGIN_REQUEST,
+  };
+}
+
+function checkLoginSuccess() {
+  return {
+    type: constants.ZIGGURAT_LOGIN_SUCCESS,
+  };
+}
+
+function checkLoginFailure() {
+  return {
+    type: constants.ZIGGURAT_LOGIN_FAILURE,
+  };
+}
+
+function setSessionInformations(user, authenticated, email, groups) {
+  return {
+    type: constants.SET_SESSION_INFORMATIONS,
+    user: user,
+    authenticated: authenticated,
+    email: email,
+    groups: groups,
   };
 }
 
 function sendCredentialsToZiggurat(username, password) {
   return (dispatch) => {
     dispatch(zigguratLoginRequest());
-    // use json, not form data, to send data to our sane koa backend
     myHttp.postFormData('/login', {
       'user_name': username,
       password: password,
       'provider_name': 'ziggurat',
     })
       .then(data => {
-        console.log('SessionManagement handler received from login!: %o', data);
         dispatch(zigguratLoginSuccess());
         console.log(data);
       })
@@ -46,9 +76,27 @@ function sendCredentialsToZiggurat(username, password) {
   };
 }
 
+function checkLogin() {
+  return (dispatch) => {
+    dispatch(checkLoginRequest());
+    myHttp.get('/session')
+      .then(res => res.json())
+      .then(session => {
+        console.log('received session status: %o', session);
+        dispatch(checkLoginSuccess());
+        dispatch(setSessionInformations(session['user_name'], session['authenticated'], session['user_email'], session['group_names']));
+      })
+      .catch(err => {
+        console.log(err);
+        dispatch(checkLoginFailure());
+      });
+  };
+}
+
 // Action Creators
 export const actions = {
   sendCredentialsToZiggurat,
+  checkLogin,
 };
 
 // Handlers
@@ -56,16 +104,29 @@ const HANDLERS = {
   [constants.ZIGGURAT_LOGIN_REQUEST]: (state, action) => { return state; },
   [constants.ZIGGURAT_LOGIN_SUCCESS]: (state, action) => { return state; },
   [constants.ZIGGURAT_LOGIN_FAILURE]: (state, action) => { return state; },
+  [constants.CHECK_LOGIN_REQUEST]: (state, action) => { return state; },
+  [constants.CHECK_LOGIN_SUCCESS]: (state, action) => { return state; },
+  [constants.CHECK_LOGIN_FAILURE]: (state, action) => { return state; },
+  [constants.SET_SESSION_INFORMATIONS]: (state, action) => {
+    return ({...state, sessionStatus: {
+      user: {
+        username: action.user,
+        authenticated: action.authenticated,
+        email: action.email,
+        groupe: action.groups,
+      },
+    }});
+  },
 };
 
 // Reducer
 export const initialState = {
   sessionStatus: {
     user: {
-      'user_name': 'anonymous',
+      username: '',
       authenticated: false,
-      'user_email': '',
-      'group_names': ['anonymous'],
+      email: '',
+      groups: [],
     },
   },
 };

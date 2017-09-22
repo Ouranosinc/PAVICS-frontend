@@ -7,6 +7,11 @@ import {actions as accountManagementActionsCreators} from '../../redux/modules/S
 export class AccountManagementContainer extends React.Component {
   static propTypes = {};
 
+  constructor(props) {
+    super(props);
+    this.props.accountManagementActions.checkLogin();
+  }
+
   render() {
     return (
       <AccountManagement
