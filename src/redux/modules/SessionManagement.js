@@ -5,10 +5,15 @@ export const constants = {
   ZIGGURAT_LOGIN_REQUEST: 'ZIGGURAT_LOGIN_REQUEST',
   ZIGGURAT_LOGIN_FAILURE: 'ZIGGURAT_LOGIN_FAILURE',
   ZIGGURAT_LOGIN_SUCCESS: 'ZIGGURAT_LOGIN_SUCCESS',
-  CHECK_LOGIN_REQUEST: 'CHECK_LOGIN_REQUEST',
-  CHECK_LOGIN_FAILURE: 'CHECK_LOGIN_FAILURE',
-  CHECK_LOGIN_SUCCESS: 'CHECK_LOGIN_SUCCESS',
+  SESSION_LOGOUT_REQUEST: 'SESSION_LOGOUT_REQUEST',
+  SESSION_LOGOUT_FAILURE: 'SESSION_LOGOUT_FAILURE',
+  SESSION_LOGOUT_SUCCESS: 'SESSION_LOGOUT_SUCCESS',
+  SESSION_CHECK_LOGIN_REQUEST: 'SESSION_CHECK_LOGIN_REQUEST',
+  SESSION_CHECK_LOGIN_FAILURE: 'SESSION_CHECK_LOGIN_FAILURE',
+  SESSION_CHECK_LOGIN_SUCCESS: 'SESSION_CHECK_LOGIN_SUCCESS',
   SET_SESSION_INFORMATIONS: 'SET_SESSION_INFORMATIONS',
+  RESET_SESSION_INFORMATIONS: 'RESET_SESSION_INFORMATIONS',
+  SESSION_LOGOUT: 'SESSION_LOGOUT',
 };
 
 function zigguratLoginRequest() {
@@ -31,19 +36,19 @@ function zigguratLoginFailure() {
 
 function checkLoginRequest() {
   return {
-    type: constants.ZIGGURAT_LOGIN_REQUEST,
+    type: constants.SESSION_CHECK_LOGIN_REQUEST,
   };
 }
 
 function checkLoginSuccess() {
   return {
-    type: constants.ZIGGURAT_LOGIN_SUCCESS,
+    type: constants.SESSION_CHECK_LOGIN_SUCCESS,
   };
 }
 
 function checkLoginFailure() {
   return {
-    type: constants.ZIGGURAT_LOGIN_FAILURE,
+    type: constants.SESSION_CHECK_LOGIN_FAILURE,
   };
 }
 
@@ -57,6 +62,45 @@ function setSessionInformations(user, authenticated, email, groups) {
   };
 }
 
+function sessionLogoutRequest() {
+  return {
+    type: constants.SESSION_LOGOUT_REQUEST,
+  };
+}
+
+function sessionLogoutSuccess() {
+  return {
+    type: constants.SESSION_LOGOUT_SUCCESS,
+  };
+}
+
+function sessionLogoutFailure() {
+  return {
+    type: constants.SESSION_LOGOUT_FAILURE,
+  };
+}
+
+function resetSessionInformation() {
+  return {
+    type: constants.RESET_SESSION_INFORMATIONS,
+  };
+}
+
+function logout() {
+  return dispatch => {
+    dispatch(sessionLogoutRequest());
+    myHttp.get('/logout')
+      .then(res => {
+        dispatch(sessionLogoutSuccess());
+        dispatch(resetSessionInformation());
+      })
+      .catch(err => {
+        console.log(err);
+        dispatch(sessionLogoutFailure());
+      });
+  };
+}
+
 function sendCredentialsToZiggurat(username, password) {
   return (dispatch) => {
     dispatch(zigguratLoginRequest());
@@ -67,7 +111,7 @@ function sendCredentialsToZiggurat(username, password) {
     })
       .then(data => {
         dispatch(zigguratLoginSuccess());
-        console.log(data);
+        dispatch(checkLogin());
       })
       .catch(err => {
         dispatch(zigguratLoginFailure());
@@ -78,13 +122,16 @@ function sendCredentialsToZiggurat(username, password) {
 
 function checkLogin() {
   return (dispatch) => {
+    console.log('in actual checking login');
     dispatch(checkLoginRequest());
     myHttp.get('/session')
       .then(res => res.json())
       .then(session => {
         console.log('received session status: %o', session);
         dispatch(checkLoginSuccess());
-        dispatch(setSessionInformations(session['user_name'], session['authenticated'], session['user_email'], session['group_names']));
+        if (session.authenticated === true) {
+          dispatch(setSessionInformations(session['user_name'], session['authenticated'], session['user_email'], session['group_names']));
+        }
       })
       .catch(err => {
         console.log(err);
@@ -97,6 +144,7 @@ function checkLogin() {
 export const actions = {
   sendCredentialsToZiggurat,
   checkLogin,
+  logout,
 };
 
 // Handlers
@@ -104,9 +152,9 @@ const HANDLERS = {
   [constants.ZIGGURAT_LOGIN_REQUEST]: (state, action) => { return state; },
   [constants.ZIGGURAT_LOGIN_SUCCESS]: (state, action) => { return state; },
   [constants.ZIGGURAT_LOGIN_FAILURE]: (state, action) => { return state; },
-  [constants.CHECK_LOGIN_REQUEST]: (state, action) => { return state; },
-  [constants.CHECK_LOGIN_SUCCESS]: (state, action) => { return state; },
-  [constants.CHECK_LOGIN_FAILURE]: (state, action) => { return state; },
+  [constants.SESSION_CHECK_LOGIN_REQUEST]: (state, action) => { return state; },
+  [constants.SESSION_CHECK_LOGIN_SUCCESS]: (state, action) => { return state; },
+  [constants.SESSION_CHECK_LOGIN_FAILURE]: (state, action) => { return state; },
   [constants.SET_SESSION_INFORMATIONS]: (state, action) => {
     return ({...state, sessionStatus: {
       user: {
@@ -116,6 +164,9 @@ const HANDLERS = {
         groupe: action.groups,
       },
     }});
+  },
+  [constants.RESET_SESSION_INFORMATIONS]: (state, action) => {
+    return ({...state, sessionStatus: initialState.sessionStatus});
   },
 };
 

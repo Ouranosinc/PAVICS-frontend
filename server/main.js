@@ -28,6 +28,9 @@ router.get('/api/climate_indicators', wps.getClimateIndicators);
 router.get('/session', proxy({
   url: `${config.pavics_magpie_host}/session`,
 }));
+router.get('/logout', proxy({
+  url: `${config.pavics_magpie_host}/signout`,
+}));
 router.post('/login', proxy({
   url: `${config.pavics_magpie_host}/signin`,
 }));

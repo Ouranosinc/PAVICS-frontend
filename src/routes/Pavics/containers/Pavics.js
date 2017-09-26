@@ -5,6 +5,8 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import * as actionCreators from './../modules/Pavics';
 import * as workflowActionCreators from './../../../redux/modules/Workflow';
 import { actions as researchActionsCreators } from '../../../redux/modules/ResearchAPI';
+import {actions as sessionActions} from '../../../redux/modules/SessionManagement';
+import cookie from 'react-cookies';
 import * as constants from './../../../constants';
 import {
   AccountManagementContainer,
@@ -25,6 +27,18 @@ class Pavics extends React.Component {
     platform: React.PropTypes.object.isRequired,
     fetchVisualizableData: React.PropTypes.func.isRequired
   };
+
+  constructor(props) {
+    super(props);
+    const authCookie = cookie.load(constants.AUTH_COOKIE);
+    console.log(authCookie);
+    if (authCookie) {
+      console.log('checking login');
+      this.props.checkLogin();
+    } else {
+
+    }
+  }
 
   componentWillMount () {
     this.startErrorLog();
@@ -133,12 +147,13 @@ class Pavics extends React.Component {
 
 const mapActionCreators = {
   ...actionCreators,
-  ...workflowActionCreators
+  ...workflowActionCreators,
+  ...sessionActions,
 };
 const mapStateToProps = state => {
   return {
     ...state.pavics.visualize,
-    platform: state.pavics.platform
+    platform: state.pavics.platform,
   };
 };
 export default connect(mapStateToProps, mapActionCreators)(Pavics);

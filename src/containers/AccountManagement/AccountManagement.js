@@ -2,19 +2,18 @@ import React from 'react';
 import {connect} from 'react-redux';
 import AccountManagement from './../../components/AccountManagement';
 import {bindActionCreators} from 'redux';
-import {actions as accountManagementActionsCreators} from '../../redux/modules/SessionManagement';
+import {actions as sessionManagement} from '../../redux/modules/SessionManagement';
 
 export class AccountManagementContainer extends React.Component {
-  static propTypes = {};
-
-  constructor(props) {
-    super(props);
-    this.props.accountManagementActions.checkLogin();
-  }
+  static propTypes = {
+    accountManagementActions: React.PropTypes.object.isRequired,
+    sessionManagement: React.PropTypes.object.isRequired,
+  };
 
   render() {
     return (
       <AccountManagement
+        logout={this.props.accountManagementActions.logout}
         sendCredentialsToZiggurat={this.props.accountManagementActions.sendCredentialsToZiggurat}
         sessionStatus={this.props.sessionManagement.sessionStatus} />
     );
@@ -28,7 +27,7 @@ const mapStateToProps = (state) => {
 };
 const mapDispatchToProps = (dispatch) => {
   return {
-    accountManagementActions: bindActionCreators({...accountManagementActionsCreators}, dispatch),
+    accountManagementActions: bindActionCreators({...sessionManagement}, dispatch),
   };
 };
 

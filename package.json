@@ -127,6 +127,7 @@
     "react-bootstrap": "^0.30.5",
     "react-bootstrap-daterangepicker": "^3.2.1",
     "react-bootstrap-slider": "^1.1.2",
+    "react-cookies": "^0.1.0",
     "react-data-grid": "^1.0.23",
     "react-dom": "^15.5.4",
     "react-notifications": "^1.4.3",

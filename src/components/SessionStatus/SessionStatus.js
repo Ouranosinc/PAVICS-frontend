@@ -3,6 +3,7 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
+import cookie from 'react-cookies';
 
 export const PROVIDER_ZIGGURAT = 'PROVIDER_ZIGGURAT';
 export const PROVIDER_ESGF = 'PROVIDER_ESGF';
@@ -13,6 +14,7 @@ export default class SessionStatus extends Component {
   static propTypes = {
     sessionStatus: React.PropTypes.object.isRequired,
     makeZigguratLoginRequest: React.PropTypes.func.isRequired,
+    logout: React.PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -23,12 +25,14 @@ export default class SessionStatus extends Component {
       password: '',
       ogiginalState: 'empty string',
     };
+    console.log('cookie: %o', cookie.load('auth_tkt'));
   }
 
   makeUserCard() {
     return (
       <div>
         Hello {this.props.sessionStatus.user.username}!
+        <RaisedButton onTouchTap={this.props.logout} label="Logout" primary />
       </div>
     );
   }
@@ -53,9 +57,9 @@ export default class SessionStatus extends Component {
           <MenuItem value={PROVIDER_ZIGGURAT} primaryText="Ziggurat" />
           <MenuItem value={PROVIDER_ESGF} primaryText="ESGF" />
           <MenuItem value={PROVIDER_OPENID} primaryText="OpenID" />
-        </SelectField>
-        <TextField value={this.state.username} onChange={this.handleUsernameChange} hintText="Username" />
-        <TextField value={this.state.password} onChange={this.handlePasswordChange} hintText="Password" type="password" />
+        </SelectField><br />
+        <TextField value={this.state.username} onChange={this.handleUsernameChange} hintText="Username" /><br />
+        <TextField value={this.state.password} onChange={this.handlePasswordChange} hintText="Password" type="password" /><br />
         <RaisedButton onTouchTap={this.submit} label="Login" primary />
       </div>
     );
