@@ -32,7 +32,7 @@ export class SearchCatalog extends React.Component {
   };
 
   state = {
-    type: 'dataset',
+    type: 'Dataset',
     searchCriteriasName: '',
     selectedKey: '',
     criteriaKeys: [
@@ -54,16 +54,16 @@ export class SearchCatalog extends React.Component {
   }
 
   componentWillMount() {
-    this.props.researchActions.fetchFacets();
+    this.props.researchActions.fetchPavicsDatasets(this.state.type, 0);
     let filter = JSON.stringify({ where: {projectId: this.props.project.currentProject.id}});
     this.props.researchAPIActions.fetchResearchs({ filter: filter });
   }
 
   _onChangeSearchType (value) {
-    alert('TODO: refetch Catalog API with type=' + value);
     this.setState({
       type: value
     });
+    this.props.researchActions.fetchPavicsDatasets(value);
   }
 
   _onLoadSavedCriteria (id) {
@@ -94,6 +94,7 @@ export class SearchCatalog extends React.Component {
 
   _ResetCriterias () {
     this.setState({
+      type: 'Dataset',
       criteriaKeys: [
         'project',
         'model',
@@ -172,10 +173,10 @@ export class SearchCatalog extends React.Component {
                     <SelectField
                       style={{width: '95%'}}
                       value={this.state.type}
-                      floatingLabelText="Type (TODO)"
+                      floatingLabelText="Type"
                       onChange={(event, index, value) => this._onChangeSearchType(value)}>
-                      <MenuItem value="dataset" primaryText="Dataset" />
-                      <MenuItem value="file" primaryText="File" />
+                      <MenuItem value="Dataset" primaryText="Dataset" />
+                      <MenuItem value="File" primaryText="File" />
                     </SelectField>
                   </Col>
                   <Col sm={12} md={4} lg={4}>
@@ -198,11 +199,10 @@ export class SearchCatalog extends React.Component {
                   {
                     this.state.criteriaKeys.map((facetKey, i) => {
                       return <CriteriaSelection
+                        fetchDatasets={() => this.props.researchActions.fetchPavicsDatasets(this.state.type)}
                         key={i}
                         criteriaName={facetKey}
-                        variables={this.props.research.facets.items.find((x) => {
-                          return x.key === facetKey;
-                        })}
+                        variables={this.props.research.facets.items.find(x => x.key === facetKey)}
                         menuStyle="HERE!!!!"
                         research={this.props.research}
                         researchActions={this.props.researchActions} />;

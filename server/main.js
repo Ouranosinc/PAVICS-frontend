@@ -13,7 +13,7 @@ const debug = _debug('app:server');
 const paths = config.utils_paths;
 const app = new Koa();
 // Controllers
-import {birdhouse, datasets, wms, consumer, wps, phoenix} from './controllers';
+import {birdhouse, wms, consumer, wps, phoenix} from './controllers';
 // Routes
 let router = require('koa-router')();
 router.get('/wps/:identifier', consumer.resolve);
@@ -22,9 +22,6 @@ router.get('/api/wms/capabilities', birdhouse.getCapabilities);
 router.get('/api/wms/visualizableData', birdhouse.fetchVisualizableLayer);
 router.get('/api/wms/dataset/layers', wms.getLayers);
 router.get('/api/facets', wps.getFacets);
-router.get('/api/datasets/esgf', datasets.getExternalDatasets);
-router.get('/api/datasets/pavics', datasets.getDatasets);
-router.get('/api/dataset', datasets.getDataset);
 router.get('/api/climate_indicators', wps.getClimateIndicators);
 app.use(router.routes());
 app.use(router.allowedMethods());

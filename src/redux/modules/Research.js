@@ -9,12 +9,6 @@ export const constants = {
   FETCH_FACETS_REQUEST: 'RESEARCH.FETCH_FACETS_REQUEST',
   FETCH_FACETS_FAILURE: 'RESEARCH.FETCH_FACETS_FAILURE',
   FETCH_FACETS_SUCCESS: 'RESEARCH.FETCH_FACETS_SUCCESS',
-  FETCH_DATASET_REQUEST: 'RESEARCH.FETCH_DATASET_REQUEST.FETCH_DATASET_REQUEST',
-  FETCH_DATASET_FAILURE: 'RESEARCH.FETCH_DATASET_FAILURE',
-  FETCH_DATASET_SUCCESS: 'RESEARCH.FETCH_DATASET_SUCCESS',
-  FETCH_ESGF_DATASETS_REQUEST: 'RESEARCH.FETCH_ESGF_DATASETS_REQUEST',
-  FETCH_ESGF_DATASETS_FAILURE: 'RESEARCH.FETCH_ESGF_DATASETS_FAILURE',
-  FETCH_ESGF_DATASETS_SUCCESS: 'RESEARCH.FETCH_ESGF_DATASETS_SUCCESS',
   FETCH_PAVICS_DATASETS_REQUEST: 'RESEARCH.FETCH_PAVICS_DATASETS_REQUEST',
   FETCH_PAVICS_DATASETS_FAILURE: 'RESEARCH.FETCH_PAVICS_DATASETS_FAILURE',
   FETCH_PAVICS_DATASETS_SUCCESS: 'RESEARCH.FETCH_PAVICS_DATASETS_SUCCESS',
@@ -53,48 +47,6 @@ function fetchFacetsFailure (error) {
       items: [],
       error: error
     }
-  };
-}
-function getDatasetRequest () {
-  return {
-    type: constants.FETCH_DATASET_REQUEST,
-    selectedDataset: {
-      receivedAt: 1, // TODO: Fix
-      requestedAt: Date.now(),
-      isFetching: true,
-      data: {}
-    }
-  };
-}
-function getDatasetFailure (error) {
-  return {
-    type: constants.FETCH_DATASET_FAILURE,
-    selectedDataset: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      data: {},
-      error: error
-    }
-  };
-}
-function getDatasetSuccess (dataset) {
-  return {
-    type: constants.FETCH_DATASET_SUCCESS,
-    selectedDataset: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      data: dataset,
-      error: null
-    }
-  };
-}
-export function getDatasetByURL (url) {
-  return function (dispatch) {
-    dispatch(getDatasetRequest());
-    return fetch(`/api/dataset?url=${url}`)
-      .then(response => response.json())
-      .then(json => dispatch(getDatasetSuccess(json)))
-      .catch(error => dispatch(getDatasetFailure(error)));
   };
 }
 export function restorePavicsDatasets (searchCriteria) {
@@ -140,8 +92,9 @@ export function receivePavicsDatasets (datasets) {
     }
   };
 }
-// OUR PAVICS DATASETS CATALOG 2.0
-export function fetchPavicsDatasets () {
+
+// Returns dataset results AND facet counts
+export function fetchPavicsDatasets (type = 'Dataset', limit = 10000) {
   return function (dispatch, getState) {
     dispatch(requestPavicsDatasets());
     // Get current added facets by querying store
@@ -150,68 +103,48 @@ export function fetchPavicsDatasets () {
     facets.forEach(function (facet, i) {
       constraints += `${(i > 0) ? ',' : ''}${facet.key}:${facet.value}`;
     });
-    return fetch(`/api/datasets/pavics?constraints=${constraints}`)
+    if(!constraints.length) limit = 0; // If no facets selected, we attend to have no dataset result
+    return fetch(`/wps/pavicsearch?limit=${limit}&type=${type}&constraints=${constraints}`)
       .then(response => response.json())
-      .then(json =>
-        dispatch(receivePavicsDatasets(json))
-      )
-      .catch(error =>
+      .then(json => {
+        // Dataset result
+        let datasets = json.response.docs;
+        datasets.sort((a, b) => a.dataset_id.localeCompare(b.dataset_id));
+        dispatch(receivePavicsDatasets(datasets));
+
+        // Facet result
+        let facets = [];
+        json['responseHeader']['params']['facet.field'].forEach(function (key) {
+          facets.push({
+            key: key,
+            values: []//
+          });
+        });
+        var facetFields = json['facet_counts']['facet_fields'];
+        for (var facetKey in facetFields) {
+          if (facetFields.hasOwnProperty(facetKey)) {
+            let values = [];
+            let keyIndex = facets.findIndex(x => x.key === facetKey);
+            for(let i = 0; i < facetFields[facetKey].length; i = i + 2) {
+              var thisValue = {
+                value: facetFields[facetKey][i],
+                count: facetFields[facetKey][i+1],
+              };
+              values.push(thisValue);
+            }
+            values.sort((a, b) => a.value.localeCompare(b.value));
+            facets[keyIndex].values = values;
+          }
+        }
+        dispatch(fetchFacetsSuccess(facets));
+
+      })
+      /*.catch(error =>
         dispatch(receivePavicsDatasetsFailure(error))
-      );
+      );*/
   };
 }
-function requestEsgfDatasets () {
-  return {
-    type: constants.FETCH_ESGF_DATASETS_REQUEST,
-    esgfDatasets: {
-      requestedAt: Date.now(),
-      isFetching: true,
-      items: []
-    }
-  };
-}
-function receiveEsgfDatasetsFailure (error) {
-  return {
-    type: constants.FETCH_ESGF_DATASETS_FAILURE,
-    esgfDatasets: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      items: [],
-      error: error
-    }
-  };
-}
-function receiveEsgfDatasets (datasets) {
-  return {
-    type: constants.FETCH_ESGF_DATASETS_SUCCESS,
-    esgfDatasets: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      items: datasets,
-      error: null
-    }
-  };
-}
-// EXTERNAL ESGF CATALOG
-function fetchEsgfDatasets () {
-  return function (dispatch, getState) {
-    dispatch(requestEsgfDatasets());
-    // Get current added facets by querying store
-    let facets = getState().research.selectedFacets;
-    let constraints = '';
-    facets.forEach(function (facet, i) {
-      constraints += `${(i > 0) ? ',' : ''}${facet.key}:${facet.value}`;
-    });
-    return fetch(`/api/datasets/esgf?constraints=${constraints}`)
-      .then(response => response.json())
-      .then(json =>
-        dispatch(receiveEsgfDatasets(json))
-      )
-      .catch(error =>
-        dispatch(receiveEsgfDatasetsFailure(error))
-      );
-  };
-}
+
 function fetchFacets () {
   return function (dispatch) {
     dispatch(fetchFacetsrequest());
@@ -244,9 +177,7 @@ function clearFacetKeyValuePairs () {
 // Exported Action Creators
 export const actions = {
   fetchFacets,
-  getDatasetByURL,
   fetchPavicsDatasets,
-  fetchEsgfDatasets,
   restorePavicsDatasets,
   addFacetKeyValuePair,
   removeFacetKeyValuePair,
@@ -287,15 +218,6 @@ const HANDLERS = {
   },
   [constants.REMOVE_ALL_FACET_KEY_VALUE]: (state, action) => {
     return ({...state, selectedFacets: []});
-  },
-  [constants.FETCH_DATASET_REQUEST]: (state, action) => {
-    return ({...state, selectedDataset: action.selectedDataset});
-  },
-  [constants.FETCH_DATASET_FAILURE]: (state, action) => {
-    return ({...state, selectedDataset: action.selectedDataset});
-  },
-  [constants.FETCH_DATASET_SUCCESS]: (state, action) => {
-    return ({...state, selectedDataset: action.selectedDataset});
   },
   [constants.FETCH_ESGF_DATASETS_REQUEST]: (state, action) => {
     return ({...state, esgfDatasets: action.esgfDatasets});
