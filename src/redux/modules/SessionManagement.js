@@ -1,5 +1,6 @@
 import myHttp from './../../../lib/http';
 import cookie from 'react-cookies';
+import { NotificationManager } from 'react-notifications';
 
 // Constants
 export const constants = {
@@ -93,6 +94,7 @@ function logout() {
     cookie.remove('auth_tkt');
     myHttp.get('/logout')
       .then(res => {
+        NotificationManager.success(`You have been logged out of the platform.`);
         dispatch(sessionLogoutSuccess());
         dispatch(resetSessionInformation());
       })
@@ -111,13 +113,19 @@ function sendCredentialsToZiggurat(username, password) {
       password: password,
       'provider_name': 'ziggurat',
     })
-      .then(data => {
-        dispatch(zigguratLoginSuccess());
-        dispatch(checkLogin());
+      .then(response => {
+        console.log('this shit was actually considered as a sendCredentialsToZiggurat success %o', response);
+        if (response.status === 401) {
+          dispatch(zigguratLoginFailure());
+          NotificationManager.error(`The user ${username} is not authorized on the platform`);
+        } else {
+          dispatch(zigguratLoginSuccess());
+          dispatch(checkLogin());
+        }
       })
       .catch(err => {
         dispatch(zigguratLoginFailure());
-        console.log(err);
+        console.log('error in sendCredentialsToZiggurat: %o', err);
       });
   };
 }
@@ -132,6 +140,7 @@ function checkLogin() {
         console.log('received session status: %o', session);
         dispatch(checkLoginSuccess());
         if (session.authenticated === true) {
+          NotificationManager.success('You have been logged in to the platform.');
           dispatch(setSessionInformations(session['user_name'], session['authenticated'], session['user_email'], session['group_names']));
         }
       })

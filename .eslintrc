@@ -2,8 +2,7 @@
   "parser"  : "babel-eslint",
   "extends" : [
     "standard",
-    "standard-react",
-    "loopback"
+    "standard-react"
   ],
   "env"     : {
     "browser" : true
