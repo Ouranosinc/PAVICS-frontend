@@ -1,3 +1,4 @@
+import myHttp from './../../../lib/http';
 // Constants
 export const constants = {
   WORKFLOW_CHANGE_STEP: 'WORKFLOW_CHANGE_STEP',
@@ -111,7 +112,7 @@ function handleSelectedProcessValueChange (key, value) {
 
 function fetchProcessInputs (provider, process) {
   return dispatch => {
-    return fetch(`/phoenix/inputs?provider=${provider}&process=${process}`)
+    return myHttp.get(`/phoenix/inputs?provider=${provider}&process=${process}`)
       .then(response => response.json())
       .then(json => {
         dispatch(setProcessInputs(json.inputs));
@@ -138,7 +139,7 @@ function chooseProcess (process) {
 
 function fetchProcesses (provider) {
   return (dispatch) => {
-    return fetch(`/phoenix/processesList?provider=${provider}`)
+    return myHttp.get(`/phoenix/processesList?provider=${provider}`)
       .then(response => response.json())
       .then(json => dispatch(setProcesses(json.items)))
       .catch(err => {
@@ -149,7 +150,7 @@ function fetchProcesses (provider) {
 
 function fetchProviders () {
   return (dispatch) => {
-    return fetch('/phoenix/processes')
+    return myHttp.get('/phoenix/processes')
       .then(response => response.json())
       .then(json => dispatch(setProviders(json.items)))
       .catch(err => {
@@ -168,7 +169,7 @@ function executeProcess (provider, process, inputValues) {
       }
     }
     let string = array.join(';');
-    return fetch(`/phoenix/execute?wps=${provider}&process=${process}&inputs=${string}`)
+    return myHttp.get(`/phoenix/execute?wps=${provider}&process=${process}&inputs=${string}`)
       .then(response => {
         console.log('received:', response);
       })

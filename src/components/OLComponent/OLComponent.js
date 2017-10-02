@@ -3,6 +3,7 @@ import classes from './OLComponent.scss';
 import ol from 'openlayers';
 import Dialog from 'material-ui/Dialog';
 import * as constants from './../../constants';
+import myHttp from './../../../lib/http';
 // Couldn't figure out the bug when importing inner component css file but it works from node_modules
 let G_BING_API_KEY = 'AtXX65CBBfZXBxm6oMyf_5idMAMI7W6a5GuZ5acVcrYi6lCQayiiBz7_aMHB7JR7';
 const INDEX_BASE_MAP = -10;
@@ -175,7 +176,7 @@ class OLComponent extends React.Component {
       `version=1.1.0&request=GetFeature&typename=${this.props.selectedShapefile.wmsParams.LAYERS}&` +
       'outputFormat=application/json&srsname=EPSG:3857&' +
       'bbox=' + extent.join(',') + ',EPSG:3857';
-    fetch(url)
+    myHttp.get(url)
       .then(response => response.json(), err => console.log(err))
       .then(
         response => {
@@ -374,7 +375,7 @@ class OLComponent extends React.Component {
     let wmsUrl = this.props.selectedDatasetLayer.wms_url;
     let parser = new ol.format.WMSCapabilities();
     let capabilities = {};
-    fetch(wmsUrl)
+    myHttp.get(wmsUrl)
       .then(
         response => response.text(),
         err => console.log(err)

@@ -1,4 +1,5 @@
 import myHttp from './../../../lib/http';
+import cookie from 'react-cookies';
 
 // Constants
 export const constants = {
@@ -89,6 +90,7 @@ function resetSessionInformation() {
 function logout() {
   return dispatch => {
     dispatch(sessionLogoutRequest());
+    cookie.remove('auth_tkt');
     myHttp.get('/logout')
       .then(res => {
         dispatch(sessionLogoutSuccess());

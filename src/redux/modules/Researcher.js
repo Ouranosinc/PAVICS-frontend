@@ -1,3 +1,4 @@
+import myHttp from './../../../lib/http';
 // Constants
 export const constants = {
   RESEARCHER_SET_CURRENT_RESEARCHER: 'RESEARCHER_SET_CURRENT_RESEARCHER',
@@ -42,17 +43,7 @@ function loginResearcherFailure (error) {
 export function login (credentials) {
   return dispatch => {
     dispatch(loginResearcherRequest());
-    let headers = new Headers();
-    headers.append('Content-Type', 'application/json');
-    let request = new Request(
-      __LOOPBACK_API_PATH__ + '/Researcher/login',
-      {
-        method: 'POST',
-        body: JSON.stringify(credentials),
-        headers: headers
-      }
-    );
-    fetch(request)
+    myHttp.postJson(__LOOPBACK_API_PATH__ + '/Researcher/login', credentials)
       .then(res => res.json())
       .then(json => dispatch(loginResearcherSuccess(json)))
       .catch(err => dispatch(loginResearcherFailure(err)));

@@ -3,7 +3,6 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import cookie from 'react-cookies';
 
 export const PROVIDER_ZIGGURAT = 'PROVIDER_ZIGGURAT';
 export const PROVIDER_ESGF = 'PROVIDER_ESGF';
@@ -25,13 +24,12 @@ export default class SessionStatus extends Component {
       password: '',
       ogiginalState: 'empty string',
     };
-    console.log('cookie: %o', cookie.load('auth_tkt'));
   }
 
   makeUserCard() {
     return (
       <div>
-        Hello {this.props.sessionStatus.user.username}!
+        Hello {this.props.sessionStatus.user.username}!<br />
         <RaisedButton onTouchTap={this.props.logout} label="Logout" primary />
       </div>
     );
