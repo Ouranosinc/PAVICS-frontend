@@ -10,6 +10,7 @@ debug('Creating default configuration.');
 // Default Configuration
 // ========================================================
 let serverHost = process.env.PAVICS_FRONTEND_IP || localip;
+let serverProto = process.env.PAVICS_FRONTEND_PROTO || 'http';
 let birdhouseHost = process.env.BIRDHOUSE_HOST || 'outarde.crim.ca';
 let loopbackHost = process.env.LOOPBACK_HOST || 'outarde.crim.ca:3005';
 let PAVICS_WORKFLOW_PROVIDER = process.env.PAVICS_WORKFLOW_PROVIDER || 'malleefowl';
@@ -18,6 +19,7 @@ let PAVICS_VISUALIZE_IDENTIFIER = process.env.PAVICS_VISUALIZE_IDENTIFIER || 'TO
 let PAVICS_PERSIST_IDENTIFIER = process.env.PAVICS_PERSIST_IDENTIFIER || 'thredds_download';
 let PAVICS_PUBLISH_IDENTIFIER = process.env.PAVICS_PUBLISH_IDENTIFIER || 'TODO';
 let serverPort = process.env.PORT || 3000;
+let serverExternalPort = process.env.PAVICS_FRONTEND_PORT || serverPort;
 const config = {
   env: process.env.NODE_ENV || 'development',
   // ----------------------------------
@@ -25,6 +27,8 @@ const config = {
   // ----------------------------------
   server_host: serverHost, // use string 'localhost' to prevent exposure on local network
   server_port: serverPort,
+  server_external_port: serverExternalPort,
+  server_proto: serverProto,
   // ----------------------------------
   // PAVICS Configs
   // ----------------------------------
