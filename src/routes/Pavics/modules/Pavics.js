@@ -1,6 +1,7 @@
 import initialState from './../../../store/initialState';
 import * as constants from './../../../constants';
 import ol from 'openlayers';
+import myHttp from './../../../../lib/http';
 
 // SYNC
 const SET_WMS_LAYER = 'Visualize.SET_WMS_LAYER';
@@ -239,7 +240,7 @@ export function receiveWMSLayerTimesteps (data) {
 export function fetchScalarValue (opendapUrl, lat, lon, time, variable) {
   return function (dispatch) {
     dispatch(requestScalarValue());
-    return fetch(`/wps/getpoint?opendapUrl=${opendapUrl}&lat=${lat}&lon=${lon}&time=${time}&variable=${variable}`)
+    return myHttp.get(`/wps/getpoint?opendapUrl=${opendapUrl}&lat=${lat}&lon=${lon}&time=${time}&variable=${variable}`)
       .then(response => response.json())
       .then(json => {
         // Removing black magic from application
@@ -253,7 +254,7 @@ export function fetchScalarValue (opendapUrl, lat, lon, time, variable) {
 export function fetchClimateIndicators () {
   return function (dispatch) {
     dispatch(requestClimateIndicators());
-    return fetch('/api/climate_indicators')
+    return myHttp.get('/api/climate_indicators')
       .then(response => response.json())
       .then(json => dispatch(receiveClimateIndicators(json)))
       .catch(error => dispatch(receiveClimateIndicatorsFailure(error)));
@@ -275,7 +276,7 @@ export function fetchPlotlyData (
       `&time_final_indice=${timeFinalIndice}&spatial1_initial_indice=${spatial1InitialIndice}` +
       `&spatial1_final_indice=${spatial1FinalIndice}&spatial2_initial_indice=${spatial2InitialIndice}` +
       `&spatial2_final_indice=${spatial2FinalIndice}`;
-    return fetch(url)
+    return myHttp.get(url)
       .then((response) => {
         console.log('variable name: ', variableName);
         return response.json();
@@ -293,7 +294,7 @@ export function fetchPlotlyData (
 export function fetchWMSLayerDetails (url, layer) {
   return function (dispatch) {
     dispatch(requestWMSLayerDetails());
-    return fetch(`${url}?request=GetMetadata&item=layerDetails&layerName=${layer}`)
+    return myHttp.get(`${url}?request=GetMetadata&item=layerDetails&layerName=${layer}`)
       .then(response => response.json())
       .then(json =>
         dispatch(receiveWMSLayerDetails(json))
@@ -306,7 +307,7 @@ export function fetchWMSLayerDetails (url, layer) {
 export function fetchWMSLayerTimesteps (url, layer, day) {
   return function (dispatch) {
     dispatch(requestWMSLayerTimesteps());
-    return fetch(`${url}?request=GetMetadata&item=timesteps&day=${day}&layerName=${layer}`)
+    return myHttp.get(`${url}?request=GetMetadata&item=timesteps&day=${day}&layerName=${layer}`)
       .then(response => response.json())
       .then(json =>
         dispatch(receiveWMSLayerTimesteps(json))
@@ -375,7 +376,7 @@ export function receivedDatasetCapabilities (capabilities) {
 export function fetchShapefiles () {
   const parser = new ol.format.WMSCapabilities();
   return dispatch => {
-    return fetch(`${__PAVICS_GEOSERVER_PATH__}/wms?request=GetCapabilities`)
+    return myHttp.get(`${__PAVICS_GEOSERVER_PATH__}/wms?request=GetCapabilities`)
       .then(response => response.text())
       .then(text => {
         return parser.read(text);
@@ -469,7 +470,7 @@ function setLayer (layer) {
 }
 export function fetchVisualizableData (statusLocation) {
   return dispatch => {
-    return fetch(`/api/wms/visualizableData?status=${statusLocation}`)
+    return myHttp.get(`/api/wms/visualizableData?status=${statusLocation}`)
       .then(response => response.json())
       .then(json => dispatch(setLayer(json)))
       .catch(err => {

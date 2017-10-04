@@ -8,6 +8,7 @@ import { Step, Stepper, StepLabel, StepContent } from 'material-ui/Stepper';
 import CircularProgress from 'material-ui/CircularProgress';
 import Paper from 'material-ui/Paper';
 import WpsProcessForm from '../WpsProcessForm';
+import myHttp from './../../../lib/http';
 const styles = {
   orParagraph: {
     margin: '10px 0',
@@ -46,17 +47,12 @@ export default class ScientificWorkflowStepper extends Component {
     };
   }
 
-  request (url) {
-    let headers = new Headers();
-    headers.append('accept', 'application/json');
-    let options = {
-      method: 'GET',
-      headers: headers
-    };
+  request(url) {
     return new Promise((resolve) => {
-      fetch(url, options)
+      myHttp.get(url, {'accept': 'application/json'})
         .then(res => res.json())
-        .then(json => resolve(json));
+        .then(json => resolve(json))
+        .catch(err => console.log(err));
     });
 
   }

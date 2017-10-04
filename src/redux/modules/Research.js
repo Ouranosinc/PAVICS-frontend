@@ -1,3 +1,5 @@
+import myHttp from './../../../lib/http';
+
 // Constants
 export const constants = {
   CREATE_RESEARCH_REQUEST: 'RESEARCH.CREATE_RESEARCH_REQUEST',
@@ -91,7 +93,7 @@ function getDatasetSuccess (dataset) {
 export function getDatasetByURL (url) {
   return function (dispatch) {
     dispatch(getDatasetRequest());
-    return fetch(`/api/dataset?url=${url}`)
+    return myHttp.get(`/api/dataset?url=${url}`)
       .then(response => response.json())
       .then(json => dispatch(getDatasetSuccess(json)))
       .catch(error => dispatch(getDatasetFailure(error)));
@@ -150,7 +152,7 @@ export function fetchPavicsDatasets () {
     facets.forEach(function (facet, i) {
       constraints += `${(i > 0) ? ',' : ''}${facet.key}:${facet.value}`;
     });
-    return fetch(`/api/datasets/pavics?constraints=${constraints}`)
+    return myHttp.get(`/api/datasets/pavics?constraints=${constraints}`)
       .then(response => response.json())
       .then(json =>
         dispatch(receivePavicsDatasets(json))
@@ -202,7 +204,7 @@ function fetchEsgfDatasets () {
     facets.forEach(function (facet, i) {
       constraints += `${(i > 0) ? ',' : ''}${facet.key}:${facet.value}`;
     });
-    return fetch(`/api/datasets/esgf?constraints=${constraints}`)
+    return myHttp.get(`/api/datasets/esgf?constraints=${constraints}`)
       .then(response => response.json())
       .then(json =>
         dispatch(receiveEsgfDatasets(json))
@@ -215,7 +217,7 @@ function fetchEsgfDatasets () {
 function fetchFacets () {
   return function (dispatch) {
     dispatch(fetchFacetsrequest());
-    return fetch('/api/facets')
+    return myHttp.get('/api/facets')
       .then(response => response.json())
       .then(json => dispatch(fetchFacetsSuccess(json)))
       .catch(error => dispatch(fetchFacetsFailure(error)));
