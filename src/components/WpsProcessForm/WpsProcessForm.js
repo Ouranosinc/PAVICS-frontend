@@ -3,6 +3,7 @@ import Checkbox from 'material-ui/Checkbox';
 import TextField from 'material-ui/TextField';
 import classes from '../WorkflowWizard/WorkflowWizard.scss';
 import DeformWrapper from '../DeformWrapper/DeformWrapper';
+
 const BOOLEAN = '//www.w3.org/TR/xmlschema-2/#boolean';
 const STRING = '//www.w3.org/TR/xmlschema-2/#string';
 const NETCDF = 'ComplexData';
@@ -30,14 +31,13 @@ export default class WpsProcessForm extends React.Component {
   likewise, the handleSelectedProcessValueChange was never fully implemented
    */
 
-
   constructor (props) {
     super(props);
 
     // Initially fill formData with input defaultValues if any
     let formData = {};
     this.props.workflow.selectedProcessInputs.forEach((input) => {
-      formData[input.name] = input.defaultValue || "";
+      formData[input.name] = input.defaultValue || '';
     });
     this.state = {
       formData: formData
@@ -103,7 +103,7 @@ export default class WpsProcessForm extends React.Component {
     });
   }
 
-  handleCheckBoxChange(event) {
+  handleCheckBoxChange (event) {
     this.setState({
       formData: {
         ...this.state.formData,
@@ -130,7 +130,7 @@ export default class WpsProcessForm extends React.Component {
               name={input.name}
               label={input.title}
               labelPosition="right"
-              labelStyle={{textAlign: "left"}}
+              labelStyle={{ textAlign: 'left' }}
               checked={value}
               onCheck={(event, value) => this.handleCheckBoxChange(event)}
               value={value} />

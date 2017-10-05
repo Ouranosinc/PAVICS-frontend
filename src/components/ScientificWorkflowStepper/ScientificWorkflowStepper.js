@@ -16,7 +16,7 @@ const styles = {
     color: 'white'
   }
 };
-const FORM_WORKFLOW_ID = "form-workflow-process";
+const FORM_WORKFLOW_ID = 'form-workflow-process';
 export default class ScientificWorkflowStepper extends Component {
   static propTypes = {
     showDialog: React.PropTypes.func.isRequired,
@@ -31,7 +31,7 @@ export default class ScientificWorkflowStepper extends Component {
     workflow: React.PropTypes.object.isRequired,
     workflowActions: React.PropTypes.object.isRequired,
     workflowAPI: React.PropTypes.object.isRequired,
-    workflowAPIActions: React.PropTypes.object.isRequired,
+    workflowAPIActions: React.PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -47,14 +47,13 @@ export default class ScientificWorkflowStepper extends Component {
     };
   }
 
-  request(url) {
+  request (url) {
     return new Promise((resolve) => {
       myHttp.get(url, {'accept': 'application/json'})
         .then(res => res.json())
         .then(json => resolve(json))
         .catch(err => console.log(err));
     });
-
   }
 
   /*
@@ -96,8 +95,8 @@ export default class ScientificWorkflowStepper extends Component {
           let processDescription = await this.request(`/phoenix/inputs?provider=${thisTaskProvider}&process=${thisTaskProcessIdentifier}`);
           let validInputNames = [];
           processDescription.inputs.map(elem => validInputNames.push(elem.name));
-          for(let inputName in thisTask.inputs) {
-            if(thisTask.inputs.hasOwnProperty(inputName)) {
+          for (let inputName in thisTask.inputs) {
+            if (thisTask.inputs.hasOwnProperty(inputName)) {
               let validInputIndex = validInputNames.indexOf(inputName);
               if (validInputIndex === -1) {
                 NotificationManager.error(`The input ${inputName} is not a valid input for the process ${thisTaskProcessIdentifier}, it should be one of ${validInputNames.join(', ')}.`);
@@ -116,7 +115,6 @@ export default class ScientificWorkflowStepper extends Component {
       }
       console.log('inputs that should be provided:', inputsThatShouldBeProvided);
       this.props.workflowActions.setProcessInputs(inputsThatShouldBeProvided);
-
     } else {
       NotificationManager.error('The workflow is invalid, it lacks a json member.');
     }
@@ -166,14 +164,14 @@ export default class ScientificWorkflowStepper extends Component {
    I manually name the inputs that expect user input processIdentifier.inputName when building the form
    so that when filling the workflow, I can validate processIdentifier and inputName and have some kind of insurance that I am filling the right value
    */
-  catchAndWrapExecuteProcess() {
+  catchAndWrapExecuteProcess () {
     let data = new FormData(document.querySelector(`#${FORM_WORKFLOW_ID}`));
     let toSendData = new FormData();
     let toFillWorkflow = this.state.workflow.json;
 
     // If mosaic unchecked, no key will be in FormData, TODO same exception for every boolean/checkbox values I guess
-    if(!data.get("subset_WFS.mosaic")){
-      data.append("subset_WFS.mosaic", "False");
+    if (!data.get('subset_WFS.mosaic')) {
+      data.append('subset_WFS.mosaic', 'False');
     }
     for (let pair of data) {
       // if there is no dot, the input is deform related, leave it as is
@@ -192,20 +190,19 @@ export default class ScientificWorkflowStepper extends Component {
         // if the process identifier is not the same, we know it's not the right input
         if (tasks[i].inputs && tasks[i].identifier === keys[0]) {
           for (let inputName in tasks[i].inputs) {
-            if(tasks[i].inputs.hasOwnProperty(inputName)) {
+            if (tasks[i].inputs.hasOwnProperty(inputName)) {
               if (inputName === keys[1]) {
                 if (inputName === 'mosaic') {
                   // mosaic value must always be a "True" of "False" string
-                  if(typeof(tasks[i].inputs[inputName] ) === "boolean"){
-                    tasks[i].inputs[inputName] = (pair[1] === true)? 'True':'False';
-                  }else if(typeof(tasks[i].inputs[inputName]) === "string"){
-                    tasks[i].inputs[inputName] = (pair[1] === "True")? 'True':'False';
+                  if (typeof (tasks[i].inputs[inputName]) === 'boolean') {
+                    tasks[i].inputs[inputName] = (pair[1] === true) ? 'True' : 'False';
+                  } else if (typeof (tasks[i].inputs[inputName]) === 'string') {
+                    tasks[i].inputs[inputName] = (pair[1] === 'True') ? 'True' : 'False';
                   }
-                }else{
+                } else {
                   tasks[i].inputs[inputName] = pair[1];
                 }
               }
-
             }
           }
         }
@@ -247,7 +244,7 @@ export default class ScientificWorkflowStepper extends Component {
             <p style={styles.orParagraph}>Or add a new workflow</p>
             <ScientificWorkflowForm
               project={this.props.project}
-              workflowAPIActions={this.props.workflowAPIActions}/>
+              workflowAPIActions={this.props.workflowAPIActions} />
           </StepContent>
         </Step>
         <Step>
@@ -267,7 +264,7 @@ export default class ScientificWorkflowStepper extends Component {
                   <RaisedButton
                     label="Back"
                     onClick={this.handlePrev}
-                    icon={<BackIcon />}/>
+                    icon={<BackIcon />} />
                   <WpsProcessForm
                     executeProcess={this.catchAndWrapExecuteProcess}
                     formId={FORM_WORKFLOW_ID}
@@ -276,7 +273,7 @@ export default class ScientificWorkflowStepper extends Component {
                     selectedShapefile={this.props.selectedShapefile}
                     goToSection={this.props.goToSection}
                     workflow={this.props.workflow}
-                    workflowActions={this.props.workflowActions}/>
+                    workflowActions={this.props.workflowActions} />
                 </StepContent>
               )
           }
