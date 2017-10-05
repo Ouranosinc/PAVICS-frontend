@@ -7,8 +7,9 @@ import WpsProcessDetails from './../../components/WpsProcessDetails';
 import WpsProcessForm from './../../components/WpsProcessForm';
 import RaisedButton from 'material-ui/RaisedButton';
 import BackIcon from 'material-ui/svg-icons/navigation/arrow-back';
+import myHttp from './../../../lib/http';
 
-const FORM_PROCESS_ID = "form-individual-process";
+const FORM_PROCESS_ID = 'form-individual-process';
 
 export default class WorkflowWizardStepper extends React.Component {
   static propTypes = {
@@ -22,48 +23,37 @@ export default class WorkflowWizardStepper extends React.Component {
     workflowActions: React.PropTypes.object.isRequired
   };
 
-  constructor(props) {
+  constructor (props) {
     super(props);
     this.execute = this.execute.bind(this);
-    this.makePostRequest = this.makePostRequest.bind(this);
   }
 
   execute () {
     // ugly hack to workaround making one extra trip to the backend
     // we already have had to put strange __start__ and __end__ inputs to work nicely with phoenix
     let formData = new FormData(document.querySelector(`#${FORM_PROCESS_ID}`));
-    for (let pair of formData) {
-      console.log(pair);
-    }
-
-    let url = `${__PAVICS_PHOENIX_PATH__}/processes/execute?wps=${this.props.workflow.selectedProvider}&process=${this.props.workflow.selectedProcess.identifier}`;
-    this.makePostRequest(url, formData, (xhr, params) => {
-      // status is always 200
-      // if(xhr.responseURL.indexOf('/processes/loading') !== -1){ // Deprecated but workek well with phoenix execute() Accept text/html
-      try {
-        let response = JSON.parse(xhr.responseText);
-        if (response.status === 200) {
-          this.props.jobAPIActions.createJob({ projectId: this.props.project.currentProject.id, phoenixTaskId: response.task_id });
-          NotificationManager.success('Process has been launched with success, you can now monitor process execution in the monitoring panel', 'Success', 10000);
-        }else{
+    let url = `/phoenix/processes/execute?wps=${this.props.workflow.selectedProvider}&process=${this.props.workflow.selectedProcess.identifier}`;
+    const additionalHeaders = {
+      'accept': 'application/json'
+    };
+    myHttp.postFormData(url, formData, additionalHeaders)
+      .then(res => res.json())
+      .then(response => {
+        // status is always 200
+        // if(xhr.responseURL.indexOf('/processes/loading') !== -1){ // Deprecated but workek well with phoenix execute() Accept text/html
+        console.log('received response from phoenix: %o', response);
+        try {
+          if (response.status === 200) {
+            this.props.jobAPIActions.createJob({ projectId: this.props.project.currentProject.id, phoenixTaskId: response.task_id });
+            NotificationManager.success('Process has been launched with success, you can now monitor process execution in the monitoring panel', 'Success', 10000);
+          } else {
+            NotificationManager.error('Process hasn\'t been launched as intended. Make sure the process and required inputs are defined properly', 'Error', 10000);
+          }
+        } catch (error) {
           NotificationManager.error('Process hasn\'t been launched as intended. Make sure the process and required inputs are defined properly', 'Error', 10000);
         }
-      }catch(error){
-        NotificationManager.error('Process hasn\'t been launched as intended. Make sure the process and required inputs are defined properly', 'Error', 10000);
-      }
-    });
-  }
-
-  makePostRequest (url, data, callable, params) {
-    let xhr = new XMLHttpRequest();
-    xhr.onload = function () {
-      if (callable !== undefined) {
-        callable(xhr, params);
-      }
-    };
-    xhr.open('POST', url);
-    xhr.setRequestHeader('accept', 'application/json'); // Old: 'text/html'
-    xhr.send(data);
+      })
+      .catch(err => console.log(err));
   }
 
   render () {

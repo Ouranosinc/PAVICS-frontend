@@ -112,15 +112,15 @@ export default class WpsProcessForm extends React.Component {
     });
   }
 
-  makeInput (input) {
+  makeInnerInput (input) {
     switch (input.dataType) {
       case BOOLEAN:
         let value = false;
-        if(typeof(this.state.formData[input.name]) === "boolean"){
-          value = this.state.formData[input.name]
-        }else if(typeof(this.state.formData[input.name]) === "string"){
-          if(this.state.formData[input.name] === "True"){
-            value= true;
+        if (typeof (this.state.formData[input.name]) === 'boolean') {
+          value = this.state.formData[input.name];
+        } else if (typeof (this.state.formData[input.name]) === 'string') {
+          if (this.state.formData[input.name] === 'True') {
+            value = true;
           }
         }
         return (

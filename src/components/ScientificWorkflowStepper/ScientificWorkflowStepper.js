@@ -135,40 +135,30 @@ export default class ScientificWorkflowStepper extends Component {
   }
 
   /*
-  totally duplicated in WorkflowWizardStepper, but this one receives the data
+  mostly duplicated in WorkflowWizardStepper, but this one receives the data
   TODO both should be the same, the execute function should receive a form data, or something like that
    */
   execute (formData) {
     // ugly hack to workaround making one extra trip to the backend
     // we already have had to put strange __start__ and __end__ inputs to work nicely with phoenix
-    let url = `${__PAVICS_PHOENIX_PATH__}/processes/execute?wps=${this.props.selectedProvider}&process=${this.props.selectedProcess.identifier}`;
-    this.makePostRequest(url, formData, (xhr, params) => {
-      // status is always 200
-      // if(xhr.responseURL.indexOf('/processes/loading') !== -1){ // Deprecated but workek well with phoenix execute() Accept text/html
-      try {
-        let response = JSON.parse(xhr.responseText);
-        if (response.status === 200) {
-          this.props.jobAPIActions.createJob({ projectId: this.props.project.currentProject.id, phoenixTaskId: response.task_id });
-          NotificationManager.success('Workflow has been launched with success, you can now monitor workflow execution in the monitoring panel', 'Success', 10000);
-        }else{
+    let url = `/phoenix/processes/execute?wps=${this.props.selectedProvider}&process=${this.props.selectedProcess.identifier}`;
+    myHttp.postFormData(url, formData, {'accept': 'application/json'})
+      .then(res => res.json())
+      .then(response => {
+        // status is always 200
+        // if(xhr.responseURL.indexOf('/processes/loading') !== -1){ // Deprecated but workek well with phoenix execute() Accept text/html
+        try {
+          if (response.status === 200) {
+            this.props.jobAPIActions.createJob({ projectId: this.props.project.currentProject.id, phoenixTaskId: response.task_id });
+            NotificationManager.success('Workflow has been launched with success, you can now monitor workflow execution in the monitoring panel', 'Success', 10000);
+          } else {
+            NotificationManager.error('Workflow hasn\'t been launched as intended. Make sure the workflow and required inputs are defined properly', 'Error', 10000);
+          }
+        } catch (error) {
           NotificationManager.error('Workflow hasn\'t been launched as intended. Make sure the workflow and required inputs are defined properly', 'Error', 10000);
         }
-      }catch(error){
-        NotificationManager.error('Workflow hasn\'t been launched as intended. Make sure the workflow and required inputs are defined properly', 'Error', 10000);
-      }
-    });
-  }
-
-  makePostRequest (url, data, callable, params) {
-    let xhr = new XMLHttpRequest();
-    xhr.onload = function () {
-      if (callable !== undefined) {
-        callable(xhr, params);
-      }
-    };
-    xhr.open('POST', url);
-    xhr.setRequestHeader('accept', 'application/json');  // Old: 'text/html'
-    xhr.send(data);
+      })
+      .catch(err => console.log(err));
   }
 
   /*
