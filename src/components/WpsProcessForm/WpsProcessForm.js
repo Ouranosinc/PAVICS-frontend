@@ -140,16 +140,14 @@ export default class WpsProcessForm extends React.Component {
       case NETCDF:
         return (
           <div>
-            <input type="hidden" name="__start__" value="resource:sequence" />
             <TextField
               id={LABEL_NETCDF}
               name="resource"
-              fullWidth={true}
+              fullWidth
               value={this.state.formData[LABEL_NETCDF]}
               onChange={(event, value) => this.handleChange(event)}
               hintText={input.description}
               floatingLabelText={input.title} />
-            <input type="hidden" name="__end__" value="resource:sequence" />
           </div>
         );
       case STRING:
@@ -159,7 +157,7 @@ export default class WpsProcessForm extends React.Component {
               <TextField
                 id={LABEL_SHAPEFILE}
                 name={input.name}
-                fullWidth={true}
+                fullWidth
                 value={this.state.formData[LABEL_SHAPEFILE]}
                 onChange={(event, value) => this.handleChange(event)}
                 hintText={input.description}
@@ -172,7 +170,7 @@ export default class WpsProcessForm extends React.Component {
               <TextField
                 id={LABEL_FEATURE_IDS}
                 name={input.name}
-                fullWidth={true}
+                fullWidth
                 value={this.state.formData[LABEL_FEATURE_IDS]}
                 onChange={(event, value) => this.handleChange(event)}
                 hintText={input.description}
@@ -185,7 +183,7 @@ export default class WpsProcessForm extends React.Component {
             <TextField
               id={input.name}
               name={input.name}
-              fullWidth={true}
+              fullWidth
               value={this.state.formData[input.name]}
               onChange={(event, value) => this.handleChange(event)}
               hintText={input.description}
@@ -198,7 +196,7 @@ export default class WpsProcessForm extends React.Component {
             <TextField
               id={input.name}
               name={input.name}
-              fullWidth={true}
+              fullWidth
               value={this.state.formData[input.name]}
               onChange={(event, value) => this.handleChange(event)}
               hintText={input.description}
@@ -206,6 +204,17 @@ export default class WpsProcessForm extends React.Component {
           </div>
         );
     }
+  }
+
+  makeInput (input) {
+    console.log('making react component for input %o', input);
+    return (
+      <div>
+        {input['maxOccurs'] > 1 ? <input type="hidden" name="__start__" value="resource:sequence" /> : ''}
+        {this.makeInnerInput(input)}
+        {input['maxOccurs'] > 1 ? <input type="hidden" name="__end__" value="resource:sequence" /> : ''}
+      </div>
+    );
   }
 
   render () {
