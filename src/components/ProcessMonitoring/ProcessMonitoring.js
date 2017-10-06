@@ -186,32 +186,33 @@ class ProcessMonitoring extends React.Component {
 
                   if(x.status === constants.JOB_SUCCESS_STATUS) {
                     // If a SUCCESSFULL workflow, JSON Result is a WPS Output
-                    let outputs = x["response_to_json"]['wps:ExecuteResponse']['wps:ProcessOutputs'];
-                    tasks = [];
-                    if (outputs) {
-                      let data = outputs[0]['wps:Output'][0]['wps:Data'];
-                      if (data) {
-                        tasks = JSON.parse(data[0]['wps:ComplexData'][0]['_']);
-                      }
-                    }
-
-                    let LogFileURL = outputs[0]['wps:Output'][1]['wps:Reference'][0]['$']['xlink:href'];
+                    // let outputs = x["response_to_json"]['wps:ExecuteResponse']['wps:ProcessOutputs'];
+                    // tasks = [];
+                    // if (outputs) {
+                    //   let data = outputs[0]['wps:Output'][0]['wps:Data'];
+                    //   if (data) {
+                    //     tasks = JSON.parse(data[0]['wps:ComplexData'][0]['_']);
+                    //   }
+                    // }
+                    tasks = x.tasks;
+                    let LogFileURL = x["response_to_json"]['wps:ExecuteResponse']['wps:ProcessOutputs'][0]['wps:Output'][1]['wps:Reference'][0]['$']['xlink:href'];
                     logMenu = <MenuItem
                       primaryText="Browse Log File"
                       onTouchTap={(event) => window.open(LogFileURL, '_blank')}
                       leftIcon={<FileIcon />}/>
                   }else if(x.status === constants.JOB_FAILED_STATUS){
+                    tasks = x.tasks;
                     // If a FAILED workflow, JSON Result is in an ExceptionText and IS EXPANDABLE
-                    let exception = x["response_to_json"]['wps:ExecuteResponse']['wps:Status'][0]['wps:ProcessFailed'][0]['wps:ExceptionReport'][0]['ows:Exception'][0]['ows:ExceptionText'][0];
-                    const SEARCH_VALUE = 'Workflow result:';
-                    let startIndex = exception.indexOf(SEARCH_VALUE);
-                    if(startIndex > -1){
-                      let toBeParsed = exception.substring(startIndex + SEARCH_VALUE.length);
-                      tasks = JSON.parse(toBeParsed);
-                    }else{
-                      tasks = [];
-                      // NotificationManager.error(`Workflow doesn't contain attented string in ows:Exception.ows:ExceptionText result: '${SEARCH_VALUE}'`);
-                    }
+                    // let exception = x["response_to_json"]['wps:ExecuteResponse']['wps:Status'][0]['wps:ProcessFailed'][0]['wps:ExceptionReport'][0]['ows:Exception'][0]['ows:ExceptionText'][0];
+                    // const SEARCH_VALUE = 'Workflow result:';
+                    // let startIndex = exception.indexOf(SEARCH_VALUE);
+                    // if(startIndex > -1){
+                    //   let toBeParsed = exception.substring(startIndex + SEARCH_VALUE.length);
+                    //   tasks = JSON.parse(toBeParsed);
+                    // }else{
+                    //   tasks = [];
+                    //   // NotificationManager.error(`Workflow doesn't contain attented string in ows:Exception.ows:ExceptionText result: '${SEARCH_VALUE}'`);
+                    // }
                   }else{
                     // Should never happen
                     NotificationManager.error(`Workflow with status ${x.status} isn't managed properly by the platform`);
