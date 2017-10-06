@@ -13,6 +13,7 @@ const debug = _debug('app:server');
 const paths = config.utils_paths;
 const app = new Koa();
 const router = require('koa-router')();
+
 import {birdhouse, datasets, wms, consumer, wps, phoenix} from './controllers';
 // Routes
 router.get('/wps/:identifier', consumer.resolve);
@@ -36,6 +37,7 @@ router.post('/login', proxy({
 }));
 app.use(router.routes());
 app.use(router.allowedMethods());
+
 // Enable koa-proxy if it has been enabled in the config.
 // Because it's been enabled, so I guess we should enable it
 if (config.proxy && config.proxy.enabled) {

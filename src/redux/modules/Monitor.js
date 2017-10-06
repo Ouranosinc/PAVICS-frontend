@@ -152,7 +152,7 @@ function pollWPSJobs (projectId, limit = 5, page = 1, sort = 'created') {
 export function persistTemporaryResult (resource, location, overwrite, defaultFacets) {
   return (dispatch) => {
     dispatch(requestPersistTemporaryResult());
-    return fetch(`/wps/persist?resource=${resource}&location=${location}&overwrite=${overwrite}&default_facets=${JSON.stringify(defaultFacets)}`)
+    return myHttp.get(`/wps/persist?resource=${resource}&location=${location}&overwrite=${overwrite}&default_facets=${JSON.stringify(defaultFacets)}`)
       .then(response => {
         if(!response.ok){
           // Real msg is there: response.body.message; but not working as intended

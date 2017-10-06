@@ -17,8 +17,9 @@ let magpieHost = process.env.MAGPIE_HOST || 'outarde.crim.ca:52001';
 let PAVICS_WORKFLOW_PROVIDER = process.env.PAVICS_WORKFLOW_PROVIDER || 'malleefowl';
 let PAVICS_RUN_WORKFLOW_IDENTIFIER = process.env.PAVICS_RUN_WORKFLOW_IDENTIFIER || 'custom_workflow';
 let PAVICS_VISUALIZE_IDENTIFIER = process.env.PAVICS_VISUALIZE_IDENTIFIER || 'TODO';
-let PAVICS_PERSIST_IDENTIFIER = process.env.PAVICS_PERSIST_IDENTIFIER || 'thredds_download';
+let PAVICS_PERSIST_IDENTIFIER = process.env.PAVICS_PERSIST_IDENTIFIER || 'TODO';
 let PAVICS_PUBLISH_IDENTIFIER = process.env.PAVICS_PUBLISH_IDENTIFIER || 'TODO';
+let PAVICS_DEFAULT_WORKSPACE_FOLDER = process.env.PAVICS_DEFAULT_WORKSPACE_FOLDER || 'workspaces';
 let serverPort = process.env.PORT || 3000;
 let serverExternalPort = process.env.PAVICS_FRONTEND_PORT || serverPort;
 const config = {
@@ -45,6 +46,7 @@ const config = {
   PAVICS_VISUALIZE_IDENTIFIER: PAVICS_VISUALIZE_IDENTIFIER,
   PAVICS_PERSIST_IDENTIFIER: PAVICS_PERSIST_IDENTIFIER,
   PAVICS_PUBLISH_IDENTIFIER: PAVICS_PUBLISH_IDENTIFIER,
+  PAVICS_DEFAULT_WORKSPACE_FOLDER: PAVICS_DEFAULT_WORKSPACE_FOLDER,
   // ----------------------------------
   // Project Structure
   // ----------------------------------
@@ -117,6 +119,7 @@ config.globals = {
   '__PAVICS_VISUALIZE_IDENTIFIER__': JSON.stringify(config.PAVICS_VISUALIZE_IDENTIFIER),
   '__PAVICS_PERSIST_IDENTIFIER__': JSON.stringify(config.PAVICS_PERSIST_IDENTIFIER),
   '__PAVICS_PUBLISH_IDENTIFIER__': JSON.stringify(config.PAVICS_PUBLISH_IDENTIFIER),
+  '__PAVICS_DEFAULT_WORKSPACE_FOLDER__': JSON.stringify(config.PAVICS_DEFAULT_WORKSPACE_FOLDER),
 };
 // ------------------------------------
 // Validate Vendor Dependencies

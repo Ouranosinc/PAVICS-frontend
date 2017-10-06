@@ -17,25 +17,35 @@ var consumer = (function () {
   };
   return {
     resolve: function * (next) {
+      // if(next.cookies){
+      //   console.log('NEXT COOKIE: '+ next.cookies.get('auth_tkt'))
+      // }
+      const currentCookie = this.cookies.get('auth_tkt');
+      console.log('CURRENT COOKIE: ' + currentCookie);
+      let options = {
+        headers: {
+          'Cookie': `auth_tkt=${currentCookie}`
+        },
+        url: ''
+      };
       console.log('consuming:', this.params.identifier);
       let response;
-      let url;
       let xml;
       switch (this.params.identifier) {
         case 'pavicsearch':
           // url = config.pavics_pywps_path + urlEncode(this.request.query);
-          url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=pavicsearch&DataInputs=${urlEncode(
+          options.url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=pavicsearch&DataInputs=${urlEncode(
             this.request.query
           )}`;
-          console.log('consuming: ' + url);
-          response = yield request(url);
+          console.log('consuming: ' + options.url);
+          response = yield request(options);
           let xmlToJson = yield Utils.parseXMLThunk(response.body);
           let jsonTempUrl = Utils.extractWPSOutputPath(xmlToJson);
           response = yield request(jsonTempUrl);
           this.body = response.body;
           break;
         case 'plotly':
-          url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0` +
+          options.url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0` +
             `&identifier=ncplotly&DataInputs=opendap_url=${this.request.query['opendap_url']}` +
             `;variable_name=${this.request.query['variable_name']}` +
             `;time_initial_indice=` + this.request.query['time_initial_indice'] +
@@ -44,8 +54,8 @@ var consumer = (function () {
             `;spatial1_final_indice=` + this.request.query['spatial1_final_indice'] +
             `;spatial2_initial_indice=` + this.request.query['spatial2_initial_indice'] +
             `;spatial2_final_indice=` + this.request.query['spatial2_final_indice'];
-          console.log('fetching plotly data:', url);
-          response = yield request(url);
+          console.log('fetching plotly data:', options.url);
+          response = yield request(options);
           xml = yield Utils.parseXMLThunk(response.body);
           jsonPath = Utils.extractWPSOutputPath(xml);
           response = yield request(jsonPath);
@@ -59,9 +69,9 @@ var consumer = (function () {
           let lat = this.request.query['lat'];
           let time = this.request.query['time'];
           let dataInputs = `opendap_url=${opendapUrl};variable=${variable};nearest_to=lon:${lon};nearest_to=lat:${lat};nearest_to=time:${time}`;
-          url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=getpoint&DataInputs=${dataInputs}`;
-          console.log('getting point:', url);
-          response = yield request(url);
+          options.url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=getpoint&DataInputs=${dataInputs}`;
+          console.log('getting point:', options.url);
+          response = yield request(options);
           xml = yield Utils.parseXMLThunk(response.body);
           let jsonPath = Utils.extractWPSOutputPath(xml);
           response = yield request(jsonPath);
@@ -69,9 +79,9 @@ var consumer = (function () {
           break;
         case 'crawl':
           let dataset = this.request.query['dateset_id'];
-          url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=pavicrawler&storeExecuteResponse=true&DataInputs=targetfiles=${dataset}`;
-          console.log('crawling a file:', url);
-          response = yield request(url);
+          options.url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=pavicrawler&storeExecuteResponse=true&DataInputs=targetfiles=${dataset}`;
+          console.log('crawling a file:', options.url);
+          response = yield request(options);
           xml = yield Utils.parseXMLThunk(response.body);
           // let jsonPath = Utils.extractWPSOutputPath(xml);
           // response = yield request(jsonPath);
@@ -81,15 +91,8 @@ var consumer = (function () {
           let location = this.request.query['location'];
           let overwrite = this.request.query['overwrite'];
           let default_facets = this.request.query['default_facets'];
-          url = `${config.pavics_malleefowl_path}?service=WPS&version=1.0.0&request=execute&identifier=persist&DataInputs=resource=${resource};location=${location};overwrite=${overwrite};default_facets=${default_facets}`;
-          // url = `${config.pavics_malleefowl_path}?service=WPS&version=1.0.0&request=execute&identifier=persist&DataInputs=resource=http://pluvier.crim.ca:38093/wpsoutputs/flyingpigeon/ncout-5596d08c-8e76-11e7-bcf1-0242ac120006.nc;location=/workspaces/david/{yolo}/tata2.nc;overwrite=true;default_facets={yolo:valeur}`;
-          console.log('persist a file:', url);
-          let options = {
-            headers: {
-              'Cookie': "auth_tkt=813d148e733c8f0f13a22dd37b84df92ad894f1cfb8a97bc03692adba53af8ba2a0cf32a7fcd3cb95d8c07ca4bbf9da87acefac5b075f52d1547476072e7b91e59a86d314!userid_type:int; auth_tkt=813d148e733c8f0f13a22dd37b84df92ad894f1cfb8a97bc03692adba53af8ba2a0cf32a7fcd3cb95d8c07ca4bbf9da87acefac5b075f52d1547476072e7b91e59a86d314!userid_type:int"
-            },
-            url: url
-          };
+          options.url = `${config.pavics_malleefowl_path}?service=WPS&version=1.0.0&request=execute&identifier=persist&DataInputs=resource=${resource};location=${location};overwrite=${overwrite};default_facets=${default_facets}`;
+          console.log('persist a file:', options.url);
           response = yield request(options);
           xml = yield Utils.parseXMLThunk(response.body);
           if (xml['wps:ExecuteResponse']['wps:Status'][0]['wps:ProcessSucceeded']) {

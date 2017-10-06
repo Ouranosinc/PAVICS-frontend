@@ -29,6 +29,7 @@ class ProcessMonitoring extends React.Component {
     monitor: React.PropTypes.object.isRequired,
     monitorActions: React.PropTypes.object.isRequired,
     project: React.PropTypes.object.isRequired,
+    sessionManagement: React.PropTypes.object.isRequired,
     fetchVisualizableData: React.PropTypes.func.isRequired
   };
 
@@ -208,7 +209,8 @@ class ProcessMonitoring extends React.Component {
                       let toBeParsed = exception.substring(startIndex + SEARCH_VALUE.length);
                       tasks = JSON.parse(toBeParsed);
                     }else{
-                      NotificationManager.error(`Workflow doesn't contain attented string in ows:Exception.ows:ExceptionText result: '${SEARCH_VALUE}'`);
+                      tasks = [];
+                      // NotificationManager.error(`Workflow doesn't contain attented string in ows:Exception.ows:ExceptionText result: '${SEARCH_VALUE}'`);
                     }
                   }else{
                     // Should never happen
@@ -410,8 +412,9 @@ class ProcessMonitoring extends React.Component {
             output={this.state.persistDialogOutput}
             isOpen={this.state.persistDialogOpened}
             monitorActions={this.props.monitorActions}
-            onPersistConfirmed={this._onPersistOutputClicked}>
-            closePersistDialog={this._closePersistDialog}>
+            onPersistConfirmed={this._onPersistOutputClicked}
+            closePersistDialog={this._closePersistDialog}
+            username={this.props.sessionManagement.sessionStatus.user.username}>
           </PersistResultDialog>
         </div>
       </div>
