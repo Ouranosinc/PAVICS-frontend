@@ -184,38 +184,61 @@ class ProcessMonitoring extends React.Component {
                     onTouchTap={(event) => this._onShowLogDialog(x.log)}
                     leftIcon={<LogIcon />}/>;
 
+                  tasks = x.tasks;
+
+                  // If an output is a json array of netcdf urls, we must generate new output for every listed url
+                  tasks.forEach(task => {
+                    let newOutputs = [];
+                    let taskName = Object.keys(task)[0];
+                    task[taskName].forEach( parralelTask => {
+                      if(parralelTask.outputs) {
+                        parralelTask.outputs.forEach(output => {
+                          if (output.mimeType === 'application/json' && (output.inline || output.data)) {
+                            let json = JSON.parse(output.inline || output.data); // WTF .data and no reference
+                            if (Array.isArray(json) && typeof json[0] === 'string' &&
+                              json[0].startsWith('http://') && json[0].endsWith('.nc')) {
+                              json.forEach(json => {
+                                newOutputs.push({
+                                  dataType: "ComplexData",
+                                  identifier: output.identifier,
+                                  mimeType: 'application/x-netcdf',
+                                  reference: json,
+                                  title: output.title,
+                                  abstract: ''
+                                });
+                              });
+                            } else {
+                              newOutputs.push({
+                                dataType: output.dataType,
+                                identifier: output.identifier,
+                                mimeType: output.mimeType,
+                                reference: output.reference,
+                                title: output.title,
+                                abstract: ''
+                              });
+                            }
+                          } else {
+                            newOutputs.push({
+                              dataType: output.dataType,
+                              identifier: output.identifier,
+                              mimeType: output.mimeType,
+                              reference: output.reference,
+                              title: output.title,
+                              abstract: ''
+                            });
+                          }
+                        });
+                        parralelTask.outputs = newOutputs;
+                      }
+                    });
+                  });
+
                   if(x.status === constants.JOB_SUCCESS_STATUS) {
-                    // If a SUCCESSFULL workflow, JSON Result is a WPS Output
-                    // let outputs = x["response_to_json"]['wps:ExecuteResponse']['wps:ProcessOutputs'];
-                    // tasks = [];
-                    // if (outputs) {
-                    //   let data = outputs[0]['wps:Output'][0]['wps:Data'];
-                    //   if (data) {
-                    //     tasks = JSON.parse(data[0]['wps:ComplexData'][0]['_']);
-                    //   }
-                    // }
-                    tasks = x.tasks;
                     let LogFileURL = x["response_to_json"]['wps:ExecuteResponse']['wps:ProcessOutputs'][0]['wps:Output'][1]['wps:Reference'][0]['$']['xlink:href'];
                     logMenu = <MenuItem
                       primaryText="Browse Log File"
                       onTouchTap={(event) => window.open(LogFileURL, '_blank')}
                       leftIcon={<FileIcon />}/>
-                  }else if(x.status === constants.JOB_FAILED_STATUS){
-                    tasks = x.tasks;
-                    // If a FAILED workflow, JSON Result is in an ExceptionText and IS EXPANDABLE
-                    // let exception = x["response_to_json"]['wps:ExecuteResponse']['wps:Status'][0]['wps:ProcessFailed'][0]['wps:ExceptionReport'][0]['ows:Exception'][0]['ows:ExceptionText'][0];
-                    // const SEARCH_VALUE = 'Workflow result:';
-                    // let startIndex = exception.indexOf(SEARCH_VALUE);
-                    // if(startIndex > -1){
-                    //   let toBeParsed = exception.substring(startIndex + SEARCH_VALUE.length);
-                    //   tasks = JSON.parse(toBeParsed);
-                    // }else{
-                    //   tasks = [];
-                    //   // NotificationManager.error(`Workflow doesn't contain attented string in ows:Exception.ows:ExceptionText result: '${SEARCH_VALUE}'`);
-                    // }
-                  }else{
-                    // Should never happen
-                    NotificationManager.error(`Workflow with status ${x.status} isn't managed properly by the platform`);
                   }
 
                   return <ListItem
@@ -274,7 +297,7 @@ class ProcessMonitoring extends React.Component {
                         }else{
                           // No actions
                           let completedTasks = parrallelTasks.filter(x => x.status === constants.JOB_SUCCESS_STATUS);
-                          let visualizableOutputs = []
+                          let visualizableOutputs = [];
                           parrallelTasks.forEach((task)=> {
                             task.outputs.forEach((output) => {
                               if(output.mimeType === 'application/x-netcdf') {
@@ -345,20 +368,53 @@ class ProcessMonitoring extends React.Component {
                   let wpsProcessOutputs = x.response_to_json['wps:ExecuteResponse']['wps:ProcessOutputs'];
                   if(wpsProcessOutputs){
                     let outputs = wpsProcessOutputs[0]['wps:Output'];
-                    outputs.forEach(function(output){
+                    for(let i = 0; i < outputs.length; ++i){
                       try {
-                        x.outputs.push({
-                          dataType: "ComplexData",
-                          identifier: output['ows:Identifier'][0],
-                          mimeType: output['wps:Reference'][0]['$']['mimeType'],
-                          reference: output['wps:Reference'][0]['$']['href'],
-                          title: output['ows:Title'][0],
-                          abstract: output['ows:Abstract'][0]
-                        });
-                      }catch(error){
+                        let output = outputs[i];
+                        if (output['wps:Reference']) {
+                          if (output['wps:Reference'][0]['$']['mimeType'] === 'application/json') {
+                            // We might have to generate multiple outputs
+                            let json = JSON.parse(x.outputs_to_json[i]);
+                            if (Array.isArray(json) && typeof json[0] === 'string' &&
+                              json[0].startsWith('http://') && json[0].endsWith('.nc') ) {
+                              json.forEach(json => {
+                                x.outputs.push({
+                                  dataType: "ComplexData",
+                                  identifier: output['ows:Identifier'][0],
+                                  mimeType: 'application/x-netcdf',
+                                  reference: json,
+                                  title: output['ows:Title'][0],
+                                  abstract: output['ows:Abstract'][0]
+                                });
+                              });
+                            } else {
+                              x.outputs.push({
+                                dataType: "ComplexData",
+                                identifier: output['ows:Identifier'][0],
+                                mimeType: output['wps:Reference'][0]['$']['mimeType'],
+                                reference: output['wps:Reference'][0]['$']['xlink:href'] || output['wps:Reference'][0]['$']['href'],
+                                title: output['ows:Title'][0],
+                                abstract: output['ows:Abstract'][0]
+                              });
+                            }
+                          } else {
+                            x.outputs.push({
+                              dataType: "ComplexData",
+                              identifier: output['ows:Identifier'][0],
+                              mimeType: output['wps:Reference'][0]['$']['mimeType'],
+                              reference: output['wps:Reference'][0]['$']['xlink:href'] || output['wps:Reference'][0]['$']['href'],
+                              title: output['ows:Title'][0],
+                              abstract: output['ows:Abstract'][0]
+                            });
+                          }
+                        } else {
+                          NotificationManager.error("ComplexData inline should not happen anymore");
+                        }
+                      } catch(error){
+                        console.error(error);
                         NotificationManager.error("Bad WPS XML Status Output format");
                       }
-                    });
+                    }
                   }
                   return <ProcessListItem job={x}
                                           key={i}

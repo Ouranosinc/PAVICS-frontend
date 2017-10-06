@@ -66,9 +66,30 @@ let phoenix = (() => {
             let job = paginatedJobs[i];
             let tasks = [];
             if (job.status === 'ProcessSucceeded') {
+              console.log(job.title);
               console.log('Job ProcessSucceeded');
               try {
-                tasks = JSON.parse(job["response_to_json"]['wps:ExecuteResponse']['wps:ProcessOutputs'][0]['wps:Output'][0]['wps:Data'][0]['wps:ComplexData'][0]['_']);
+                if(job.title === config.PAVICS_RUN_WORKFLOW_IDENTIFIER){
+                  // Custom Workflow
+                  // 1 output by default
+                  tasks = JSON.parse(job["response_to_json"]['wps:ExecuteResponse']['wps:ProcessOutputs'][0]['wps:Output'][0]['wps:Data'][0]['wps:ComplexData'][0]['_']);
+                }else{
+                  // WPS
+                  paginatedJobs[i].outputs_to_json = [];
+                  let outputs = job["response_to_json"]['wps:ExecuteResponse']['wps:ProcessOutputs'][0]['wps:Output'];
+                  for(let z = 0; z < outputs.length; z++){
+                    let output = outputs[z];
+                    if(output['wps:Reference'][0]['$']['mimeType'] === 'application/json'){
+                      let outputPath = output['wps:Reference'][0].$.href || output['wps:Reference'][0].$['xlink:href'];
+                      console.log(`Fetching URL ${outputPath} ...`);
+                      let response = yield request(outputPath);
+                      let json = response.body;
+                      paginatedJobs[i].outputs_to_json.push(json);
+                    }else{
+                      paginatedJobs[i].outputs_to_json.push({});
+                    }
+                  }
+                }
               } catch (err) {
                 // Ignore errors...
                 console.error(err);
@@ -98,20 +119,23 @@ let phoenix = (() => {
               for(let j = 0; j < tasks.length; ++j) {
                 const task = tasks[j];
                 const taskName = Object.keys(task)[0];
-                const outputs = task[taskName][0].outputs;
-                console.log(`Task: ${JSON.stringify(task)}`);
-                console.log(`Outputs found for task #${j}: ${outputs}`);
-                if (outputs) {
-                  for(let k = 0; k < outputs.length; ++k) {
-                    let output = outputs[k];
-                    if (output.mimeType === 'application/json' && output.reference && output.reference.length) {
-                      // TODO: Should we pass token?
-                      console.log(`Fetching ${output.reference}...`);
-                      let response = yield request(output.reference);
-                      let inline = response.body;
-                      console.log(`Fetched #${i} output:`);
-                      console.log(inline);
-                      tasks[j][taskName][0].outputs[k].inline = inline;
+                for(let k = 0; k < task[taskName].length; ++k) {
+                  const parralelTask = task[taskName][k];
+                  let outputs = parralelTask.outputs;
+                  console.log(`Task: ${JSON.stringify(task)}`);
+                  console.log(`Outputs found for task #${j}: ${outputs}`);
+                  if (outputs) {
+                    for(let l = 0; l < outputs.length; ++l) {
+                      let output = outputs[l];
+                      if (output.mimeType === 'application/json' && output.reference && output.reference.length) {
+                        // TODO: Should we pass token?
+                        console.log(`Fetching ${output.reference}...`);
+                        let response = yield request(output.reference);
+                        let inline = response.body;
+                        console.log(`Fetched #${i} output:`);
+                        console.log(inline);
+                        tasks[j][taskName][0].outputs[k].inline = inline;
+                      }
                     }
                   }
                 }
