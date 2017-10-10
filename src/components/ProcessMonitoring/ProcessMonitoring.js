@@ -299,11 +299,13 @@ class ProcessMonitoring extends React.Component {
                           let completedTasks = parrallelTasks.filter(x => x.status === constants.JOB_SUCCESS_STATUS);
                           let visualizableOutputs = [];
                           parrallelTasks.forEach((task)=> {
-                            task.outputs.forEach((output) => {
-                              if(output.mimeType === 'application/x-netcdf') {
-                                visualizableOutputs.push(output.reference);
-                              }
-                            });
+                            if(task.outputs) {
+                              task.outputs.forEach((output) => {
+                                if(output.mimeType === 'application/x-netcdf') {
+                                  visualizableOutputs.push(output.reference);
+                                }
+                              });
+                            }
                           });
                           // TODO Visualize all for subtasks
                           return  (

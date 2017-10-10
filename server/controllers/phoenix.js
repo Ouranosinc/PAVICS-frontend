@@ -107,8 +107,9 @@ let phoenix = (() => {
                   tasks = [];
                 }
               } catch (err) {
-                // Ignore errors...
-                console.error(err);
+                // Ignore errors and continue...
+                tasks = [];
+                // console.error(err);
               }
             }else{
 
