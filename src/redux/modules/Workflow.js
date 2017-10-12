@@ -75,7 +75,7 @@ function setSelectedProcessValues (key, value) {
   return {
     type: constants.WORKFLOW_SET_ACTIVE_PROCESS_VALUES,
     key: key,
-    value: valuefv
+    value: value
   };
 }
 
@@ -159,26 +159,6 @@ function fetchProviders () {
   };
 }
 
-function executeProcess (provider, process, inputValues) {
-  return () => {
-    console.log(inputValues);
-    let array = [];
-    for (let key in inputValues) {
-      if (inputValues.hasOwnProperty(key)) {
-        array.push(encodeURIComponent(key) + '=' + encodeURIComponent(inputValues[key]));
-      }
-    }
-    let string = array.join(';');
-    return myHttp.get(`/phoenix/execute?wps=${provider}&process=${process}&inputs=${string}`)
-      .then(response => {
-        console.log('received:', response);
-      })
-      .catch(error => {
-        console.log('problem', error);
-      });
-  };
-}
-
 // Exported Action Creators
 export const actions = {
   setSelectedProcess: setSelectedProcess,
@@ -196,8 +176,7 @@ export const actions = {
   selectWpsProvider: selectWpsProvider,
   chooseProcess: chooseProcess,
   fetchProcesses: fetchProcesses,
-  fetchProviders: fetchProviders,
-  executeProcess : executeProcess
+  fetchProviders: fetchProviders
 };
 
 // Handlers
