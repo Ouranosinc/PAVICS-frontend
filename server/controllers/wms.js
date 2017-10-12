@@ -1,11 +1,11 @@
-'use strict'
-import {parseString} from 'xml2js'
-import request from 'koa-request'
+'use strict';
+import {parseString} from 'xml2js';
+import myHttp from './../../lib/http';
 // Explanation here http://blog.stevensanderson.com/2013/12/21/experiments-with-koa-and-javascript-generators/
 function parseXMLThunk (response, url, dataset) {
   // console.log(response)
   return function (callback) {
-    parseXMLAsync(response, url, dataset, callback)
+    parseXMLAsync(response, url, dataset, callback);
   };
 }
 function parseXMLAsync (response, url, dataset, callback) {
@@ -23,7 +23,7 @@ function parseXMLAsync (response, url, dataset, callback) {
         dataset: dataset,
         boundingBox: layer['BoundingBox'][0].$
       });
-    })
+    });
     response.sort(function (a, b) {
       if (a.name < b.name) {
         return -1;
@@ -33,7 +33,7 @@ function parseXMLAsync (response, url, dataset, callback) {
       }
       return 0;
     });
-    callback(null, response)
+    callback(null, response);
     // callback(null, result)
   });
 }
@@ -54,12 +54,7 @@ module.exports.getLayers = function * list (next) {
     // dataset = 'outputs/ouranos/subdaily/aet/pcp/aet_pcp_1970.nc'
     // url = 'http://132.217.140.31:8080/ncWMS2/wms'
   }
-  let wmsUrl = `${url}?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&DATASET=${dataset}`
-  console.log(wmsUrl);
-  var options = {
-    url: wmsUrl
-  };
-  var response = yield request(options);
+  const response = yield myHttp.get(`${url}?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&DATASET=${dataset}`);
   this.body = yield parseXMLThunk(response.body, url, dataset);
-}
+};
 

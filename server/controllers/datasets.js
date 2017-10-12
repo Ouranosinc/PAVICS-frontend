@@ -1,8 +1,8 @@
 'use strict';
 import config from '../../config';
-import request from 'koa-request';
 import url from 'url';
 import Utils from './../Utils';
+import myHttp from './../../lib/http';
 
 module.exports.getExternalDatasets = function * list (next) {
   let constraints = '';
@@ -16,17 +16,12 @@ module.exports.getExternalDatasets = function * list (next) {
   }
   let query = `${config.pavics_solr_path}/wps?service=WPS&version=1.0.0&request=Execute&identifier=esgsearch&DataInputs=url=http://pcmdi.llnl.gov/esg-search${constraints}`;
   console.log(`Querying: ${query}`)
-  var optionsWPS = {
-    url: query
-  };
-  let responseWPS = yield request(optionsWPS);
+
+  let responseWPS = yield myHttp.get(query);
   let xmlToJson = yield Utils.parseXMLThunk(responseWPS.body);
   let wpsOutput = Utils.extractWPSOutputPath(xmlToJson);
   if (wpsOutput.length) {
-    var optionsJson = {
-      url: wpsOutput
-    };
-    let responseJson = yield request(optionsJson);
+    let responseJson = yield myHttp.get(wpsOutput);
     let datasets = JSON.parse(responseJson.body);
     this.body = datasets.sort(function (a, b) {
       if (a.id < b.id) {
@@ -54,17 +49,11 @@ module.exports.getDatasets = function * list (next) {
   }
   let query = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=pavicsearch&DataInputs=${constraints}`;
   console.log(`Querying: ${query}`);
-  var optionsWPS = {
-    url: query
-  };
-  let responseWPS = yield request(optionsWPS);
+  let responseWPS = myHttp.get(query);
   let xmlToJson = yield Utils.parseXMLThunk(responseWPS.body);
   let wpsOutput = Utils.extractWPSOutputPath(xmlToJson);
   if (wpsOutput.length) {
-    var optionsJson = {
-      url: wpsOutput
-    };
-    let responseJson = yield request(optionsJson);
+    let responseJson = yield myHttp.get(wpsOutput);
     let datasets = JSON.parse(responseJson.body).response.docs;
     this.body = datasets.sort(function (a, b) {
       if (a.id < b.id) {
@@ -108,7 +97,7 @@ function getServicesFromXmlCatalog (catalogJson, query) {
 
 function getMetadataFromXmlCatalog(catalogJson) {
   let metadatas = [];
-  catalogJson.catalog.dataset[0].property.forEach(function(metadata) {
+  catalogJson.catalog.dataset[0].property.forEach(function (metadata) {
     metadatas.push({
       key: metadata.$.name,
       value: metadata.$.value
@@ -220,7 +209,7 @@ module.exports.getDataset = function * list (next) {
   let query = this.request.query.url;
   if (query.length) {
     console.log('Found url: ' + query);
-    let responseWPS = yield request(query);
+    let responseWPS = yield myHttp.get(query);
     let xmlToJson = yield Utils.parseXMLThunk(responseWPS.body);
     let dataset = extractDatasetFromXmlCatalog(xmlToJson, query);
     this.body = dataset;
