@@ -1,6 +1,6 @@
-import request from 'koa-request';
 import config from '../../../config';
 import Utils from './../../Utils';
+import myHttp from './../../../lib/http';
 
 var wps = (function () {
   return {
@@ -9,11 +9,10 @@ var wps = (function () {
 
       let url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=pavicsearch&DataInputs=facets=*&limit=0&distrib=false`;
       console.log('consuming: ' + url);
-      let response = yield request(url);
+      let response = yield myHttp.get(url);
       let xmlToJson = yield Utils.parseXMLThunk(response.body);
       let jsonTempUrl = Utils.extractWPSOutputPath(xmlToJson);
-      response = yield request(jsonTempUrl);
-
+      response = yield myHttp.get(jsonTempUrl);
       let json = JSON.parse(response.body);
       response = [];
       console.log(json);
@@ -45,7 +44,8 @@ var wps = (function () {
     },
     getClimateIndicators: function * () {
       // hardcoded for now until we know for sure where these capabilities will be coming from
-      let response = yield request('http://132.217.140.31:8092/wps?service=WPS&version=1.0.0&request=DescribeProcess&identifier=cdo_operation');
+      // 2017-10-12 this seems to have been all but abandoned but possibly will be reused some day...
+      let response = yield myHttp.get('http://132.217.140.31:8092/wps?service=WPS&version=1.0.0&request=DescribeProcess&identifier=cdo_operation');
       let json = yield Utils.parseXMLThunk(response.body);
       let inputs = json['wps:ProcessDescriptions']['ProcessDescription'][0]['DataInputs'][0]['Input'];
       let allowedValues = inputs[1]['LiteralData'][0]['ows:AllowedValues'][0]['ows:Value'];

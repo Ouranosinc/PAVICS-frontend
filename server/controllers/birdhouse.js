@@ -1,7 +1,7 @@
 'use strict';
 import config from '../../config';
 import {parseString} from 'xml2js';
-import request from 'koa-request';
+import myHttp from './../../lib/http';
 // TODO probably not the place to hardcode this
 const thredds = 'http://outarde.crim.ca:8083/thredds/wms/birdhouse/';
 const wmsUrlSuffix = '?service=WMS&version=1.3.0&request=GetCapabilities';
@@ -43,10 +43,7 @@ function makeWmsUrl (dataset) {
   return `${thredds}${dataset}${wmsUrlSuffix}`;
 }
 module.exports.fetchVisualizableLayer = function * list () {
-  let statusLocation = this.query.status;
-  let response = yield request({
-    url: statusLocation
-  });
+  let response = yield myHttp.get(this.query.status);
   let json = yield parseXMLThunk(response.body);
   let responseBody = json['wps:ExecuteResponse'];
   let outputsDefs = responseBody['wps:OutputDefinitions'][0]['wps:Output'];
@@ -56,9 +53,7 @@ module.exports.fetchVisualizableLayer = function * list () {
     if (output) {
       let refHref = output['wps:Reference'][0]['$']['href'].replace('http://outarde.crim.ca:8090/wpsoutputs/', '');
       let wmsHref = makeWmsUrl(refHref);
-      let wmsResponse = yield request({
-        url: wmsHref
-      });
+      let wmsResponse = yield myHttp.get(wmsHref);
       let wmsResponseJson = yield parseXMLThunk(wmsResponse.body);
       // lotsa ['Layer'][0] because xmlThunkParser
       let layer = wmsResponseJson['WMS_Capabilities']['Capability'][0]['Layer'][0]['Layer'][0];
@@ -85,11 +80,7 @@ module.exports.getCapabilities = function * list (next) {
   if (this.method !== 'GET') {
     return yield next;
   }
-  let options = {
-    url: `${config.pavics_ncwms_path}?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0`
-  };
-  // Yay, HTTP requests with no callbacks!
-  let response = yield request(options);
+  let response = yield myHttp.get(`${config.pavics_ncwms_path}?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0`);
   this.body = yield parseXMLThunk(response.body);
 };
 

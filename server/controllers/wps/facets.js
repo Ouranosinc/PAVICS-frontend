@@ -1,7 +1,7 @@
 'use strict';
 import config from '../../../config';
 import Utils from '../../Utils';
-import request from 'koa-request';
+import myHttp from './../../../lib/http';
 
 var facets = (function () {
   return {
@@ -10,11 +10,10 @@ var facets = (function () {
 
       let url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=pavicsearch&DataInputs=facets=*&limit=0&distrib=false`;
       console.log('consuming: ' + url);
-      let response = yield request(url);
+      let response = yield myHttp.get(url);
       let xmlToJson = yield Utils.parseXMLThunk(response.body);
       let jsonTempUrl = Utils.extractWPSOutputPath(xmlToJson);
-      response = yield request(jsonTempUrl);
-
+      response = yield myHttp.get(jsonTempUrl);
       let json = JSON.parse(response.body);
       response = [];
       console.log(json);

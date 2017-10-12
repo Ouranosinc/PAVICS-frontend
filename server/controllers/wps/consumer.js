@@ -1,6 +1,6 @@
 import config from '../../../config';
-import request from 'koa-request';
 import Utils from './../../Utils';
+import myHttp from './../../../lib/http';
 var consumer = (function () {
   // this creates the string for whatever comes after DataInputs=
   // which is stranglely formed, that is, separated by semicolons, colons and commas
@@ -28,10 +28,10 @@ var consumer = (function () {
             this.request.query
           )}`;
           console.log('consuming: ' + url);
-          response = yield request(url);
+          response = yield myHttp.get(url);
           let xmlToJson = yield Utils.parseXMLThunk(response.body);
           let jsonTempUrl = Utils.extractWPSOutputPath(xmlToJson);
-          response = yield request(jsonTempUrl);
+          response = yield myHttp.get(jsonTempUrl);
           this.body = response.body;
           break;
         case 'plotly':
@@ -45,10 +45,10 @@ var consumer = (function () {
             `;spatial2_initial_indice=` + this.request.query['spatial2_initial_indice'] +
             `;spatial2_final_indice=` + this.request.query['spatial2_final_indice'];
           console.log('fetching plotly data:', url);
-          response = yield request(url);
+          response = yield myHttp.get(url);
           xml = yield Utils.parseXMLThunk(response.body);
           jsonPath = Utils.extractWPSOutputPath(xml);
-          response = yield request(jsonPath);
+          response = yield myHttp.get(jsonPath);
           console.log('json path: ', jsonPath);
           this.body = response.body;
           break;
@@ -61,17 +61,17 @@ var consumer = (function () {
           let dataInputs = `opendap_url=${opendapUrl};variable=${variable};nearest_to=lon:${lon};nearest_to=lat:${lat};nearest_to=time:${time}`;
           url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=getpoint&DataInputs=${dataInputs}`;
           console.log('getting point:', url);
-          response = yield request(url);
+          response = yield myHttp.get(url);
           xml = yield Utils.parseXMLThunk(response.body);
           let jsonPath = Utils.extractWPSOutputPath(xml);
-          response = yield request(jsonPath);
+          response = yield myHttp.get(jsonPath);
           this.body = response.body;
           break;
         case 'crawl':
           let dataset = this.request.query['dateset_id'];
           url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=pavicrawler&storeExecuteResponse=true&DataInputs=targetfiles=${dataset}`;
           console.log('crawling a file:', url);
-          response = yield request(url);
+          response = yield myHttp.get(url);
           xml = yield Utils.parseXMLThunk(response.body);
           // let jsonPath = Utils.extractWPSOutputPath(xml);
           // response = yield request(jsonPath);
