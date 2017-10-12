@@ -117,30 +117,30 @@ let phoenix = (() => {
 
             try {
               console.log(`Tasks found on job #${i}: ${tasks.length}`);
-              for(let j = 0; j < tasks.length; ++j) {
-                const task = tasks[j];
-                const taskName = Object.keys(task)[0];
-                for(let k = 0; k < task[taskName].length; ++k) {
-                  const parralelTask = task[taskName][k];
-                  let outputs = parralelTask.outputs;
-                  console.log(`Task: ${JSON.stringify(task)}`);
-                  console.log(`Outputs found for task #${j}: ${outputs}`);
-                  if (outputs) {
-                    for(let l = 0; l < outputs.length; ++l) {
-                      let output = outputs[l];
-                      if (output.mimeType === 'application/json' && output.reference && output.reference.length) {
-                        // TODO: Should we pass token?
-                        console.log(`Fetching ${output.reference}...`);
-                        let response = yield request(output.reference);
-                        let inline = response.body;
-                        console.log(`Fetched #${i} output:`);
-                        console.log(inline);
-                        tasks[j][taskName][0].outputs[k].inline = inline;
-                      }
-                    }
-                  }
-                }
-              }
+              // for(let j = 0; j < tasks.length; ++j) {
+              //   const task = tasks[j];
+              //   const taskName = Object.keys(task)[0];
+              //   for(let k = 0; k < task[taskName].length; ++k) {
+              //     const parralelTask = task[taskName][k];
+              //     let outputs = parralelTask.outputs;
+              //     console.log(`Task: ${JSON.stringify(task)}`);
+              //     console.log(`Outputs found for task #${j}: ${outputs}`);
+              //     if (outputs) {
+              //       for(let l = 0; l < outputs.length; ++l) {
+              //         let output = outputs[l];
+              //         if (output.mimeType === 'application/json' && output.reference && output.reference.length) {
+              //           // TODO: Should we pass token?
+              //           console.log(`Fetching ${output.reference}...`);
+              //           let response = yield request(output.reference);
+              //           let inline = response.body;
+              //           console.log(`Fetched #${i} output:`);
+              //           console.log(inline);
+              //           tasks[j][taskName][0].outputs[k].inline = inline;
+              //         }
+              //       }
+              //     }
+              //   }
+              // }
               paginatedJobs[i].tasks = tasks;
             }catch(err){
               console.error(err);

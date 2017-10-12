@@ -192,18 +192,18 @@ class ProcessMonitoring extends React.Component {
                     let taskName = Object.keys(task)[0];
                     task[taskName].forEach( parralelTask => {
                       if(parralelTask.outputs) {
+
                         parralelTask.outputs.forEach(output => {
-                          if (output.mimeType === 'application/json' && (output.inline || output.data)) {
-                            let json = JSON.parse(output.inline || output.data); // WTF .data and no reference
-                            if (Array.isArray(json) && typeof json[0] === 'string' &&
-                              json[0].startsWith('http://') && json[0].endsWith('.nc')) {
-                              json.forEach(json => {
+                          if (output.mimeType === 'application/json' && output.data) {
+                            if (Array.isArray(output.data) && typeof output.data[0] === 'string' &&
+                              output.data[0].startsWith('http://') && output.data[0].endsWith('.nc')) {
+                              output.data.forEach((url, index) => {
                                 newOutputs.push({
                                   dataType: "ComplexData",
                                   identifier: output.identifier,
                                   mimeType: 'application/x-netcdf',
-                                  reference: json,
-                                  title: output.title,
+                                  reference: url,
+                                  title: `${output.title} (${index + 1}/${output.data.length})`,
                                   abstract: ''
                                 });
                               });
