@@ -13,7 +13,6 @@ let serverHost = process.env.PAVICS_FRONTEND_IP || localip;
 let serverProto = process.env.PAVICS_FRONTEND_PROTO || 'http';
 let birdhouseHost = process.env.BIRDHOUSE_HOST || 'outarde.crim.ca';
 let loopbackHost = process.env.LOOPBACK_HOST || 'outarde.crim.ca:3005';
-let magpieHost = process.env.MAGPIE_HOST || 'outarde.crim.ca:52001';
 let PAVICS_WORKFLOW_PROVIDER = process.env.PAVICS_WORKFLOW_PROVIDER || 'malleefowl';
 let PAVICS_RUN_WORKFLOW_IDENTIFIER = process.env.PAVICS_RUN_WORKFLOW_IDENTIFIER || 'custom_workflow';
 let PAVICS_VISUALIZE_IDENTIFIER = process.env.PAVICS_VISUALIZE_IDENTIFIER || 'TODO';
@@ -39,7 +38,7 @@ const config = {
   pavics_ncwms_path: `http://${birdhouseHost}:8080/ncWMS2/wms`,
   pavics_pywps_path: `http://${birdhouseHost}:8086/pywps`,
   loopback_api_path: `http://${loopbackHost}/api`,
-  pavics_magpie_host: `http://${magpieHost}`,
+  pavics_magpie_host: `http://${birdhouseHost}:52001`,
   PAVICS_WORKFLOW_PROVIDER: PAVICS_WORKFLOW_PROVIDER,
   PAVICS_RUN_WORKFLOW_IDENTIFIER: PAVICS_RUN_WORKFLOW_IDENTIFIER,
   PAVICS_VISUALIZE_IDENTIFIER: PAVICS_VISUALIZE_IDENTIFIER,
@@ -116,7 +115,7 @@ config.globals = {
   '__PAVICS_RUN_WORKFLOW_IDENTIFIER__': JSON.stringify(config.PAVICS_RUN_WORKFLOW_IDENTIFIER),
   '__PAVICS_VISUALIZE_IDENTIFIER__': JSON.stringify(config.PAVICS_VISUALIZE_IDENTIFIER),
   '__PAVICS_PERSIST_IDENTIFIER__': JSON.stringify(config.PAVICS_PERSIST_IDENTIFIER),
-  '__PAVICS_PUBLISH_IDENTIFIER__': JSON.stringify(config.PAVICS_PUBLISH_IDENTIFIER),
+  '__PAVICS_PUBLISH_IDENTIFIER__': JSON.stringify(config.PAVICS_PUBLISH_IDENTIFIER)
 };
 // ------------------------------------
 // Validate Vendor Dependencies
