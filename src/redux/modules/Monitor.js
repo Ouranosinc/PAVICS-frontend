@@ -6,9 +6,10 @@ export const constants = {
   MONITOR_FETCH_WPS_JOBS_REQUEST: 'MONITOR_FETCH_WPS_JOBS_REQUEST',
   MONITOR_FETCH_WPS_JOBS_FAILURE: 'MONITOR_FETCH_WPS_JOBS_FAILURE',
   MONITOR_FETCH_WPS_JOBS_SUCCESS: 'MONITOR_FETCH_WPS_JOBS_SUCCESS',
-  MONITOR_POLL_WPS_JOBS_REQUEST: 'MONITOR_POLL_WPS_JOBS_REQUEST',
-  MONITOR_POLL_WPS_JOBS_FAILURE: 'MONITOR_POLL_WPS_JOBS_FAILURE',
   MONITOR_POLL_WPS_JOBS_SUCCESS: 'MONITOR_POLL_WPS_JOBS_SUCCESS',
+  MONITOR_PERSIST_TEMPORARY_RESULT_REQUEST: 'MONITOR_PERSIST_TEMPORARY_RESULT_REQUEST',
+  MONITOR_PERSIST_TEMPORARY_RESULT_FAILURE: 'MONITOR_PERSIST_TEMPORARY_RESULT_FAILURE',
+  MONITOR_PERSIST_TEMPORARY_RESULT_SUCCESS: 'MONITOR_PERSIST_TEMPORARY_RESULT_SUCCESS',
 };
 
 //Actions Creators
@@ -48,6 +49,45 @@ function receiveWPSJobs (data) {
       isFetching: false,
       items: data.jobs,
       count: data.count,
+      error: null
+    }
+  };
+}
+
+function requestPersistTemporaryResult () {
+  return {
+    type: constants.MONITOR_PERSIST_TEMPORARY_RESULT_REQUEST,
+    persist: {
+      requestedAt: Date.now(),
+      isFetching: true,
+      data: {},
+      count: 0
+
+    }
+  };
+}
+
+function receivePersistTemporaryResultFailure (error) {
+  NotificationManager.error(`Failed at persisting a temporary result. Returned Status ${error.status}: ${error.message}`);
+  return {
+    type: constants.MONITOR_PERSIST_TEMPORARY_RESULT_FAILURE,
+    persist: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      data: {},
+      error: error
+    }
+  };
+}
+
+function receivePersistTemporaryResult (data) {
+  NotificationManager.success(`Persisted file with success at ${data.url}`);
+  return {
+    type: constants.MONITOR_PERSIST_TEMPORARY_RESULT_SUCCESS,
+    persist: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      data: data,
       error: null
     }
   };
@@ -109,11 +149,36 @@ function pollWPSJobs (projectId, limit = 5, page = 1, sort = 'created') {
       });
   };
 }
+export function persistTemporaryResult (resource, location, overwrite, defaultFacets) {
+  return (dispatch) => {
+    dispatch(requestPersistTemporaryResult());
+    return myHttp.get(`/wps/persist?resource=${resource}&location=${location}&overwrite=${overwrite}&default_facets=${JSON.stringify(defaultFacets)}`)
+      .then(response => {
+        if(!response.ok){
+          // Real msg is there: response.body.message; but not working as intended
+          dispatch(receivePersistTemporaryResultFailure({
+            status: response.status,
+            message: response.statusText,
+            url: response.url
+          }));
+        }else{
+          return response.json();
+        }
+      })
+      .then(json => {
+        if(json) dispatch(receivePersistTemporaryResult(json));
+      }, err => {
+        // Not sure it'll ever happen
+      });
+  };
+}
+
 
 // Exported Action Creators
 export const actions = {
   fetchWPSJobs: fetchWPSJobs,
-  pollWPSJobs: pollWPSJobs
+  pollWPSJobs: pollWPSJobs,
+  persistTemporaryResult: persistTemporaryResult
 };
 
 export const initialState = {
@@ -124,7 +189,14 @@ export const initialState = {
     items: [],
     count: 0,
     error: null
-  }
+  },
+  persist: {
+    requestedAt: null,
+    receivedAt: null,
+    isFetching: false,
+    data: {},
+    error: null
+  },
 };
 
 // Reducer

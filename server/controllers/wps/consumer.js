@@ -17,25 +17,35 @@ var consumer = (function () {
   };
   return {
     resolve: function * (next) {
+      // if(next.cookies){
+      //   console.log('NEXT COOKIE: '+ next.cookies.get('auth_tkt'))
+      // }
+      const currentCookie = this.cookies.get('auth_tkt');
+      console.log('CURRENT COOKIE: ' + currentCookie);
+      let options = {
+        headers: {
+          'Cookie': `auth_tkt=${currentCookie}`
+        },
+        url: ''
+      };
       console.log('consuming:', this.params.identifier);
       let response;
-      let url;
       let xml;
       switch (this.params.identifier) {
         case 'pavicsearch':
           // url = config.pavics_pywps_path + urlEncode(this.request.query);
-          url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=pavicsearch&DataInputs=${urlEncode(
+          options.url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=pavicsearch&DataInputs=${urlEncode(
             this.request.query
           )}`;
-          console.log('consuming: ' + url);
-          response = yield request(url);
+          console.log('consuming: ' + options.url);
+          response = yield request(options);
           let xmlToJson = yield Utils.parseXMLThunk(response.body);
           let jsonTempUrl = Utils.extractWPSOutputPath(xmlToJson);
           response = yield request(jsonTempUrl);
           this.body = response.body;
           break;
         case 'plotly':
-          url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0` +
+          options.url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0` +
             `&identifier=ncplotly&DataInputs=opendap_url=${this.request.query['opendap_url']}` +
             `;variable_name=${this.request.query['variable_name']}` +
             `;time_initial_indice=` + this.request.query['time_initial_indice'] +
@@ -44,8 +54,8 @@ var consumer = (function () {
             `;spatial1_final_indice=` + this.request.query['spatial1_final_indice'] +
             `;spatial2_initial_indice=` + this.request.query['spatial2_initial_indice'] +
             `;spatial2_final_indice=` + this.request.query['spatial2_final_indice'];
-          console.log('fetching plotly data:', url);
-          response = yield request(url);
+          console.log('fetching plotly data:', options.url);
+          response = yield request(options);
           xml = yield Utils.parseXMLThunk(response.body);
           jsonPath = Utils.extractWPSOutputPath(xml);
           response = yield request(jsonPath);
@@ -59,9 +69,9 @@ var consumer = (function () {
           let lat = this.request.query['lat'];
           let time = this.request.query['time'];
           let dataInputs = `opendap_url=${opendapUrl};variable=${variable};nearest_to=lon:${lon};nearest_to=lat:${lat};nearest_to=time:${time}`;
-          url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=getpoint&DataInputs=${dataInputs}`;
-          console.log('getting point:', url);
-          response = yield request(url);
+          options.url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=getpoint&DataInputs=${dataInputs}`;
+          console.log('getting point:', options.url);
+          response = yield request(options);
           xml = yield Utils.parseXMLThunk(response.body);
           let jsonPath = Utils.extractWPSOutputPath(xml);
           response = yield request(jsonPath);
@@ -69,13 +79,31 @@ var consumer = (function () {
           break;
         case 'crawl':
           let dataset = this.request.query['dateset_id'];
-          url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=pavicrawler&storeExecuteResponse=true&DataInputs=targetfiles=${dataset}`;
-          console.log('crawling a file:', url);
-          response = yield request(url);
+          options.url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=pavicrawler&storeExecuteResponse=true&DataInputs=targetfiles=${dataset}`;
+          console.log('crawling a file:', options.url);
+          response = yield request(options);
           xml = yield Utils.parseXMLThunk(response.body);
           // let jsonPath = Utils.extractWPSOutputPath(xml);
           // response = yield request(jsonPath);
           this.body = xml;
+        case 'persist':
+          let resource = this.request.query['resource'];
+          let location = this.request.query['location'];
+          let overwrite = this.request.query['overwrite'];
+          let default_facets = this.request.query['default_facets'];
+          options.url = `${config.pavics_malleefowl_path}?service=WPS&version=1.0.0&request=execute&identifier=persist&DataInputs=resource=${resource};location=${location};overwrite=${overwrite};default_facets=${default_facets}`;
+          console.log('persist a file:', options.url);
+          response = yield request(options);
+          xml = yield Utils.parseXMLThunk(response.body);
+          if (xml['wps:ExecuteResponse']['wps:Status'][0]['wps:ProcessSucceeded']) {
+            let jsonPath = Utils.extractWPSOutputPath(xml);
+            console.log('persist result path:', jsonPath);
+            response = yield request(jsonPath);
+            this.body = {url: JSON.parse(response.body)[0]};
+          } else {
+            this.status = 500;
+            this.body = {message: xml['wps:ExecuteResponse']['wps:Status'][0]['wps:ProcessFailed'][0]['wps:ExceptionReport'][0]['ows:Exception'][0]['ows:ExceptionText'][0]};
+          }
       }
     }
   };

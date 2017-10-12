@@ -24,6 +24,7 @@ export class ProcessListItem extends React.Component {
     isWorkflowTask:  React.PropTypes.bool,
     job: React.PropTypes.object.isRequired,
     onShowLogDialog: React.PropTypes.func.isRequired,
+    onShowPersistDialog: React.PropTypes.func.isRequired,
     onVisualiseDatasets: React.PropTypes.func.isRequired,
   };
 
@@ -36,7 +37,7 @@ export class ProcessListItem extends React.Component {
     super(props);
   }
 
-  extractFileId (reference) {
+  extractFileId (reference = '') {
     const SEARCH_VALUE = "wpsoutputs/";
     let fileId = "";
     let index = reference.indexOf(SEARCH_VALUE);
@@ -75,13 +76,6 @@ export class ProcessListItem extends React.Component {
   }
 
   buildBasicIconMenuActions(output) {
-    let isVisualisableOnMap = false;
-    if(output.mimeType === 'application/x-netcdf'){
-      isVisualisableOnMap = true;
-    }
-    if(output.mimeType === 'application/json') {
-      // TODO
-    }
     return <IconMenu iconButtonElement={
       <IconButton
         touch={true}
@@ -90,7 +84,7 @@ export class ProcessListItem extends React.Component {
       </IconButton>}>
       <MenuItem
         primaryText="Visualize"
-        disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS || !isVisualisableOnMap}
+        disabled={!this._isVisualizeAvailable(output)}
         onTouchTap={(event) => this.props.onVisualiseDatasets([output.reference])}
         leftIcon={<VisualizeIcon />}/>
       <MenuItem
@@ -104,11 +98,18 @@ export class ProcessListItem extends React.Component {
         onTouchTap={(event) => alert('TODO: Call Publish WPS')}
         leftIcon={<PublishIcon />}/>
       <MenuItem
-        primaryText="Persist (TODO)"
-        disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS}
-        onTouchTap={(event) => alert('TODO: Call Persist WPS')}
+        primaryText="Persist"
+        disabled={!this._isPersistAvailable(output)}
+        onTouchTap={(event) => this.props.onShowPersistDialog(output)}
         leftIcon={<PersistIcon  />}/>
     </IconMenu>
+  }
+
+  _isPersistAvailable(output){
+      return (this.props.job.status === constants.JOB_SUCCESS_STATUS && output.mimeType === 'application/x-netcdf');
+  }
+  _isVisualizeAvailable(output) {
+    return (this.props.job.status === constants.JOB_SUCCESS_STATUS && output.mimeType === 'application/x-netcdf');
   }
 
   render () {
@@ -155,7 +156,7 @@ export class ProcessListItem extends React.Component {
       // Not a success has typically no outputs and only a log file to be shown
       let logMenuItem = <MenuItem
         primaryText="Show Logs"
-        onTouchTap={(event) => this._onShowLogDialog(x.log)}
+        onTouchTap={(event) => this.props.onShowLogDialog(this.props.job.log)}
         leftIcon={<LogIcon />}/>;
       if(this.props.job.status === constants.JOB_ACCEPTED_STATUS){
         secondaryText =

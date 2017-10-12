@@ -14,7 +14,7 @@ module.exports.getExternalDatasets = function * list (next) {
   if (this.request.query.facets) {
     console.log(this.request.query.facets);
   }
-  let query = `${config.pavics_solr_path}/wps?service=WPS&version=1.0.0&request=Execute&identifier=esgsearch&DataInputs=url=http://pcmdi.llnl.gov/esg-search${constraints}`;
+  let query = `${config.pavics_malleefowl_path}?service=WPS&version=1.0.0&request=Execute&identifier=esgsearch&DataInputs=url=http://pcmdi.llnl.gov/esg-search${constraints}`;
   console.log(`Querying: ${query}`)
   var optionsWPS = {
     url: query
