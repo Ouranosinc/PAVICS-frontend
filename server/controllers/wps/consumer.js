@@ -40,21 +40,12 @@ var consumer = (function () {
           if (this.request.query.type) type = `type=${this.request.query.type};`;
           if (this.request.query.limit) limit = `limit=${this.request.query.limit};`;
           if (this.request.query.constraints) constraints = `;constraints=${this.request.query.constraints};`;
-          url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=pavicsearch&DataInputs=${limit}facets=*;${type}distrib=true${constraints}`;
-          console.log('fetching pavicsearch: ', url);
-          response = yield request(url);
+          options.url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=pavicsearch&DataInputs=${limit}facets=*;${type}distrib=true${constraints}`;
+          console.log('fetching pavicsearch: ', options.url);
+          response = yield request(options);
           xml = yield Utils.parseXMLThunk(response.body);
           jsonPath = Utils.extractWPSOutputPath(xml);
           response = yield request(jsonPath);
-          /*// url = config.pavics_pywps_path + urlEncode(this.request.query);
-          options.url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=pavicsearch&DataInputs=${urlEncode(
-            this.request.query
-          )}`;
-          console.log('consuming: ' + options.url);
-          response = yield request(options);
-          let xmlToJson = yield Utils.parseXMLThunk(response.body);
-          let jsonTempUrl = Utils.extractWPSOutputPath(xmlToJson);
-          response = yield request(jsonTempUrl);*/
           this.body = response.body;
           break;
         case 'plotly':

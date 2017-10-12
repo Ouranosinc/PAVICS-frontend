@@ -155,7 +155,7 @@ export class SearchCatalog extends React.Component {
             <Paper>
               <div className="container">
                 <Row>
-                  <Col sm={12} md={4} lg={4}>
+                  <Col sm={12} md={6} lg={6}>
                     <SelectField
                       style={{width: '95%'}}
                       fullWidth={true}
@@ -169,7 +169,7 @@ export class SearchCatalog extends React.Component {
                       }
                     </SelectField>
                   </Col>
-                  <Col sm={12} md={4} lg={4}>
+                  {/*<Col sm={12} md={4} lg={4}>
                     <SelectField
                       style={{width: '95%'}}
                       value={this.state.type}
@@ -178,8 +178,8 @@ export class SearchCatalog extends React.Component {
                       <MenuItem value="Aggregate" primaryText="Dataset" />
                       <MenuItem value="FileAsAggregate" primaryText="File" />
                     </SelectField>
-                  </Col>
-                  <Col sm={12} md={4} lg={4}>
+                  </Col>*/}
+                  <Col sm={12} md={6} lg={6}>
                     <SelectField
                       style={{width: '95%'}}
                       floatingLabelText="Add additional criteria"

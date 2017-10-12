@@ -107,7 +107,7 @@ export function fetchPavicsDatasets (type = 'Aggregate', limit = 10000) {
     });
     if(!constraints.length) limit = 0; // If no facets selected, we attend to have no dataset result
 
-    return myHttp(`/wps/pavicsearch?limit=${limit}&type=${type}&constraints=${constraints}`)
+    return myHttp.get(`/wps/pavicsearch?limit=${limit}&type=${type}&constraints=${constraints}`)
       .then(response => response.json())
       .then(json => {
         // Dataset result

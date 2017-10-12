@@ -45,8 +45,8 @@ class TimeSeriesChart extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.currentScalarValue.data && nextProps.currentScalarValue.data.variable && nextProps.currentScalarValue.data !== this.props.currentScalarValue.data) {
-      if (this.props.selectedDatasetLayer && this.props.selectedDatasetLayer['opendap_urls'].length) {
-        let opendapUrl = this.props.selectedDatasetLayer['opendap_urls'][0];
+      if (this.props.selectedDatasetLayer && this.props.selectedDatasetLayer['opendap_url'].length) {
+        let opendapUrl = this.props.selectedDatasetLayer['opendap_url'][0];
         let variable = nextProps.currentScalarValue.data.variable;
         this.props.fetchPlotlyData(
           opendapUrl,

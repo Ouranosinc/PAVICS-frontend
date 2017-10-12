@@ -72,7 +72,7 @@ class ProcessMonitoring extends React.Component {
 
   pollWPSJobs () {
     this.loop = setTimeout( () => {
-      console.log(moment());
+      // console.log(moment());
       this.props.monitorActions.pollWPSJobs(this.props.project.currentProject.id, this.state.numberPerPage, this.state.pageNumber);
     }, 3000);
   }

@@ -17,6 +17,7 @@ import Folder from 'material-ui/svg-icons/file/folder';
 import FolderSpecial from 'material-ui/svg-icons/notification/folder-special';
 import File from 'material-ui/svg-icons/editor/insert-drive-file';
 import ShareIcon from 'material-ui/svg-icons/social/person-add';
+import ExpandableIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-down';
 
 export class ProjectDatasets extends React.Component {
   static propTypes = {
@@ -79,19 +80,38 @@ export class ProjectDatasets extends React.Component {
               return (
                 <ListItem
                   key={i}
-                  primaryText={dataset.dataset_id}
+                  primaryText={`${dataset.aggregate_title} (${dataset.fileserver_url.length} file${(dataset.fileserver_url.length > 1)? 's': ''})` }
                   secondaryText={
                     <p>
-                      <span style={{color: darkBlack}}>{dataset.variable_long_name[0]}</span><br />
+                      <span style={{color: darkBlack}}><strong>Variable: </strong> {dataset.variable_long_name}</span><br />
                       <strong>Keywords: </strong>{dataset.keywords.join(', ')}
                     </p>
                   }
                   secondaryTextLines={2}
                   leftIcon={folderIcon}
                   initiallyOpen={false}
-                  primaryTogglesNestedList={false}
+                  primaryTogglesNestedList={true}
+                  autoGenerateNestedIndicator={false}
+                  rightIconButton={
+                    <IconMenu
+                      menuStyle={{marginRight: '100px'}}
+                      iconButtonElement={
+                        <IconButton
+                          touch={true}
+                          tooltip="Actions"
+                          tooltipPosition="bottom-left">
+                          <MoreVertIcon color={grey400} />
+                        </IconButton>}>
+                      <MenuItem primaryText="Visualize" onTouchTap={(event) => {
+                        this._onVisualizeLayer(event, dataset, dataset.wms_url[0], j)
+                      }} leftIcon={<Visualize />} />
+                      <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.opendap_urls[i], '_blank')} leftIcon={<Download />} />
+                      <MenuItem primaryText="Remove (TODO)" onTouchTap={(event) => alert('remove ' + fileName)} leftIcon={<Remove />} />
+                      <MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + fileName)} leftIcon={<ShareIcon />} />
+                    </IconMenu>
+                  }
                   nestedItems={
-                    dataset.wms_urls.map((wmsUrl, j) => {
+                    dataset.wms_url.map((wmsUrl, j) => {
                       let text = '/';
                       let fileName = wmsUrl.substr(wmsUrl.lastIndexOf(text) + text.length);
                       let nestedIcon = <File />;
@@ -107,7 +127,9 @@ export class ProjectDatasets extends React.Component {
                           primaryText={fileName}
                           leftIcon={nestedIcon}
                           rightIconButton={
-                            <IconMenu iconButtonElement={
+                            <IconMenu
+                              menuStyle={{marginRight: '100px'}}
+                              iconButtonElement={
                               <IconButton
                                 touch={true}
                                 tooltip="Actions"
