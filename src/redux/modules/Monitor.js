@@ -1,4 +1,5 @@
 import { NotificationManager } from 'react-notifications';
+import myHttp from './../../../lib/http';
 
 // Constants
 export const constants = {
@@ -96,7 +97,7 @@ function fetchWPSJobs (projectId, limit = 5, page = 1, sort = 'created') {
   // Error handling as intended EXAMPLE !!
   return (dispatch) => {
     dispatch(requestWPSJobs());
-    return fetch(`/phoenix/jobs?projectId=${projectId}&limit=${limit}&page=${page}&sort=${sort}`)
+    return myHttp.get(`/phoenix/jobs?projectId=${projectId}&limit=${limit}&page=${page}&sort=${sort}`)
       .then(response => {
         if(!response.ok){
           dispatch(receiveWPSJobsFailure({
@@ -137,7 +138,7 @@ function receivePollWPSJobs (data) {
 
 function pollWPSJobs (projectId, limit = 5, page = 1, sort = 'created') {
   return (dispatch) => {
-    return fetch(`/phoenix/jobs?projectId=${projectId}&limit=${limit}&page=${page}&sort=${sort}`)
+    return myHttp.get(`/phoenix/jobs?projectId=${projectId}&limit=${limit}&page=${page}&sort=${sort}`)
       .then(response => {
         if(response.ok){
           return response.json();
@@ -151,7 +152,7 @@ function pollWPSJobs (projectId, limit = 5, page = 1, sort = 'created') {
 export function persistTemporaryResult (resource, location, overwrite, defaultFacets) {
   return (dispatch) => {
     dispatch(requestPersistTemporaryResult());
-    return fetch(`/wps/persist?resource=${resource}&location=${location}&overwrite=${overwrite}&default_facets=${JSON.stringify(defaultFacets)}`)
+    return myHttp.get(`/wps/persist?resource=${resource}&location=${location}&overwrite=${overwrite}&default_facets=${JSON.stringify(defaultFacets)}`)
       .then(response => {
         if(!response.ok){
           // Real msg is there: response.body.message; but not working as intended

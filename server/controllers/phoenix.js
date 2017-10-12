@@ -36,6 +36,7 @@ let phoenix = (() => {
             },
             rejectUnauthorized: false
           };
+          console.log(`Fetching phoenix at url ${options.url} ...`);
           response = yield request(options);
           let json = JSON.parse(response.body);
 
@@ -57,6 +58,94 @@ let phoenix = (() => {
             paginatedJobs[i]['response_to_json'] = yield Utils.parseXMLThunk(paginatedJobs[i]['response']);
             paginatedJobs[i]['request_to_json'] = yield Utils.parseXMLThunk(paginatedJobs[i]['request']);
           }
+
+          // Epic journey in fetching workflow json outputs
+          // console.log(paginatedJobs);
+          console.log('Epic journey in fetching workflow json outputs');
+          for(let i = 0; i < paginatedJobs.length; ++i) {
+            let job = paginatedJobs[i];
+            let tasks = [];
+            if (job.status === 'ProcessSucceeded') {
+              console.log(job.title);
+              console.log('Job ProcessSucceeded');
+              try {
+                if(job.title === config.PAVICS_RUN_WORKFLOW_IDENTIFIER){
+                  // Custom Workflow
+                  // 1 output by default
+                  tasks = JSON.parse(job["response_to_json"]['wps:ExecuteResponse']['wps:ProcessOutputs'][0]['wps:Output'][0]['wps:Data'][0]['wps:ComplexData'][0]['_']);
+                }else{
+                  // WPS
+                  paginatedJobs[i].outputs_to_json = [];
+                  let outputs = job["response_to_json"]['wps:ExecuteResponse']['wps:ProcessOutputs'][0]['wps:Output'];
+                  for(let z = 0; z < outputs.length; z++){
+                    let output = outputs[z];
+                    if(output['wps:Reference'][0]['$']['mimeType'] === 'application/json'){
+                      let outputPath = output['wps:Reference'][0].$.href || output['wps:Reference'][0].$['xlink:href'];
+                      console.log(`Fetching URL ${outputPath} ...`);
+                      let response = yield request(outputPath);
+                      let json = response.body;
+                      paginatedJobs[i].outputs_to_json.push(json);
+                    }else{
+                      paginatedJobs[i].outputs_to_json.push({});
+                    }
+                  }
+                }
+              } catch (err) {
+                // Ignore errors...
+                console.error(err);
+              }
+            }else if(job.status === 'ProcessFailed'){
+              console.log('Job ProcessFailed');
+              try {
+                let exception = job["response_to_json"]['wps:ExecuteResponse']['wps:Status'][0]['wps:ProcessFailed'][0]['wps:ExceptionReport'][0]['ows:Exception'][0]['ows:ExceptionText'][0]
+                const SEARCH_VALUE = 'Workflow result:';
+                let startIndex = exception.indexOf(SEARCH_VALUE);
+                if(startIndex > -1){
+                  let toBeParsed = exception.substring(startIndex + SEARCH_VALUE.length);
+                  tasks = JSON.parse(toBeParsed);
+                }else{
+                  tasks = [];
+                }
+              } catch (err) {
+                // Ignore errors and continue...
+                tasks = [];
+                // console.error(err);
+              }
+            }else{
+
+            }
+
+            try {
+              console.log(`Tasks found on job #${i}: ${tasks.length}`);
+              // for(let j = 0; j < tasks.length; ++j) {
+              //   const task = tasks[j];
+              //   const taskName = Object.keys(task)[0];
+              //   for(let k = 0; k < task[taskName].length; ++k) {
+              //     const parralelTask = task[taskName][k];
+              //     let outputs = parralelTask.outputs;
+              //     console.log(`Task: ${JSON.stringify(task)}`);
+              //     console.log(`Outputs found for task #${j}: ${outputs}`);
+              //     if (outputs) {
+              //       for(let l = 0; l < outputs.length; ++l) {
+              //         let output = outputs[l];
+              //         if (output.mimeType === 'application/json' && output.reference && output.reference.length) {
+              //           // TODO: Should we pass token?
+              //           console.log(`Fetching ${output.reference}...`);
+              //           let response = yield request(output.reference);
+              //           let inline = response.body;
+              //           console.log(`Fetched #${i} output:`);
+              //           console.log(inline);
+              //           tasks[j][taskName][0].outputs[k].inline = inline;
+              //         }
+              //       }
+              //     }
+              //   }
+              // }
+              paginatedJobs[i].tasks = tasks;
+            }catch(err){
+              console.error(err);
+            }
+          } //end for paginatedJobs
 
           // Over-writting phoenix values return with what interests us
           let result = {};

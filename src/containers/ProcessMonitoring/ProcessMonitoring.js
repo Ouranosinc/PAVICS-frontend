@@ -25,6 +25,7 @@ const mapStateToProps = (state) => {
   return {
     monitor: state.monitor,
     project: state.project,
+    sessionManagement: state.sessionManagement
   }
 };
 const mapDispatchToProps = (dispatch) => {

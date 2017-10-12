@@ -10,14 +10,17 @@ debug('Creating default configuration.');
 // Default Configuration
 // ========================================================
 let serverHost = process.env.PAVICS_FRONTEND_IP || localip;
+let serverProto = process.env.PAVICS_FRONTEND_PROTO || 'http';
 let birdhouseHost = process.env.BIRDHOUSE_HOST || 'outarde.crim.ca';
 let loopbackHost = process.env.LOOPBACK_HOST || 'outarde.crim.ca:3005';
 let PAVICS_WORKFLOW_PROVIDER = process.env.PAVICS_WORKFLOW_PROVIDER || 'malleefowl';
 let PAVICS_RUN_WORKFLOW_IDENTIFIER = process.env.PAVICS_RUN_WORKFLOW_IDENTIFIER || 'custom_workflow';
 let PAVICS_VISUALIZE_IDENTIFIER = process.env.PAVICS_VISUALIZE_IDENTIFIER || 'TODO';
-let PAVICS_PERSIST_IDENTIFIER = process.env.PAVICS_PERSIST_IDENTIFIER || 'thredds_download';
+let PAVICS_PERSIST_IDENTIFIER = process.env.PAVICS_PERSIST_IDENTIFIER || 'TODO';
 let PAVICS_PUBLISH_IDENTIFIER = process.env.PAVICS_PUBLISH_IDENTIFIER || 'TODO';
+let PAVICS_DEFAULT_WORKSPACE_FOLDER = process.env.PAVICS_DEFAULT_WORKSPACE_FOLDER || 'workspaces';
 let serverPort = process.env.PORT || 3000;
+let serverExternalPort = process.env.PAVICS_FRONTEND_PORT || serverPort;
 const config = {
   env: process.env.NODE_ENV || 'development',
   // ----------------------------------
@@ -25,6 +28,8 @@ const config = {
   // ----------------------------------
   server_host: serverHost, // use string 'localhost' to prevent exposure on local network
   server_port: serverPort,
+  server_external_port: serverExternalPort,
+  server_proto: serverProto,
   // ----------------------------------
   // PAVICS Configs
   // ----------------------------------
@@ -34,11 +39,13 @@ const config = {
   pavics_ncwms_path: `http://${birdhouseHost}:8080/ncWMS2/wms`,
   pavics_pywps_path: `http://${birdhouseHost}:8086/pywps`,
   loopback_api_path: `http://${loopbackHost}/api`,
+  pavics_magpie_host: `http://${birdhouseHost}:52001`,
   PAVICS_WORKFLOW_PROVIDER: PAVICS_WORKFLOW_PROVIDER,
   PAVICS_RUN_WORKFLOW_IDENTIFIER: PAVICS_RUN_WORKFLOW_IDENTIFIER,
   PAVICS_VISUALIZE_IDENTIFIER: PAVICS_VISUALIZE_IDENTIFIER,
   PAVICS_PERSIST_IDENTIFIER: PAVICS_PERSIST_IDENTIFIER,
   PAVICS_PUBLISH_IDENTIFIER: PAVICS_PUBLISH_IDENTIFIER,
+  PAVICS_DEFAULT_WORKSPACE_FOLDER: PAVICS_DEFAULT_WORKSPACE_FOLDER,
   // ----------------------------------
   // Project Structure
   // ----------------------------------
@@ -105,11 +112,13 @@ config.globals = {
   '__PAVICS_PHOENIX_PATH__': JSON.stringify(config.pavics_phoenix_path),
   '__PAVICS_GEOSERVER_PATH__': JSON.stringify(config.pavics_geoserver_path),
   '__LOOPBACK_API_PATH__': JSON.stringify(config.loopback_api_path),
+  '__MAGPIE_HOST__': JSON.stringify(config.pavics_magpie_host),
   '__PAVICS_WORKFLOW_PROVIDER__': JSON.stringify(config.PAVICS_WORKFLOW_PROVIDER),
   '__PAVICS_RUN_WORKFLOW_IDENTIFIER__': JSON.stringify(config.PAVICS_RUN_WORKFLOW_IDENTIFIER),
   '__PAVICS_VISUALIZE_IDENTIFIER__': JSON.stringify(config.PAVICS_VISUALIZE_IDENTIFIER),
   '__PAVICS_PERSIST_IDENTIFIER__': JSON.stringify(config.PAVICS_PERSIST_IDENTIFIER),
   '__PAVICS_PUBLISH_IDENTIFIER__': JSON.stringify(config.PAVICS_PUBLISH_IDENTIFIER),
+  '__PAVICS_DEFAULT_WORKSPACE_FOLDER__': JSON.stringify(config.PAVICS_DEFAULT_WORKSPACE_FOLDER)
 };
 // ------------------------------------
 // Validate Vendor Dependencies

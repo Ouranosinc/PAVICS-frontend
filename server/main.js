@@ -14,8 +14,9 @@ const paths = config.utils_paths;
 const app = new Koa();
 // Controllers
 import {birdhouse, wms, consumer, wps, phoenix} from './controllers';
+const router = require('koa-router')();
+
 // Routes
-let router = require('koa-router')();
 router.get('/wps/:identifier', consumer.resolve);
 router.get('/phoenix/:identifier', phoenix.consume);
 router.get('/api/wms/capabilities', birdhouse.getCapabilities);
@@ -23,8 +24,18 @@ router.get('/api/wms/visualizableData', birdhouse.fetchVisualizableLayer);
 router.get('/api/wms/dataset/layers', wms.getLayers);
 router.get('/api/facets', wps.getFacets);
 router.get('/api/climate_indicators', wps.getClimateIndicators);
+router.get('/session', proxy({
+  url: `${config.pavics_magpie_host}/session`,
+}));
+router.get('/logout', proxy({
+  url: `${config.pavics_magpie_host}/signout`,
+}));
+router.post('/login', proxy({
+  url: `${config.pavics_magpie_host}/signin`,
+}));
 app.use(router.routes());
 app.use(router.allowedMethods());
+
 // Enable koa-proxy if it has been enabled in the config.
 // Because it's been enabled, so I guess we should enable it
 if (config.proxy && config.proxy.enabled) {
@@ -34,7 +45,7 @@ if (config.proxy && config.proxy.enabled) {
 // (ignoring file requests). If you want to implement isomorphic
 // rendering, you'll want to remove this middleware.
 app.use(convert(historyApiFallback({
-  verbose: false
+  verbose: false,
 })));
 // ------------------------------------
 // Apply Webpack HMR Middleware

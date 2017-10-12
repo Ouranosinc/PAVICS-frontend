@@ -41,3 +41,5 @@ export const NETCDF = 'ComplexData';
 export const LABEL_NETCDF = 'LABEL_NETCDF';
 export const LABEL_SHAPEFILE = 'LABEL_SHAPEFILE';
 export const LABEL_FEATURE_IDS = 'LABEL_FEATURE_IDS';
+// session
+export const AUTH_COOKIE = 'auth_tkt';

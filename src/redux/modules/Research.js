@@ -1,3 +1,5 @@
+import myHttp from './../../../lib/http';
+
 // Constants
 export const constants = {
   CREATE_RESEARCH_REQUEST: 'RESEARCH.CREATE_RESEARCH_REQUEST',
@@ -104,7 +106,8 @@ export function fetchPavicsDatasets (type = 'Aggregate', limit = 10000) {
       constraints += `${(i > 0) ? ',' : ''}${facet.key}:${facet.value}`;
     });
     if(!constraints.length) limit = 0; // If no facets selected, we attend to have no dataset result
-    return fetch(`/wps/pavicsearch?limit=${limit}&type=${type}&constraints=${constraints}`)
+
+    return myHttp(`/wps/pavicsearch?limit=${limit}&type=${type}&constraints=${constraints}`)
       .then(response => response.json())
       .then(json => {
         // Dataset result
@@ -144,11 +147,63 @@ export function fetchPavicsDatasets (type = 'Aggregate', limit = 10000) {
       );*/
   };
 }
+function requestEsgfDatasets () {
+  return {
+    type: constants.FETCH_ESGF_DATASETS_REQUEST,
+    esgfDatasets: {
+      requestedAt: Date.now(),
+      isFetching: true,
+      items: []
+    }
+  };
+}
+function receiveEsgfDatasetsFailure (error) {
+  return {
+    type: constants.FETCH_ESGF_DATASETS_FAILURE,
+    esgfDatasets: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      items: [],
+      error: error
+    }
+  };
+}
+function receiveEsgfDatasets (datasets) {
+  return {
+    type: constants.FETCH_ESGF_DATASETS_SUCCESS,
+    esgfDatasets: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      items: datasets,
+      error: null
+    }
+  };
+}
+// EXTERNAL ESGF CATALOG
+function fetchEsgfDatasets () {
+  return function (dispatch, getState) {
+    dispatch(requestEsgfDatasets());
+    // Get current added facets by querying store
+    let facets = getState().research.selectedFacets;
+    let constraints = '';
+    facets.forEach(function (facet, i) {
+      constraints += `${(i > 0) ? ',' : ''}${facet.key}:${facet.value}`;
+    });
+    return myHttp.get(`/api/datasets/esgf?constraints=${constraints}`)
+      .then(response => response.json())
+      .then(json =>
+        dispatch(receiveEsgfDatasets(json))
+      )
+      .catch(error =>
+        dispatch(receiveEsgfDatasetsFailure(error))
+      );
+  };
+}
 
 function fetchFacets () {
   return function (dispatch) {
     dispatch(fetchFacetsrequest());
-    return fetch('/api/facets')
+    return myHttp.get('/api/facets')
       .then(response => response.json())
       .then(json => dispatch(fetchFacetsSuccess(json)))
       .catch(error => dispatch(fetchFacetsFailure(error)));

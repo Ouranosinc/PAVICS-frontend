@@ -23,19 +23,29 @@ export class PersistResultDialog extends React.Component {
     isOpen:  React.PropTypes.bool.isRequired,
     onPersistConfirmed: React.PropTypes.func.isRequired,
     closePersistDialog: React.PropTypes.func.isRequired,
-    monitorActions: React.PropTypes.object.isRequired
+    monitorActions: React.PropTypes.object.isRequired,
+    username: React.PropTypes.string.isRequired
   };
-
   constructor (props) {
     super(props);
     this.state = {
       expanded: false,
       key: '',
-      location: 'workspaces/david/{yolo}/tata3.nc',
+      location: `${__PAVICS_DEFAULT_WORKSPACE_FOLDER__}/`,
       value: '',
       facets: [],
       overwrite: false
     };
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.username && nextProps.output && nextProps.output.reference && nextProps.output.reference.length) {
+      let text = '/';
+      let fileName = nextProps.output.reference.substr(nextProps.output.reference.lastIndexOf(text) + text.length);
+      this.setState({
+        location: `${__PAVICS_DEFAULT_WORKSPACE_FOLDER__}/${nextProps.username}/${fileName}`
+      });
+    }
   }
 
   handleExpandChange = (expanded) => {
@@ -101,7 +111,6 @@ export class PersistResultDialog extends React.Component {
       value: ''
     });
   };
-
 
   render () {
       return <Dialog
