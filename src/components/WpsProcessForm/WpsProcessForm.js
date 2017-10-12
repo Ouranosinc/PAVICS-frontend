@@ -3,6 +3,7 @@ import Checkbox from 'material-ui/Checkbox';
 import TextField from 'material-ui/TextField';
 import classes from '../WorkflowWizard/WorkflowWizard.scss';
 import DeformWrapper from '../DeformWrapper/DeformWrapper';
+
 const BOOLEAN = '//www.w3.org/TR/xmlschema-2/#boolean';
 const STRING = '//www.w3.org/TR/xmlschema-2/#string';
 const NETCDF = 'ComplexData';
@@ -30,14 +31,13 @@ export default class WpsProcessForm extends React.Component {
   likewise, the handleSelectedProcessValueChange was never fully implemented
    */
 
-
   constructor (props) {
     super(props);
 
     // Initially fill formData with input defaultValues if any
     let formData = {};
     this.props.workflow.selectedProcessInputs.forEach((input) => {
-      formData[input.name] = input.defaultValue || "";
+      formData[input.name] = input.defaultValue || '';
     });
     this.state = {
       formData: formData
@@ -103,7 +103,7 @@ export default class WpsProcessForm extends React.Component {
     });
   }
 
-  handleCheckBoxChange(event) {
+  handleCheckBoxChange (event) {
     this.setState({
       formData: {
         ...this.state.formData,
@@ -112,15 +112,15 @@ export default class WpsProcessForm extends React.Component {
     });
   }
 
-  makeInput (input) {
+  makeInnerInput (input) {
     switch (input.dataType) {
       case BOOLEAN:
         let value = false;
-        if(typeof(this.state.formData[input.name]) === "boolean"){
-          value = this.state.formData[input.name]
-        }else if(typeof(this.state.formData[input.name]) === "string"){
-          if(this.state.formData[input.name] === "True"){
-            value= true;
+        if (typeof (this.state.formData[input.name]) === 'boolean') {
+          value = this.state.formData[input.name];
+        } else if (typeof (this.state.formData[input.name]) === 'string') {
+          if (this.state.formData[input.name] === 'True') {
+            value = true;
           }
         }
         return (
@@ -130,7 +130,7 @@ export default class WpsProcessForm extends React.Component {
               name={input.name}
               label={input.title}
               labelPosition="right"
-              labelStyle={{textAlign: "left"}}
+              labelStyle={{ textAlign: 'left' }}
               checked={value}
               onCheck={(event, value) => this.handleCheckBoxChange(event)}
               value={value} />
@@ -140,16 +140,14 @@ export default class WpsProcessForm extends React.Component {
       case NETCDF:
         return (
           <div>
-            <input type="hidden" name="__start__" value="resource:sequence" />
             <TextField
               id={LABEL_NETCDF}
               name="resource"
-              fullWidth={true}
+              fullWidth
               value={this.state.formData[LABEL_NETCDF]}
               onChange={(event, value) => this.handleChange(event)}
               hintText={input.description}
               floatingLabelText={input.title} />
-            <input type="hidden" name="__end__" value="resource:sequence" />
           </div>
         );
       case STRING:
@@ -159,7 +157,7 @@ export default class WpsProcessForm extends React.Component {
               <TextField
                 id={LABEL_SHAPEFILE}
                 name={input.name}
-                fullWidth={true}
+                fullWidth
                 value={this.state.formData[LABEL_SHAPEFILE]}
                 onChange={(event, value) => this.handleChange(event)}
                 hintText={input.description}
@@ -172,7 +170,7 @@ export default class WpsProcessForm extends React.Component {
               <TextField
                 id={LABEL_FEATURE_IDS}
                 name={input.name}
-                fullWidth={true}
+                fullWidth
                 value={this.state.formData[LABEL_FEATURE_IDS]}
                 onChange={(event, value) => this.handleChange(event)}
                 hintText={input.description}
@@ -185,7 +183,7 @@ export default class WpsProcessForm extends React.Component {
             <TextField
               id={input.name}
               name={input.name}
-              fullWidth={true}
+              fullWidth
               value={this.state.formData[input.name]}
               onChange={(event, value) => this.handleChange(event)}
               hintText={input.description}
@@ -198,7 +196,7 @@ export default class WpsProcessForm extends React.Component {
             <TextField
               id={input.name}
               name={input.name}
-              fullWidth={true}
+              fullWidth
               value={this.state.formData[input.name]}
               onChange={(event, value) => this.handleChange(event)}
               hintText={input.description}
@@ -206,6 +204,17 @@ export default class WpsProcessForm extends React.Component {
           </div>
         );
     }
+  }
+
+  makeInput (input) {
+    console.log('making react component for input %o', input);
+    return (
+      <div>
+        {input['maxOccurs'] > 1 ? <input type="hidden" name="__start__" value="resource:sequence" /> : ''}
+        {this.makeInnerInput(input)}
+        {input['maxOccurs'] > 1 ? <input type="hidden" name="__end__" value="resource:sequence" /> : ''}
+      </div>
+    );
   }
 
   render () {
