@@ -127,7 +127,6 @@ class ProcessMonitoring extends React.Component {
   }
 
   _onPersistOutputClicked () {
-    alert('called WPS');
     this._closePersistDialog();
   }
 
