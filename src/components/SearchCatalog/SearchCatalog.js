@@ -32,7 +32,7 @@ export class SearchCatalog extends React.Component {
   };
 
   state = {
-    type: 'Dataset',
+    type: 'Aggregate',
     searchCriteriasName: '',
     selectedKey: '',
     criteriaKeys: [
@@ -94,7 +94,7 @@ export class SearchCatalog extends React.Component {
 
   _ResetCriterias () {
     this.setState({
-      type: 'Dataset',
+      type: 'Aggregate',
       criteriaKeys: [
         'project',
         'model',
@@ -175,8 +175,8 @@ export class SearchCatalog extends React.Component {
                       value={this.state.type}
                       floatingLabelText="Type"
                       onChange={(event, index, value) => this._onChangeSearchType(value)}>
-                      <MenuItem value="Dataset" primaryText="Dataset" />
-                      <MenuItem value="File" primaryText="File" />
+                      <MenuItem value="Aggregate" primaryText="Dataset" />
+                      <MenuItem value="FileAsAggregate" primaryText="File" />
                     </SelectField>
                   </Col>
                   <Col sm={12} md={4} lg={4}>

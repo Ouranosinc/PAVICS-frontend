@@ -94,7 +94,7 @@ export function receivePavicsDatasets (datasets) {
 }
 
 // Returns dataset results AND facet counts
-export function fetchPavicsDatasets (type = 'Dataset', limit = 10000) {
+export function fetchPavicsDatasets (type = 'Aggregate', limit = 10000) {
   return function (dispatch, getState) {
     dispatch(requestPavicsDatasets());
     // Get current added facets by querying store
