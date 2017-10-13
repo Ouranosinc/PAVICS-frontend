@@ -352,9 +352,9 @@ export function selectBasemap (basemap) {
     dispatch(setSelectedBasemap(basemap));
   };
 }
-export function selectDatasetLayer (layer) {
+export function selectCurrentDisplayedDataset (layer) {
   return dispatch => {
-    dispatch(setSelectedDatasetLayer(layer));
+    dispatch(setCurrentDisplayedDataset(layer));
   };
 }
 function setSelectedColorPalette(palette) {
@@ -456,7 +456,7 @@ function setSelectedBasemap (basemap) {
     basemap: basemap
   };
 }
-function setSelectedDatasetLayer (layer) {
+function setCurrentDisplayedDataset (layer) {
   return {
     type: SET_SELECTED_DATASET_LAYER,
     layer: layer
@@ -525,7 +525,7 @@ const VISUALIZE_HANDLERS = {
     return ({...state, currentProjectSearchCriterias: newSearchCriterias});
   },
   [SET_SELECTED_DATASET_LAYER]: (state, action) => {
-    return {...state, selectedDatasetLayer: action.layer};
+    return {...state, currentDisplayedDataset: action.layer};
   },
   [SET_SELECTED_DATASET_CAPABILITIES]: (state, action) => {
     return {...state, selectedDatasetCapabilities: action.capabilities};
@@ -535,8 +535,8 @@ const VISUALIZE_HANDLERS = {
     return ({...state, currentProjectDatasets: newDatasets});
   },
   [ADD_DATASET_LAYERS_TO_VISUALIZE]: (state, action) => {
-    let newDatasetLayers = state.currentVisualizedDatasetLayers.concat(action.datasets);
-    return ({...state, currentVisualizedDatasetLayers: newDatasetLayers});
+    let newDatasetLayers = state.currentVisualizedDatasets.concat(action.datasets);
+    return ({...state, currentVisualizedDatasets: newDatasetLayers});
   },
   [SET_CURRENT_TIME_ISO]: (state, action) => {
     return ({...state, currentDateTime: action.currentDateTime});

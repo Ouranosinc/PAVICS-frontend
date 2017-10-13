@@ -12,7 +12,7 @@ const initialState = {
     },
     selectedShapefile: {},
     selectedBasemap: '',
-    selectedDatasetLayer: {
+    currentDisplayedDataset: {
       opacity: 0.8
     },
     publicShapeFiles: [],
@@ -34,7 +34,7 @@ const initialState = {
       data: {},
       error: null
     },
-    currentVisualizedDatasetLayers: [],
+    currentVisualizedDatasets: [],
     selectedDatasetCapabilities: {},
     selectedWMSLayerDetails: {
       requestedAt: null,

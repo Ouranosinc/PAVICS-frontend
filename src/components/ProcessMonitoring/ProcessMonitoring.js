@@ -26,6 +26,7 @@ import VisualizeIcon from 'material-ui/svg-icons/image/remove-red-eye';
 class ProcessMonitoring extends React.Component {
   static propTypes = {
     addDatasetLayersToVisualize: React.PropTypes.func.isRequired,
+    selectCurrentDisplayedDataset: React.PropTypes.func.isRequired,
     monitor: React.PropTypes.object.isRequired,
     monitorActions: React.PropTypes.object.isRequired,
     project: React.PropTypes.object.isRequired,
@@ -68,6 +69,12 @@ class ProcessMonitoring extends React.Component {
         this.pollWPSJobs();
       }
     }
+    if(nextProps.monitor.visualizedTempDatasets && nextProps.monitor.visualizedTempDatasets.items.length){
+      nextProps.monitor.visualizedTempDatasets.items.map(x => x.aggregate_title = "BIDON!");
+      this.props.addDatasetLayersToVisualize(nextProps.monitor.visualizedTempDatasets.items);
+      this.props.selectCurrentDisplayedDataset(nextProps.monitor.visualizedTempDatasets.items[0]);
+      NotificationManager.success("Dataset has been added the Layer Switcher, data is being loaded on the map...");
+    }
   }
 
   pollWPSJobs () {
@@ -89,20 +96,8 @@ class ProcessMonitoring extends React.Component {
     this.props.monitorActions.fetchWPSJobs(this.props.project.currentProject.id, numberPerPage, pageNumber);
   }
 
-  _onVisualiseDatasets (urlArray) {
-    // TODO Remove hardcoded path
-    console.log('TODO: Call Visualize WPS, temporary built WMS URL so the result can be seen but TimeSlider and other features won\'t work');
-    urlArray.forEach((url) => {
-      let prefix = __PAVICS_NCWMS_PATH__ + '?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&DATASET=outputs/wps_outputs/';
-      let index = url.indexOf('flyingpigeon');
-      let suffix = url.substring(index, url.length);
-      this.props.addDatasetLayersToVisualize([
-        {
-          wms_url: prefix + suffix,
-          dataset_id: suffix
-        }
-      ]);
-    });
+  _onVisualiseDatasets (httpURLArray) {
+    this.props.monitorActions.visualizeTemporaryResult(httpURLArray);
   }
 
   _onShowLogDialog (log) {

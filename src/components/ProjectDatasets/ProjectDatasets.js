@@ -59,7 +59,7 @@ export class ProjectDatasets extends React.Component {
     copy['wms_url'] = currentWmsUrl;
     copy['currentWmsIndex'] = i;
     this.props.addDatasetLayersToVisualize([copy]);
-    this.props.selectDatasetLayer({
+    this.props.selectCurrentDisplayedDataset({
       ...copy,
       opacity: 0.8
     });
@@ -75,11 +75,11 @@ export class ProjectDatasets extends React.Component {
             <Subheader>Current project dataset(s)</Subheader>
             {datasetsPaginated.map((dataset, i) => {
               let folderIcon = <Folder />;
-              if (this.props.currentVisualizedDatasetLayers.find(x => x.dataset_id === dataset.dataset_id)) {
+              if (this.props.currentVisualizedDatasets.find(x => x.dataset_id === dataset.dataset_id)) {
                 folderIcon = <FolderSpecial />;
               }
               let disabledDatasetVisualize = false;
-              if (this.props.currentVisualizedDatasetLayers.find(x => x.dataset_id === dataset.dataset_id)) {
+              if (this.props.currentVisualizedDatasets.find(x => x.dataset_id === dataset.dataset_id)) {
                 disabledDatasetVisualize = true;
               }
               if(dataset.type === "Aggregate") {
@@ -118,7 +118,7 @@ export class ProjectDatasets extends React.Component {
                       dataset.wms_url.map((wmsUrl, j) => {
                         let nestedIcon = <File />;
                         let disabledNestedVisualize = false;
-                        if (this.props.currentVisualizedDatasetLayers.find(x => x.wms_url ===  wmsUrl)) {
+                        if (this.props.currentVisualizedDatasets.find(x => x.wms_url ===  wmsUrl)) {
                           nestedIcon = <Visualize />;
                           disabledNestedVisualize = true;
                         }
@@ -155,7 +155,7 @@ export class ProjectDatasets extends React.Component {
               }else {
                 let disabledVisualize = false;
                 let fileIcon = <File />;
-                if (this.props.currentVisualizedDatasetLayers.find(x => x.dataset_id === dataset.dataset_id)) {
+                if (this.props.currentVisualizedDatasets.find(x => x.dataset_id === dataset.dataset_id)) {
                   fileIcon = <Visualize />;
                   disabledVisualize = true;
                 }

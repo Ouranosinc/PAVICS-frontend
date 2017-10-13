@@ -16,13 +16,13 @@ class Visualize extends React.Component {
     projectActions: React.PropTypes.object.isRequired,
     selectMapManipulationMode: React.PropTypes.func.isRequired,
     selectedDatasetCapabilities: React.PropTypes.object.isRequired,
-    selectedDatasetLayer: React.PropTypes.object.isRequired,
+    currentDisplayedDataset: React.PropTypes.object.isRequired,
     currentScalarValue: React.PropTypes.object.isRequired,
-    currentVisualizedDatasetLayers: React.PropTypes.array.isRequired,
+    currentVisualizedDatasets: React.PropTypes.array.isRequired,
     fetchShapefiles: React.PropTypes.func.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
     selectedBasemap: React.PropTypes.string.isRequired,
-    selectDatasetLayer: React.PropTypes.func.isRequired,
+    selectCurrentDisplayedDataset: React.PropTypes.func.isRequired,
     selectShapefile: React.PropTypes.func.isRequired,
     selectBasemap: React.PropTypes.func.isRequired,
     // fetchFacets: React.PropTypes.func.isRequired,
@@ -104,7 +104,7 @@ class Visualize extends React.Component {
               selectedBasemap={this.props.selectedBasemap}
               selectedColorPalette={this.props.selectedColorPalette}
               selectedDatasetCapabilities={this.props.selectedDatasetCapabilities}
-              selectedDatasetLayer={this.props.selectedDatasetLayer}
+              currentDisplayedDataset={this.props.currentDisplayedDataset}
               selectedRegions={this.props.selectedRegions}
               selectedShapefile={this.props.selectedShapefile}
               setCurrentDateTime={this.props.setCurrentDateTime}
@@ -127,7 +127,7 @@ class Visualize extends React.Component {
               ? <div className={classes.panel}>
                 <TimeSeriesChart
                   currentScalarValue={this.props.currentScalarValue}
-                  selectedDatasetLayer={this.props.selectedDatasetLayer}
+                  currentDisplayedDataset={this.props.currentDisplayedDataset}
                   onToggleMapPanel={this._onToggleMapPanel}
                   plotlyData={this.props.plotlyData}
                   fetchPlotlyData={this.props.fetchPlotlyData}
@@ -143,11 +143,11 @@ class Visualize extends React.Component {
                     selectColorPalette={this.props.selectColorPalette}
                     selectedColorPalette={this.props.selectedColorPalette}
                     fetchShapefiles={this.props.fetchShapefiles}
-                    selectDatasetLayer={this.props.selectDatasetLayer}
+                    selectCurrentDisplayedDataset={this.props.selectCurrentDisplayedDataset}
                     selectShapefile={this.props.selectShapefile}
                     selectBasemap={this.props.selectBasemap}
-                    currentVisualizedDatasetLayers={this.props.currentVisualizedDatasetLayers}
-                    selectedDatasetLayer={this.props.selectedDatasetLayer}
+                    currentVisualizedDatasets={this.props.currentVisualizedDatasets}
+                    currentDisplayedDataset={this.props.currentDisplayedDataset}
                     selectedShapefile={this.props.selectedShapefile}
                     selectedBasemap={this.props.selectedBasemap}
                     publicShapeFiles={this.props.publicShapeFiles}
@@ -160,7 +160,7 @@ class Visualize extends React.Component {
                   selectedWMSLayerDetails={this.props.selectedWMSLayerDetails}
                   selectedWMSLayerTimesteps={this.props.selectedWMSLayerTimesteps}
                   setCurrentDateTime={this.props.setCurrentDateTime}
-                  selectedDatasetLayer={this.props.selectedDatasetLayer}
+                  currentDisplayedDataset={this.props.currentDisplayedDataset}
                   selectedDatasetCapabilities={this.props.selectedDatasetCapabilities}
                   currentDateTime={this.props.currentDateTime}
                   monthsRange={false}

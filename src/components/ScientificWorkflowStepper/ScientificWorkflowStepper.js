@@ -24,7 +24,7 @@ export default class ScientificWorkflowStepper extends Component {
     jobAPIActions: React.PropTypes.object.isRequired,
     project: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
-    selectedDatasetLayer: React.PropTypes.object.isRequired,
+    currentDisplayedDataset: React.PropTypes.object.isRequired,
     selectedRegions: React.PropTypes.array.isRequired,
     selectedProcess: React.PropTypes.object.isRequired,
     selectedProvider: React.PropTypes.string.isRequired,
@@ -282,7 +282,7 @@ export default class ScientificWorkflowStepper extends Component {
                     executeProcess={this.catchAndWrapExecuteProcess}
                     formId={FORM_WORKFLOW_ID}
                     selectedRegions={this.props.selectedRegions}
-                    selectedDatasetLayer={this.props.selectedDatasetLayer}
+                    currentDisplayedDataset={this.props.currentDisplayedDataset}
                     selectedShapefile={this.props.selectedShapefile}
                     goToSection={this.props.goToSection}
                     workflow={this.props.workflow}
