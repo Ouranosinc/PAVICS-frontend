@@ -283,7 +283,7 @@ class OLComponent extends React.Component {
     let lon = converted[0];
     let lat = converted[1];
     let time = this.props.currentDateTime.substr(0, this.props.currentDateTime.length - 5);
-    let variable = this.props.selectedDatasetLayer['variable'][0];
+    let variable = this.props.selectedDatasetLayer['variable'];
     this.props.fetchScalarValue(opendapUrl, lat, lon, time, variable);
   }
 

@@ -55,11 +55,12 @@ export class ProjectDatasets extends React.Component {
   }
 
   _onVisualizeLayer (event, dataset, currentWmsUrl, i) {
-    dataset['wms_url'] = currentWmsUrl;
-    dataset['currentWmsIndex'] = i;
-    this.props.addDatasetLayersToVisualize([dataset]);
+    let copy = JSON.parse(JSON.stringify(dataset));
+    copy['wms_url'] = currentWmsUrl;
+    copy['currentWmsIndex'] = i;
+    this.props.addDatasetLayersToVisualize([copy]);
     this.props.selectDatasetLayer({
-      ...dataset,
+      ...copy,
       opacity: 0.8
     });
   }
@@ -77,79 +78,122 @@ export class ProjectDatasets extends React.Component {
               if (this.props.currentVisualizedDatasetLayers.find(x => x.dataset_id === dataset.dataset_id)) {
                 folderIcon = <FolderSpecial />;
               }
-              return (
-                <ListItem
-                  key={i}
-                  primaryText={`${dataset.aggregate_title} (${dataset.fileserver_url.length} file${(dataset.fileserver_url.length > 1)? 's': ''})` }
-                  secondaryText={
-                    <p>
-                      <span style={{color: darkBlack}}><strong>Variable: </strong> {dataset.variable_long_name}</span><br />
-                      <strong>Keywords: </strong>{dataset.keywords.join(', ')}
-                    </p>
-                  }
-                  secondaryTextLines={2}
-                  leftIcon={folderIcon}
-                  initiallyOpen={false}
-                  primaryTogglesNestedList={true}
-                  autoGenerateNestedIndicator={false}
-                  rightIconButton={
-                    <IconMenu
-                      menuStyle={{marginRight: '100px'}}
-                      iconButtonElement={
+              let disabledDatasetVisualize = false;
+              if (this.props.currentVisualizedDatasetLayers.find(x => x.dataset_id === dataset.dataset_id)) {
+                disabledDatasetVisualize = true;
+              }
+              if(dataset.type === "Aggregate") {
+                return (
+                  <ListItem
+                    key={i}
+                    primaryText={dataset.aggregate_title}
+                    secondaryText={
+                      <p>
+                        <span style={{color: darkBlack}}>{`${dataset.fileserver_url.length} Files`}</span><br />
+                        <strong>Keywords: </strong>{dataset.keywords.join(', ')}
+                      </p>
+                    }
+                    secondaryTextLines={2}
+                    leftIcon={folderIcon}
+                    initiallyOpen={false}
+                    primaryTogglesNestedList={true}
+                    autoGenerateNestedIndicator={false}
+                    rightIconButton={
+                      <IconMenu iconButtonElement={
                         <IconButton
                           touch={true}
                           tooltip="Actions"
                           tooltipPosition="bottom-left">
                           <MoreVertIcon color={grey400} />
                         </IconButton>}>
-                      <MenuItem primaryText="Visualize" onTouchTap={(event) => {
-                        this._onVisualizeLayer(event, dataset, dataset.wms_url[0], j)
-                      }} leftIcon={<Visualize />} />
-                      <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.opendap_urls[i], '_blank')} leftIcon={<Download />} />
-                      <MenuItem primaryText="Remove (TODO)" onTouchTap={(event) => alert('remove ' + fileName)} leftIcon={<Remove />} />
-                      <MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + fileName)} leftIcon={<ShareIcon />} />
-                    </IconMenu>
-                  }
-                  nestedItems={
-                    dataset.wms_url.map((wmsUrl, j) => {
-                      let text = '/';
-                      let fileName = wmsUrl.substr(wmsUrl.lastIndexOf(text) + text.length);
-                      let nestedIcon = <File />;
-                      let disabledNestedVisualize = false;
-                      if (this.props.currentVisualizedDatasetLayers.find(x => x.wms_url ===  wmsUrl)) {
-                        nestedIcon = <Visualize />;
-                        disabledNestedVisualize = true;
-                      }
-                      return (
-                        <ListItem
-                          style={{width: '98%'}}
-                          key={j}
-                          primaryText={fileName}
-                          leftIcon={nestedIcon}
-                          rightIconButton={
-                            <IconMenu
-                              menuStyle={{marginRight: '100px'}}
-                              iconButtonElement={
-                              <IconButton
-                                touch={true}
-                                tooltip="Actions"
-                                tooltipPosition="bottom-left">
-                                <MoreVertIcon color={grey400} />
-                              </IconButton>}>
-                              <MenuItem primaryText="Visualize" disabled={disabledNestedVisualize} onTouchTap={(event) => {
-                                this._onVisualizeLayer(event, dataset, wmsUrl, j)
-                              }} leftIcon={<Visualize />} />
-                              <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.opendap_urls[i], '_blank')} leftIcon={<Download />} />
-                              <MenuItem primaryText="Remove (TODO)" onTouchTap={(event) => alert('remove ' + fileName)} leftIcon={<Remove />} />
-                              <MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + fileName)} leftIcon={<ShareIcon />} />
-                            </IconMenu>
-                          }
-                        />
-                      );
-                    })
-                  }
-                />
-              );
+                        <MenuItem primaryText="Visualize" disabled={disabledDatasetVisualize} onTouchTap={(event) => {
+                          this._onVisualizeLayer(event, dataset, dataset.wms_url[0], 0) // TODO FIX..
+                        }} leftIcon={<Visualize />} />
+                        <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.opendap_url[0], '_blank')} leftIcon={<Download />} />
+                        <MenuItem primaryText="Remove (TODO)" onTouchTap={(event) => alert('remove ' + dataset.title[0])} leftIcon={<Remove />} />
+                        <MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + dataset.title[0])} leftIcon={<ShareIcon />} />
+                      </IconMenu>
+                    }
+                    nestedItems={
+                      dataset.wms_url.map((wmsUrl, j) => {
+                        let nestedIcon = <File />;
+                        let disabledNestedVisualize = false;
+                        if (this.props.currentVisualizedDatasetLayers.find(x => x.wms_url ===  wmsUrl)) {
+                          nestedIcon = <Visualize />;
+                          disabledNestedVisualize = true;
+                        }
+                        return (
+                          <ListItem
+                            style={{width: '98%'}}
+                            key={j}
+                            primaryText={dataset.title[j]}
+                            leftIcon={nestedIcon}
+                            rightIconButton={
+                              <IconMenu
+                                menuStyle={{marginRight: '100px'}}
+                                iconButtonElement={
+                                  <IconButton
+                                    touch={true}
+                                    tooltip="Actions"
+                                    tooltipPosition="bottom-left">
+                                    <MoreVertIcon color={grey400} />
+                                  </IconButton>}>
+                                <MenuItem primaryText="Visualize" disabled={disabledNestedVisualize} onTouchTap={(event) => {
+                                  this._onVisualizeLayer(event, dataset, wmsUrl, j)
+                                }} leftIcon={<Visualize />} />
+                                <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.opendap_url[j], '_blank')} leftIcon={<Download />} />
+                                <MenuItem primaryText="Remove (TODO)" onTouchTap={(event) => alert('remove ' + dataset.title[j])} leftIcon={<Remove />} />
+                                <MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + dataset.title[j])} leftIcon={<ShareIcon />} />
+                              </IconMenu>
+                            }
+                          />
+                        );
+                      })
+                    }
+                  />
+                );
+              }else {
+                let disabledVisualize = false;
+                let fileIcon = <File />;
+                if (this.props.currentVisualizedDatasetLayers.find(x => x.dataset_id === dataset.dataset_id)) {
+                  fileIcon = <Visualize />;
+                  disabledVisualize = true;
+                }
+                return(
+                  <ListItem
+                    key={i}
+                    primaryText={dataset.aggregate_title}
+                    secondaryText={
+                      <p>
+                        <span style={{color: darkBlack}}>{dataset.title[0]}</span><br />
+                        <strong>Keywords: </strong>{dataset.keywords.join(', ')}
+                      </p>
+                    }
+                    secondaryTextLines={2}
+                    leftIcon={fileIcon}
+                    initiallyOpen={false}
+                    primaryTogglesNestedList={true}
+                    autoGenerateNestedIndicator={false}
+                    rightIconButton={
+                      <IconMenu iconButtonElement={
+                        <IconButton
+                          touch={true}
+                          tooltip="Actions"
+                          tooltipPosition="bottom-left">
+                          <MoreVertIcon color={grey400} />
+                        </IconButton>}>
+                        <MenuItem primaryText="Visualize" disabled={disabledVisualize} onTouchTap={(event) => {
+                          this._onVisualizeLayer(event, dataset, dataset.wms_url[0], 0)
+                        }} leftIcon={<Visualize />} />
+                        <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.opendap_url[i], '_blank')} leftIcon={<Download />} />
+                        <MenuItem primaryText="Remove (TODO)" onTouchTap={(event) => alert('remove ' + fileName)} leftIcon={<Remove />} />
+                        <MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + fileName)} leftIcon={<ShareIcon />} />
+                      </IconMenu>
+                    }
+                  />
+                );
+              }
+
             })}
           </List>
           <Pagination
