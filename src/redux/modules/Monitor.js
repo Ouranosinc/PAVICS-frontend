@@ -10,6 +10,9 @@ export const constants = {
   MONITOR_PERSIST_TEMPORARY_RESULT_REQUEST: 'MONITOR_PERSIST_TEMPORARY_RESULT_REQUEST',
   MONITOR_PERSIST_TEMPORARY_RESULT_FAILURE: 'MONITOR_PERSIST_TEMPORARY_RESULT_FAILURE',
   MONITOR_PERSIST_TEMPORARY_RESULT_SUCCESS: 'MONITOR_PERSIST_TEMPORARY_RESULT_SUCCESS',
+  MONITOR_VISUALIZE_TEMPORARY_RESULT_REQUEST: 'MONITOR_VISUALIZE_TEMPORARY_RESULT_REQUEST',
+  MONITOR_VISUALIZE_TEMPORARY_RESULT_FAILURE: 'MONITOR_VISUALIZE_TEMPORARY_RESULT_FAILURE',
+  MONITOR_VISUALIZE_TEMPORARY_RESULT_SUCCESS: 'MONITOR_VISUALIZE_TEMPORARY_RESULT_SUCCESS'
 };
 
 //Actions Creators
@@ -57,7 +60,7 @@ function receiveWPSJobs (data) {
 function requestPersistTemporaryResult () {
   return {
     type: constants.MONITOR_PERSIST_TEMPORARY_RESULT_REQUEST,
-    persist: {
+    persistedTempDataset: {
       requestedAt: Date.now(),
       isFetching: true,
       data: {},
@@ -71,7 +74,7 @@ function receivePersistTemporaryResultFailure (error) {
   NotificationManager.error(`Failed at persisting a temporary result. Returned Status ${error.status}: ${error.message}`);
   return {
     type: constants.MONITOR_PERSIST_TEMPORARY_RESULT_FAILURE,
-    persist: {
+    persistedTempDataset: {
       receivedAt: Date.now(),
       isFetching: false,
       data: {},
@@ -84,10 +87,48 @@ function receivePersistTemporaryResult (data) {
   NotificationManager.success(`Persisted file with success at ${data.url}`);
   return {
     type: constants.MONITOR_PERSIST_TEMPORARY_RESULT_SUCCESS,
-    persist: {
+    persistedTempDataset: {
       receivedAt: Date.now(),
       isFetching: false,
       data: data,
+      error: null
+    }
+  };
+}
+
+function requestVisualizeTemporaryResult () {
+  return {
+    type: constants.MONITOR_VISUALIZE_TEMPORARY_RESULT_REQUEST,
+    visualizedTempDatasets: {
+      requestedAt: Date.now(),
+      isFetching: true,
+      items: [],
+      count: 0
+
+    }
+  };
+}
+
+function receiveVisualizeTemporaryResultFailure (error) {
+  NotificationManager.error(`Failed at visualizing a temporary result. Returned Status ${error.status}: ${error.message}`);
+  return {
+    type: constants.MONITOR_VISUALIZE_TEMPORARY_RESULT_FAILURE,
+    visualizedTempDatasets: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      items: [],
+      error: error
+    }
+  };
+}
+
+function receiveVisualizeTemporaryResult (datasets) {
+  return {
+    type: constants.MONITOR_VISUALIZE_TEMPORARY_RESULT_SUCCESS,
+    visualizedTempDatasets: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      items: datasets,
       error: null
     }
   };
@@ -172,13 +213,41 @@ export function persistTemporaryResult (resource, location, overwrite, defaultFa
       });
   };
 }
+export function visualizeTemporaryResult (resources) {
+  return (dispatch) => {
+    dispatch(requestVisualizeTemporaryResult());
+    let url = `/wps/visualize?`;
+    resources.forEach(res => {
+      url += `resource=${res}&`
+    });
+    return myHttp.get(url)
+      .then(response => {
+        if(!response.ok){
+          // Real msg is there: response.body.message; but not working as intended
+          dispatch(receiveVisualizeTemporaryResultFailure({
+            status: response.status,
+            message: response.statusText,
+            url: response.url
+          }));
+        }else{
+          return response.json();
+        }
+      })
+      .then(json => {
+        if(json) dispatch(receiveVisualizeTemporaryResult(json.response.docs));
+      }, err => {
+        // Not sure it'll ever happen
+      });
+  };
+}
 
 
 // Exported Action Creators
 export const actions = {
   fetchWPSJobs: fetchWPSJobs,
   pollWPSJobs: pollWPSJobs,
-  persistTemporaryResult: persistTemporaryResult
+  persistTemporaryResult: persistTemporaryResult,
+  visualizeTemporaryResult: visualizeTemporaryResult
 };
 
 export const initialState = {
@@ -190,11 +259,18 @@ export const initialState = {
     count: 0,
     error: null
   },
-  persist: {
+  persistedTempDataset: {
     requestedAt: null,
     receivedAt: null,
     isFetching: false,
     data: {},
+    error: null
+  },
+  visualizedTempDatasets: {
+    requestedAt: null,
+    receivedAt: null,
+    isFetching: false,
+    items: [],
     error: null
   },
 };
@@ -212,6 +288,24 @@ const MONITOR_HANDLERS = {
   },
   [constants.MONITOR_POLL_WPS_JOBS_SUCCESS]: (state, action) => {
     return ({...state, jobs: action.jobs});
+  },
+  [constants.MONITOR_PERSIST_TEMPORARY_RESULT_REQUEST]: (state, action) => {
+    return ({...state, persistedTempDataset: action.persistedTempDataset});
+  },
+  [constants.MONITOR_PERSIST_TEMPORARY_RESULT_FAILURE]: (state, action) => {
+    return ({...state, persistedTempDataset: action.persistedTempDataset});
+  },
+  [constants.MONITOR_PERSIST_TEMPORARY_RESULT_SUCCESS]: (state, action) => {
+    return ({...state, persistedTempDataset: action.persistedTempDataset});
+  },
+  [constants.MONITOR_VISUALIZE_TEMPORARY_RESULT_REQUEST]: (state, action) => {
+    return ({...state, visualizedTempDatasets: action.visualizedTempDatasets});
+  },
+  [constants.MONITOR_VISUALIZE_TEMPORARY_RESULT_FAILURE]: (state, action) => {
+    return ({...state, visualizedTempDatasets: action.visualizedTempDatasets});
+  },
+  [constants.MONITOR_VISUALIZE_TEMPORARY_RESULT_SUCCESS]: (state, action) => {
+    return ({...state, visualizedTempDatasets: action.visualizedTempDatasets});
   },
 };
 

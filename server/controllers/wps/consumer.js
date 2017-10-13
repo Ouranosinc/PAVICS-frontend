@@ -108,6 +108,22 @@ var consumer = (function () {
             this.status = 500;
             this.body = {message: xml['wps:ExecuteResponse']['wps:Status'][0]['wps:ProcessFailed'][0]['wps:ExceptionReport'][0]['ows:Exception'][0]['ows:ExceptionText'][0]};
           }
+        case 'visualize':
+          let resources = this.request.query['resource']; //Array of strings
+          if(!Array.isArray(resources)){
+            resources = [resources]
+          }
+          options.url = `${config.pavics_malleefowl_path}?service=WPS&request=execute&version=1.0.0&identifier=visualize&storeExecuteResponse=true&DataInputs=`;
+          console.log(resources);
+          resources.forEach(res =>  {
+            options.url += `resource=${res};`;
+          });
+          console.log('visualizing files:', options.url);
+          response = yield request(options);
+          xml = yield Utils.parseXMLThunk(response.body);
+          jsonPath = Utils.extractWPSOutputPath(xml);
+          response = yield request(jsonPath);
+          this.body = response.body;
       }
     }
   };

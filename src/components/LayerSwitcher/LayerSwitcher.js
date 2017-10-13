@@ -30,12 +30,12 @@ export default class LayerSwitcher extends React.Component {
     onToggleMapPanel: React.PropTypes.func.isRequired,
     fetchShapefiles: React.PropTypes.func.isRequired,
     selectColorPalette: React.PropTypes.func.isRequired,
-    selectDatasetLayer: React.PropTypes.func.isRequired,
+    selectCurrentDisplayedDataset: React.PropTypes.func.isRequired,
     selectShapefile: React.PropTypes.func.isRequired,
     selectBasemap: React.PropTypes.func.isRequired,
-    currentVisualizedDatasetLayers: React.PropTypes.array.isRequired,
+    currentVisualizedDatasets: React.PropTypes.array.isRequired,
     selectedColorPalette: React.PropTypes.object.isRequired,
-    selectedDatasetLayer: React.PropTypes.object.isRequired,
+    currentDisplayedDataset: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
     resetSelectedRegions: React.PropTypes.func.isRequired,
     selectedBasemap: React.PropTypes.string.isRequired,
@@ -48,7 +48,7 @@ export default class LayerSwitcher extends React.Component {
     this._onHideLayerSwitcherPanel = this._onHideLayerSwitcherPanel.bind(this);
     this.setSelectedShapefile = this.setSelectedShapefile.bind(this);
     this.setSelectedBaseMap = this.setSelectedBaseMap.bind(this);
-    this.setSelectedDatasetLayer = this.setSelectedDatasetLayer.bind(this);
+    this.setCurrentDisplayedDataset = this.setCurrentDisplayedDataset.bind(this);
     this.setDatasetLayerOpacity = this.setDatasetLayerOpacity.bind(this);
     this.setSelectedColorPalette = this.setSelectedColorPalette.bind(this);
     this.resetDatasetLayer = this.resetDatasetLayer.bind(this);
@@ -74,17 +74,17 @@ export default class LayerSwitcher extends React.Component {
     this.props.selectBasemap(value);
   }
 
-  setSelectedDatasetLayer (event, value) {
-    let selectedDataset = this.props.currentVisualizedDatasetLayers.find(dataset => dataset.dataset_id === value);
-    this.props.selectDatasetLayer({
+  setCurrentDisplayedDataset (event, value) {
+    let selectedDataset = this.props.currentVisualizedDatasets.find(dataset => dataset.dataset_id === value);
+    this.props.selectCurrentDisplayedDataset({
       ...selectedDataset,
-      opacity: this.props.selectedDatasetLayer.opacity
+      opacity: this.props.currentDisplayedDataset.opacity
     });
   }
 
   setDatasetLayerOpacity (event, value) {
-    this.props.selectDatasetLayer({
-      ...this.props.selectedDatasetLayer,
+    this.props.selectCurrentDisplayedDataset({
+      ...this.props.currentDisplayedDataset,
       opacity: value
     });
   }
@@ -99,7 +99,7 @@ export default class LayerSwitcher extends React.Component {
   }
 
   resetDatasetLayer () {
-    this.props.selectDatasetLayer({});
+    this.props.selectCurrentDisplayedDataset({});
   }
 
   makeShapefileList () {
@@ -173,16 +173,16 @@ export default class LayerSwitcher extends React.Component {
         style={{height: '225px', overflowY: 'auto'}}
         className={classes['layers']}>
         {
-          this.props.currentVisualizedDatasetLayers.map((dataset, i) => {
+          this.props.currentVisualizedDatasets.map((dataset, i) => {
             return (
               <ListItem
                 key={i}
-                primaryText={dataset.dataset_id}
+                primaryText={dataset.aggregate_title}
                 leftCheckbox={
                   <RadioButtonGroup
-                    name="selectedDatasetLayer"
-                    valueSelected={this.props.selectedDatasetLayer.dataset_id}
-                    onChange={this.setSelectedDatasetLayer}>
+                    name="currentDisplayedDataset"
+                    valueSelected={this.props.currentDisplayedDataset.dataset_id}
+                    onChange={this.setCurrentDisplayedDataset}>
                     <RadioButton value={dataset.dataset_id} />
                   </RadioButtonGroup>
                 } />
@@ -196,19 +196,19 @@ export default class LayerSwitcher extends React.Component {
   makeSlider () {
     // not so clever trick so that opacity is not undefined when resetting layer
     // should stay aligned with initialState's opacity
-    if (isNaN(this.props.selectedDatasetLayer.opacity)) {
+    if (isNaN(this.props.currentDisplayedDataset.opacity)) {
       this.setDatasetLayerOpacity(null, 0.8);
     }
     return (
       <div style={{padding: '0 15px'}}>
-        <div style={{textAlign: 'center'}}>opacity: {Math.floor(this.props.selectedDatasetLayer.opacity * 100)}%
+        <div style={{textAlign: 'center'}}>opacity: {Math.floor(this.props.currentDisplayedDataset.opacity * 100)}%
         </div>
         <Slider
-          disabled={!this.props.selectedDatasetLayer.dataset_id}
+          disabled={!this.props.currentDisplayedDataset.dataset_id}
           sliderStyle={{margin: '0'}}
           step={0.05}
           onChange={this.setDatasetLayerOpacity}
-          value={this.props.selectedDatasetLayer.opacity} />
+          value={this.props.currentDisplayedDataset.opacity} />
       </div>
     );
   }

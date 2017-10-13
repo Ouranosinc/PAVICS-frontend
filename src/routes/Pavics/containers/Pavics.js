@@ -92,6 +92,7 @@ class Pavics extends React.Component {
         return (
           <ProcessMonitoringContainer
             addDatasetLayersToVisualize={this.props.addDatasetLayersToVisualize}
+            selectCurrentDisplayedDataset={this.props.selectCurrentDisplayedDataset}
             workflow={this.props.workflow}
             workflowActions={this.props.workflowActions}
             fetchVisualizableData={this.props.fetchVisualizableData} />

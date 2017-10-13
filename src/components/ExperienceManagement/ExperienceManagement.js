@@ -13,10 +13,10 @@ export class ExperienceManagement extends React.Component {
     researchActions: React.PropTypes.object.isRequired,
     currentProjectDatasets: React.PropTypes.array.isRequired,
     currentProjectSearchCriterias: React.PropTypes.array.isRequired,
-    currentVisualizedDatasetLayers: React.PropTypes.array.isRequired,
+    currentVisualizedDatasets: React.PropTypes.array.isRequired,
     addDatasetLayersToVisualize: React.PropTypes.func.isRequired,
     removeSearchCriteriasFromProject: React.PropTypes.func.isRequired,
-    selectDatasetLayer: React.PropTypes.func.isRequired,
+    selectCurrentDisplayedDataset: React.PropTypes.func.isRequired,
     goToSection: React.PropTypes.func.isRequired
   };
   constructor (props) {

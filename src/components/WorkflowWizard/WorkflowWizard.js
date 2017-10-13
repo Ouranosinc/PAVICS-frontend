@@ -13,7 +13,7 @@ export default class WorkflowWizard extends React.Component {
     goToSection: React.PropTypes.func.isRequired,
     jobAPIActions: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
-    selectedDatasetLayer: React.PropTypes.object.isRequired,
+    currentDisplayedDataset: React.PropTypes.object.isRequired,
     selectedRegions: React.PropTypes.array.isRequired,
     project: React.PropTypes.object.isRequired,
     workflow: React.PropTypes.object.isRequired,
@@ -103,7 +103,7 @@ export default class WorkflowWizard extends React.Component {
                   project={this.props.project}
                   showDialog={this.showDialog}
                   selectedRegions={this.props.selectedRegions}
-                  selectedDatasetLayer={this.props.selectedDatasetLayer}
+                  currentDisplayedDataset={this.props.currentDisplayedDataset}
                   selectedShapefile={this.props.selectedShapefile}
                   selectedProvider={__PAVICS_WORKFLOW_PROVIDER__}
                   selectedProcess={{identifier: __PAVICS_RUN_WORKFLOW_IDENTIFIER__}}
@@ -121,7 +121,7 @@ export default class WorkflowWizard extends React.Component {
                   jobAPIActions={this.props.jobAPIActions}
                   project={this.props.project}
                   selectedRegions={this.props.selectedRegions}
-                  selectedDatasetLayer={this.props.selectedDatasetLayer}
+                  currentDisplayedDataset={this.props.currentDisplayedDataset}
                   selectedShapefile={this.props.selectedShapefile}
                   workflow={this.props.workflow}
                   workflowActions={this.props.workflowActions}

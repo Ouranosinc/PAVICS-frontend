@@ -72,7 +72,7 @@ export class TimeSlider extends React.Component {
     monthsRange: React.PropTypes.bool.isRequired,
     yearsRange: React.PropTypes.bool.isRequired,
     currentDateTime: React.PropTypes.string.isRequired,
-    selectedDatasetLayer: React.PropTypes.object.isRequired,
+    currentDisplayedDataset: React.PropTypes.object.isRequired,
     selectedDatasetCapabilities: React.PropTypes.object.isRequired,
     selectedWMSLayerDetails: React.PropTypes.object.isRequired,
     selectedWMSLayerTimesteps: React.PropTypes.object.isRequired,
@@ -104,7 +104,7 @@ export class TimeSlider extends React.Component {
         }
       );
     }
-    if (nextProps.selectedDatasetLayer && nextProps.selectedDatasetLayer !== this.props.selectedDatasetLayer && !nextProps.selectedDatasetLayer['dataset_id']) {
+    if (nextProps.currentDisplayedDataset && nextProps.currentDisplayedDataset !== this.props.currentDisplayedDataset && !nextProps.currentDisplayedDataset['dataset_id']) {
       this.setState(DEFAULT_STATE);
     }
   }
