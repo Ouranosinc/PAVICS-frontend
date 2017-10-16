@@ -15,6 +15,7 @@ export class ProcessMonitoringContainer extends React.Component {
 
 
   render () {
+    console.log('ProcessMonitoring container')
     return (
       <ProcessMonitoring {...this.props} />
     )

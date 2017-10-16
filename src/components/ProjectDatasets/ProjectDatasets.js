@@ -58,7 +58,7 @@ export class ProjectDatasets extends React.Component {
     let copy = JSON.parse(JSON.stringify(dataset));
     copy['wms_url'] = currentWmsUrl;
     copy['currentWmsIndex'] = i;
-    this.props.addDatasetLayersToVisualize([copy]);
+    this.props.addDatasetsToVisualize([copy]);
     this.props.selectCurrentDisplayedDataset({
       ...copy,
       opacity: 0.8

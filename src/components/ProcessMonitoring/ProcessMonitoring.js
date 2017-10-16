@@ -5,6 +5,7 @@ import * as constants from '../../constants';
 import Loader from './../../components/Loader';
 import Pagination from './../../components/Pagination';
 import StatusElement from './StatusElement';
+import LoadingScreen from './../LoadingScreen';
 import ProcessListItem from './ProcessListItem';
 import PersistResultDialog from './PersistResultDialog';
 import Dialog from 'material-ui/Dialog';
@@ -25,7 +26,7 @@ import VisualizeIcon from 'material-ui/svg-icons/image/remove-red-eye';
 
 class ProcessMonitoring extends React.Component {
   static propTypes = {
-    addDatasetLayersToVisualize: React.PropTypes.func.isRequired,
+    addDatasetsToVisualize: React.PropTypes.func.isRequired,
     selectCurrentDisplayedDataset: React.PropTypes.func.isRequired,
     monitor: React.PropTypes.object.isRequired,
     monitorActions: React.PropTypes.object.isRequired,
@@ -43,7 +44,8 @@ class ProcessMonitoring extends React.Component {
       persistDialogOutput: {},
       persistDialogOpened: false,
       pageNumber: 1,
-      numberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX]
+      numberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX],
+      loadingScreen: null
     };
     this.props.monitorActions.fetchWPSJobs(this.props.project.currentProject.id, constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX], 1);
     this._closeLogDialog = this._closeLogDialog.bind(this);
@@ -70,9 +72,9 @@ class ProcessMonitoring extends React.Component {
       }
     }
     if(nextProps.monitor.visualizedTempDatasets && nextProps.monitor.visualizedTempDatasets.items.length){
-      nextProps.monitor.visualizedTempDatasets.items.map(x => x.aggregate_title = "BIDON!");
-      this.props.addDatasetLayersToVisualize(nextProps.monitor.visualizedTempDatasets.items);
+      this.props.addDatasetsToVisualize(nextProps.monitor.visualizedTempDatasets.items);
       this.props.selectCurrentDisplayedDataset(nextProps.monitor.visualizedTempDatasets.items[0]);
+      this.setState({loadingScreen: null});
       NotificationManager.success("Dataset has been added the Layer Switcher, data is being loaded on the map...");
     }
   }
@@ -96,8 +98,11 @@ class ProcessMonitoring extends React.Component {
     this.props.monitorActions.fetchWPSJobs(this.props.project.currentProject.id, numberPerPage, pageNumber);
   }
 
-  _onVisualiseDatasets (httpURLArray) {
-    this.props.monitorActions.visualizeTemporaryResult(httpURLArray);
+  _onVisualiseDatasets (httpURLArray, aggregate = false) {
+    this.props.monitorActions.visualizeTemporaryResult(httpURLArray, aggregate);
+    this.setState({
+      loadingScreen: <LoadingScreen />
+    });
   }
 
   _onShowLogDialog (log) {
@@ -183,12 +188,12 @@ class ProcessMonitoring extends React.Component {
 
                   // If an output is a json array of netcdf urls, we must generate new output for every listed url
                   tasks.forEach(task => {
-                    let newOutputs = [];
                     let taskName = Object.keys(task)[0];
                     task[taskName].forEach( parralelTask => {
                       if(parralelTask.outputs) {
-
+                        let newOutputs = [];
                         parralelTask.outputs.forEach(output => {
+                          newOutputs = [];
                           if (output.mimeType === 'application/json' && output.data) {
                             if (Array.isArray(output.data) && typeof output.data[0] === 'string' &&
                               output.data[0].startsWith('http://') && output.data[0].endsWith('.nc')) {
@@ -240,18 +245,17 @@ class ProcessMonitoring extends React.Component {
                     key={i}
                     primaryText={x.title + ': ' + x.abstract}
                     secondaryText={
-                      <p>
-                      <span
-                        style={{color: darkBlack}}>Launched on <strong>{moment(x.created).format(constants.PAVICS_DATE_FORMAT)}</strong> using provider <strong>{x.service}</strong>.</span><br />
+                      <span style={{color: darkBlack}}>
+                        <span>Launched on <strong>{moment(x.created).format(constants.PAVICS_DATE_FORMAT)}</strong> using provider <strong>{x.service}</strong>.</span><br/>
                         <StatusElement job={x} />, <strong>Duration: </strong>{x.duration}
-                      </p>
+                      </span>
                     }
                     secondaryTextLines={2}
                     rightIconButton={
                       <IconMenu iconButtonElement={
                         <IconButton
                           touch={true}
-                          tooltipPosition="bottom-left">AoN
+                          tooltipPosition="bottom-left">
                           <MoreVertIcon color={grey400}/>
                         </IconButton>
                       }>
@@ -290,7 +294,6 @@ class ProcessMonitoring extends React.Component {
                               onVisualiseDatasets={this._onVisualiseDatasets} />
                           );
                         }else{
-                          // No actions
                           let completedTasks = parrallelTasks.filter(x => x.status === constants.JOB_SUCCESS_STATUS);
                           let visualizableOutputs = [];
                           parrallelTasks.forEach((task)=> {
@@ -325,9 +328,14 @@ class ProcessMonitoring extends React.Component {
                                 </IconButton>
                               }>
                                 <MenuItem
-                                  primaryText="Visualize All"
+                                  primaryText="Visualize All (Aggregated)"
                                   disabled={!visualizableOutputs.length}
-                                  onTouchTap={(event) => this._onVisualiseDatasets(visualizableOutputs)}
+                                  onTouchTap={(event) => this._onVisualiseDatasets(visualizableOutputs, true)}
+                                  leftIcon={<VisualizeIcon />}/>
+                                <MenuItem
+                                  primaryText="Visualize All (Splitted)"
+                                  disabled={!visualizableOutputs.length}
+                                  onTouchTap={(event) => this._onVisualiseDatasets(visualizableOutputs, false)}
                                   leftIcon={<VisualizeIcon />}/>
                               </IconMenu>
                             }
@@ -374,13 +382,13 @@ class ProcessMonitoring extends React.Component {
                             let json = JSON.parse(x.outputs_to_json[i]);
                             if (Array.isArray(json) && typeof json[0] === 'string' &&
                               json[0].startsWith('http://') && json[0].endsWith('.nc') ) {
-                              json.forEach(json => {
+                              json.forEach((reference, index) => {
                                 x.outputs.push({
                                   dataType: "ComplexData",
                                   identifier: output['ows:Identifier'][0],
                                   mimeType: 'application/x-netcdf',
-                                  reference: json,
-                                  title: output['ows:Title'][0],
+                                  reference: reference,
+                                  title: `${output['ows:Title'][0]} (${index + 1}/${json.length})`,
                                   abstract: output['ows:Abstract'][0]
                                 });
                               });
@@ -430,8 +438,10 @@ class ProcessMonitoring extends React.Component {
             </List>;
       }
     }
+    console.log('ProcessMonitoring component');
     return (
       <div>
+        {this.state.loadingScreen}
         <div className="container">
           <Paper style={{ marginTop: 20 }}>
             {mainComponent}

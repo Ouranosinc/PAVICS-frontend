@@ -14,7 +14,7 @@ export class ExperienceManagement extends React.Component {
     currentProjectDatasets: React.PropTypes.array.isRequired,
     currentProjectSearchCriterias: React.PropTypes.array.isRequired,
     currentVisualizedDatasets: React.PropTypes.array.isRequired,
-    addDatasetLayersToVisualize: React.PropTypes.func.isRequired,
+    addDatasetsToVisualize: React.PropTypes.func.isRequired,
     removeSearchCriteriasFromProject: React.PropTypes.func.isRequired,
     selectCurrentDisplayedDataset: React.PropTypes.func.isRequired,
     goToSection: React.PropTypes.func.isRequired

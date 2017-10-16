@@ -213,13 +213,14 @@ export function persistTemporaryResult (resource, location, overwrite, defaultFa
       });
   };
 }
-export function visualizeTemporaryResult (resources) {
+export function visualizeTemporaryResult (resources, aggregate = false) {
   return (dispatch) => {
     dispatch(requestVisualizeTemporaryResult());
     let url = `/wps/visualize?`;
     resources.forEach(res => {
       url += `resource=${res}&`
     });
+    url += `aggregate=${aggregate}`;
     return myHttp.get(url)
       .then(response => {
         if(!response.ok){
