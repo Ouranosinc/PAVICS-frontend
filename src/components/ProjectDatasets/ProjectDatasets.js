@@ -29,7 +29,7 @@ export class ProjectDatasets extends React.Component {
 
   constructor(props) {
     super(props);
-    this._onVisualizeLayer = this._onVisualizeLayer.bind(this);
+    this._onVisualizeDataset = this._onVisualizeDataset.bind(this);
     this._onDatasetsPageChanged = this._onDatasetsPageChanged.bind(this);
     this.state = {
       datasetsPageNumber: 1,
@@ -54,10 +54,18 @@ export class ProjectDatasets extends React.Component {
     });
   }
 
-  _onVisualizeLayer (event, dataset, currentWmsUrl, i) {
+  _onVisualizeDataset (event, dataset, index) {
     let copy = JSON.parse(JSON.stringify(dataset));
-    copy['wms_url'] = currentWmsUrl;
-    copy['currentWmsIndex'] = i;
+    if (index) {
+      copy['datetime_min'] = [dataset.datetime_min[index]];
+      copy['datetime_max'] = [dataset.datetime_max[index]];
+      copy['abstract'] = [dataset.abstract[index]];
+      copy['wms_url'] = [dataset.wms_url[index]];
+      copy['opendap_url'] = [dataset.opendap_url[index]];
+      copy['fileserver_url'] = [dataset.fileserver_url[index]];
+      copy['catalog_url'] = [dataset.catalog_url[index]];
+      // TODO, do the same for 'title', 'last_modified', 'resourcename', etc. ??
+    }
     this.props.addDatasetsToVisualize([copy]);
     this.props.selectCurrentDisplayedDataset({
       ...copy,
@@ -106,12 +114,15 @@ export class ProjectDatasets extends React.Component {
                           tooltipPosition="bottom-left">
                           <MoreVertIcon color={grey400} />
                         </IconButton>}>
-                        <MenuItem primaryText="Visualize" disabled={disabledDatasetVisualize} onTouchTap={(event) => {
-                          this._onVisualizeLayer(event, dataset, dataset.wms_url[0], 0) // TODO FIX..
-                        }} leftIcon={<Visualize />} />
                         <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.opendap_url[0], '_blank')} leftIcon={<Download />} />
                         <MenuItem primaryText="Remove (TODO)" onTouchTap={(event) => alert('remove ' + dataset.title[0])} leftIcon={<Remove />} />
                         <MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + dataset.title[0])} leftIcon={<ShareIcon />} />
+                        <MenuItem primaryText="Visualize All"
+                                  disabled={disabledDatasetVisualize}
+                                  onTouchTap={(event) => {
+                                    this._onVisualizeDataset(event, dataset)
+                                  }}
+                                  leftIcon={<Visualize />} />
                       </IconMenu>
                     }
                     nestedItems={
@@ -138,12 +149,12 @@ export class ProjectDatasets extends React.Component {
                                     tooltipPosition="bottom-left">
                                     <MoreVertIcon color={grey400} />
                                   </IconButton>}>
-                                <MenuItem primaryText="Visualize" disabled={disabledNestedVisualize} onTouchTap={(event) => {
-                                  this._onVisualizeLayer(event, dataset, wmsUrl, j)
-                                }} leftIcon={<Visualize />} />
                                 <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.opendap_url[j], '_blank')} leftIcon={<Download />} />
                                 <MenuItem primaryText="Remove (TODO)" onTouchTap={(event) => alert('remove ' + dataset.title[j])} leftIcon={<Remove />} />
                                 <MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + dataset.title[j])} leftIcon={<ShareIcon />} />
+                                <MenuItem primaryText="Visualize" disabled={disabledNestedVisualize} onTouchTap={(event) => {
+                                  this._onVisualizeDataset(event, dataset, j)
+                                }} leftIcon={<Visualize />} />
                               </IconMenu>
                             }
                           />
@@ -182,12 +193,12 @@ export class ProjectDatasets extends React.Component {
                           tooltipPosition="bottom-left">
                           <MoreVertIcon color={grey400} />
                         </IconButton>}>
-                        <MenuItem primaryText="Visualize" disabled={disabledVisualize} onTouchTap={(event) => {
-                          this._onVisualizeLayer(event, dataset, dataset.wms_url[0], 0)
-                        }} leftIcon={<Visualize />} />
                         <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.opendap_url[i], '_blank')} leftIcon={<Download />} />
                         <MenuItem primaryText="Remove (TODO)" onTouchTap={(event) => alert('remove ' + fileName)} leftIcon={<Remove />} />
                         <MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + fileName)} leftIcon={<ShareIcon />} />
+                        <MenuItem primaryText="Visualize" disabled={disabledVisualize} onTouchTap={(event) => {
+                          this._onVisualizeDataset(event, dataset, i)
+                        }} leftIcon={<Visualize />} />
                       </IconMenu>
                     }
                   />

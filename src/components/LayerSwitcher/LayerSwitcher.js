@@ -178,9 +178,9 @@ export default class LayerSwitcher extends React.Component {
             if (dataset.wms_url.length === 1) {
               const SEARCH_VALUE = '/';
               let index = dataset.wms_url[0].lastIndexOf(SEARCH_VALUE);
-              secondaryText = `NetCDF file: ${dataset.wms_url[0].substring(index + SEARCH_VALUE.length)}`;
+              secondaryText = `${dataset.wms_url[0].substring(index + SEARCH_VALUE.length)}`;
             } else {
-              secondaryText =`${dataset.wms_url.length} NetCDF file${(dataset.wms_url.length > 1)?'s':''}`;
+              secondaryText =`${dataset.wms_url.length} aggregated file${(dataset.wms_url.length > 1)?'s':''}`;
             }
             return (
               <ListItem
