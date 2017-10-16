@@ -109,6 +109,7 @@ var consumer = (function () {
             this.body = {message: xml['wps:ExecuteResponse']['wps:Status'][0]['wps:ProcessFailed'][0]['wps:ExceptionReport'][0]['ows:Exception'][0]['ows:ExceptionText'][0]};
           }
         case 'visualize':
+          let aggregate = this.request.query['aggregate'];
           let resources = this.request.query['resource']; //Array of strings
           if(!Array.isArray(resources)){
             resources = [resources]
@@ -118,6 +119,7 @@ var consumer = (function () {
           resources.forEach(res =>  {
             options.url += `resource=${res};`;
           });
+          options.url += `aggregate=${aggregate};`;
           console.log('visualizing files:', options.url);
           response = yield request(options);
           xml = yield Utils.parseXMLThunk(response.body);

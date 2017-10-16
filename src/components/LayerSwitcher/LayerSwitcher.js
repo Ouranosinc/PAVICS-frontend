@@ -75,7 +75,7 @@ export default class LayerSwitcher extends React.Component {
   }
 
   setCurrentDisplayedDataset (event, value) {
-    let selectedDataset = this.props.currentVisualizedDatasets.find(dataset => dataset.dataset_id === value);
+    let selectedDataset = this.props.currentVisualizedDatasets.find(dataset => dataset.uniqueLayerSwitcherId === value);
     this.props.selectCurrentDisplayedDataset({
       ...selectedDataset,
       opacity: this.props.currentDisplayedDataset.opacity
@@ -174,16 +174,26 @@ export default class LayerSwitcher extends React.Component {
         className={classes['layers']}>
         {
           this.props.currentVisualizedDatasets.map((dataset, i) => {
+            let secondaryText = '';
+            if (dataset.wms_url.length === 1) {
+              const SEARCH_VALUE = '/';
+              let index = dataset.wms_url[0].lastIndexOf(SEARCH_VALUE);
+              secondaryText = `NetCDF file: ${dataset.wms_url[0].substring(index + SEARCH_VALUE.length)}`;
+            } else {
+              secondaryText =`${dataset.wms_url.length} NetCDF file${(dataset.wms_url.length > 1)?'s':''}`;
+            }
             return (
               <ListItem
                 key={i}
                 primaryText={dataset.aggregate_title}
+                secondaryText={<span>{secondaryText}</span>}
+                secondaryTextLines={1}
                 leftCheckbox={
                   <RadioButtonGroup
                     name="currentDisplayedDataset"
-                    valueSelected={this.props.currentDisplayedDataset.dataset_id}
+                    valueSelected={this.props.currentDisplayedDataset.uniqueLayerSwitcherId}
                     onChange={this.setCurrentDisplayedDataset}>
-                    <RadioButton value={dataset.dataset_id} />
+                    <RadioButton value={dataset.uniqueLayerSwitcherId}/>
                   </RadioButtonGroup>
                 } />
             );
@@ -204,7 +214,7 @@ export default class LayerSwitcher extends React.Component {
         <div style={{textAlign: 'center'}}>opacity: {Math.floor(this.props.currentDisplayedDataset.opacity * 100)}%
         </div>
         <Slider
-          disabled={!this.props.currentDisplayedDataset.dataset_id}
+          disabled={!this.props.currentDisplayedDataset.uniqueLayerSwitcherId}
           sliderStyle={{margin: '0'}}
           step={0.05}
           onChange={this.setDatasetLayerOpacity}

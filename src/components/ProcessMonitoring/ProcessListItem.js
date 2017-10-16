@@ -44,7 +44,13 @@ export class ProcessListItem extends React.Component {
     if(index > -1) {
       fileId = reference.substring(index + SEARCH_VALUE.length);
     }else{
-      fileId = reference;
+      const SEARCH_VALUE_2 = "fileServer/";
+      index = reference.indexOf(SEARCH_VALUE_2);
+      if(index > -1) {
+        fileId = reference.substring(index + SEARCH_VALUE_2.length);
+      }else{
+        fileId = reference;
+      }
     }
     return fileId;
   }
@@ -58,6 +64,12 @@ export class ProcessListItem extends React.Component {
     if (this.props.isWorkflowTask){
       logMenuItem = null;
     }
+    let visualizableTaskOutputs = [];
+    this.props.job.outputs.forEach(output => {
+      if(output.mimeType === 'application/x-netcdf') {
+        visualizableTaskOutputs.push(output.reference);
+      }
+    });
     return (
       <IconMenu iconButtonElement={
           <IconButton
@@ -71,6 +83,16 @@ export class ProcessListItem extends React.Component {
           onTouchTap={(event) => window.open(this.props.job.status_location, '_blank')}
           leftIcon={<FileIcon />}/>
         {logMenuItem}
+        <MenuItem
+          primaryText="Visualize All (Aggregated)"
+          disabled={!visualizableTaskOutputs.length}
+          onTouchTap={(event) => this.props.onVisualiseDatasets(visualizableTaskOutputs, true)}
+          leftIcon={<VisualizeIcon />}/>
+        <MenuItem
+          primaryText="Visualize All (Splitted)"
+          disabled={!visualizableTaskOutputs.length}
+          onTouchTap={(event) => this.props.onVisualiseDatasets(visualizableTaskOutputs, false)}
+          leftIcon={<VisualizeIcon />}/>
       </IconMenu>
     );
   }
@@ -82,11 +104,6 @@ export class ProcessListItem extends React.Component {
         tooltipPosition="bottom-left">
         <MoreVertIcon color={grey400}/>
       </IconButton>}>
-      <MenuItem
-        primaryText="Visualize"
-        disabled={!this._isVisualizeAvailable(output)}
-        onTouchTap={(event) => this.props.onVisualiseDatasets([output.reference])}
-        leftIcon={<VisualizeIcon />}/>
       <MenuItem
         primaryText="Download"
         disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS}
@@ -102,6 +119,11 @@ export class ProcessListItem extends React.Component {
         disabled={!this._isPersistAvailable(output)}
         onTouchTap={(event) => this.props.onShowPersistDialog(output)}
         leftIcon={<PersistIcon  />}/>
+      <MenuItem
+        primaryText="Visualize"
+        disabled={!this._isVisualizeAvailable(output)}
+        onTouchTap={(event) => this.props.onVisualiseDatasets([output.reference])}
+        leftIcon={<VisualizeIcon />}/>
     </IconMenu>
   }
 

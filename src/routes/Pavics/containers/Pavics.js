@@ -21,7 +21,7 @@ import { NotificationContainer, NotificationManager } from 'react-notifications'
 
 class Pavics extends React.Component {
   static propTypes = {
-    addDatasetLayersToVisualize: React.PropTypes.func.isRequired,
+    addDatasetsToVisualize: React.PropTypes.func.isRequired,
     // chooseStep: React.PropTypes.func.isRequired,
     goToSection: React.PropTypes.func.isRequired,
     platform: React.PropTypes.object.isRequired,
@@ -91,7 +91,7 @@ class Pavics extends React.Component {
       case constants.PLATFORM_SECTION_MONITOR:
         return (
           <ProcessMonitoringContainer
-            addDatasetLayersToVisualize={this.props.addDatasetLayersToVisualize}
+            addDatasetsToVisualize={this.props.addDatasetsToVisualize}
             selectCurrentDisplayedDataset={this.props.selectCurrentDisplayedDataset}
             workflow={this.props.workflow}
             workflowActions={this.props.workflowActions}
