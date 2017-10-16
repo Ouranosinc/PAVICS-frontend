@@ -65,11 +65,13 @@ export class ProcessListItem extends React.Component {
       logMenuItem = null;
     }
     let visualizableTaskOutputs = [];
-    this.props.job.outputs.forEach(output => {
-      if(output.mimeType === 'application/x-netcdf') {
-        visualizableTaskOutputs.push(output.reference);
-      }
-    });
+    if(this.props.job.outputs) {
+      this.props.job.outputs.forEach(output => {
+        if(output.mimeType === 'application/x-netcdf') {
+          visualizableTaskOutputs.push(output.reference);
+        }
+      });
+    }
     return (
       <IconMenu iconButtonElement={
           <IconButton

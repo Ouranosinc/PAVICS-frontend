@@ -71,7 +71,9 @@ class ProcessMonitoring extends React.Component {
         this.pollWPSJobs();
       }
     }
-    if(nextProps.monitor.visualizedTempDatasets && nextProps.monitor.visualizedTempDatasets.items.length){
+    if(nextProps.monitor.visualizedTempDatasets &&
+      nextProps.monitor.visualizedTempDatasets.items.length &&
+      nextProps.monitor.visualizedTempDatasets !== this.props.monitor.visualizedTempDatasets){
       this.props.addDatasetsToVisualize(nextProps.monitor.visualizedTempDatasets.items);
       this.props.selectCurrentDisplayedDataset(nextProps.monitor.visualizedTempDatasets.items[0]);
       this.setState({loadingScreen: null});
