@@ -54,23 +54,42 @@ export class ProjectDatasets extends React.Component {
     });
   }
 
-  _onVisualizeDataset (event, dataset, index) {
-    let copy = JSON.parse(JSON.stringify(dataset));
-    if (index) {
-      copy['datetime_min'] = [dataset.datetime_min[index]];
-      copy['datetime_max'] = [dataset.datetime_max[index]];
-      copy['abstract'] = [dataset.abstract[index]];
-      copy['wms_url'] = [dataset.wms_url[index]];
-      copy['opendap_url'] = [dataset.opendap_url[index]];
-      copy['fileserver_url'] = [dataset.fileserver_url[index]];
-      copy['catalog_url'] = [dataset.catalog_url[index]];
-      // TODO, do the same for 'title', 'last_modified', 'resourcename', etc. ??
+  setFileAsAggregateArrayFields(dataset, index) {
+    dataset['datetime_min'] = [dataset.datetime_min[index]];
+    dataset['datetime_max'] = [dataset.datetime_max[index]];
+    dataset['abstract'] = [dataset.abstract[index]];
+    dataset['wms_url'] = [dataset.wms_url[index]];
+    dataset['opendap_url'] = [dataset.opendap_url[index]];
+    dataset['fileserver_url'] = [dataset.fileserver_url[index]];
+    dataset['catalog_url'] = [dataset.catalog_url[index]];
+    // TODO, do the same for 'title', 'last_modified', 'resourcename', etc. ??
+    return dataset;
+  }
+
+  _onVisualizeDataset (event, dataset, aggregate = false, index = -1) {
+    if(aggregate) {
+      let copy = JSON.parse(JSON.stringify(dataset));
+      if(index > -1) {
+        copy = this.setFileAsAggregateArrayFields(copy, index);
+      }
+      this.props.addDatasetsToVisualize([copy]);
+      this.props.selectCurrentDisplayedDataset({
+        ...copy,
+        opacity: 0.8
+      });
+    }else{
+      // Split every file in independants datasets
+      let splittedDatasets = [];
+      dataset.wms_url.forEach((wmsUrl, index) => {
+        let copy = JSON.parse(JSON.stringify(dataset));
+        splittedDatasets.push(this.setFileAsAggregateArrayFields(copy, index));
+      });
+      this.props.addDatasetsToVisualize(splittedDatasets);
+      this.props.selectCurrentDisplayedDataset({
+        ...splittedDatasets[0],
+        opacity: 0.8
+      });
     }
-    this.props.addDatasetsToVisualize([copy]);
-    this.props.selectCurrentDisplayedDataset({
-      ...copy,
-      opacity: 0.8
-    });
   }
 
   render () {
@@ -87,9 +106,10 @@ export class ProjectDatasets extends React.Component {
                 folderIcon = <FolderSpecial />;
               }
               let disabledDatasetVisualize = false;
-              if (this.props.currentVisualizedDatasets.find(x => x.dataset_id === dataset.dataset_id)) {
-                disabledDatasetVisualize = true;
-              }
+              // let found = this.props.currentVisualizedDatasets.find(x => x.dataset_id === dataset.dataset_id);
+              // if (found && found.wms_url.length === dataset.wms_url.length) {
+              //   disabledDatasetVisualize = true;
+              // }
               if(dataset.type === "Aggregate") {
                 return (
                   <ListItem
@@ -97,7 +117,7 @@ export class ProjectDatasets extends React.Component {
                     primaryText={dataset.aggregate_title}
                     secondaryText={
                       <p>
-                        <span style={{color: darkBlack}}>{`${dataset.fileserver_url.length} Files`}</span><br />
+                        <span style={{color: darkBlack}}>{dataset.fileserver_url.length + ' Files'}</span><br />
                         <strong>Keywords: </strong>{dataset.keywords.join(', ')}
                       </p>
                     }
@@ -117,10 +137,16 @@ export class ProjectDatasets extends React.Component {
                         <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.opendap_url[0], '_blank')} leftIcon={<Download />} />
                         <MenuItem primaryText="Remove (TODO)" onTouchTap={(event) => alert('remove ' + dataset.title[0])} leftIcon={<Remove />} />
                         <MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + dataset.title[0])} leftIcon={<ShareIcon />} />
-                        <MenuItem primaryText="Visualize All"
+                        <MenuItem primaryText="Visualize All (Aggregated)"
                                   disabled={disabledDatasetVisualize}
                                   onTouchTap={(event) => {
-                                    this._onVisualizeDataset(event, dataset)
+                                    this._onVisualizeDataset(event, dataset, true)
+                                  }}
+                                  leftIcon={<Visualize />} />
+                        <MenuItem primaryText="Visualize All (Splitted)"
+                                  disabled={disabledDatasetVisualize}
+                                  onTouchTap={(event) => {
+                                    this._onVisualizeDataset(event, dataset, false)
                                   }}
                                   leftIcon={<Visualize />} />
                       </IconMenu>
@@ -129,9 +155,9 @@ export class ProjectDatasets extends React.Component {
                       dataset.wms_url.map((wmsUrl, j) => {
                         let nestedIcon = <File />;
                         let disabledNestedVisualize = false;
-                        if (this.props.currentVisualizedDatasets.find(x => x.wms_url ===  wmsUrl)) {
+                        let founds = this.props.currentVisualizedDatasets.filter(x => x.wms_url.indexOf(wmsUrl) > -1);
+                        if (founds && founds.length) {
                           nestedIcon = <Visualize />;
-                          disabledNestedVisualize = true;
                         }
                         return (
                           <ListItem
@@ -153,7 +179,7 @@ export class ProjectDatasets extends React.Component {
                                 <MenuItem primaryText="Remove (TODO)" onTouchTap={(event) => alert('remove ' + dataset.title[j])} leftIcon={<Remove />} />
                                 <MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + dataset.title[j])} leftIcon={<ShareIcon />} />
                                 <MenuItem primaryText="Visualize" disabled={disabledNestedVisualize} onTouchTap={(event) => {
-                                  this._onVisualizeDataset(event, dataset, j)
+                                  this._onVisualizeDataset(event, dataset, true, j)
                                 }} leftIcon={<Visualize />} />
                               </IconMenu>
                             }
@@ -164,6 +190,7 @@ export class ProjectDatasets extends React.Component {
                   />
                 );
               }else {
+                // FileAsAggregate
                 let disabledVisualize = false;
                 let fileIcon = <File />;
                 if (this.props.currentVisualizedDatasets.find(x => x.dataset_id === dataset.dataset_id)) {
@@ -193,11 +220,11 @@ export class ProjectDatasets extends React.Component {
                           tooltipPosition="bottom-left">
                           <MoreVertIcon color={grey400} />
                         </IconButton>}>
-                        <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.opendap_url[i], '_blank')} leftIcon={<Download />} />
-                        <MenuItem primaryText="Remove (TODO)" onTouchTap={(event) => alert('remove ' + fileName)} leftIcon={<Remove />} />
-                        <MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + fileName)} leftIcon={<ShareIcon />} />
+                        <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.opendap_url[0], '_blank')} leftIcon={<Download />} />
+                        <MenuItem primaryText="Remove (TODO)" onTouchTap={(event) => alert('remove ' + dataset.title[0])} leftIcon={<Remove />} />
+                        <MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + dataset.title[0])} leftIcon={<ShareIcon />} />
                         <MenuItem primaryText="Visualize" disabled={disabledVisualize} onTouchTap={(event) => {
-                          this._onVisualizeDataset(event, dataset, i)
+                          this._onVisualizeDataset(event, dataset, true, 0)
                         }} leftIcon={<Visualize />} />
                       </IconMenu>
                     }
