@@ -15,6 +15,7 @@ export class ProcessMonitoringContainer extends React.Component {
 
 
   render () {
+    console.log('ProcessMonitoring container')
     return (
       <ProcessMonitoring {...this.props} />
     )
@@ -25,6 +26,7 @@ const mapStateToProps = (state) => {
   return {
     monitor: state.monitor,
     project: state.project,
+    sessionManagement: state.sessionManagement
   }
 };
 const mapDispatchToProps = (dispatch) => {

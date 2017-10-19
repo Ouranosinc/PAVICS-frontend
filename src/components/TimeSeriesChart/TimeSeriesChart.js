@@ -31,7 +31,7 @@ const LAYOUT = {
 class TimeSeriesChart extends React.Component {
   static propTypes = {
     currentScalarValue: React.PropTypes.object.isRequired,
-    selectedDatasetLayer: React.PropTypes.object.isRequired,
+    currentDisplayedDataset: React.PropTypes.object.isRequired,
     onToggleMapPanel: React.PropTypes.func.isRequired,
     plotlyData: React.PropTypes.object.isRequired,
     fetchPlotlyData: React.PropTypes.func.isRequired
@@ -45,8 +45,8 @@ class TimeSeriesChart extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.currentScalarValue.data && nextProps.currentScalarValue.data.variable && nextProps.currentScalarValue.data !== this.props.currentScalarValue.data) {
-      if (this.props.selectedDatasetLayer && this.props.selectedDatasetLayer['opendap_urls'].length) {
-        let opendapUrl = this.props.selectedDatasetLayer['opendap_urls'][0];
+      if (this.props.currentDisplayedDataset && this.props.currentDisplayedDataset['opendap_url'].length) {
+        let opendapUrl = this.props.currentDisplayedDataset['opendap_url'][0];
         let variable = nextProps.currentScalarValue.data.variable;
         this.props.fetchPlotlyData(
           opendapUrl,

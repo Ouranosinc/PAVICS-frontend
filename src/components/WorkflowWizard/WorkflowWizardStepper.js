@@ -17,7 +17,7 @@ export default class WorkflowWizardStepper extends React.Component {
     jobAPIActions: React.PropTypes.object.isRequired,
     project: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
-    selectedDatasetLayer: React.PropTypes.object.isRequired,
+    currentDisplayedDataset: React.PropTypes.object.isRequired,
     selectedRegions: React.PropTypes.array.isRequired,
     workflow: React.PropTypes.object.isRequired,
     workflowActions: React.PropTypes.object.isRequired
@@ -100,7 +100,7 @@ export default class WorkflowWizardStepper extends React.Component {
                     formId={FORM_PROCESS_ID}
                     goToSection={this.props.goToSection}
                     selectedRegions={this.props.selectedRegions}
-                    selectedDatasetLayer={this.props.selectedDatasetLayer}
+                    currentDisplayedDataset={this.props.currentDisplayedDataset}
                     selectedShapefile={this.props.selectedShapefile}
                     workflow={this.props.workflow}
                     workflowActions={this.props.workflowActions} />

@@ -12,13 +12,13 @@ debug('Creating default configuration.');
 let serverHost = process.env.PAVICS_FRONTEND_IP || localip;
 let serverProto = process.env.PAVICS_FRONTEND_PROTO || 'http';
 let birdhouseHost = process.env.BIRDHOUSE_HOST || 'outarde.crim.ca';
-let loopbackHost = process.env.LOOPBACK_HOST || 'outarde.crim.ca:3005';
-let magpieHost = process.env.MAGPIE_HOST || 'outarde.crim.ca:52001';
+let loopbackHost = process.env.LOOPBACK_HOST || birdhouseHost;
 let PAVICS_WORKFLOW_PROVIDER = process.env.PAVICS_WORKFLOW_PROVIDER || 'malleefowl';
 let PAVICS_RUN_WORKFLOW_IDENTIFIER = process.env.PAVICS_RUN_WORKFLOW_IDENTIFIER || 'custom_workflow';
 let PAVICS_VISUALIZE_IDENTIFIER = process.env.PAVICS_VISUALIZE_IDENTIFIER || 'TODO';
-let PAVICS_PERSIST_IDENTIFIER = process.env.PAVICS_PERSIST_IDENTIFIER || 'thredds_download';
+let PAVICS_PERSIST_IDENTIFIER = process.env.PAVICS_PERSIST_IDENTIFIER || 'TODO';
 let PAVICS_PUBLISH_IDENTIFIER = process.env.PAVICS_PUBLISH_IDENTIFIER || 'TODO';
+let PAVICS_DEFAULT_WORKSPACE_FOLDER = process.env.PAVICS_DEFAULT_WORKSPACE_FOLDER || 'workspaces';
 let serverPort = process.env.PORT || 3000;
 let serverExternalPort = process.env.PAVICS_FRONTEND_PORT || serverPort;
 const config = {
@@ -33,18 +33,19 @@ const config = {
   // ----------------------------------
   // PAVICS Configs
   // ----------------------------------
-  pavics_solr_path: `http://${birdhouseHost}:8091`,
+  pavics_malleefowl_path: `http://${birdhouseHost}:8091/wps`,
   pavics_phoenix_path: `https://${birdhouseHost}:8443`,
-  pavics_geoserver_path: `http://${birdhouseHost}:8087/geoserver`,
-  pavics_ncwms_path: `http://${birdhouseHost}:8080/ncWMS2/wms`,
+  pavics_geoserver_path: `https://${birdhouseHost}/geoserver`,
+  pavics_ncwms_path: `https://${birdhouseHost}/ncWMS2/wms`,
   pavics_pywps_path: `http://${birdhouseHost}:8086/pywps`,
-  loopback_api_path: `http://${loopbackHost}/api`,
-  pavics_magpie_host: `http://${magpieHost}`,
+  loopback_api_path: `https://${loopbackHost}/project-api/api`,
+  pavics_magpie_host: `https://${birdhouseHost}/magpie`,
   PAVICS_WORKFLOW_PROVIDER: PAVICS_WORKFLOW_PROVIDER,
   PAVICS_RUN_WORKFLOW_IDENTIFIER: PAVICS_RUN_WORKFLOW_IDENTIFIER,
   PAVICS_VISUALIZE_IDENTIFIER: PAVICS_VISUALIZE_IDENTIFIER,
   PAVICS_PERSIST_IDENTIFIER: PAVICS_PERSIST_IDENTIFIER,
   PAVICS_PUBLISH_IDENTIFIER: PAVICS_PUBLISH_IDENTIFIER,
+  PAVICS_DEFAULT_WORKSPACE_FOLDER: PAVICS_DEFAULT_WORKSPACE_FOLDER,
   // ----------------------------------
   // Project Structure
   // ----------------------------------
@@ -117,6 +118,7 @@ config.globals = {
   '__PAVICS_VISUALIZE_IDENTIFIER__': JSON.stringify(config.PAVICS_VISUALIZE_IDENTIFIER),
   '__PAVICS_PERSIST_IDENTIFIER__': JSON.stringify(config.PAVICS_PERSIST_IDENTIFIER),
   '__PAVICS_PUBLISH_IDENTIFIER__': JSON.stringify(config.PAVICS_PUBLISH_IDENTIFIER),
+  '__PAVICS_DEFAULT_WORKSPACE_FOLDER__': JSON.stringify(config.PAVICS_DEFAULT_WORKSPACE_FOLDER)
 };
 // ------------------------------------
 // Validate Vendor Dependencies

@@ -16,7 +16,7 @@ var wps = (function () {
 
       let json = JSON.parse(response.body);
       response = [];
-      console.log(json);
+      console.log('yolo');
       json['responseHeader']['params']['facet.field'].forEach(function (key) {
         response.push({
           key: key,
@@ -24,23 +24,22 @@ var wps = (function () {
         });
       });
       var facetFields = json['facet_counts']['facet_fields'];
-      for (var object in facetFields) {
-        if (facetFields.hasOwnProperty(object)) {
+      for (var facetKey in facetFields) {
+        if (facetFields.hasOwnProperty(facetKey)) {
           let values = [];
-          let index = response.findIndex(x => x.key === object);
-          for (var value in facetFields[object]) {
-            if (facetFields[object].hasOwnProperty(value)) {
-              var thisValue = facetFields[object][value];
-              if (thisValue === 0 || thisValue === '0') {
-                continue;
-              }
-              values.push(thisValue);
-            }
+          let keyIndex = response.findIndex(x => x.key === facetKey);
+          for(let i = 0; i < facetFields[facetKey].length; i = i + 2) {
+            var thisValue = {
+              value: facetFields[facetKey][i],
+              count: facetFields[facetKey][i+1],
+            };
+            values.push(thisValue);
           }
-          values.sort();
-          response[index].values = values;
+          values.sort((a, b) => a.value.localeCompare(b.value));
+          response[keyIndex].values = values;
         }
       }
+      console.log(response);
       this.body = response;
     },
     getClimateIndicators: function * () {

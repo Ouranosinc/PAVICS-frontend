@@ -11,7 +11,7 @@ const SET_SELECTED_SHAPEFILE = 'Visualize.SET_SELECTED_SHAPEFILE';
 const SET_SELECTED_BASEMAP = 'Visualize.SET_SELECTED_BASEMAP';
 const SET_SELECTED_DATASET_LAYER = 'Visualize.SET_SELECTED_DATASET_LAYER';
 const SET_SELECTED_DATASET_CAPABILITIES = 'Visualize.SET_SELECTED_DATASET_CAPABILITIES';
-const ADD_DATASET_LAYERS_TO_VISUALIZE = 'Visualize.ADD_DATASET_LAYERS_TO_VISUALIZE';
+const ADD_DATASETS_TO_VISUALIZE = 'Visualize.ADD_DATASETS_TO_VISUALIZE';
 const ADD_SEARCH_CRITERIAS_TO_PROJECTS = 'Visualize.ADD_SEARCH_CRITERIAS_TO_PROJECTS';
 const ADD_FEATURE_TO_SELECTED_REGIONS = 'Visualize.ADD_FEATURE_TO_SELECTED_REGIONS';
 const REMOVE_FEATURE_FROM_SELECTED_REGIONS = 'Visualize.REMOVE_FEATURE_FROM_SELECTED_REGIONS';
@@ -57,9 +57,9 @@ export function addDatasetsToProject (datasets) {
     datasets: datasets
   };
 }
-export function addDatasetLayersToVisualize (datasets) {
+export function addDatasetsToVisualize (datasets) {
   return {
-    type: ADD_DATASET_LAYERS_TO_VISUALIZE,
+    type: ADD_DATASETS_TO_VISUALIZE,
     datasets: datasets
   };
 }
@@ -352,9 +352,9 @@ export function selectBasemap (basemap) {
     dispatch(setSelectedBasemap(basemap));
   };
 }
-export function selectDatasetLayer (layer) {
+export function selectCurrentDisplayedDataset (layer) {
   return dispatch => {
-    dispatch(setSelectedDatasetLayer(layer));
+    dispatch(setCurrentDisplayedDataset(layer));
   };
 }
 function setSelectedColorPalette(palette) {
@@ -456,7 +456,7 @@ function setSelectedBasemap (basemap) {
     basemap: basemap
   };
 }
-function setSelectedDatasetLayer (layer) {
+function setCurrentDisplayedDataset (layer) {
   return {
     type: SET_SELECTED_DATASET_LAYER,
     layer: layer
@@ -525,7 +525,7 @@ const VISUALIZE_HANDLERS = {
     return ({...state, currentProjectSearchCriterias: newSearchCriterias});
   },
   [SET_SELECTED_DATASET_LAYER]: (state, action) => {
-    return {...state, selectedDatasetLayer: action.layer};
+    return {...state, currentDisplayedDataset: action.layer};
   },
   [SET_SELECTED_DATASET_CAPABILITIES]: (state, action) => {
     return {...state, selectedDatasetCapabilities: action.capabilities};
@@ -534,9 +534,19 @@ const VISUALIZE_HANDLERS = {
     let newDatasets = state.currentProjectDatasets.concat(action.datasets);
     return ({...state, currentProjectDatasets: newDatasets});
   },
-  [ADD_DATASET_LAYERS_TO_VISUALIZE]: (state, action) => {
-    let newDatasetLayers = state.currentVisualizedDatasetLayers.concat(action.datasets);
-    return ({...state, currentVisualizedDatasetLayers: newDatasetLayers});
+  [ADD_DATASETS_TO_VISUALIZE]: (state, action) => {
+    function uuidv4() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+    action.datasets.map( x => {
+      x.uniqueLayerSwitcherId = uuidv4();
+      return x;
+    })
+    let newDatasetLayers = state.currentVisualizedDatasets.concat(action.datasets);
+    return ({...state, currentVisualizedDatasets: newDatasetLayers});
   },
   [SET_CURRENT_TIME_ISO]: (state, action) => {
     return ({...state, currentDateTime: action.currentDateTime});

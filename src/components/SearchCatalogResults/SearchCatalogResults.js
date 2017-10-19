@@ -68,6 +68,9 @@ export class SearchCatalogResults extends React.Component {
     this.state.checkedDatasets.forEach((dataset) => {
       // TODO validate dataset_id unicity
       dataset.projectId = this.props.project.currentProject.id;
+      dataset.datetime_max = dataset.datetime_max.map(x => x.toString()); // TODOD Remove this
+      dataset.datetime_min = dataset.datetime_min.map(x => x.toString()); // TODOD Remove this
+      delete dataset.id; // Loopback fails this
       this.props.projectAPIActions.createProjectDatasets(dataset);
     });
     this.setState({
@@ -98,10 +101,10 @@ export class SearchCatalogResults extends React.Component {
                   <ListItem
                     key={i}
                     leftCheckbox={<Checkbox value={x.dataset_id} onCheck={this._onCheckedDataset} />}
-                    primaryText={x.dataset_id}
+                    primaryText={`${x.aggregate_title} (${x.fileserver_url.length} file${(x.fileserver_url.length > 1)? 's': ''})` }
                     secondaryText={
                       <p>
-                        <span style={{color: darkBlack}}>{x.variable_long_name[0]}</span><br />
+                        <span style={{color: darkBlack}}><strong>Variable: </strong> {x.variable_long_name}</span><br />
                         <strong>Keywords: </strong>{x.keywords.join(', ')}
                       </p>
                     }
@@ -114,11 +117,11 @@ export class SearchCatalogResults extends React.Component {
                           <strong>Subject: </strong>{x.subject}<br />
                           <strong>Category: </strong>{x.category}<br />
                           <strong>Experiment: </strong>{x.experiment}<br />
-                          <strong>Variable: </strong>{x.variable.join(', ')}<br />
+                          <strong>Variable: </strong>{x.variable}<br />
                           <strong>Project: </strong>{x.project}<br />
                           <strong>Institute: </strong>{x.institute}<br />
                           <strong>Model: </strong>{x.model}<br />
-                          <strong>Units: </strong>{x.units.join(', ')}<br />
+                          <strong>Units: </strong>{x.units}<br />
                           <strong>Frequency: </strong>{x.frequency}<br />
                           <strong>Content type: </strong>{x.content_type}<br />
                         </div>}

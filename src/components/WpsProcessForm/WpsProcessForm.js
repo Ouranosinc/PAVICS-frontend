@@ -16,7 +16,7 @@ export default class WpsProcessForm extends React.Component {
     formId: React.PropTypes.string.isRequired,
     goToSection: React.PropTypes.func.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
-    selectedDatasetLayer: React.PropTypes.object.isRequired,
+    currentDisplayedDataset: React.PropTypes.object.isRequired,
     selectedRegions: React.PropTypes.array.isRequired,
     workflow: React.PropTypes.object.isRequired,
     workflowActions: React.PropTypes.object.isRequired
@@ -48,14 +48,14 @@ export default class WpsProcessForm extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     console.log('form will receive props', nextProps);
-    if (nextProps.selectedDatasetLayer['urls']) {
+    if (nextProps.currentDisplayedDataset['url']) {
       // TODO when unhardcoding files, remove the [0]
-      if (this.state.formData[LABEL_NETCDF] !== nextProps.selectedDatasetLayer['urls'][0]) {
+      if (this.state.formData[LABEL_NETCDF] !== nextProps.currentDisplayedDataset['url'][0]) {
         this.setState({
           ...this.state,
           formData: {
             ...this.state.formData,
-            [LABEL_NETCDF]: nextProps.selectedDatasetLayer['urls'][0]
+            [LABEL_NETCDF]: nextProps.currentDisplayedDataset['url'][0]
           }
         });
       }

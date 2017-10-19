@@ -5,7 +5,9 @@ import * as constants from '../../constants';
 import Loader from './../../components/Loader';
 import Pagination from './../../components/Pagination';
 import StatusElement from './StatusElement';
+import LoadingScreen from './../LoadingScreen';
 import ProcessListItem from './ProcessListItem';
+import PersistResultDialog from './PersistResultDialog';
 import Dialog from 'material-ui/Dialog';
 import {List, ListItem} from 'material-ui/List';
 import Subheader from 'material-ui/Subheader';
@@ -24,10 +26,12 @@ import VisualizeIcon from 'material-ui/svg-icons/image/remove-red-eye';
 
 class ProcessMonitoring extends React.Component {
   static propTypes = {
-    addDatasetLayersToVisualize: React.PropTypes.func.isRequired,
+    addDatasetsToVisualize: React.PropTypes.func.isRequired,
+    selectCurrentDisplayedDataset: React.PropTypes.func.isRequired,
     monitor: React.PropTypes.object.isRequired,
     monitorActions: React.PropTypes.object.isRequired,
     project: React.PropTypes.object.isRequired,
+    sessionManagement: React.PropTypes.object.isRequired,
     fetchVisualizableData: React.PropTypes.func.isRequired
   };
 
@@ -37,12 +41,18 @@ class ProcessMonitoring extends React.Component {
     this.state = {
       logDialogArray: [],
       logDialogOpened: false,
+      persistDialogOutput: {},
+      persistDialogOpened: false,
       pageNumber: 1,
-      numberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX]
+      numberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX],
+      loadingScreen: null
     };
     this.props.monitorActions.fetchWPSJobs(this.props.project.currentProject.id, constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX], 1);
-    this._closeDialog = this._closeDialog.bind(this);
+    this._closeLogDialog = this._closeLogDialog.bind(this);
     this._onShowLogDialog = this._onShowLogDialog.bind(this);
+    this._closePersistDialog = this._closePersistDialog.bind(this);
+    this._onPersistOutputClicked = this._onPersistOutputClicked.bind(this);
+    this._onShowPersistDialog = this._onShowPersistDialog.bind(this);
     this._onRefreshResults = this._onRefreshResults.bind(this);
     this._onPageChanged = this._onPageChanged.bind(this);
     this._onVisualiseDatasets = this._onVisualiseDatasets.bind(this);
@@ -61,11 +71,19 @@ class ProcessMonitoring extends React.Component {
         this.pollWPSJobs();
       }
     }
+    if(nextProps.monitor.visualizedTempDatasets &&
+      nextProps.monitor.visualizedTempDatasets.items.length &&
+      nextProps.monitor.visualizedTempDatasets !== this.props.monitor.visualizedTempDatasets){
+      this.props.addDatasetsToVisualize(nextProps.monitor.visualizedTempDatasets.items);
+      this.props.selectCurrentDisplayedDataset(nextProps.monitor.visualizedTempDatasets.items[0]);
+      this.setState({loadingScreen: null});
+      NotificationManager.success("Dataset has been added the Layer Switcher, data is being loaded on the map...");
+    }
   }
 
   pollWPSJobs () {
     this.loop = setTimeout( () => {
-      console.log(moment());
+      // console.log(moment());
       this.props.monitorActions.pollWPSJobs(this.props.project.currentProject.id, this.state.numberPerPage, this.state.pageNumber);
     }, 3000);
   }
@@ -82,19 +100,10 @@ class ProcessMonitoring extends React.Component {
     this.props.monitorActions.fetchWPSJobs(this.props.project.currentProject.id, numberPerPage, pageNumber);
   }
 
-  _onVisualiseDatasets (urlArray) {
-    // TODO Remove hardcoded path
-    console.log('TODO: Call Visualize WPS, temporary built WMS URL so the result can be seen but TimeSlider and other features won\'t work');
-    urlArray.forEach((url) => {
-      let prefix = __PAVICS_NCWMS_PATH__ + '?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&DATASET=outputs/wps_outputs/';
-      let index = url.indexOf('flyingpigeon');
-      let suffix = url.substring(index, url.length);
-      this.props.addDatasetLayersToVisualize([
-        {
-          wms_url: prefix + suffix,
-          dataset_id: suffix
-        }
-      ]);
+  _onVisualiseDatasets (httpURLArray, aggregate = false) {
+    this.props.monitorActions.visualizeTemporaryResult(httpURLArray, aggregate);
+    this.setState({
+      loadingScreen: <LoadingScreen />
     });
   }
 
@@ -105,10 +114,28 @@ class ProcessMonitoring extends React.Component {
     });
   }
 
-  _closeDialog () {
+  _closeLogDialog () {
     this.setState({
       logDialogOpened: false,
       logDialogArray: ''
+    });
+  }
+
+  _onShowPersistDialog (output) {
+    this.setState({
+      persistDialogOpened: true,
+      persistDialogOutput: output
+    });
+  }
+
+  _onPersistOutputClicked () {
+    this._closePersistDialog();
+  }
+
+  _closePersistDialog () {
+    this.setState({
+      persistDialogOpened: false,
+      persistDialogOutput: {}
     });
   }
 
@@ -147,6 +174,7 @@ class ProcessMonitoring extends React.Component {
                 return <ProcessListItem job={x}
                                         key={i}
                                         onShowLogDialog={this._onShowLogDialog}
+                                        onShowPersistDialog={this._onShowPersistDialog}
                                         onVisualiseDatasets={this._onVisualiseDatasets}/>;
               }else {
                 if (x.process_id === __PAVICS_RUN_WORKFLOW_IDENTIFIER__) {
@@ -157,54 +185,78 @@ class ProcessMonitoring extends React.Component {
                     onTouchTap={(event) => this._onShowLogDialog(x.log)}
                     leftIcon={<LogIcon />}/>;
 
-                  if(x.status === constants.JOB_SUCCESS_STATUS) {
-                    // If a SUCCESSFULL workflow, JSON Result is a WPS Output
-                    let outputs = x["response_to_json"]['wps:ExecuteResponse']['wps:ProcessOutputs'];
-                    tasks = [];
-                    if (outputs) {
-                      let data = outputs[0]['wps:Output'][0]['wps:Data'];
-                      if (data) {
-                        tasks = JSON.parse(data[0]['wps:ComplexData'][0]['_']);
-                      }
-                    }
+                  tasks = x.tasks;
 
-                    let LogFileURL = outputs[0]['wps:Output'][1]['wps:Reference'][0]['$']['xlink:href'];
+                  // If an output is a json array of netcdf urls, we must generate new output for every listed url
+                  tasks.forEach(task => {
+                    let taskName = Object.keys(task)[0];
+                    task[taskName].forEach( parralelTask => {
+                      if(parralelTask.outputs) {
+                        let newOutputs = [];
+                        parralelTask.outputs.forEach(output => {
+                          newOutputs = [];
+                          if (output.mimeType === 'application/json' && output.data) {
+                            if (Array.isArray(output.data) && typeof output.data[0] === 'string' &&
+                              output.data[0].startsWith('http://') && output.data[0].endsWith('.nc')) {
+                              output.data.forEach((url, index) => {
+                                newOutputs.push({
+                                  dataType: "ComplexData",
+                                  identifier: output.identifier,
+                                  mimeType: 'application/x-netcdf',
+                                  reference: url,
+                                  title: `${output.title} (${index + 1}/${output.data.length})`,
+                                  abstract: ''
+                                });
+                              });
+                            } else {
+                              newOutputs.push({
+                                dataType: output.dataType,
+                                identifier: output.identifier,
+                                mimeType: output.mimeType,
+                                reference: output.reference,
+                                title: output.title,
+                                abstract: ''
+                              });
+                            }
+                          } else {
+                            newOutputs.push({
+                              dataType: output.dataType,
+                              identifier: output.identifier,
+                              mimeType: output.mimeType,
+                              reference: output.reference,
+                              title: output.title,
+                              abstract: ''
+                            });
+                          }
+                        });
+                        parralelTask.outputs = newOutputs;
+                      }
+                    });
+                  });
+
+                  if(x.status === constants.JOB_SUCCESS_STATUS) {
+                    let LogFileURL = x["response_to_json"]['wps:ExecuteResponse']['wps:ProcessOutputs'][0]['wps:Output'][1]['wps:Reference'][0]['$']['xlink:href'];
                     logMenu = <MenuItem
                       primaryText="Browse Log File"
                       onTouchTap={(event) => window.open(LogFileURL, '_blank')}
                       leftIcon={<FileIcon />}/>
-                  }else if(x.status === constants.JOB_FAILED_STATUS){
-                    // If a FAILED workflow, JSON Result is in an ExceptionText and IS EXPANDABLE
-                    let exception = x["response_to_json"]['wps:ExecuteResponse']['wps:Status'][0]['wps:ProcessFailed'][0]['wps:ExceptionReport'][0]['ows:Exception'][0]['ows:ExceptionText'][0];
-                    const SEARCH_VALUE = 'Workflow result:';
-                    let startIndex = exception.indexOf(SEARCH_VALUE);
-                    if(startIndex > -1){
-                      let toBeParsed = exception.substring(startIndex + SEARCH_VALUE.length);
-                      tasks = JSON.parse(toBeParsed);
-                    }else{
-                      NotificationManager.error(`Workflow doesn't contain attented string in ows:Exception.ows:ExceptionText result: '${SEARCH_VALUE}'`);
-                    }
-                  }else{
-                    // Should never happen
-                    NotificationManager.error(`Workflow with status ${x.status} isn't managed properly by the platform`);
                   }
 
                   return <ListItem
                     key={i}
                     primaryText={x.title + ': ' + x.abstract}
                     secondaryText={
-                      <p>
-                      <span
-                        style={{color: darkBlack}}>Launched on <strong>{moment(x.created).format(constants.PAVICS_DATE_FORMAT)}</strong> using provider <strong>{x.service}</strong>.</span><br />
+                      <span style={{color: darkBlack}}>
+                        <span>Launched on <strong>{moment(x.created).format(constants.PAVICS_DATE_FORMAT)}</strong> using provider <strong>{x.service}</strong>.</span><br/>
                         <StatusElement job={x} />, <strong>Duration: </strong>{x.duration}
-                      </p>
+                      </span>
                     }
                     secondaryTextLines={2}
                     rightIconButton={
                       <IconMenu iconButtonElement={
                         <IconButton
                           touch={true}
-                          tooltipPosition="bottom-left">AoN
+                          tooltipPosition="bottom-left">
                           <MoreVertIcon color={grey400}/>
                         </IconButton>
                       }>
@@ -239,18 +291,20 @@ class ProcessMonitoring extends React.Component {
                               key={j}
                               job={taskDetails}
                               onShowLogDialog={this._onShowLogDialog}
+                              onShowPersistDialog={this._onShowPersistDialog}
                               onVisualiseDatasets={this._onVisualiseDatasets} />
                           );
                         }else{
-                          // No actions
                           let completedTasks = parrallelTasks.filter(x => x.status === constants.JOB_SUCCESS_STATUS);
-                          let visualizableOutputs = []
+                          let visualizableOutputs = [];
                           parrallelTasks.forEach((task)=> {
-                            task.outputs.forEach((output) => {
-                              if(output.mimeType === 'application/x-netcdf') {
-                                visualizableOutputs.push(output.reference);
-                              }
-                            });
+                            if(task.outputs) {
+                              task.outputs.forEach((output) => {
+                                if(output.mimeType === 'application/x-netcdf') {
+                                  visualizableOutputs.push(output.reference);
+                                }
+                              });
+                            }
                           });
                           // TODO Visualize all for subtasks
                           return  (
@@ -275,9 +329,14 @@ class ProcessMonitoring extends React.Component {
                                 </IconButton>
                               }>
                                 <MenuItem
-                                  primaryText="Visualize All"
+                                  primaryText="Visualize All (Aggregated)"
                                   disabled={!visualizableOutputs.length}
-                                  onTouchTap={(event) => this._onVisualiseDatasets(visualizableOutputs)}
+                                  onTouchTap={(event) => this._onVisualiseDatasets(visualizableOutputs, true)}
+                                  leftIcon={<VisualizeIcon />}/>
+                                <MenuItem
+                                  primaryText="Visualize All (Splitted)"
+                                  disabled={!visualizableOutputs.length}
+                                  onTouchTap={(event) => this._onVisualiseDatasets(visualizableOutputs, false)}
                                   leftIcon={<VisualizeIcon />}/>
                               </IconMenu>
                             }
@@ -291,6 +350,7 @@ class ProcessMonitoring extends React.Component {
                                   key={k}
                                   job={task}
                                   onShowLogDialog={this._onShowLogDialog}
+                                  onShowPersistDialog={this._onShowPersistDialog}
                                   onVisualiseDatasets={this._onVisualiseDatasets} />
                               })
                             }
@@ -314,24 +374,58 @@ class ProcessMonitoring extends React.Component {
                   let wpsProcessOutputs = x.response_to_json['wps:ExecuteResponse']['wps:ProcessOutputs'];
                   if(wpsProcessOutputs){
                     let outputs = wpsProcessOutputs[0]['wps:Output'];
-                    outputs.forEach(function(output){
+                    for(let i = 0; i < outputs.length; ++i){
                       try {
-                        x.outputs.push({
-                          dataType: "ComplexData",
-                          identifier: output['ows:Identifier'][0],
-                          mimeType: output['wps:Reference'][0]['$']['mimeType'],
-                          reference: output['wps:Reference'][0]['$']['href'],
-                          title: output['ows:Title'][0],
-                          abstract: output['ows:Abstract'][0]
-                        });
-                      }catch(error){
+                        let output = outputs[i];
+                        if (output['wps:Reference']) {
+                          if (output['wps:Reference'][0]['$']['mimeType'] === 'application/json') {
+                            // We might have to generate multiple outputs
+                            let json = JSON.parse(x.outputs_to_json[i]);
+                            if (Array.isArray(json) && typeof json[0] === 'string' &&
+                              json[0].startsWith('http://') && json[0].endsWith('.nc') ) {
+                              json.forEach((reference, index) => {
+                                x.outputs.push({
+                                  dataType: "ComplexData",
+                                  identifier: output['ows:Identifier'][0],
+                                  mimeType: 'application/x-netcdf',
+                                  reference: reference,
+                                  title: `${output['ows:Title'][0]} (${index + 1}/${json.length})`,
+                                  abstract: output['ows:Abstract'][0]
+                                });
+                              });
+                            } else {
+                              x.outputs.push({
+                                dataType: "ComplexData",
+                                identifier: output['ows:Identifier'][0],
+                                mimeType: output['wps:Reference'][0]['$']['mimeType'],
+                                reference: output['wps:Reference'][0]['$']['xlink:href'] || output['wps:Reference'][0]['$']['href'],
+                                title: output['ows:Title'][0],
+                                abstract: output['ows:Abstract'][0]
+                              });
+                            }
+                          } else {
+                            x.outputs.push({
+                              dataType: "ComplexData",
+                              identifier: output['ows:Identifier'][0],
+                              mimeType: output['wps:Reference'][0]['$']['mimeType'],
+                              reference: output['wps:Reference'][0]['$']['xlink:href'] || output['wps:Reference'][0]['$']['href'],
+                              title: output['ows:Title'][0],
+                              abstract: output['ows:Abstract'][0]
+                            });
+                          }
+                        } else {
+                          NotificationManager.error("ComplexData inline should not happen anymore");
+                        }
+                      } catch(error){
+                        console.error(error);
                         NotificationManager.error("Bad WPS XML Status Output format");
                       }
-                    });
+                    }
                   }
                   return <ProcessListItem job={x}
                                           key={i}
                                           onShowLogDialog={this._onShowLogDialog}
+                                          onShowPersistDialog={this._onShowPersistDialog}
                                           onVisualiseDatasets={this._onVisualiseDatasets}/>
                 }
               }
@@ -345,8 +439,10 @@ class ProcessMonitoring extends React.Component {
             </List>;
       }
     }
+    console.log('ProcessMonitoring component');
     return (
       <div>
+        {this.state.loadingScreen}
         <div className="container">
           <Paper style={{ marginTop: 20 }}>
             {mainComponent}
@@ -367,7 +463,7 @@ class ProcessMonitoring extends React.Component {
                 label="Close"
                 primary={false}
                 keyboardFocused={true}
-                onTouchTap={this._closeDialog} />
+                onTouchTap={this._closeLogDialog} />
             }
             autoScrollBodyContent={true}>
             {
@@ -377,6 +473,14 @@ class ProcessMonitoring extends React.Component {
               }) : null
             }
           </Dialog>
+          <PersistResultDialog
+            output={this.state.persistDialogOutput}
+            isOpen={this.state.persistDialogOpened}
+            monitorActions={this.props.monitorActions}
+            onPersistConfirmed={this._onPersistOutputClicked}
+            closePersistDialog={this._closePersistDialog}
+            username={this.props.sessionManagement.sessionStatus.user.username}>
+          </PersistResultDialog>
         </div>
       </div>
     );
