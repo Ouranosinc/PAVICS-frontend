@@ -12,7 +12,7 @@ debug('Creating default configuration.');
 let serverHost = process.env.PAVICS_FRONTEND_IP || localip;
 let serverProto = process.env.PAVICS_FRONTEND_PROTO || 'http';
 let birdhouseHost = process.env.BIRDHOUSE_HOST || 'outarde.crim.ca';
-let loopbackHost = process.env.LOOPBACK_HOST || 'outarde.crim.ca:3005';
+let loopbackHost = process.env.LOOPBACK_HOST || birdhouseHost;
 let PAVICS_WORKFLOW_PROVIDER = process.env.PAVICS_WORKFLOW_PROVIDER || 'malleefowl';
 let PAVICS_RUN_WORKFLOW_IDENTIFIER = process.env.PAVICS_RUN_WORKFLOW_IDENTIFIER || 'custom_workflow';
 let PAVICS_VISUALIZE_IDENTIFIER = process.env.PAVICS_VISUALIZE_IDENTIFIER || 'TODO';
@@ -35,11 +35,11 @@ const config = {
   // ----------------------------------
   pavics_malleefowl_path: `http://${birdhouseHost}:8091/wps`,
   pavics_phoenix_path: `https://${birdhouseHost}:8443`,
-  pavics_geoserver_path: `http://${birdhouseHost}:8087/geoserver`,
-  pavics_ncwms_path: `http://${birdhouseHost}:8080/ncWMS2/wms`,
+  pavics_geoserver_path: `https://${birdhouseHost}/geoserver`,
+  pavics_ncwms_path: `https://${birdhouseHost}/ncWMS2/wms`,
   pavics_pywps_path: `http://${birdhouseHost}:8086/pywps`,
-  loopback_api_path: `http://${loopbackHost}/api`,
-  pavics_magpie_host: `http://${birdhouseHost}:52001`,
+  loopback_api_path: `https://${loopbackHost}/project-api/api`,
+  pavics_magpie_host: `https://${birdhouseHost}/magpie`,
   PAVICS_WORKFLOW_PROVIDER: PAVICS_WORKFLOW_PROVIDER,
   PAVICS_RUN_WORKFLOW_IDENTIFIER: PAVICS_RUN_WORKFLOW_IDENTIFIER,
   PAVICS_VISUALIZE_IDENTIFIER: PAVICS_VISUALIZE_IDENTIFIER,
