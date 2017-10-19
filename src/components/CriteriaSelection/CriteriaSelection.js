@@ -11,6 +11,7 @@ class CriteriaSelection extends React.Component {
     variables: React.PropTypes.object.isRequired,
     research: React.PropTypes.object.isRequired,
     researchActions: React.PropTypes.object.isRequired,
+    fetchDatasets: React.PropTypes.func.isRequired
   };
 
   state = {
@@ -28,7 +29,7 @@ class CriteriaSelection extends React.Component {
 
   _onRemoveFacet (facet) {
     this.props.researchActions.removeFacetKeyValuePair(facet.key, facet.value);
-    this.props.researchActions.fetchPavicsDatasets();
+    this.props.fetchDatasets();
   }
 
   _onSelectRow (event) {
@@ -37,23 +38,7 @@ class CriteriaSelection extends React.Component {
     } else {
       this.props.researchActions.removeFacetKeyValuePair(this.props.criteriaName, event.target.value);
     }
-    this.props.researchActions.fetchPavicsDatasets();
-  }
-
-  _formatRows () {
-    let vars = [];
-    if (this.state.inputContent.length > 0) {
-      vars = this.props.variables.values.filter((value) => {
-        return value.toLowerCase().indexOf(this.state.inputContent.toLowerCase()) !== -1;
-      });
-    } else {
-      vars = this.props.variables.values;
-    }
-    return vars.map((value) => {
-      return [
-        value
-      ];
-    });
+    this.props.fetchDatasets();
   }
 
   _onInputChange (event) {
@@ -79,20 +64,15 @@ class CriteriaSelection extends React.Component {
             initiallyOpen={false}
             primaryTogglesNestedList={true}
             nestedItems={
-              this._formatRows().map((row, i) => {
+              this.props.variables.values.map((variable, i) => {
                 let checked = false;
-                this.props.research.selectedFacets.map(x => {
-                  if (x.value === row[0]) {
-                    checked = true;
-                  }
-                });
-                return (
-                  <ListItem
-                    key={i}
-                    primaryText={row}
-                    leftCheckbox={<Checkbox value={row} checked={checked} onCheck={this._onSelectRow} />}
-                  />
-                );
+                const exists = this.props.research.selectedFacets.filter(x => x.value === variable.value);
+                if(exists.length) checked = true;
+                return <ListItem
+                  key={i}
+                  primaryText={`${variable.value} (${variable.count})`}
+                  leftCheckbox={<Checkbox value={variable.value} checked={checked} onCheck={this._onSelectRow} />}
+                />
               })
             }
           />

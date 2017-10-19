@@ -48,14 +48,14 @@ export default class WpsProcessForm extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     console.log('form will receive props', nextProps);
-    if (nextProps.selectedDatasetLayer['urls']) {
+    if (nextProps.selectedDatasetLayer['url']) {
       // TODO when unhardcoding files, remove the [0]
-      if (this.state.formData[LABEL_NETCDF] !== nextProps.selectedDatasetLayer['urls'][0]) {
+      if (this.state.formData[LABEL_NETCDF] !== nextProps.selectedDatasetLayer['url'][0]) {
         this.setState({
           ...this.state,
           formData: {
             ...this.state.formData,
-            [LABEL_NETCDF]: nextProps.selectedDatasetLayer['urls'][0]
+            [LABEL_NETCDF]: nextProps.selectedDatasetLayer['url'][0]
           }
         });
       }
