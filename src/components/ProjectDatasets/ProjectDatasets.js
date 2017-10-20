@@ -75,6 +75,7 @@ export class ProjectDatasets extends React.Component {
       this.props.addDatasetsToVisualize([copy]);
       this.props.selectCurrentDisplayedDataset({
         ...copy,
+        currentFileIndex: 0,
         opacity: 0.8
       });
     }else{
@@ -87,6 +88,7 @@ export class ProjectDatasets extends React.Component {
       this.props.addDatasetsToVisualize(splittedDatasets);
       this.props.selectCurrentDisplayedDataset({
         ...splittedDatasets[0],
+        currentFileIndex: 0,
         opacity: 0.8
       });
     }

@@ -75,7 +75,11 @@ class ProcessMonitoring extends React.Component {
       nextProps.monitor.visualizedTempDatasets.items.length &&
       nextProps.monitor.visualizedTempDatasets !== this.props.monitor.visualizedTempDatasets){
       this.props.addDatasetsToVisualize(nextProps.monitor.visualizedTempDatasets.items);
-      this.props.selectCurrentDisplayedDataset(nextProps.monitor.visualizedTempDatasets.items[0]);
+      this.props.selectCurrentDisplayedDataset({
+        ...nextProps.monitor.visualizedTempDatasets.items[0],
+        currentFileIndex: 0,
+        opacity: 0.8
+      });
       this.setState({loadingScreen: null});
       NotificationManager.success("Dataset has been added the Layer Switcher, data is being loaded on the map...");
     }

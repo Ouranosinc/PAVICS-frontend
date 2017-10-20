@@ -544,7 +544,7 @@ const VISUALIZE_HANDLERS = {
     action.datasets.map( x => {
       x.uniqueLayerSwitcherId = uuidv4();
       return x;
-    })
+    });
     let newDatasetLayers = state.currentVisualizedDatasets.concat(action.datasets);
     return ({...state, currentVisualizedDatasets: newDatasetLayers});
   },
