@@ -351,13 +351,48 @@ export class TimeSlider extends React.Component {
             newCurrentFileIndex = i;
           }
         }
-        // If not found, ncWMS won't be able to process datetime so we'll force a valid datetime
         if(newCurrentFileIndex >= 0){
           this.props.setCurrentDateTime(newDateTime);
+          // console.log(newCurrentFileIndex);
+          // this.props.selectCurrentDisplayedDataset({
+          //   ...this.props.currentDisplayedDataset,
+          //   currentFileIndex: newCurrentFileIndex,
+          //   opacity: 0.8
+          // });
         }else {
-          // TODO Manage inter-files holes
-          // If newDateTime doesn't match any file, ncWMS won't be able to process datetime so we'll force a valid datetime (??)
-          console.log('DATA HOLE!');
+          // If not found, ncWMS won't be able to process datetime so we'll force a valid datetime (??)
+          // This will force a valid newDateTime in a valid newCurrentFileIndex
+          // This introduce a new bug if user manually pick an invalid date, we over-write his value ??
+          // TODO If backward or forward timestep clicked.. nearest datetime is irrelevant, we know the direction
+          // This is usefull actually only when a slider is activated (month-day or year)
+          // TODO: LOCK one or multiple value (YEAR / MONTH-DAY)
+
+          // let newMomentDatetime = moment.parseZone(newDateTime),
+          //     nearestIndex = -1,
+          //     nearestDayDiff = Number.MAX_SAFE_INTEGER,
+          //     isMax = false;
+
+          // for(let i = 0; i < this.props.currentDisplayedDataset.datetime_min.length; ++i){
+          //   let currentFileMinDiff = Math.abs(newMomentDatetime.diff(moment.parseZone(this.props.currentDisplayedDataset.datetime_min[i]))),
+          //       currentFileMaxDiff = Math.abs(newMomentDatetime.diff(moment.parseZone(this.props.currentDisplayedDataset.datetime_max[i])));
+          //   if(currentFileMinDiff < nearestDayDiff) {
+          //     isMax = false;
+          //     nearestIndex = i;
+          //     nearestDayDiff = currentFileMinDiff;
+          //   }
+          //   if(currentFileMaxDiff < nearestDayDiff) {
+          //     isMax = true;
+          //     nearestIndex = i;
+          //     nearestDayDiff = currentFileMaxDiff;
+          //   }
+          // }
+          // if(nearestIndex > -1) {
+          //   let propertyName = (isMax)? 'datetime_max': 'datetime_min';
+          //   newDateTime = this.props.currentDisplayedDataset[propertyName][nearestIndex];
+          //   newCurrentFileIndex = nearestIndex;
+          //   console.log('Data hole, Best match is with file index %i for date %s', nearestIndex, newDateTime);
+          //   this.props.setCurrentDateTime(newDateTime);
+          //
         }
         console.log(newCurrentFileIndex);
         this.props.selectCurrentDisplayedDataset({
