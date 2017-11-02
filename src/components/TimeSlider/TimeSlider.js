@@ -331,13 +331,14 @@ export class TimeSlider extends React.Component {
         currentTime: currentTime
       }
     );
-    console.log(`current time is now ${currentTime}`);
+    // console.log(`current time is now ${currentTime}`);
   }
 
   changeCurrentDateTime () {
     let newDateTime = `${this.state.currentYear}-${this.state.currentMonthDay}T${this.state.currentTime}`;
     if (this.props.currentDateTime !== newDateTime) {
-      // this.props.setCurrentDateTime(newDateTime);
+      // console.log("New datetime provided by TimeSlider: %s", newDateTime);
+      this.props.setCurrentDateTime(newDateTime);
       let currentFileMomentMin = moment.parseZone(this.props.currentDisplayedDataset.datetime_min[this.props.currentDisplayedDataset.currentFileIndex]);
       let currentFileMomentMax = moment.parseZone(this.props.currentDisplayedDataset.datetime_max[this.props.currentDisplayedDataset.currentFileIndex]);
       let currentMoment = moment.parseZone(newDateTime);
@@ -352,7 +353,6 @@ export class TimeSlider extends React.Component {
           }
         }
         if(newCurrentFileIndex >= 0){
-          this.props.setCurrentDateTime(newDateTime);
           // console.log(newCurrentFileIndex);
           // this.props.selectCurrentDisplayedDataset({
           //   ...this.props.currentDisplayedDataset,
@@ -394,7 +394,6 @@ export class TimeSlider extends React.Component {
           //   this.props.setCurrentDateTime(newDateTime);
           //
         }
-        console.log(newCurrentFileIndex);
         this.props.selectCurrentDisplayedDataset({
           ...this.props.currentDisplayedDataset,
           currentFileIndex: newCurrentFileIndex,
@@ -402,7 +401,8 @@ export class TimeSlider extends React.Component {
         });
       }else{
         // newDateTime fits current file, everything is fine just propagate newDateTime
-        this.props.setCurrentDateTime(newDateTime);
+        // console.log("New datetime provided by TimeSlider: %s", newDateTime);
+        // this.props.setCurrentDateTime(newDateTime);
       }
     }
   }
