@@ -1,16 +1,12 @@
 import React from 'react';
-import Checkbox from 'material-ui/Checkbox';
-import TextField from 'material-ui/TextField';
 import DeformWrapper from '../DeformWrapper/DeformWrapper';
 import WpsProcessFormInput from '../WpsProcessFormInput/WpsProcessFormInput';
+import * as constants from './../../constants';
 
 /*
 Wps Process Form
 this module builds and updates the values of the inputs of a simple wps process
 it uses the custom routes of phoenix "api" to fetch the inputs of a specified provider and process
-
-it seems the dataType property of the inputs might change unpredictably (we have seen three forms to date) but they all seem to end with the type
-hence, for string and boolean, implement a type of "endsWith" check instead of pure equivalence
 
 the inputs of the selected process are available in props.workflow.selectedProcessInputs
 
@@ -37,13 +33,10 @@ at this level, the form data should be a flat array or dataType.name values
 
  */
 
-const BOOLEAN = 'boolean';
-const STRING = 'string';
-const NETCDF = 'ComplexData';
-const LABEL_NETCDF = 'ComplexData.resource';
-const LABEL_OPENDAP = 'string.resource';
-const LABEL_SHAPEFILE = 'string.typename';
-const LABEL_FEATURE_IDS = 'string.featureids';
+const makeUniqueIdentifier = input => {
+  return `${input.dataType}.${input.name}`;
+};
+
 export default class WpsProcessForm extends React.Component {
   static propTypes = {
     executeProcess: React.PropTypes.func.isRequired,
@@ -67,27 +60,18 @@ export default class WpsProcessForm extends React.Component {
 
   constructor (props) {
     super(props);
-
-    // Initially fill formData with input defaultValues if any
     let formData = {};
     this.props.workflow.selectedProcessInputs.forEach((input) => {
-      formData[this.makeUniqueIdentifier(input)] = input.defaultValue || '';
+      formData[makeUniqueIdentifier(input)] = input.defaultValue || '';
     });
     this.state = {
       formData: formData
     };
-    console.log(this.state);
-    this.handleCheckBoxChange = this.handleCheckBoxChange.bind(this);
     this.handleChange = this.handleChange.bind(this);
-
   }
 
-  componentDidMount() {
+  componentDidMount () {
     this.verifyMeaningfulValues(this.props);
-  }
-
-  makeUniqueIdentifier (input) {
-    return `${input.dataType}.${input.name}`;
   }
 
   /*
@@ -114,33 +98,34 @@ export default class WpsProcessForm extends React.Component {
   verifyMeaningfulValues (props) {
     console.log('verifying meaningful values in %o, current state: %o', props, this.state);
     if (props.currentDisplayedDataset['url'] && props.currentDisplayedDataset['url'].length > 0) {
-      if (this.state.formData.hasOwnProperty(LABEL_NETCDF)) {
+      // TODO this should create one input for each url selected
+      if (this.state.formData.hasOwnProperty(constants.LABEL_NETCDF)) {
         this.setState({
           ...this.state,
           formData: {
             ...this.state.formData,
-            [LABEL_NETCDF]: props.currentDisplayedDataset['url'][0]
+            [constants.LABEL_NETCDF]: props.currentDisplayedDataset['url'][0]
           }
         });
       }
-      if (this.state.formData.hasOwnProperty(LABEL_OPENDAP)) {
+      if (this.state.formData.hasOwnProperty(constants.LABEL_OPENDAP)) {
         this.setState({
           ...this.state,
           formData: {
             ...this.state.formData,
-            [LABEL_OPENDAP]: props.currentDisplayedDataset['opendap_url'][0]
+            [constants.LABEL_OPENDAP]: props.currentDisplayedDataset['opendap_url'][0]
           }
         });
       }
     }
     if (props.selectedShapefile['wmsParams']) {
       console.log('some things at least still work, next layer written should be %s', props.selectedShapefile['wmsParams']['LAYERS']);
-      if (this.state.formData[LABEL_SHAPEFILE] !== props.selectedShapefile['wmsParams']['LAYERS']) {
+      if (this.state.formData[constants.LABEL_SHAPEFILE] !== props.selectedShapefile['wmsParams']['LAYERS']) {
         this.setState({
           ...this.state,
           formData: {
             ...this.state.formData,
-            [LABEL_SHAPEFILE]: props.selectedShapefile['wmsParams'] ? props.selectedShapefile['wmsParams']['LAYERS'] : ''
+            [constants.LABEL_SHAPEFILE]: props.selectedShapefile['wmsParams'] ? props.selectedShapefile['wmsParams']['LAYERS'] : ''
           }
         });
       }
@@ -149,17 +134,17 @@ export default class WpsProcessForm extends React.Component {
         ...this.state,
         formData: {
           ...this.state.formData,
-          [LABEL_SHAPEFILE]: ''
+          [constants.LABEL_SHAPEFILE]: ''
         }
       });
     }
     let thisFeatureIdsString = props.selectedRegions.join(', ');
-    if (this.state.formData[LABEL_FEATURE_IDS] !== thisFeatureIdsString) {
+    if (this.state.formData[constants.LABEL_FEATURE_IDS] !== thisFeatureIdsString) {
       this.setState({
         ...this.state,
         formData: {
           ...this.state.formData,
-          [LABEL_FEATURE_IDS]: thisFeatureIdsString
+          [constants.LABEL_FEATURE_IDS]: thisFeatureIdsString
         }
       });
     }
@@ -169,22 +154,12 @@ export default class WpsProcessForm extends React.Component {
     this.verifyMeaningfulValues(nextProps);
   }
 
-  handleChange (event, uniqueIdentifier) {
+  handleChange (value, uniqueIdentifier) {
     // TODO eventually this will probably go in the global state
-    // so use the handleProcessFormValueChange func passed in props
     this.setState({
       formData: {
         ...this.state.formData,
-        [uniqueIdentifier]: event.target.value
-      }
-    });
-  }
-
-  handleCheckBoxChange (event, uniqueIdentifier) {
-    this.setState({
-      formData: {
-        ...this.state.formData,
-        [uniqueIdentifier]: event.target.checked
+        [uniqueIdentifier]: value
       }
     });
   }
@@ -211,16 +186,14 @@ export default class WpsProcessForm extends React.Component {
           return (
             <div key={i}>
               {input['maxOccurs'] > 1 ? <input type="hidden" name="__start__" value="resource:sequence" /> : ''}
-              {/* this.createMarkup(input) */}
               <WpsProcessFormInput
                 name={input.name}
                 type={input.dataType}
                 title={input.title}
-                uniqueIdentifier={this.makeUniqueIdentifier(input)}
+                uniqueIdentifier={makeUniqueIdentifier(input)}
                 description={input.description}
-                value={this.state.formData[this.makeUniqueIdentifier(input)]}
-                handleChange={this.handleChange}
-                handleCheckBoxChange={this.handleCheckBoxChange} />
+                value={this.state.formData[makeUniqueIdentifier(input)]}
+                handleChange={this.handleChange} />
               {input['maxOccurs'] > 1 ? <input type="hidden" name="__end__" value="resource:sequence" /> : ''}
             </div>
           );
