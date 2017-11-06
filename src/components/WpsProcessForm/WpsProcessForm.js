@@ -97,57 +97,38 @@ export default class WpsProcessForm extends React.Component {
 
   verifyMeaningfulValues (props) {
     console.log('verifying meaningful values in %o, current state: %o', props, this.state);
-    if (props.currentDisplayedDataset['url'] && props.currentDisplayedDataset['url'].length > 0) {
-      // TODO this should create one input for each url selected
-      if (this.state.formData.hasOwnProperty(constants.LABEL_NETCDF)) {
-        this.setState({
-          ...this.state,
-          formData: {
-            ...this.state.formData,
-            [constants.LABEL_NETCDF]: props.currentDisplayedDataset['url'][0]
-          }
-        });
-      }
-      if (this.state.formData.hasOwnProperty(constants.LABEL_OPENDAP)) {
-        this.setState({
-          ...this.state,
-          formData: {
-            ...this.state.formData,
-            [constants.LABEL_OPENDAP]: props.currentDisplayedDataset['opendap_url'][0]
-          }
-        });
-      }
-    }
-    if (props.selectedShapefile['wmsParams']) {
-      console.log('some things at least still work, next layer written should be %s', props.selectedShapefile['wmsParams']['LAYERS']);
-      if (this.state.formData[constants.LABEL_SHAPEFILE] !== props.selectedShapefile['wmsParams']['LAYERS']) {
-        this.setState({
-          ...this.state,
-          formData: {
-            ...this.state.formData,
-            [constants.LABEL_SHAPEFILE]: props.selectedShapefile['wmsParams'] ? props.selectedShapefile['wmsParams']['LAYERS'] : ''
-          }
-        });
-      }
+
+    let changedState = {};
+
+    if (props.currentDisplayedDataset['url']) {
+      changedState[constants.LABEL_NETCDF] = props.currentDisplayedDataset['url'];
     } else {
-      this.setState({
-        ...this.state,
-        formData: {
-          ...this.state.formData,
-          [constants.LABEL_SHAPEFILE]: ''
-        }
-      });
+      changedState[constants.LABEL_NETCDF] = '';
     }
-    let thisFeatureIdsString = props.selectedRegions.join(', ');
-    if (this.state.formData[constants.LABEL_FEATURE_IDS] !== thisFeatureIdsString) {
-      this.setState({
-        ...this.state,
-        formData: {
-          ...this.state.formData,
-          [constants.LABEL_FEATURE_IDS]: thisFeatureIdsString
-        }
-      });
+
+    if (props.currentDisplayedDataset['opendap_url']) {
+      changedState[constants.LABEL_OPENDAP] = props.currentDisplayedDataset['opendap_url'];
+    } else {
+      changedState[constants.LABEL_OPENDAP] = '';
     }
+
+    if (props.selectedShapefile['wmsParams'] && props.selectedShapefile['wmsParams']['LAYERS']) {
+      changedState[constants.LABEL_SHAPEFILE] = props.selectedShapefile['wmsParams']['LAYERS'];
+    } else {
+      changedState[constants.LABEL_SHAPEFILE] = '';
+    }
+
+    if (props.selectedRegions) {
+      changedState[constants.LABEL_FEATURE_IDS] = props.selectedRegions;
+    }
+
+    this.setState({
+      ...this.state,
+      formData: {
+        ...this.state.formData,
+        ...changedState
+      }
+    });
   }
 
   componentWillReceiveProps (nextProps) {
@@ -160,6 +141,18 @@ export default class WpsProcessForm extends React.Component {
       formData: {
         ...this.state.formData,
         [uniqueIdentifier]: value
+      }
+    });
+  }
+
+  handleArrayChange (value, uniqueIdentifier, index) {
+    // TODO eventually this will probably go in the global state
+    let wholeArray = this.state.formData[uniqueIdentifier];
+    wholeArray[index] = value;
+    this.setState({
+      formData: {
+        ...this.state.formData,
+        [uniqueIdentifier]: wholeArray
       }
     });
   }
@@ -185,7 +178,6 @@ export default class WpsProcessForm extends React.Component {
         {this.props.workflow.selectedProcessInputs.map((input, i) => {
           return (
             <div key={i}>
-              {input['maxOccurs'] > 1 ? <input type="hidden" name="__start__" value="resource:sequence" /> : ''}
               <WpsProcessFormInput
                 name={input.name}
                 type={input.dataType}
@@ -193,8 +185,10 @@ export default class WpsProcessForm extends React.Component {
                 uniqueIdentifier={makeUniqueIdentifier(input)}
                 description={input.description}
                 value={this.state.formData[makeUniqueIdentifier(input)]}
+                minOccurs={input.minOccurs}
+                maxOccurs={input.maxOccurs}
+                handleArrayChange={this.handleArrayChange}
                 handleChange={this.handleChange} />
-              {input['maxOccurs'] > 1 ? <input type="hidden" name="__end__" value="resource:sequence" /> : ''}
             </div>
           );
         })}

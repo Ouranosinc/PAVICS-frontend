@@ -5,14 +5,18 @@ import * as constants from './../../constants';
 
 export default class WpsProcessFormInput extends Component {
 
+  // value not marked as required because it can (somewhat) validly be undefined
   static propTypes = {
     type: React.PropTypes.string.isRequired,
     name: React.PropTypes.string.isRequired,
     title: React.PropTypes.string.isRequired,
     uniqueIdentifier: React.PropTypes.string.isRequired,
     description: React.PropTypes.string.isRequired,
-    value: React.PropTypes.any.isRequired,
-    handleChange: React.PropTypes.func.isRequired
+    handleChange: React.PropTypes.func.isRequired,
+    handleArrayChange: React.PropTypes.func.isRequired,
+    minOccurs: React.PropTypes.number.isRequired,
+    maxOccurs: React.PropTypes.number.isRequired,
+    value: React.PropTypes.any
   };
 
   // it seems the dataType property of the inputs might change unpredictably (we have seen three forms to date) but they all seem to end with the type
@@ -42,16 +46,37 @@ export default class WpsProcessFormInput extends Component {
         </div>
       );
     }
-    return <TextField
-      name={this.props.name}
-      fullWidth
-      value={this.props.value}
-      onChange={(event, value) => this.props.handleChange(event.target.value, this.props.uniqueIdentifier)}
-      hintText={this.props.description}
-      floatingLabelText={this.props.title} />;
+    if (Array.isArray(this.props.value) && this.props.value.length > 0) {
+      return this.props.value.map((elem, i) => {
+        return (
+          <TextField
+            name={this.props.name}
+            fullWidth
+            value={this.props.value[i]}
+            onChange={(event, value) => this.props.handleArrayChange(event.target.value, this.props.uniqueIdentifier, i)}
+            hintText={this.props.description}
+            floatingLabelText={this.props.title} />
+        );
+      });
+    }
+    return (
+      <TextField
+        name={this.props.name}
+        fullWidth
+        value={this.props.value}
+        onChange={(event, value) => this.props.handleChange(event.target.value, this.props.uniqueIdentifier)}
+        hintText={this.props.description}
+        floatingLabelText={this.props.title} />
+    );
   }
 
   render () {
-    return this.createMarkup();
+    return (
+      <div>
+        {this.props.maxOccurs > 1 ? <input type="hidden" name="__start__" value={this.props.name + ':sequence'} /> : ''}
+        {this.createMarkup()}
+        {this.props.maxOccurs > 1 ? <input type="hidden" name="__end__" value={this.props.name + ':sequence'} /> : ''}
+      </div>
+    );
   }
 }
