@@ -78,6 +78,7 @@ export default class LayerSwitcher extends React.Component {
     let selectedDataset = this.props.currentVisualizedDatasets.find(dataset => dataset.uniqueLayerSwitcherId === value);
     this.props.selectCurrentDisplayedDataset({
       ...selectedDataset,
+      currentFileIndex: 0,
       opacity: this.props.currentDisplayedDataset.opacity
     });
   }
@@ -85,6 +86,7 @@ export default class LayerSwitcher extends React.Component {
   setDatasetLayerOpacity (event, value) {
     this.props.selectCurrentDisplayedDataset({
       ...this.props.currentDisplayedDataset,
+      currentFileIndex: 0,
       opacity: value
     });
   }

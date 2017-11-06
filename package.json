@@ -122,7 +122,7 @@
     "openlayers": "^3.17.1",
     "plotly.js": "^1.17.3",
     "postcss-loader": "^0.9.0",
-    "rc-slider": "5.2.1",
+    "rc-slider": "^8.3.3",
     "react": "^15.5.4",
     "react-bootstrap": "^0.30.5",
     "react-bootstrap-daterangepicker": "^3.2.1",

@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import * as constants from '../../constants';
 require('rc-slider/assets/index.css');
+import moment from 'moment';
 import classes from './TimeSlider.scss';
 import Slider  from 'rc-slider';
 import { Col, Row} from 'react-bootstrap'
@@ -60,6 +61,7 @@ const DEFAULT_STATE = {
     1980: '1980',
     2020: '2020'
   },
+  yearDataMarks: [],
   stepLength: 1,
   stepGranularity: DAY_VALUE,
   stepSpeed: 5000,
@@ -77,6 +79,7 @@ export class TimeSlider extends React.Component {
     selectedWMSLayerDetails: React.PropTypes.object.isRequired,
     selectedWMSLayerTimesteps: React.PropTypes.object.isRequired,
     setCurrentDateTime: React.PropTypes.func.isRequired,
+    selectCurrentDisplayedDataset: React.PropTypes.func.isRequired,
     onToggleMapPanel: React.PropTypes.func.isRequired
   };
 
@@ -167,30 +170,50 @@ export class TimeSlider extends React.Component {
   changeGlobalRange () {
     let layerDetails = this.props.selectedWMSLayerDetails.data;
     let timeSteps = this.props.selectedWMSLayerTimesteps.data.timesteps;
+    let minDatetime = this.props.currentDisplayedDataset.datetime_min[0];
+    let maxDatetime = this.props.currentDisplayedDataset.datetime_max[this.props.currentDisplayedDataset.datetime_max.length - 1];
 
     // Define MIN and MAX dataset datetime values
-    let year = Object.keys(layerDetails.datesWithData)[0];
-    let monthObj = layerDetails.datesWithData[year];
-    let month = Object.keys(monthObj)[0];
-    let day = monthObj[month][0];
-    let realMonth = parseInt(month) + 1;
-    let realDay = parseInt(day);
-    realMonth = (realMonth < 10) ? '0' + realMonth : realMonth.toString();
-    realDay = (realDay < 10) ? '0' + realDay : realDay.toString();
     this.setState({
-      minDatetime: `${year}-${realMonth}-${realDay}T${timeSteps[0]}`,
-      maxDatetime: layerDetails.nearestTimeIso
+      minDatetime: minDatetime,
+      maxDatetime: maxDatetime
     });
 
-    let marksYears = {};
-    let yearArr = [];
-    for (let year in layerDetails.datesWithData) {
-      yearArr.push(parseInt(year));
-    }
-    yearArr.sort();
+    let marksYears = {},
+        firstYear = parseInt(moment.parseZone(minDatetime).year(), 10),
+        lastYear = parseInt(moment.parseZone(maxDatetime).year(), 10),
+        yearArr = [];
 
-    let firstYear = parseInt(yearArr[0]);
-    let lastYear = parseInt(yearArr[yearArr.length - 1]);
+    // Load yearArr
+    for (let i = firstYear; i < lastYear; ++i) {
+      yearArr.push(i);
+    }
+    yearArr.sort(); //Useless...
+
+    // Define disabled year's marks
+    let percentageByYear = 100 / yearArr.length;
+    let yearDataMarks = [];
+    yearArr.forEach(year => {
+      let yearBegin = moment.parseZone(`${year}-01-01`/*T00:00:00Z*/);
+      let yearEnd = moment.parseZone(`${year}-12-31`/*T24:00:00Z*/);
+      let found = false;
+      for (let i = 0; i < this.props.currentDisplayedDataset.datetime_min.length && !found; ++i) {
+        let currentFileMomentMin = moment.parseZone(this.props.currentDisplayedDataset.datetime_min[i]);
+        let currentFileMomentMax = moment.parseZone(this.props.currentDisplayedDataset.datetime_max[i]);
+        if ((yearBegin.isSameOrBefore(currentFileMomentMax) && yearBegin.isSameOrAfter(currentFileMomentMin)) ||
+          (yearEnd.isSameOrBefore(currentFileMomentMax) && yearEnd.isSameOrAfter(currentFileMomentMin))) {
+          console.log('Found data for year ' + year);
+          found = true;
+        }
+      }
+      yearDataMarks.push({
+        hasData: found,
+        width: percentageByYear
+      })
+    });
+    yearDataMarks.map( x => x.width += "%");
+
+    // Define year's marks based on number of yearArr values
     if (yearArr <= 10) {
       yearArr.forEach(
         (year) => {
@@ -244,15 +267,18 @@ export class TimeSlider extends React.Component {
         currentDate: this.props.currentDateTime.substring(0, 10),
         currentMonthDay: this.props.currentDateTime.substring(5, 10),
         currentTime: `${this.props.currentDateTime.substring(11, 24)}`,
-        currentYear: firstYear,
+        currentYear: `${this.props.currentDateTime.substring(0, 4)}`,
         firstYear: firstYear,
         lastYear: lastYear,
-        marksYears: marksYears
+        marksYears: marksYears,
+        yearDataMarks: yearDataMarks,
       }
     );
   }
 
   changeTimesteps () {
+    // NOTE: Calculated timestep is based on one file datesWithData + timesteps values
+    // Aggregated files should always have same timesteps
     let datesWithData = this.props.selectedWMSLayerDetails.data.datesWithData;
     let timeSteps = this.props.selectedWMSLayerTimesteps.data.timesteps;
     let stepLength = 1;
@@ -305,13 +331,79 @@ export class TimeSlider extends React.Component {
         currentTime: currentTime
       }
     );
-    console.log(`current time is now ${currentTime}`);
+    // console.log(`current time is now ${currentTime}`);
   }
 
   changeCurrentDateTime () {
     let newDateTime = `${this.state.currentYear}-${this.state.currentMonthDay}T${this.state.currentTime}`;
     if (this.props.currentDateTime !== newDateTime) {
+      // console.log("New datetime provided by TimeSlider: %s", newDateTime);
       this.props.setCurrentDateTime(newDateTime);
+      let currentFileMomentMin = moment.parseZone(this.props.currentDisplayedDataset.datetime_min[this.props.currentDisplayedDataset.currentFileIndex]);
+      let currentFileMomentMax = moment.parseZone(this.props.currentDisplayedDataset.datetime_max[this.props.currentDisplayedDataset.currentFileIndex]);
+      let currentMoment = moment.parseZone(newDateTime);
+      let newCurrentFileIndex = -1;
+      if(currentMoment.isAfter(currentFileMomentMax) || currentMoment.isBefore(currentFileMomentMin)){
+        // Search for new matching fileIndex
+        for(let i = 0; i < this.props.currentDisplayedDataset.datetime_min.length; ++i){
+          currentFileMomentMin = moment.parseZone(this.props.currentDisplayedDataset.datetime_min[i]);
+          currentFileMomentMax = moment.parseZone(this.props.currentDisplayedDataset.datetime_max[i]);
+          if (currentMoment.isSameOrBefore(currentFileMomentMax) && currentMoment.isSameOrAfter(currentFileMomentMin)) {
+            newCurrentFileIndex = i;
+          }
+        }
+        if(newCurrentFileIndex >= 0){
+          // console.log(newCurrentFileIndex);
+          // this.props.selectCurrentDisplayedDataset({
+          //   ...this.props.currentDisplayedDataset,
+          //   currentFileIndex: newCurrentFileIndex,
+          //   opacity: 0.8
+          // });
+        }else {
+          // If not found, ncWMS won't be able to process datetime so we'll force a valid datetime (??)
+          // This will force a valid newDateTime in a valid newCurrentFileIndex
+          // This introduce a new bug if user manually pick an invalid date, we over-write his value ??
+          // TODO If backward or forward timestep clicked.. nearest datetime is irrelevant, we know the direction
+          // This is usefull actually only when a slider is activated (month-day or year)
+          // TODO: LOCK one or multiple value (YEAR / MONTH-DAY)
+
+          // let newMomentDatetime = moment.parseZone(newDateTime),
+          //     nearestIndex = -1,
+          //     nearestDayDiff = Number.MAX_SAFE_INTEGER,
+          //     isMax = false;
+
+          // for(let i = 0; i < this.props.currentDisplayedDataset.datetime_min.length; ++i){
+          //   let currentFileMinDiff = Math.abs(newMomentDatetime.diff(moment.parseZone(this.props.currentDisplayedDataset.datetime_min[i]))),
+          //       currentFileMaxDiff = Math.abs(newMomentDatetime.diff(moment.parseZone(this.props.currentDisplayedDataset.datetime_max[i])));
+          //   if(currentFileMinDiff < nearestDayDiff) {
+          //     isMax = false;
+          //     nearestIndex = i;
+          //     nearestDayDiff = currentFileMinDiff;
+          //   }
+          //   if(currentFileMaxDiff < nearestDayDiff) {
+          //     isMax = true;
+          //     nearestIndex = i;
+          //     nearestDayDiff = currentFileMaxDiff;
+          //   }
+          // }
+          // if(nearestIndex > -1) {
+          //   let propertyName = (isMax)? 'datetime_max': 'datetime_min';
+          //   newDateTime = this.props.currentDisplayedDataset[propertyName][nearestIndex];
+          //   newCurrentFileIndex = nearestIndex;
+          //   console.log('Data hole, Best match is with file index %i for date %s', nearestIndex, newDateTime);
+          //   this.props.setCurrentDateTime(newDateTime);
+          //
+        }
+        this.props.selectCurrentDisplayedDataset({
+          ...this.props.currentDisplayedDataset,
+          currentFileIndex: newCurrentFileIndex,
+          opacity: 0.8
+        });
+      }else{
+        // newDateTime fits current file, everything is fine just propagate newDateTime
+        // console.log("New datetime provided by TimeSlider: %s", newDateTime);
+        // this.props.setCurrentDateTime(newDateTime);
+      }
     }
   }
 
@@ -387,7 +479,7 @@ export class TimeSlider extends React.Component {
                 value={new Date(
                   this.state.currentYear, this.state.currentMonthDay.substring(0, 2), this.state.currentMonthDay.substring(3, 5)
                 ).valueOf() / DIVIDER}
-                onChange={this._onChangedMonthSlider}
+                onChange={(values) => this._onChangedMonthSlider(values)}
               />
             </Col>
           </Row>
@@ -402,8 +494,21 @@ export class TimeSlider extends React.Component {
                 included={false}
                 value={this.state.currentYear}
                 defaultValue={1900}
-                onChange={this._onChangedYearSlider}
+                handleStyle={{
+                  zIndex: 1000
+                }}
+                dotStyle={{
+                  zIndex: 1000
+                }}
+                onChange={(values) => this._onChangedYearSlider(values)}
               />
+            </Col>
+            <Col sm={12} style={{height:"4px", marginTop: '-8px', zIndex: "1", pointerEvents: 'none'}}>
+              {
+                this.state.yearDataMarks.map((x, i) => {
+                  return <span key={i} style={{height:"3px", width: x.width, background: x.hasData? 'transparent':'#8b0000', float: 'left'}}>&nbsp;</span>;
+                })
+              }
             </Col>
           </Row>
           <Row className={classes['StepControls']}>
