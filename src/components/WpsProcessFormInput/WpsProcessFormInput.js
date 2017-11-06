@@ -50,6 +50,7 @@ export default class WpsProcessFormInput extends Component {
       return this.props.value.map((elem, i) => {
         return (
           <TextField
+            key={i}
             name={this.props.name}
             fullWidth
             value={this.props.value[i]}
