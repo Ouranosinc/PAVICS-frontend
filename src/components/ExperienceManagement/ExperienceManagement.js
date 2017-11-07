@@ -1,5 +1,6 @@
 import React from 'react';
 import classes from './ExperienceManagement.scss';
+import ProjectCreation from './../../components/ProjectCreation';
 import ProjectDatasets from './../../components/ProjectDatasets';
 import ProjectSearchCriterias from './../../components/ProjectSearchCriterias';
 import ProjectSelector from './../../components/ProjectSelector';
@@ -26,6 +27,7 @@ export class ExperienceManagement extends React.Component {
   render () {
    return (
       <div className={classes['ExperienceManagement']} style={{ margin: 20 }}>
+        <ProjectCreation  {...this.props}/>
         <ProjectSelector {...this.props}/>
         {
           (this.props.project.currentProject.id) ?

@@ -15,7 +15,7 @@ export class ProjectSelector extends React.Component {
   }
 
   componentWillMount() {
-    let filter = JSON.stringify({"where": { "researcherId": 1}});
+    let filter = JSON.stringify({"where": { "researcherId": 1},"order": "name ASC"});
     this.props.projectAPIActions.fetchProjects({filter: filter });
   }
 
@@ -29,7 +29,7 @@ export class ProjectSelector extends React.Component {
   render () {
     return (
       <div className={classes['ProjectSelector']}>
-        <Paper>
+        <Paper style={{marginTop: 20}}>
           <div className="container">
             <SelectField
               fullWidth={true}
