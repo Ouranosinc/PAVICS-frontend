@@ -25,13 +25,20 @@ router.get('/api/wms/dataset/layers', wms.getLayers);
 router.get('/api/facets', wps.getFacets);
 router.get('/api/climate_indicators', wps.getClimateIndicators);
 router.get('/session', proxy({
-  url: `${config.pavics_magpie_host}/session`,
+  url: `${config.pavics_magpie_host}/session`
 }));
 router.get('/logout', proxy({
-  url: `${config.pavics_magpie_host}/signout`,
+  url: `${config.pavics_magpie_host}/signout`
 }));
 router.post('/login', proxy({
-  url: `${config.pavics_magpie_host}/signin`,
+  url: `${config.pavics_magpie_host}/signin`
+}));
+app.use(proxy({
+  host: `${config.pavics_phoenix_path}`,
+  match: /^\/phoenix\/processes\/execute/,
+  map: (path) => {
+    return path.replace('/phoenix', '');
+  }
 }));
 app.use(router.routes());
 app.use(router.allowedMethods());

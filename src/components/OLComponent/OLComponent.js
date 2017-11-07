@@ -343,6 +343,10 @@ class OLComponent extends React.Component {
     this.addBingLayer(this.props.selectedBasemap, this.props.selectedBasemap);
   }
 
+  /*
+  this depends on the previous props because of the way we keep track of the ol layers
+  they are stored as a "map" built from their title
+   */
   setShapefile (prevProps) {
     let shapefile = this.props.selectedShapefile;
     console.log('change shapefile:', shapefile);
@@ -442,6 +446,7 @@ class OLComponent extends React.Component {
     if (this.props.selectedColorPalette !== prevProps.selectedColorPalette) {
       this.updateColorPalette();
     }
+    console.log('OLComponent did update. prev props: %o vs current props: %o. prev state: %o vs current state: %o.', prevProps, this.props, prevState, this.state);
     if (this.props.selectedBasemap !== prevProps.selectedBasemap) {
       this.setBasemap(prevProps);
     }
