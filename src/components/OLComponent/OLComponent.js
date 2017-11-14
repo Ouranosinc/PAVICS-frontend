@@ -14,6 +14,11 @@ const LAYER_SELECTED_REGIONS = 'selectedRegions';
 const LAYER_DATASET = 'dataset_layer';
 // not exactly sure if the selected regions index is working
 // when base map is at 1 it shadows the selected regions
+
+function datasetHasWmsUrls (dataset) {
+  return !!(dataset.wms_url && dataset.wms_url.length > 0);
+}
+
 class OLComponent extends React.Component {
   static propTypes = {
     currentDateTime: React.PropTypes.string.isRequired,
@@ -374,59 +379,68 @@ class OLComponent extends React.Component {
     }
   }
 
-  setDatasetLayer (prevProps) {
-    console.log('setting new dataset layer', this.props.currentDisplayedDataset);
-    let wmsUrl = this.props.currentDisplayedDataset.wms_url[this.props.currentDisplayedDataset.currentFileIndex];
-    let parser = new ol.format.WMSCapabilities();
-    let capabilities = {};
-    myHttp.get(wmsUrl)
-      .then(
-        response => response.text(),
-        err => console.log(err)
-      )
-      .then(
-        text => {
-          capabilities = parser.read(text);
-          console.log('wms capabilities:', capabilities);
-          let url = capabilities['Service']['OnlineResource'];
+  /*
+  routine creates a wms layer and adds it to the map layer repositories
+   */
+  setDatasetLayer (minMaxBracket, layerName, resourceUrl, opacity) {
+    const wmsParams = {
+      'COLORSCALERANGE': minMaxBracket,
+      'ABOVEMAXCOLOR': 'extend',
+      'TRANSPARENT': 'TRUE',
+      'STYLES': 'default-scalar/seq-Blues', // TODO UI switcher for styles
+      'LAYERS': layerName,
+      'EPSG': '4326',
+      'LOGSCALE': false,
+      'crossOrigin': 'anonymous',
+      'BGCOLOR': 'transparent',
+      'SRS': 'EPSG:4326',
+      'TIME': ''
+    };
+    this.map.removeLayer(this.layers[LAYER_DATASET]);
+    this.datasetSource = new ol.source.TileWMS({
+      url: resourceUrl,
+      params: wmsParams
+    });
+    this.addTileWMSLayer(INDEX_DATASET_LAYER, LAYER_DATASET, this.datasetSource, opacity);
+  }
 
-          // very nesting
-          let layer = capabilities['Capability']['Layer']['Layer'][0]['Layer'][0];
-          let layerName = layer['Name'];
-          let wmsParams = {
-            'ABOVEMAXCOLOR': 'extend',
-            'TRANSPARENT': 'TRUE',
-            'STYLES': 'default-scalar/seq-Blues', // TODO UI switcher for styles
-            'LAYERS': layerName,
-            'EPSG': '4326',
-            'LOGSCALE': false,
-            'crossOrigin': 'anonymous',
-            'BGCOLOR': 'transparent',
-            'SRS': 'EPSG:4326',
-            'TIME': ''
-          };
-          if (layer['Dimension']) {
-            // Only if a temporal dimension exists
-            let timeDimension = this.findDimension(layer['Dimension'], 'time');
-            let date = timeDimension.values.substring(0, 24);
-            this.props.fetchWMSLayerTimesteps(url, layerName, date);
-            // this.props.setCurrentDateTime(date);
-          } else {
-            // wmsParams['ELEVATION'] = 0;
-          }
-          this.map.removeLayer(this.layers[LAYER_DATASET]);
-          this.datasetSource = new ol.source.TileWMS(
-            {
-              url: url,
-              params: wmsParams
-            }
-          );
-          this.addTileWMSLayer(INDEX_DATASET_LAYER, LAYER_DATASET, this.datasetSource, this.props.currentDisplayedDataset.opacity);
-          this.props.setSelectedDatasetCapabilities(capabilities);
-          this.props.fetchWMSLayerDetails(url, layerName);
-        },
-        err => console.log(err)
-      );
+  /*
+  routine fetches capabilities from a wms url, then creates a layer from it
+  it expects the dataset to have informations about its wms_urls, opacity, min max
+   */
+  updateDatasetWmsLayer (dataset) {
+    console.log('setting new dataset layer', dataset);
+    const currentWmsCapabilitiesUrl = dataset.wms_url[dataset.currentFileIndex];
+    myHttp.get(currentWmsCapabilitiesUrl)
+      .then(response => response.text())
+      .then(text => {
+        const parser = new ol.format.WMSCapabilities();
+        const capabilities = parser.read(text);
+        const resourceUrl = capabilities['Service']['OnlineResource'];
+        console.log('fetched capabilities %o for wms url %s', capabilities, currentWmsCapabilitiesUrl);
+
+        /*
+        here we assume that the layer that actually contains the information we want to display is the first one of the dataset
+        for instance, there could be layers containing lat or lon in the return values of the capabilities
+        hopefully the relevant variable will always be the first one
+         */
+        const layer = capabilities['Capability']['Layer']['Layer'][0]['Layer'][0];
+        const layerName = layer['Name'];
+        const minMaxBracket = `${dataset['variable_min']},${dataset['variable_max']}`;
+        console.log('current dataset min max bracket: %s', minMaxBracket);
+        this.setDatasetLayer(minMaxBracket, layerName, resourceUrl, dataset.opacity);
+
+        if (layer['Dimension']) {
+          const timeDimension = this.findDimension(layer['Dimension'], 'time');
+          const date = timeDimension.values.substring(0, 24);
+          this.props.fetchWMSLayerTimesteps(resourceUrl, layerName, date);
+          // this.props.setCurrentDateTime(date);
+        }
+
+        this.props.setSelectedDatasetCapabilities(capabilities);
+        this.props.fetchWMSLayerDetails(resourceUrl, layerName);
+      })
+      .catch(err => console.log(err));
   }
 
   updateColorPalette () {
@@ -442,24 +456,80 @@ class OLComponent extends React.Component {
     }
   }
 
+  /*
+  OpenLayers inner workings are somewhat obfuscated. The layer object only has one or two letter properties that don't really express what they're for
+  Here I assume that for open layers to display something, it needs this "H" property, that contains opacity, layer title, it's visibility, and a few other things
+  This is a bit critical, as it decides wether or not the app considers that there is a displayed dataset
+   */
+  hasCurrentlyDisplayedDataset () {
+    return !!(this.layers[LAYER_DATASET] && this.layers[LAYER_DATASET].H);
+  }
+
+  /*
+  the open layers map and our internal layer repository are two different things
+  ol map is what is being displayed, layer repository is how we keep track of what is displayed and manage changes
+   */
+  removeLayer (layer) {
+    this.map.removeLayer(this.layers[layer]);
+    delete this.layers[layer];
+  }
+
   componentDidUpdate (prevProps, prevState) {
+    console.log('OLComponent did update. prev props: %o vs current props: %o. prev state: %o vs current state: %o.', prevProps, this.props, prevState, this.state);
     if (this.props.selectedColorPalette !== prevProps.selectedColorPalette) {
       this.updateColorPalette();
     }
-    console.log('OLComponent did update. prev props: %o vs current props: %o. prev state: %o vs current state: %o.', prevProps, this.props, prevState, this.state);
     if (this.props.selectedBasemap !== prevProps.selectedBasemap) {
       this.setBasemap(prevProps);
     }
     if (this.props.selectedShapefile !== prevProps.selectedShapefile) {
       this.setShapefile(prevProps);
     }
-    if (this.props.currentDisplayedDataset !== prevProps.currentDisplayedDataset && !this.props.currentDisplayedDataset.capabilities) {
-      if (this.props.currentDisplayedDataset.opacity !== prevProps.currentDisplayedDataset.opacity && this.props.currentDisplayedDataset.opacity > 0) {
-        this.layers[LAYER_DATASET].setOpacity(this.props.currentDisplayedDataset.opacity);
-      } else if (Object.keys(this.props.currentDisplayedDataset).length === 0 && this.props.currentDisplayedDataset.constructor === Object) {
-        this.map.removeLayer(this.layers[LAYER_DATASET]);
-      } else {
-        this.setDatasetLayer(this.props.currentDisplayedDataset);
+    /*
+    what is a selected dataset really?
+    the currentDisplayedDataset from the store always contains a few properties even if no dataset is actually selected
+    at the very least, if we want to _display_ something we need wms capabilities urls
+    we also have a list of layers contained in this.layers, having a selected dataset could be the presence of a layer in this.layers[LAYER_DATASET]
+    I think we will need both the presence of a layer in this.layers as well as the existence of at least one wms url the different state changes
+
+    we want to update the selected dataset when
+     - there is actually a change of the selected dataset
+     - the time has changed (actually meaning that the current file index has been changed) and we need to reload the layer
+     - the opacity changes (which does not require a full reload)
+     - we reset the dataset (remove it completely)
+     */
+    const newDataset = this.props.currentDisplayedDataset;
+    const oldDataset = prevProps.currentDisplayedDataset;
+    const hasDisplayedDataset = this.hasCurrentlyDisplayedDataset();
+    console.log('current displayed dataset: %o, this should be a boolean indicating it exists: %o', this.layers[LAYER_DATASET], hasDisplayedDataset);
+
+    // if there is a displayed dataset
+    if ( hasDisplayedDataset ) {
+      // if the new dataset doesn't have wmsUrls, we want to destroy the layer
+      // after we have made this check, we need to return because the other conditions could be true
+      // this slight logical flaw is within the acceptable I believe, either of the properties that are checked could be "undefined"
+      // which would give a false positive on the change of said property
+      if ( !datasetHasWmsUrls(newDataset) ) {
+        this.removeLayer(LAYER_DATASET);
+        return;
+      }
+
+      // if the opacity has changed, update opacity
+      if ( newDataset.opacity !== oldDataset.opacity ) {
+        this.layers[LAYER_DATASET].setOpacity(newDataset.opacity);
+      }
+
+      // if the new dataset currentFileIndex has changed, reload the layer
+      if ( newDataset.currentFileIndex !== oldDataset.currentFileIndex ) {
+        console.log('currentFileIndex has changed and we update the wms layer. new: %s, old: %s', newDataset.currentFileIndex, oldDataset.currentFileIndex);
+        this.updateDatasetWmsLayer(newDataset);
+      }
+    }
+
+    // if there is no displayed dataset, but new dataset has wms urls, load the dataset layer
+    if ( !hasDisplayedDataset ) {
+      if ( datasetHasWmsUrls(newDataset) ) {
+        this.updateDatasetWmsLayer(newDataset);
       }
     }
   }
