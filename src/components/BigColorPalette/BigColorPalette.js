@@ -7,9 +7,20 @@ import * as classes from './BigColorPalette.scss';
 this class shows the currently selected colorbar as well as the min and max attributed to the current color bar
 it should also provide ways to edit there minimum and maximum values
 
-in theory, two things can change the values:
- - selecting a dataset (which resets the store min and max to the dataset values)
- - manually entering a new value in the inputs (which should reload the dataset with the new values)
+*******
+color scale preferences per variable
+*******
+when selecting dataset, if no preferences, take dataset default for specific variable
+after that keep preferences for as long as window is open
+as long as user stays on a variable, preferences information do not change
+
+rescale layer on return
+
+ensemble of
+ - nom variable
+ - variable min
+ - variable max
+ - color palette
 
 we should validate that the min is lower than the max before propagating the new values
 
@@ -40,7 +51,7 @@ export default class BigColorPalette extends React.Component {
     return (
       <Grid className={classes.BigColorPalette}>
         <Row>
-          <Col xs={1} xsOffset={1} mdOffset={2}>
+          <Col xs={2} md={1} mdOffset={2}>
             <div className={classes.BoundaryInput}>
               <TextField
                 fullWidth
@@ -54,7 +65,7 @@ export default class BigColorPalette extends React.Component {
               {this.props.selectedColorPalette.name}
             </div>
           </Col>
-          <Col xs={1}>
+          <Col xs={2} md={1}>
             <div className={classes.BoundaryInput}>
               <TextField
                 fullWidth
