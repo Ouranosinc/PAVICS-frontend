@@ -182,12 +182,12 @@ export default class LayerSwitcher extends React.Component {
               let index = dataset.wms_url[0].lastIndexOf(SEARCH_VALUE);
               secondaryText = `${dataset.wms_url[0].substring(index + SEARCH_VALUE.length)}`;
             } else {
-              secondaryText =`${dataset.wms_url.length} aggregated file${(dataset.wms_url.length > 1)?'s':''}`;
+              secondaryText = `${dataset.wms_url.length} aggregated file${(dataset.wms_url.length > 1) ? 's' : ''}`;
             }
             return (
               <ListItem
                 key={i}
-                primaryText={dataset.aggregate_title}
+                primaryText={dataset['aggregate_title']}
                 secondaryText={<span>{secondaryText}</span>}
                 secondaryTextLines={1}
                 leftCheckbox={
@@ -195,7 +195,7 @@ export default class LayerSwitcher extends React.Component {
                     name="currentDisplayedDataset"
                     valueSelected={this.props.currentDisplayedDataset.uniqueLayerSwitcherId}
                     onChange={this.setCurrentDisplayedDataset}>
-                    <RadioButton value={dataset.uniqueLayerSwitcherId}/>
+                    <RadioButton value={dataset.uniqueLayerSwitcherId} />
                   </RadioButtonGroup>
                 } />
             );
@@ -255,8 +255,7 @@ export default class LayerSwitcher extends React.Component {
           <AppBar
             title="Layer Switcher"
             iconElementLeft={<IconButton><LayersIcon /></IconButton>}
-            iconElementRight={<IconButton><MinimizeIcon
-              onTouchTap={(event) => this._onHideLayerSwitcherPanel()} /></IconButton>} />
+            iconElementRight={<IconButton><MinimizeIcon onTouchTap={this._onHideLayerSwitcherPanel} /></IconButton>} />
           <Tabs>
             <Tab
               style={{height: '100%'}}
