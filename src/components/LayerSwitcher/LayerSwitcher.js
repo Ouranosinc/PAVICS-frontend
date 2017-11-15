@@ -106,7 +106,12 @@ export default class LayerSwitcher extends React.Component {
     this.props.selectCurrentDisplayedDataset({});
   }
 
+  /*
+  this routine should iterate through the different workspaces that are available to the user and show them separated by workspace name
+  presently, they're all grouped under "public", which would be replaced by the workspace name
+   */
   makeShapefileList () {
+    // lol 302 px. such precision. very design.
     return (
       <List
         style={{height: '302px', overflowY: 'auto'}}
@@ -116,7 +121,7 @@ export default class LayerSwitcher extends React.Component {
           primaryTogglesNestedList
           primaryText="Public"
           nestedItems={
-            this.props.publicShapeFiles.map((shapeFile, i) => {
+            this.props.publicShapeFiles.map( (shapeFile, i) => {
               return (
                 <ListItem
                   primaryText={shapeFile.title}
