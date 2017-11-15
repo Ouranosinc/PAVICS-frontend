@@ -15,17 +15,19 @@ import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
 import LayersIcon from 'material-ui/svg-icons/maps/layers';
 import MinimizeIcon from 'material-ui/svg-icons/content/remove';
+
+const AVAILABLE_COLOR_PALETTES = [
+  {
+    url: `${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=seq-Blues&COLORBARONLY=true&WIDTH=200&HEIGHT=20&VERTICAL=false`,
+    name: 'default-scalar/seq-Blues'
+  },
+  {
+    url: `${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=div-BuRd&COLORBARONLY=true&WIDTH=200&HEIGHT=20&VERTICAL=false`,
+    name: 'default-scalar/div-BuRd'
+  }
+];
+
 export default class LayerSwitcher extends React.Component {
-  availableColorPalettes = [
-    {
-      url: `${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=seq-Blues&COLORBARONLY=true&WIDTH=200&HEIGHT=20&VERTICAL=false`,
-      name: 'default-scalar/seq-Blues'
-    },
-    {
-      url: `${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=div-BuRd&COLORBARONLY=true&WIDTH=200&HEIGHT=20&VERTICAL=false`,
-      name: 'default-scalar/div-BuRd'
-    }
-  ];
   static propTypes = {
     onToggleMapPanel: React.PropTypes.func.isRequired,
     fetchShapefiles: React.PropTypes.func.isRequired,
@@ -53,7 +55,7 @@ export default class LayerSwitcher extends React.Component {
     this.setSelectedColorPalette = this.setSelectedColorPalette.bind(this);
     this.resetDatasetLayer = this.resetDatasetLayer.bind(this);
     this.resetShapefile = this.resetShapefile.bind(this);
-    this.props.selectColorPalette(this.availableColorPalettes[0]);
+    this.props.selectColorPalette(AVAILABLE_COLOR_PALETTES[0]);
   }
 
   componentDidMount () {
@@ -229,7 +231,7 @@ export default class LayerSwitcher extends React.Component {
         floatingLabelText="Color Palette"
         value={this.props.selectedColorPalette}
         onChange={this.setSelectedColorPalette}>{
-        this.availableColorPalettes.map((palette, i) => {
+        AVAILABLE_COLOR_PALETTES.map((palette, i) => {
           return (
             <MenuItem
               key={i}
