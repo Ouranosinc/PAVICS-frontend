@@ -131,9 +131,6 @@ export default class LayerSwitcher extends React.Component {
               );
             })
           } />
-        <ListItem
-          primaryTogglesNestedList
-          primaryText="Private (TODO)" />
       </List>
     );
   }
