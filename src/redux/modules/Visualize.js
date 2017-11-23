@@ -43,6 +43,11 @@ const HANDLERS = {
 };
 
 // Reducer
+/*
+the variable preferences should contain the preferences for every variable to be used in visualization
+ideally at some point it would be initialized from an http request at app launch
+or some better pattern
+ */
 export const initialState = {
   variableMin: '',
   variableMax: ''

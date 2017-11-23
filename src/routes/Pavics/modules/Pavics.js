@@ -524,8 +524,33 @@ const VISUALIZE_HANDLERS = {
     newSearchCriterias.splice(index, 1);
     return ({...state, currentProjectSearchCriterias: newSearchCriterias});
   },
+  /*
+  this handler must receive a dataset
+  verify if preferences has been set for the selected variable
+  if variable is set
+    update dataset informations with it
+  else
+    initialize preferences for the variable
+   */
   [SET_SELECTED_DATASET_LAYER]: (state, action) => {
-    return {...state, currentDisplayedDataset: action.layer};
+    let variablePreference;
+    if (state.variablePreferences[action.layer.variable]) {
+      variablePreference = state.variablePreferences[action.layer.variable];
+      action.layer.variable_min = variablePreference.min;
+      action.layer.variable_max = variablePreference.max;
+      action.layer.variable_palette = variablePreference.colorPalette;
+    } else {
+      variablePreference = {
+        min: action.layer.variable_min,
+        max: action.layer.variable_max,
+        colorPalette: action.layer.variable_palette
+      };
+    }
+    return {
+      ...state,
+      currentDisplayedDataset: action.layer,
+      variablePreferences: {...state.variablePreferences, [action.layer.variable]: variablePreference}
+    };
   },
   [SET_SELECTED_DATASET_CAPABILITIES]: (state, action) => {
     return {...state, selectedDatasetCapabilities: action.capabilities};

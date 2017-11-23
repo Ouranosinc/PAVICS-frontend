@@ -382,12 +382,12 @@ class OLComponent extends React.Component {
   /*
   routine creates a wms layer and adds it to the map layer repositories
    */
-  setDatasetLayer (minMaxBracket, layerName, resourceUrl, opacity) {
+  setDatasetLayer (minMaxBracket, layerName, resourceUrl, opacity, colorPalette) {
     const wmsParams = {
       'COLORSCALERANGE': minMaxBracket,
       'ABOVEMAXCOLOR': 'extend',
       'TRANSPARENT': 'TRUE',
-      'STYLES': 'default-scalar/seq-Blues', // TODO UI switcher for styles
+      'STYLES': colorPalette,
       'LAYERS': layerName,
       'EPSG': '4326',
       'LOGSCALE': false,
@@ -407,9 +407,7 @@ class OLComponent extends React.Component {
   /*
   routine fetches capabilities from a wms url, then creates a layer from it
   it expects the dataset to have informations about its wms_urls
-
-  it should take the min max values and color palette in the store for the variable of the dataset
-  these values should have been updated in the store already when the dataset is selected
+  at this point in time, the informations stored in the dataset are assumed to be valid
    */
   updateDatasetWmsLayer (dataset) {
     console.log('setting new dataset layer', dataset);
@@ -431,7 +429,7 @@ class OLComponent extends React.Component {
         const layerName = layer['Name'];
         const minMaxBracket = `${dataset['variable_min']},${dataset['variable_max']}`;
         console.log('current dataset min max bracket: %s', minMaxBracket);
-        this.setDatasetLayer(minMaxBracket, layerName, resourceUrl, dataset.opacity);
+        this.setDatasetLayer(minMaxBracket, layerName, resourceUrl, dataset.opacity, `default-scalar/${dataset.variable_palette}`);
 
         if (layer['Dimension']) {
           const timeDimension = this.findDimension(layer['Dimension'], 'time');

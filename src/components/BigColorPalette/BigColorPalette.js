@@ -4,26 +4,10 @@ import TextField from 'material-ui/TextField';
 import * as classes from './BigColorPalette.scss';
 
 /*
-this class shows the currently selected colorbar as well as the min and max attributed to the current color bar
-it should also provide ways to edit there minimum and maximum values
-
-*******
-color scale preferences per variable
-*******
-when selecting dataset, if no preferences, take dataset default for specific variable
-after that keep preferences for as long as window is open
-as long as user stays on a variable, preferences information do not change
-
-rescale layer on return
-
-ensemble of
- - nom variable
- - variable min
- - variable max
- - color palette
+this component show the current preferences for the selected dataset's variable
+it should allow the user to update the preferences for the variable
 
 we should validate that the min is lower than the max before propagating the new values
-
  */
 export default class BigColorPalette extends React.Component {
   static propTypes = {
