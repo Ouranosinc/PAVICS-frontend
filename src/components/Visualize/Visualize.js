@@ -296,9 +296,8 @@ class Visualize extends React.Component {
               ref={this.setOLComponentReference} />
           </div>
           <BigColorPalette
+            setVariablePreferenceBoundaries={this.props.setVariablePreferenceBoundaries}
             variablePreference={this.props.variablePreferences[this.props.currentDisplayedDataset.variable]}
-            setVariableMax={this.props.visualizeActions.setVariableMax}
-            setVariableMin={this.props.visualizeActions.setVariableMin}
             selectedColorPalette={this.props.selectedColorPalette} />
           <PieMenu
             mapPanelStatus={this.state.mapPanelStatus}

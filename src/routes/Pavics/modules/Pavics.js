@@ -20,6 +20,7 @@ const REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS = 'Visualize.REMOVE_SEARCH_CRITERIAS
 const ADD_DATASETS_TO_PROJECTS = 'Visualize.ADD_DATASETS_TO_PROJECTS';
 const CLICK_TOGGLE_PANEL = 'Visualize.CLICK_TOGGLE_PANEL';
 const SET_CURRENT_TIME_ISO = 'Visualize.SET_CURRENT_TIME_ISO';
+const VISUALIZE_SET_VARIABLE_BOUNDARY_VALUES = 'Visualize.VISUALIZE_SET_VARIABLE_BOUNDARY_VALUE';
 // ASYNC
 const FETCH_PLOTLY_DATA_REQUEST = 'Visualize.FETCH_PLOTLY_DATA_REQUEST';
 const FETCH_PLOTLY_DATA_FAILURE = 'Visualize.FETCH_PLOTLY_DATA_FAILURE';
@@ -482,6 +483,18 @@ export function goToSection (section) {
   return dispatch => dispatch(setSection(section));
 }
 
+function updateVariablePreferenceBoundaries (min, max) {
+  return {
+    type: VISUALIZE_SET_VARIABLE_BOUNDARY_VALUES,
+    min: min,
+    max: max
+  };
+}
+
+export function setVariablePreferenceBoundaries (min, max) {
+  return dispatch => dispatch(updateVariablePreferenceBoundaries(min, max));
+}
+
 const VISUALIZE_HANDLERS = {
   [constants.VISUALIZE_SET_MAP_MANIPULATION_MODE]: (state, action) => {
     return {...state, mapManipulationMode: action.mode};
@@ -523,6 +536,24 @@ const VISUALIZE_HANDLERS = {
   },
   [SET_SELECTED_SHAPEFILE]: (state, action) => {
     return {...state, selectedShapefile: action.shapefile};
+  },
+  [VISUALIZE_SET_VARIABLE_BOUNDARY_VALUES]: (state, action) => {
+    return {
+      ...state,
+      variablePreferences: {
+        ...state.variablePreferences,
+        [state.currentDisplayedDataset.variable]: {
+          ...state.variablePreferences[state.currentDisplayedDataset.variable],
+          min: action.min,
+          max: action.max
+        }
+      },
+      currentDisplayedDataset: {
+        ...state.currentDisplayedDataset,
+        variable_min: action.min,
+        variable_max: action.max
+      }
+    };
   },
   [SET_SELECTED_BASEMAP]: (state, action) => {
     return {...state, selectedBasemap: action.basemap};

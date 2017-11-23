@@ -408,6 +408,9 @@ class OLComponent extends React.Component {
   routine fetches capabilities from a wms url, then creates a layer from it
   it expects the dataset to have informations about its wms_urls
   at this point in time, the informations stored in the dataset are assumed to be valid
+
+  TODO we refetch the capabilities every time we make a modification to the dataset, but this is inefficient
+  we could only fetch these when we change dataset, no need to reload only if we change the min max or opacity
    */
   updateDatasetWmsLayer (dataset) {
     console.log('setting new dataset layer', dataset);
@@ -529,6 +532,15 @@ class OLComponent extends React.Component {
       // if the dataset simply has changed, reload the layer
       if ( (newDataset['dataset_id'] !== oldDataset['dataset_id']) ) {
         console.log('dataset id has changed and we update the wms layer. new: %s, old: %s', newDataset['dataset_id'], oldDataset['dataset_id']);
+        this.updateDatasetWmsLayer(newDataset);
+      }
+
+      // if min max values have changed, reload the layer
+      if (
+        (newDataset['variable_min'] !== oldDataset['variable_min']) ||
+        (newDataset['variable_max'] !== oldDataset['variable_max'])
+      ) {
+        console.log('min max values have changed so we reload the dataset');
         this.updateDatasetWmsLayer(newDataset);
       }
     }

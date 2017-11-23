@@ -44,6 +44,10 @@ export const LABEL_SHAPEFILE = 'string.typename';
 export const LABEL_FEATURE_IDS = 'string.featureids';
 // session
 export const AUTH_COOKIE = 'auth_tkt';
-// abbreviations
+// variable preferences
 export const VARIABLE_PR = 'pr';
 export const VARIABLE_PCP = 'pcp';
+export const VARIABLE_BOUNDARY_MAX = 'max';
+export const VARIABLE_BOUNDARY_MIN = 'min';
+// keys
+export const KEY_ENTER = 'Enter';
