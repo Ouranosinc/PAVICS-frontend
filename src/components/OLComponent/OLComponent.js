@@ -450,7 +450,7 @@ class OLComponent extends React.Component {
     if (this.layers[LAYER_DATASET]) {
       console.log('changing color palette:', this.props.selectedColorPalette.name);
       this.datasetSource.updateParams({
-        'STYLES': this.props.selectedColorPalette.name
+        'STYLES': `default-scalar/${this.props.selectedColorPalette.name}`
       });
     } else {
       console.log('select a dataset first');

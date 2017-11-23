@@ -506,6 +506,19 @@ const VISUALIZE_HANDLERS = {
     return {...state, publicShapeFiles: action.publicShapeFiles};
   },
   [SET_SELECTED_COLOR_PALETTE]: (state, action) => {
+    if (state.currentDisplayedDataset.variable && state.variablePreferences[state.currentDisplayedDataset.variable]) {
+      return {
+        ...state,
+        selectedColorPalette: action.palette,
+        variablePreferences: {
+          ...state.variablePreferences,
+          [state.currentDisplayedDataset.variable]: {
+            ...state.variablePreferences[state.currentDisplayedDataset.variable],
+            colorPalette: action.palette.name
+          }
+        }
+      };
+    }
     return {...state, selectedColorPalette: action.palette};
   },
   [SET_SELECTED_SHAPEFILE]: (state, action) => {

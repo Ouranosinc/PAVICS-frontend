@@ -20,12 +20,12 @@ const AVAILABLE_COLOR_PALETTES = [
   {
     url: `${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=seq-Blues&COLORBARONLY=true&WIDTH=200&HEIGHT=20&VERTICAL=false`,
     bigUrl: `${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=seq-Blues&COLORBARONLY=true&WIDTH=600&HEIGHT=60&VERTICAL=false`,
-    name: 'default-scalar/seq-Blues'
+    name: 'seq-Blues'
   },
   {
     url: `${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=div-BuRd&COLORBARONLY=true&WIDTH=200&HEIGHT=20&VERTICAL=false`,
     bigUrl: `${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=div-BuRd&COLORBARONLY=true&WIDTH=600&HEIGHT=60&VERTICAL=false`,
-    name: 'default-scalar/div-BuRd'
+    name: 'div-BuRd'
   }
 ];
 

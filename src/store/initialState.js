@@ -7,7 +7,7 @@ const initialState = {
   visualize: {
     variablePreferences: {
       [constants.VARIABLE_PR]: {min: 0, max: 0.0001, colorPalette: 'seq-Blues'},
-      [constants.VARIABLE_PCP]: {min: 0, max: 0.0001, colorPalette: 'seq-BuRd'}
+      [constants.VARIABLE_PCP]: {min: 0, max: 0.0001, colorPalette: 'div-BuRd'}
     },
     mapManipulationMode: constants.VISUALIZE_MODE_VISUALIZE,
     selectedColorPalette: {

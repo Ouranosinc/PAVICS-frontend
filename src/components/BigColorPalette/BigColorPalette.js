@@ -11,9 +11,8 @@ we should validate that the min is lower than the max before propagating the new
  */
 export default class BigColorPalette extends React.Component {
   static propTypes = {
+    variablePreference: React.PropTypes.object,
     selectedColorPalette: React.PropTypes.object.isRequired,
-    variableMin: React.PropTypes.string.isRequired,
-    variableMax: React.PropTypes.string.isRequired,
     setVariableMin: React.PropTypes.func.isRequired,
     setVariableMax: React.PropTypes.func.isRequired
   };
@@ -32,34 +31,37 @@ export default class BigColorPalette extends React.Component {
   }
 
   render () {
-    return (
-      <Grid className={classes.BigColorPalette}>
-        <Row>
-          <Col xs={2} md={1} mdOffset={2}>
-            <div className={classes.BoundaryInput}>
-              <TextField
-                fullWidth
-                id="variable-min"
-                onChange={this.changeMin}
-                value={this.props.variableMin} />
-            </div>
-          </Col>
-          <Col xs={8} md={6}>
-            <div className={classes.ImageContainer} style={{backgroundImage: `url(${this.props.selectedColorPalette.bigUrl})`}}>
-              {this.props.selectedColorPalette.name}
-            </div>
-          </Col>
-          <Col xs={2} md={1}>
-            <div className={classes.BoundaryInput}>
-              <TextField
-                fullWidth
-                id="variable-max"
-                onChange={this.changeMax}
-                value={this.props.variableMax} />
-            </div>
-          </Col>
-        </Row>
-      </Grid>
-    );
+    if (this.props.variablePreference) {
+      return (
+        <Grid className={classes.BigColorPalette}>
+          <Row>
+            <Col xs={2} md={1} mdOffset={2}>
+              <div className={classes.BoundaryInput}>
+                <TextField
+                  fullWidth
+                  id="variable-min"
+                  onChange={this.changeMin}
+                  value={this.props.variablePreference.min} />
+              </div>
+            </Col>
+            <Col xs={8} md={6}>
+              <div className={classes.ImageContainer} style={{backgroundImage: `url(${this.props.selectedColorPalette.bigUrl})`}}>
+                {this.props.selectedColorPalette.name}
+              </div>
+            </Col>
+            <Col xs={2} md={1}>
+              <div className={classes.BoundaryInput}>
+                <TextField
+                  fullWidth
+                  id="variable-max"
+                  onChange={this.changeMax}
+                  value={this.props.variablePreference.max} />
+              </div>
+            </Col>
+          </Row>
+        </Grid>
+      );
+    }
+    return null;
   }
 }

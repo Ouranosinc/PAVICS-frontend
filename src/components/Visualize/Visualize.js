@@ -296,8 +296,7 @@ class Visualize extends React.Component {
               ref={this.setOLComponentReference} />
           </div>
           <BigColorPalette
-            variableMin={this.props.visualize.variableMin}
-            variableMax={this.props.visualize.variableMax}
+            variablePreference={this.props.variablePreferences[this.props.currentDisplayedDataset.variable]}
             setVariableMax={this.props.visualizeActions.setVariableMax}
             setVariableMin={this.props.visualizeActions.setVariableMin}
             selectedColorPalette={this.props.selectedColorPalette} />
