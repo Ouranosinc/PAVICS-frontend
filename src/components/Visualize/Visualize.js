@@ -48,8 +48,8 @@ class Visualize extends React.Component {
     unselectRegion: React.PropTypes.func.isRequired,
     resetSelectedRegions: React.PropTypes.func.isRequired,
     layer: React.PropTypes.any,
-    visualize: React.PropTypes.object.isRequired,
-    visualizeActions: React.PropTypes.object.isRequired
+    setVariablePreferenceBoundaries: React.PropTypes.func.isRequired,
+    variablePreferences: React.PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -66,9 +66,7 @@ class Visualize extends React.Component {
     mapPanelStatus[constants.VISUALIZE_TIME_SLIDER_PANEL] = true;
     this.state = {
       mapPanelStatus: mapPanelStatus,
-      OLComponentReference: {},
-      variableMin: 0,
-      variableMax: 0.0001
+      OLComponentReference: {}
     };
 
     // TEST PURPOSE (TimeSlider): Load this dataset when opening the platform

@@ -54,7 +54,6 @@ export default class BigColorPalette extends React.Component {
   }
 
   changeMin (event) {
-    // this.props.setVariablePreferenceBoundaries(constants.VARIABLE_BOUNDARY_MIN, event.target.value);
     this.setState({
       ...this.state,
       localMin: event.target.value
@@ -62,7 +61,6 @@ export default class BigColorPalette extends React.Component {
   }
 
   changeMax (event) {
-    // this.props.setVariablePreferenceBoundaries(constants.VARIABLE_BOUNDARY_MAX, event.target.value);
     this.setState({
       ...this.state,
       localMax: event.target.value
@@ -71,7 +69,6 @@ export default class BigColorPalette extends React.Component {
 
   catchReturn (event) {
     if (event.key === constants.KEY_ENTER) {
-      console.log('local min: %s, local max: %s', this.localMin, this.localMax);
       if (this.state.localMin < this.state.localMax) {
         this.props.setVariablePreferenceBoundaries(this.state.localMin, this.state.localMax);
       } else {
