@@ -1,5 +1,5 @@
-import {createResource, mergeReducers} from 'redux-rest-resource';
-// ERROR Loader import {createResource} from './../../lib/redux-rest-resource/custom-create-resource';
+// import {createResource, mergeReducers} from 'redux-rest-resource';
+import {createResource, mergeReducers} from './../../lib/redux-rest-resource';
 
 const research = createResource({
   name: 'project',
