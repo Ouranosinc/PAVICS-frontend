@@ -43,6 +43,16 @@ $ npm install                   # Install project dependencies
 $ npm start                     # Compile and launch
 ```
 
+## To modify Redux-rest-resource transpiled files
+
+After changing files in src/lib/redux-rest-resource/src folder, Run the following commands to compile code
+
+```bash
+$ cd src/lib/redux-rest-resource
+$ npm i
+$ npm run compile # will be called by install anyway tho
+```
+
 If everything works, you should see the following:
 
 <img src="http://i.imgur.com/zR7VRG6.png?2" />
