@@ -1,11 +1,11 @@
 import React from 'react'
-import classes from './ProjectCreation.scss';
+import classes from './ProjectEditor.scss';
 import * as constants from '../../constants';
 import Paper from 'material-ui/Paper';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 
-export class ProjectCreation extends React.Component {
+export class ProjectEditor extends React.Component {
   static propTypes = {
     project: React.PropTypes.object.isRequired,
     projectActions: React.PropTypes.object.isRequired,
@@ -15,9 +15,9 @@ export class ProjectCreation extends React.Component {
 
   constructor(props) {
     super(props);
-    this._onSetNewProjectName = this._onSetNewProjectName.bind(this);
-    this._onSetNewProjectDescription = this._onSetNewProjectDescription.bind(this);
-    this._onCreateProject = this._onCreateProject.bind(this);
+    this._onSetProjectName = this._onSetProjectName.bind(this);
+    this._onSetProjectDescription = this._onSetProjectDescription.bind(this);
+    this._onSaveProject = this._onSaveProject.bind(this);
     this.state = {
       projectName: '',
       projectDescription: ''
@@ -25,35 +25,35 @@ export class ProjectCreation extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-
+    if(nextProps.project.currentProject && nextProps.project.currentProject !== this.props.project.currentProject) {
+      this.setState({
+        projectName: nextProps.project.currentProject.name,
+        projectDescription: nextProps.project.currentProject.description
+      })
+    }
   }
 
   componentWillMount() {
 
   }
 
-  _onSetNewProjectName(name){
+  _onSetProjectName(name){
     this.setState({
       projectName: name
     })
   }
 
-  _onSetNewProjectDescription(desc){
+  _onSetProjectDescription(desc){
     this.setState({
       projectDescription: desc
     })
   }
-  _onCreateProject(event, value){
-    this.props.projectAPIActions.createProject({
-        name: this.state.projectName,
-        description: this.state.projectDescription,
-        researcherId: 1
+  _onSaveProject(event, value){
+    this.props.projectAPIActions.updateProject({
+      id: this.props.project.currentProject.id,
+      name: this.state.projectName,
+      description: this.state.projectDescription,
     });
-    this.setState({
-      projectName: '',
-      projectDescription: ''
-    });
-    // ALERT
   }
 
   render () {
@@ -63,23 +63,25 @@ export class ProjectCreation extends React.Component {
           <div className="container">
             <TextField
               hintText="Define a name"
+              value={this.state.projectName}
               fullWidth={true}
-              onChange={(event, value) => this._onSetNewProjectName(value)}
+              onChange={(event, value) => this._onSetProjectName(value)}
               floatingLabelText="Project name" />
             <TextField
               hintText="Write a project description"
+              value={this.state.projectDescription}
               fullWidth={true}
               multiLine={true}
               rows={1}
               rowsMax={7}
-              onChange={(event, value) => this._onSetNewProjectDescription(value)}
+              onChange={(event, value) => this._onSetProjectDescription(value)}
               floatingLabelText="Project description" />
           </div>
         </Paper>
 
         <RaisedButton
-          onClick={this._onCreateProject}
-          label="Create new project"
+          onClick={this._onSaveProject}
+          label="Save project properties"
           disabled={!this.state.projectName.length}
           style={{marginTop: 20}} />
       </div>
@@ -87,4 +89,4 @@ export class ProjectCreation extends React.Component {
   }
 }
 
-export default ProjectCreation
+export default ProjectEditor
