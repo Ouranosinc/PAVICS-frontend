@@ -93,8 +93,10 @@ export default class BigColorPalette extends React.Component {
               </div>
             </Col>
             <Col xs={8} md={6}>
-              <div className={classes.ImageContainer} style={{backgroundImage: `url(${this.props.selectedColorPalette.bigUrl})`}}>
-                {this.props.selectedColorPalette.name}
+              <div
+                className={classes.ImageContainer}
+                style={{backgroundImage: `url(${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=${this.props.variablePreference.colorPalette}&COLORBARONLY=true&WIDTH=600&HEIGHT=60&VERTICAL=false)`}}>
+                {this.props.variablePreference.colorPalette}
               </div>
             </Col>
             <Col xs={2} md={1}>
