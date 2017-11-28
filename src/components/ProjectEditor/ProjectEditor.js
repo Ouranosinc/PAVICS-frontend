@@ -25,16 +25,21 @@ export class ProjectEditor extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if(nextProps.project.currentProject && nextProps.project.currentProject !== this.props.project.currentProject) {
+    if(nextProps.project && nextProps.project.currentProject.id !== this.props.project.currentProject.id) {
       this.setState({
         projectName: nextProps.project.currentProject.name,
         projectDescription: nextProps.project.currentProject.description
-      })
+      });
     }
   }
 
   componentWillMount() {
-
+    if (this.props.project && this.props.project.currentProject && this.props.project.currentProject.id){
+      this.setState({
+        projectName: this.props.project.currentProject.name,
+        projectDescription: this.props.project.currentProject.description
+      });
+    }
   }
 
   _onSetProjectName(name){

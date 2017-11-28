@@ -131,10 +131,10 @@ export class SearchCatalog extends React.Component {
         //   id: 1,
         //   filter: JSON.stringify({yolo:"yolo"})
         // });
-        NotificationManager.success("Search criteria(s) was saved with success. Navigate to 'Project Management' section to manage saved search criteria(s).");
+        // NotificationManager.success("Search criteria(s) was saved with success. Navigate to 'Project Management' section to manage saved search criteria(s).");
       }
     } else {
-      NotificationManager.error("You need to specify a name and at least one criteria to be able to save the current search criteria(s).");
+      NotificationManager.warning("You need to specify a name and at least one criteria to be able to save the current search criteria(s).");
     }
   }
 

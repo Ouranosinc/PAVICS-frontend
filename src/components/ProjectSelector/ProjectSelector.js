@@ -4,6 +4,7 @@ import MenuItem from 'material-ui/MenuItem';
 import Paper from 'material-ui/Paper';
 import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
+import { NotificationManager } from 'react-notifications';
 
 export class ProjectSelector extends React.Component {
   static propTypes = {
@@ -16,13 +17,14 @@ export class ProjectSelector extends React.Component {
   }
 
   componentWillMount() {
-    let filter = JSON.stringify({"where": { "researcherId": 1},"order": "name ASC"});
-    this.props.projectAPIActions.fetchProjects({filter: filter });
+    // let filter = JSON.stringify({"where": { "researcherId": 1},"order": "name ASC"});
+    // this.props.projectAPIActions.fetchProjects({filter: filter });
   }
 
   _onSetCurrentProject(id){
     let project = this.props.projectAPI.items.find(x => x.id === id);
     this.props.projectActions.setCurrentProject(project);
+    NotificationManager.info(`Project '${project.name}' has been selected as the current project.`);
     // TODO RESET DATASET SELECTION IN LAYER SWITCHER
     // TODO RESET LAYER SWITCH DATASETS LIST
   }

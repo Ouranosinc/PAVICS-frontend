@@ -62,7 +62,7 @@ export class ProjectCreation extends React.Component {
         <Paper style={{marginTop: 20}}>
           <div className="container">
             <TextField
-              hintText="Define a name"
+              hintText="Define a project name"
               fullWidth={true}
               onChange={(event, value) => this._onSetNewProjectName(value)}
               floatingLabelText="Project name" />
