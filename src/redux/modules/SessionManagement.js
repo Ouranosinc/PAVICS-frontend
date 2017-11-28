@@ -108,7 +108,7 @@ function logout() {
 function sendCredentialsToZiggurat(username, password) {
   return (dispatch) => {
     dispatch(zigguratLoginRequest());
-    myHttp.postFormData('/login', {
+    myHttp.postUrlEncodedForm('/login', {
       'user_name': username,
       password: password,
       'provider_name': 'ziggurat',

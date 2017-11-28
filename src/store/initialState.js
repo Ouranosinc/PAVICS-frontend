@@ -5,11 +5,9 @@ const initialState = {
     section: ''
   },
   visualize: {
+    variablePreferences: {},
     mapManipulationMode: constants.VISUALIZE_MODE_VISUALIZE,
-    selectedColorPalette: {
-      url: '',
-      name: ''
-    },
+    selectedColorPalette: '',
     selectedShapefile: {},
     selectedBasemap: '',
     currentDisplayedDataset: {

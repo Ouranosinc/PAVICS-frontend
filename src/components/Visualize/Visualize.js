@@ -10,6 +10,7 @@ import TimeSeriesChart from './../../components/TimeSeriesChart';
 import MapControls from './../../components/MapControls';
 import * as constants from '../../constants';
 import { NotificationManager } from 'react-notifications';
+import BigColorPalette from '../BigColorPalette/BigColorPalette';
 
 class Visualize extends React.Component {
   static propTypes = {
@@ -45,11 +46,14 @@ class Visualize extends React.Component {
     setCurrentDateTime: React.PropTypes.func.isRequired,
     setSelectedDatasetCapabilities: React.PropTypes.func.isRequired,
     selectedRegions: React.PropTypes.array.isRequired,
-    selectedColorPalette: React.PropTypes.object.isRequired,
+    selectedColorPalette: React.PropTypes.string.isRequired,
     selectColorPalette: React.PropTypes.func.isRequired,
     selectRegion: React.PropTypes.func.isRequired,
     unselectRegion: React.PropTypes.func.isRequired,
-    resetSelectedRegions: React.PropTypes.func.isRequired
+    resetSelectedRegions: React.PropTypes.func.isRequired,
+    layer: React.PropTypes.any,
+    setVariablePreferenceBoundaries: React.PropTypes.func.isRequired,
+    variablePreferences: React.PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -309,19 +313,25 @@ class Visualize extends React.Component {
               setSelectedDatasetCapabilities={this.props.setSelectedDatasetCapabilities}
               ref={this.setOLComponentReference} />
           </div>
+          <BigColorPalette
+            setVariablePreferenceBoundaries={this.props.setVariablePreferenceBoundaries}
+            variablePreference={this.props.variablePreferences[this.props.currentDisplayedDataset.variable]}
+            selectedColorPalette={this.props.selectedColorPalette} />
           <PieMenu
             mapPanelStatus={this.state.mapPanelStatus}
             onToggleMapPanel={this._onToggleMapPanel} />
           <div className={classes.left}>
-            {(this.state.mapPanelStatus[constants.VISUALIZE_INFO_PANEL])
-              ?
-              <div className={classes.panel}>
-                <InformationPanel
-                  onToggleMapPanel={this._onToggleMapPanel}
-                  currentScalarValue={this.props.currentScalarValue} />
-              </div> : null
+            {
+              (this.state.mapPanelStatus[constants.VISUALIZE_INFO_PANEL])
+              ? <div className={classes.panel}>
+                  <InformationPanel
+                    onToggleMapPanel={this._onToggleMapPanel}
+                    currentScalarValue={this.props.currentScalarValue} />
+                </div>
+              : null
             }
-            {(this.state.mapPanelStatus[constants.VISUALIZE_CHART_PANEL])
+            {
+              (this.state.mapPanelStatus[constants.VISUALIZE_CHART_PANEL])
               ? <div className={classes.panel}>
                 <TimeSeriesChart
                   currentScalarValue={this.props.currentScalarValue}

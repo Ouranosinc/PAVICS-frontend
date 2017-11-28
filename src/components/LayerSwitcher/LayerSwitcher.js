@@ -15,17 +15,14 @@ import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
 import LayersIcon from 'material-ui/svg-icons/maps/layers';
 import MinimizeIcon from 'material-ui/svg-icons/content/remove';
+
+const AVAILABLE_COLOR_PALETTES = [
+  'seq-Blues',
+  'div-BuRd',
+  'default'
+];
+
 export default class LayerSwitcher extends React.Component {
-  availableColorPalettes = [
-    {
-      url: `${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=seq-Blues&COLORBARONLY=true&WIDTH=200&HEIGHT=20&VERTICAL=false`,
-      name: 'default-scalar/seq-Blues'
-    },
-    {
-      url: `${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=div-BuRd&COLORBARONLY=true&WIDTH=200&HEIGHT=20&VERTICAL=false`,
-      name: 'default-scalar/div-BuRd'
-    }
-  ];
   static propTypes = {
     onToggleMapPanel: React.PropTypes.func.isRequired,
     fetchShapefiles: React.PropTypes.func.isRequired,
@@ -34,7 +31,7 @@ export default class LayerSwitcher extends React.Component {
     selectShapefile: React.PropTypes.func.isRequired,
     selectBasemap: React.PropTypes.func.isRequired,
     currentVisualizedDatasets: React.PropTypes.array.isRequired,
-    selectedColorPalette: React.PropTypes.object.isRequired,
+    selectedColorPalette: React.PropTypes.string.isRequired,
     currentDisplayedDataset: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
     resetSelectedRegions: React.PropTypes.func.isRequired,
@@ -53,7 +50,7 @@ export default class LayerSwitcher extends React.Component {
     this.setSelectedColorPalette = this.setSelectedColorPalette.bind(this);
     this.resetDatasetLayer = this.resetDatasetLayer.bind(this);
     this.resetShapefile = this.resetShapefile.bind(this);
-    this.props.selectColorPalette(this.availableColorPalettes[0]);
+    this.props.selectColorPalette(AVAILABLE_COLOR_PALETTES[0]);
   }
 
   componentDidMount () {
@@ -104,7 +101,12 @@ export default class LayerSwitcher extends React.Component {
     this.props.selectCurrentDisplayedDataset({});
   }
 
+  /*
+  this routine should iterate through the different workspaces that are available to the user and show them separated by workspace name
+  presently, they're all grouped under "public", which would be replaced by the workspace name
+   */
   makeShapefileList () {
+    // lol 302 px. such precision. very design.
     return (
       <List
         style={{height: '302px', overflowY: 'auto'}}
@@ -114,7 +116,7 @@ export default class LayerSwitcher extends React.Component {
           primaryTogglesNestedList
           primaryText="Public"
           nestedItems={
-            this.props.publicShapeFiles.map((shapeFile, i) => {
+            this.props.publicShapeFiles.map( (shapeFile, i) => {
               return (
                 <ListItem
                   primaryText={shapeFile.title}
@@ -131,9 +133,6 @@ export default class LayerSwitcher extends React.Component {
               );
             })
           } />
-        <ListItem
-          primaryTogglesNestedList
-          primaryText="Private (TODO)" />
       </List>
     );
   }
@@ -182,12 +181,12 @@ export default class LayerSwitcher extends React.Component {
               let index = dataset.wms_url[0].lastIndexOf(SEARCH_VALUE);
               secondaryText = `${dataset.wms_url[0].substring(index + SEARCH_VALUE.length)}`;
             } else {
-              secondaryText =`${dataset.wms_url.length} aggregated file${(dataset.wms_url.length > 1)?'s':''}`;
+              secondaryText = `${dataset.wms_url.length} aggregated file${(dataset.wms_url.length > 1) ? 's' : ''}`;
             }
             return (
               <ListItem
                 key={i}
-                primaryText={dataset.aggregate_title}
+                primaryText={dataset['aggregate_title']}
                 secondaryText={<span>{secondaryText}</span>}
                 secondaryTextLines={1}
                 leftCheckbox={
@@ -195,7 +194,7 @@ export default class LayerSwitcher extends React.Component {
                     name="currentDisplayedDataset"
                     valueSelected={this.props.currentDisplayedDataset.uniqueLayerSwitcherId}
                     onChange={this.setCurrentDisplayedDataset}>
-                    <RadioButton value={dataset.uniqueLayerSwitcherId}/>
+                    <RadioButton value={dataset.uniqueLayerSwitcherId} />
                   </RadioButtonGroup>
                 } />
             );
@@ -232,14 +231,14 @@ export default class LayerSwitcher extends React.Component {
         floatingLabelText="Color Palette"
         value={this.props.selectedColorPalette}
         onChange={this.setSelectedColorPalette}>{
-        this.availableColorPalettes.map((palette, i) => {
+        AVAILABLE_COLOR_PALETTES.map((palette, i) => {
           return (
             <MenuItem
               key={i}
               value={palette}
               primaryText={
-                <div style={{background: `url(${palette.url}) center no-repeat`, padding: '0 0 0 10px'}}>
-                  {palette.name}
+                <div style={{background: `url(${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=${palette}&COLORBARONLY=true&WIDTH=200&HEIGHT=20&VERTICAL=false) center no-repeat`, padding: '0 0 0 10px'}}>
+                  {palette}
                 </div>
               } />
           );
@@ -255,8 +254,7 @@ export default class LayerSwitcher extends React.Component {
           <AppBar
             title="Layer Switcher"
             iconElementLeft={<IconButton><LayersIcon /></IconButton>}
-            iconElementRight={<IconButton><MinimizeIcon
-              onTouchTap={(event) => this._onHideLayerSwitcherPanel()} /></IconButton>} />
+            iconElementRight={<IconButton><MinimizeIcon onTouchTap={this._onHideLayerSwitcherPanel} /></IconButton>} />
           <Tabs>
             <Tab
               style={{height: '100%'}}
