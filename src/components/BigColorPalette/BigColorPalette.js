@@ -5,6 +5,8 @@ import * as classes from './BigColorPalette.scss';
 import * as constants from '../../constants';
 import {NotificationManager} from 'react-notifications';
 
+const ARBITRARY_MAX_DECIMAL_QUANTITY = 15;
+
 /*
 this component show the current preferences for the selected dataset's variable
 it should allow the user to update the preferences for the variable
@@ -68,7 +70,12 @@ export default class BigColorPalette extends React.Component {
 
   catchReturn (event) {
     if (event.key === constants.KEY_ENTER) {
-      if (this.state.localMin < this.state.localMax) {
+      // javascript does not handle very small numbers well which is problematic for comparison
+      // we'd expect parseFloat(1e-7) to return 0.0000001 but we get 1e-7 back
+      // whereas parseFloat(1e-6) returns the expected 0.000001
+      let min = (this.state.localMin.indexOf('e') !== -1) ? parseFloat(this.state.localMin).toFixed(ARBITRARY_MAX_DECIMAL_QUANTITY) : this.state.localMin;
+      let max = (this.state.localMax.indexOf('e') !== -1) ? parseFloat(this.state.localMax).toFixed(ARBITRARY_MAX_DECIMAL_QUANTITY) : this.state.localMax;
+      if (min < max) {
         this.props.setVariablePreferenceBoundaries(this.state.localMin, this.state.localMax);
       } else {
         NotificationManager.error('Please input valid min max values (min should be smaller than max).');
