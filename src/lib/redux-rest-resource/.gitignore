@@ -5,5 +5,4 @@ _book/
 coverage/
 .nyc_output/
 .tmp/
-lib/
 yarn.lock
