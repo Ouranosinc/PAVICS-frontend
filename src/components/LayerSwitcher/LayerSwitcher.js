@@ -17,14 +17,8 @@ import LayersIcon from 'material-ui/svg-icons/maps/layers';
 import MinimizeIcon from 'material-ui/svg-icons/content/remove';
 
 const AVAILABLE_COLOR_PALETTES = [
-  {
-    url: `${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=seq-Blues&COLORBARONLY=true&WIDTH=200&HEIGHT=20&VERTICAL=false`,
-    name: 'seq-Blues'
-  },
-  {
-    url: `${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=div-BuRd&COLORBARONLY=true&WIDTH=200&HEIGHT=20&VERTICAL=false`,
-    name: 'div-BuRd'
-  }
+  'seq-Blues',
+  'div-BuRd'
 ];
 
 export default class LayerSwitcher extends React.Component {
@@ -242,8 +236,8 @@ export default class LayerSwitcher extends React.Component {
               key={i}
               value={palette}
               primaryText={
-                <div style={{background: `url(${palette.url}) center no-repeat`, padding: '0 0 0 10px'}}>
-                  {palette.name}
+                <div style={{background: `url(${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=${palette}&COLORBARONLY=true&WIDTH=200&HEIGHT=20&VERTICAL=false) center no-repeat`, padding: '0 0 0 10px'}}>
+                  {palette}
                 </div>
               } />
           );

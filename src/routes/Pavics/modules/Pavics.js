@@ -358,7 +358,7 @@ export function selectCurrentDisplayedDataset (layer) {
     dispatch(setCurrentDisplayedDataset(layer));
   };
 }
-function setSelectedColorPalette(palette) {
+function setSelectedColorPalette (palette) {
   return {
     type: SET_SELECTED_COLOR_PALETTE,
     palette: palette
@@ -527,7 +527,7 @@ const VISUALIZE_HANDLERS = {
           ...state.variablePreferences,
           [state.currentDisplayedDataset.variable]: {
             ...state.variablePreferences[state.currentDisplayedDataset.variable],
-            colorPalette: action.palette.name
+            colorPalette: action.palette
           }
         }
       };

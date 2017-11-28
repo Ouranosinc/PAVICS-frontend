@@ -451,9 +451,9 @@ class OLComponent extends React.Component {
     // TODO there is something that feels somewhat wrong about having the datasetLayer in a prop
     // it might be totally ok, but be bit careful ot
     if (this.layers[LAYER_DATASET]) {
-      console.log('changing color palette:', this.props.selectedColorPalette.name);
+      console.log('changing color palette:', this.props.selectedColorPalette);
       this.datasetSource.updateParams({
-        'STYLES': `default-scalar/${this.props.selectedColorPalette.name}`
+        'STYLES': `default-scalar/${this.props.selectedColorPalette}`
       });
     } else {
       console.log('select a dataset first');

@@ -27,7 +27,6 @@ on external changes
 export default class BigColorPalette extends React.Component {
   static propTypes = {
     variablePreference: React.PropTypes.object,
-    selectedColorPalette: React.PropTypes.object.isRequired,
     setVariablePreferenceBoundaries: React.PropTypes.func.isRequired
   };
   constructor (props) {
