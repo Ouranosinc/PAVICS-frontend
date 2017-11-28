@@ -36,6 +36,7 @@ export default class BigColorPalette extends React.Component {
     this.changeMin = this.changeMin.bind(this);
     this.changeMax = this.changeMax.bind(this);
     this.catchReturn = this.catchReturn.bind(this);
+    this.persistBoundaries = this.persistBoundaries.bind(this);
     this.state = {
       localMin: '',
       localMax: ''
@@ -68,18 +69,22 @@ export default class BigColorPalette extends React.Component {
     });
   }
 
+  persistBoundaries () {
+    // javascript does not handle very small numbers well which is problematic for comparison
+    // we'd expect parseFloat(1e-7) to return 0.0000001 but we get 1e-7 back
+    // whereas parseFloat(1e-6) returns the expected 0.000001
+    let min = (this.state.localMin.indexOf('e') !== -1) ? parseFloat(this.state.localMin).toFixed(ARBITRARY_MAX_DECIMAL_QUANTITY) : this.state.localMin;
+    let max = (this.state.localMax.indexOf('e') !== -1) ? parseFloat(this.state.localMax).toFixed(ARBITRARY_MAX_DECIMAL_QUANTITY) : this.state.localMax;
+    if (min < max) {
+      this.props.setVariablePreferenceBoundaries(this.state.localMin, this.state.localMax);
+    } else {
+      NotificationManager.error('Please input valid min max values (min should be smaller than max).');
+    }
+  }
+
   catchReturn (event) {
     if (event.key === constants.KEY_ENTER) {
-      // javascript does not handle very small numbers well which is problematic for comparison
-      // we'd expect parseFloat(1e-7) to return 0.0000001 but we get 1e-7 back
-      // whereas parseFloat(1e-6) returns the expected 0.000001
-      let min = (this.state.localMin.indexOf('e') !== -1) ? parseFloat(this.state.localMin).toFixed(ARBITRARY_MAX_DECIMAL_QUANTITY) : this.state.localMin;
-      let max = (this.state.localMax.indexOf('e') !== -1) ? parseFloat(this.state.localMax).toFixed(ARBITRARY_MAX_DECIMAL_QUANTITY) : this.state.localMax;
-      if (min < max) {
-        this.props.setVariablePreferenceBoundaries(this.state.localMin, this.state.localMax);
-      } else {
-        NotificationManager.error('Please input valid min max values (min should be smaller than max).');
-      }
+      this.persistBoundaries();
     }
   }
 
@@ -94,6 +99,7 @@ export default class BigColorPalette extends React.Component {
                   fullWidth
                   id="variable-min"
                   onKeyPress={this.catchReturn}
+                  onBlur={this.persistBoundaries}
                   onChange={this.changeMin}
                   value={this.state.localMin} />
               </div>
@@ -111,6 +117,7 @@ export default class BigColorPalette extends React.Component {
                   fullWidth
                   id="variable-max"
                   onKeyPress={this.catchReturn}
+                  onBlur={this.persistBoundaries}
                   onChange={this.changeMax}
                   value={this.state.localMax} />
               </div>
