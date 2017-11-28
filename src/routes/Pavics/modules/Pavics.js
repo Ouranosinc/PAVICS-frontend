@@ -593,7 +593,8 @@ const VISUALIZE_HANDLERS = {
     return {
       ...state,
       currentDisplayedDataset: action.layer,
-      variablePreferences: {...state.variablePreferences, [action.layer.variable]: variablePreference}
+      variablePreferences: {...state.variablePreferences, [action.layer.variable]: variablePreference},
+      selectedColorPalette: variablePreference.colorPalette
     };
   },
   [SET_SELECTED_DATASET_CAPABILITIES]: (state, action) => {

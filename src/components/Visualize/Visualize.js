@@ -42,7 +42,7 @@ class Visualize extends React.Component {
     setCurrentDateTime: React.PropTypes.func.isRequired,
     setSelectedDatasetCapabilities: React.PropTypes.func.isRequired,
     selectedRegions: React.PropTypes.array.isRequired,
-    selectedColorPalette: React.PropTypes.object.isRequired,
+    selectedColorPalette: React.PropTypes.string.isRequired,
     selectColorPalette: React.PropTypes.func.isRequired,
     selectRegion: React.PropTypes.func.isRequired,
     unselectRegion: React.PropTypes.func.isRequired,

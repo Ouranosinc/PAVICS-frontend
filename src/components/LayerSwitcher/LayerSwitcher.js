@@ -18,7 +18,8 @@ import MinimizeIcon from 'material-ui/svg-icons/content/remove';
 
 const AVAILABLE_COLOR_PALETTES = [
   'seq-Blues',
-  'div-BuRd'
+  'div-BuRd',
+  'default'
 ];
 
 export default class LayerSwitcher extends React.Component {
@@ -30,7 +31,7 @@ export default class LayerSwitcher extends React.Component {
     selectShapefile: React.PropTypes.func.isRequired,
     selectBasemap: React.PropTypes.func.isRequired,
     currentVisualizedDatasets: React.PropTypes.array.isRequired,
-    selectedColorPalette: React.PropTypes.object.isRequired,
+    selectedColorPalette: React.PropTypes.string.isRequired,
     currentDisplayedDataset: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
     resetSelectedRegions: React.PropTypes.func.isRequired,

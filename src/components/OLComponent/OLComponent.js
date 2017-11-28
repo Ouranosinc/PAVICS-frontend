@@ -25,7 +25,7 @@ class OLComponent extends React.Component {
     mapManipulationMode: React.PropTypes.string.isRequired,
     setCurrentDateTime: React.PropTypes.func.isRequired,
     selectedRegions: React.PropTypes.array.isRequired,
-    selectedColorPalette: React.PropTypes.object.isRequired,
+    selectedColorPalette: React.PropTypes.string.isRequired,
     currentDisplayedDataset: React.PropTypes.object.isRequired,
     selectedShapefile: React.PropTypes.object.isRequired,
     selectedBasemap: React.PropTypes.string.isRequired,
