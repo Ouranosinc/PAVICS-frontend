@@ -24,7 +24,6 @@ const mapStateToProps = (state) => {
     projectAPI: state.projectAPI,
     visualize: state.visualize
   };
->>>>>>> master
 };
 const mapDispatchToProps = (dispatch) => {
   return {
