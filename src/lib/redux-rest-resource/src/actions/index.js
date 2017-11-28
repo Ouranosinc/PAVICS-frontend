@@ -54,26 +54,52 @@ const createAction = (actionId, {resourceName, resourcePluralName = getPluralNam
 
     // PAV-451, figured out what verb to be used and if we gotta show something
     let successShowSomething = false;
-    let verb = '';
+    let translatedVerb = '';
+    let translatedResourceName = resourceName;
     switch (getActionType(actionId)){
       case 'CREATE':
         successShowSomething = true;
-        verb = 'created';
+        translatedVerb = 'created';
         break;
       case 'UPDATE':
         successShowSomething = true;
-        verb = 'updated';
+        translatedVerb = 'updated';
         break;
       case 'DELETE':
         successShowSomething = true;
-        verb = 'deleted';
+        translatedVerb = 'deleted';
         break;
       case 'FETCH':
       case 'GET':
-        verb = '';
+        translatedVerb = '';
         successShowSomething = false;
         break;
       default:
+        break;
+    }
+
+    switch(resourceName){
+      case 'projectResearchs':
+        if(getActionType(actionId) === 'CREATE') translatedVerb = 'linked to project';
+      case 'research':
+        translatedResourceName = "Search criteria(s)";
+        break;
+      case 'projectDatasets':
+        if(getActionType(actionId) === 'CREATE') translatedVerb = 'linked to project';
+      case 'dataset':
+        translatedResourceName = "Dataset";
+        break;
+      case 'project':
+        translatedResourceName = "Project";
+        break;
+      case 'workflow':
+        translatedResourceName = "Workflow";
+        break;
+      case 'researcher':
+        translatedResourceName = "User";
+        break;
+      case 'job':
+        translatedResourceName = "Job";
         break;
     }
 
@@ -81,13 +107,13 @@ const createAction = (actionId, {resourceName, resourcePluralName = getPluralNam
       .then(applyTransformPipeline(buildTransformPipeline(defaultTransformResponsePipeline, actionOpts.transformResponse)))
       .then(payload => {
         if(successShowSomething) {
-          NotificationManager.success(`${resourceName[0].toUpperCase() + resourceName.slice(1)} was ${verb} with success`);
+          NotificationManager.success(`${translatedResourceName} was ${translatedVerb} with success`);
         }
         dispatch({type, status: 'resolved', context, options: reduceOpts, receivedAt: Date.now(), ...payload});
       })
       .catch((err) => {
         // Catch HttpErrors
-        NotificationManager.error(`${resourceName[0].toUpperCase() + resourceName.slice(1)} failed at being ${verb}: Error ${err.statusCode} ${err.body.error.message}`);
+        NotificationManager.error(`${translatedResourceName} failed at being ${translatedVerb}: Error ${err.statusCode} ${err.body.error.message}`);
         if (err.statusCode) {
           dispatch({
             type,
