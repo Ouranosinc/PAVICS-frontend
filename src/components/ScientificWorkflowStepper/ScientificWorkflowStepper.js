@@ -232,10 +232,18 @@ export default class ScientificWorkflowStepper extends Component {
     const styleStepLabel = {
       color: 'white'
     };
+    const innerStyleStepLabel = {
+      fontWeight: 'bold',
+      marginTop: '60px',
+      marginLeft: '-340px'
+    };
     return (
       <Stepper activeStep={this.state.activeStep} orientation="vertical">
         <Step>
-          <StepLabel style={styleStepLabel}>Choose the 'Configure & Run' action of the desired workflow</StepLabel>
+          <StepLabel style={styleStepLabel}>
+            Choose the 'Configure & Run' action of the desired workflow
+            <span style={innerStyleStepLabel}>{(this.state.workflow)? this.state.workflow.name: ''}</span>
+          </StepLabel>
           <StepContent>
             <ScientificWorkflowList
               goToConfigureAndRunStep={this.goToConfigureAndRunStep}

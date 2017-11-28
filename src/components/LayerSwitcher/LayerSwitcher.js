@@ -278,7 +278,7 @@ export default class LayerSwitcher extends React.Component {
             </Tab>
             <Tab
               icon={<FontIcon className="material-icons">local_library</FontIcon>}
-              label="Shape Files">
+              label="Regions">
               <Paper zDepth={2}>
                 <Subheader>
                   <RaisedButton

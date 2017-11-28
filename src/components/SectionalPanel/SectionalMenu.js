@@ -71,8 +71,8 @@ class SectionalMenu extends React.Component {
               <AssignmentIcon color={white} />
             </a>
           </OverlayTrigger>
-          <OverlayTrigger placement="left" overlay={this.tooltip('Workflow Wizard')} delay={10}>
-            <a onClick={this.workflows} title="Workflow Wizard"
+          <OverlayTrigger placement="left" overlay={this.tooltip('Data Processing')} delay={10}>
+            <a onClick={this.workflows} title="Data Processing"
               className={(this.props.section === constants.PLATFORM_SECTION_WORKFLOWS) ? classes['active'] : ''}>
               <InputIcon color={white} />
             </a>
