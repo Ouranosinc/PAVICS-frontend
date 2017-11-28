@@ -31,16 +31,18 @@ export default class MapControls extends React.Component {
           title="Map Controls"
           iconElementLeft={<IconButton><MapControlsIcon /></IconButton>}
           iconElementRight={<IconButton><MinimizeIcon onTouchTap={(event) => this._onHideMapControlsPanel()} /></IconButton>} />
-        <h4>Mouse Click Mode</h4>
-        <Divider />
-        <RadioButtonGroup
-          style={{marginTop: '10px'}}
-          onChange={this.props.selectMapManipulationMode}
-          name="map-manipulation-mode"
-          defaultSelected={constants.VISUALIZE_MODE_VISUALIZE}>
-          <RadioButton value={constants.VISUALIZE_MODE_VISUALIZE} label="Point scalar values" />
-          <RadioButton value={constants.VISUALIZE_MODE_JOB_MANAGEMENT} label="Region Selection" />
-        </RadioButtonGroup>
+        <div className="container">
+          <h4>Mouse Click Mode</h4>
+          <Divider />
+          <RadioButtonGroup
+            style={{marginTop: '10px'}}
+            onChange={this.props.selectMapManipulationMode}
+            name="map-manipulation-mode"
+            defaultSelected={constants.VISUALIZE_MODE_VISUALIZE}>
+            <RadioButton value={constants.VISUALIZE_MODE_VISUALIZE} label="Grid Point Values" />
+            <RadioButton value={constants.VISUALIZE_MODE_JOB_MANAGEMENT} label="Region Selection" />
+          </RadioButtonGroup>
+        </div>
       </Paper>
     );
   }

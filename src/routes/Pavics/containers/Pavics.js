@@ -113,7 +113,7 @@ class Pavics extends React.Component {
       case constants.PLATFORM_SECTION_PROJECT_MANAGEMENT:
         return "Project Management";
       case constants.PLATFORM_SECTION_WORKFLOWS:
-        return "Workflow Wizard";
+        return "Data Processing";
       case constants.PLATFORM_SECTION_MONITOR:
         return "Processes Monitoring";
       case constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT:
