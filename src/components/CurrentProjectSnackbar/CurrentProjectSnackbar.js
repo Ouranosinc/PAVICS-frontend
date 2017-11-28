@@ -12,8 +12,17 @@ export class CurrentProjectSnackbar extends React.Component {
   constructor(props) {
     super(props);
     this._handleGoToExperimentManagement = this._handleGoToExperimentManagement.bind(this);
+    this._handleRequestClose = this._handleRequestClose.bind(this);
     this.state = {
       isSnackbarOpen: true
+    }
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.project && nextProps.project.currentProject.id !== this.props.project.currentProject.id) {
+      this.setState({
+        isSnackbarOpen: true
+      });
     }
   }
 
@@ -21,17 +30,25 @@ export class CurrentProjectSnackbar extends React.Component {
     this.props.goToSection(constants.PLATFORM_SECTION_PROJECT_MANAGEMENT);
   }
 
+  _handleRequestClose = () => {
+    this.setState({
+      isSnackbarOpen: false
+    });
+  };
+
   render () {
     return (
-      <Snackbar className={classes['CurrentProjectSnackbar']}
-          contentStyle={{fontWeight: 'bold'}}
-          open={this.state.isSnackbarOpen}
-          message={`Current Project: ${this.props.project.currentProject.name}`}
-          action="change"
-          autoHideDuration={99999999}
-          onRequestClose={(reason) => {/* DO NOT AUTO-CLOSE */}}
-          onActionTouchTap={(event) => this._handleGoToExperimentManagement()}>
-      </Snackbar>
+      <div>
+        {/*<Snackbar className={classes['CurrentProjectSnackbar']}
+         contentStyle={{fontWeight: 'bold'}}
+         open={this.state.isSnackbarOpen}
+         message={ `Current Project: ${this.props.project.currentProject.name}`}
+         action="change"
+         autoHideDuration={5000}
+         onRequestClose={(reason) => this._handleRequestClose()}
+         onActionTouchTap={(event) => this._handleGoToExperimentManagement()}>
+         </Snackbar>*/}
+      </div>
     )
   }
 }

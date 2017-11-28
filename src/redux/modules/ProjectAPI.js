@@ -1,19 +1,19 @@
-import {createResource, mergeReducers} from 'redux-rest-resource';
-// ERROR Loader import {createResource} from './../../lib/redux-rest-resource/custom-create-resource';
+// import {createResource, mergeReducers} from 'redux-rest-resource';
+import {createResource, mergeReducers} from './../../lib/redux-rest-resource';
 
 const research = createResource({
   name: 'project',
-  url: `${__LOOPBACK_API_PATH__}/Projects/:id?filter=:filter`
+  url: `${__PAVICS_PROJECT_API_PATH__}/Projects/:id?filter=:filter`
 });
 const projectDatasets = createResource({
   name: 'projectDatasets',
   pluralName: 'projectDatasets',
-  url: `${__LOOPBACK_API_PATH__}/Projects/:projectId/datasets`
+  url: `${__PAVICS_PROJECT_API_PATH__}/Projects/:projectId/datasets`
 });
 const projectResearchs = createResource({
   name: 'projectResearchs',
   pluralName: 'projectResearchs',
-  url: `${__LOOPBACK_API_PATH__}/Projects/:projectId/researchs`
+  url: `${__PAVICS_PROJECT_API_PATH__}/Projects/:projectId/researchs`
 });
 
 const types = {

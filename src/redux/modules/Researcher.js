@@ -43,7 +43,7 @@ function loginResearcherFailure (error) {
 export function login (credentials) {
   return dispatch => {
     dispatch(loginResearcherRequest());
-    myHttp.postJson(__LOOPBACK_API_PATH__ + '/Researcher/login', credentials)
+    myHttp.postJson(__PAVICS_PROJECT_API_PATH__ + '/Researcher/login', credentials)
       .then(res => res.json())
       .then(json => dispatch(loginResearcherSuccess(json)))
       .catch(err => dispatch(loginResearcherFailure(err)));

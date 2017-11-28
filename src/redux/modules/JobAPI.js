@@ -1,8 +1,8 @@
-import {createResource, mergeReducers} from 'redux-rest-resource';
+import {createResource, mergeReducers} from './../../lib/redux-rest-resource';
 
 const job = createResource({
   name: 'job',
-  url: `${__LOOPBACK_API_PATH__}/Jobs/:id?filter=:filter`
+  url: `${__PAVICS_PROJECT_API_PATH__}/Jobs/:id?filter=:filter`
 });
 
 const types = {

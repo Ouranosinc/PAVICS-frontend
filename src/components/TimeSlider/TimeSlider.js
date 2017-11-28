@@ -424,7 +424,7 @@ export class TimeSlider extends React.Component {
     return (
       <Paper className={classes['TimeSlider']}>
         <AppBar
-          title="Temporal Slider"
+          title="Temporal Slider A"
           iconElementLeft={<IconButton><AccessTimeIcon /></IconButton>}
           iconElementRight={<IconButton><MinimizeIcon onTouchTap={(event) => this._onHideTimeSliderPanel()} /></IconButton>} />
         <div className="container">
