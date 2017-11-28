@@ -21,6 +21,9 @@
   },
   "rules": {
     "semi" : [2, "always"],
-    "max-len": [2, 180, 2]
+    "max-len": [2, 180, 2],
+    "space-in-parens": "off",
+    "react/jsx-curly-spacing": "off",
+    "react/jsx-indent": "off"
   }
 }

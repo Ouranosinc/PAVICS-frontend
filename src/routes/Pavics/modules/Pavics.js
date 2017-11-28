@@ -20,6 +20,7 @@ const REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS = 'Visualize.REMOVE_SEARCH_CRITERIAS
 const ADD_DATASETS_TO_PROJECTS = 'Visualize.ADD_DATASETS_TO_PROJECTS';
 const CLICK_TOGGLE_PANEL = 'Visualize.CLICK_TOGGLE_PANEL';
 const SET_CURRENT_TIME_ISO = 'Visualize.SET_CURRENT_TIME_ISO';
+const VISUALIZE_SET_VARIABLE_BOUNDARY_VALUES = 'Visualize.VISUALIZE_SET_VARIABLE_BOUNDARY_VALUE';
 // ASYNC
 const FETCH_PLOTLY_DATA_REQUEST = 'Visualize.FETCH_PLOTLY_DATA_REQUEST';
 const FETCH_PLOTLY_DATA_FAILURE = 'Visualize.FETCH_PLOTLY_DATA_FAILURE';
@@ -357,7 +358,7 @@ export function selectCurrentDisplayedDataset (layer) {
     dispatch(setCurrentDisplayedDataset(layer));
   };
 }
-function setSelectedColorPalette(palette) {
+function setSelectedColorPalette (palette) {
   return {
     type: SET_SELECTED_COLOR_PALETTE,
     palette: palette
@@ -482,6 +483,18 @@ export function goToSection (section) {
   return dispatch => dispatch(setSection(section));
 }
 
+function updateVariablePreferenceBoundaries (min, max) {
+  return {
+    type: VISUALIZE_SET_VARIABLE_BOUNDARY_VALUES,
+    min: min,
+    max: max
+  };
+}
+
+export function setVariablePreferenceBoundaries (min, max) {
+  return dispatch => dispatch(updateVariablePreferenceBoundaries(min, max));
+}
+
 const VISUALIZE_HANDLERS = {
   [constants.VISUALIZE_SET_MAP_MANIPULATION_MODE]: (state, action) => {
     return {...state, mapManipulationMode: action.mode};
@@ -506,10 +519,41 @@ const VISUALIZE_HANDLERS = {
     return {...state, publicShapeFiles: action.publicShapeFiles};
   },
   [SET_SELECTED_COLOR_PALETTE]: (state, action) => {
+    if (state.currentDisplayedDataset.variable && state.variablePreferences[state.currentDisplayedDataset.variable]) {
+      return {
+        ...state,
+        selectedColorPalette: action.palette,
+        variablePreferences: {
+          ...state.variablePreferences,
+          [state.currentDisplayedDataset.variable]: {
+            ...state.variablePreferences[state.currentDisplayedDataset.variable],
+            colorPalette: action.palette
+          }
+        }
+      };
+    }
     return {...state, selectedColorPalette: action.palette};
   },
   [SET_SELECTED_SHAPEFILE]: (state, action) => {
     return {...state, selectedShapefile: action.shapefile};
+  },
+  [VISUALIZE_SET_VARIABLE_BOUNDARY_VALUES]: (state, action) => {
+    return {
+      ...state,
+      variablePreferences: {
+        ...state.variablePreferences,
+        [state.currentDisplayedDataset.variable]: {
+          ...state.variablePreferences[state.currentDisplayedDataset.variable],
+          min: action.min,
+          max: action.max
+        }
+      },
+      currentDisplayedDataset: {
+        ...state.currentDisplayedDataset,
+        variable_min: action.min,
+        variable_max: action.max
+      }
+    };
   },
   [SET_SELECTED_BASEMAP]: (state, action) => {
     return {...state, selectedBasemap: action.basemap};
@@ -524,8 +568,34 @@ const VISUALIZE_HANDLERS = {
     newSearchCriterias.splice(index, 1);
     return ({...state, currentProjectSearchCriterias: newSearchCriterias});
   },
+  /*
+  this handler must receive a dataset
+  verify if preferences has been set for the selected variable
+  if variable is set
+    update dataset informations with it
+  else
+    initialize preferences for the variable
+   */
   [SET_SELECTED_DATASET_LAYER]: (state, action) => {
-    return {...state, currentDisplayedDataset: action.layer};
+    let variablePreference;
+    if (state.variablePreferences[action.layer.variable]) {
+      variablePreference = state.variablePreferences[action.layer.variable];
+      action.layer.variable_min = variablePreference.min;
+      action.layer.variable_max = variablePreference.max;
+      action.layer.variable_palette = variablePreference.colorPalette;
+    } else {
+      variablePreference = {
+        min: action.layer.variable_min,
+        max: action.layer.variable_max,
+        colorPalette: action.layer.variable_palette
+      };
+    }
+    return {
+      ...state,
+      currentDisplayedDataset: action.layer,
+      variablePreferences: {...state.variablePreferences, [action.layer.variable]: variablePreference},
+      selectedColorPalette: variablePreference.colorPalette
+    };
   },
   [SET_SELECTED_DATASET_CAPABILITIES]: (state, action) => {
     return {...state, selectedDatasetCapabilities: action.capabilities};
