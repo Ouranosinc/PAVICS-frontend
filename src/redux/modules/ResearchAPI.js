@@ -2,17 +2,17 @@ import {createResource, mergeReducers} from './../../lib/redux-rest-resource';
 
 const research = createResource({
   name: 'research',
-  url: `${__LOOPBACK_API_PATH__}/Researchs/:id?filter=:filter`
+  url: `${__PAVICS_PROJECT_API_PATH__}/Researchs/:id?filter=:filter`
 });
 const researchDataset = createResource({
   name: 'researchDatasets',
   pluralName: 'researchDatasets',
-  url: `${__LOOPBACK_API_PATH__}/Researchs/:researchId/datasets`
+  url: `${__PAVICS_PROJECT_API_PATH__}/Researchs/:researchId/datasets`
 });
 const researchFacet = createResource({
   name: 'researchFacets',
   pluralName: 'researchFacets',
-  url: `${__LOOPBACK_API_PATH__}/Researchs/:researchId/facets`
+  url: `${__PAVICS_PROJECT_API_PATH__}/Researchs/:researchId/facets`
 });
 
 const types = {

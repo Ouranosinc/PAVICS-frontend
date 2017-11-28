@@ -200,13 +200,13 @@ The platform is coupled to a few services from Birdhouse. As of 2017-04-13, the 
 
 ```js
   let birdhouseHost = process.env.BIRDHOUSE_HOST || 'outarde.crim.ca';
-  let loopbackHost = process.env.LOOPBACK_HOST || 'outarde.crim.ca:3005';
   pavics_malleefowl_path: `http://${birdhouseHost}:8091/wps`,
   pavics_phoenix_path: `https://${birdhouseHost}:8443`,
-  pavics_geoserver_path: `http://${birdhouseHost}:8087/geoserver`,
-  pavics_ncwms_path: `http://${birdhouseHost}:8080/ncWMS2/wms`,
+  pavics_geoserver_path: `https://${birdhouseHost}/geoserver`,
+  pavics_ncwms_path: `https://${birdhouseHost}/ncWMS2/wms`,
   pavics_pywps_path: `http://${birdhouseHost}:8086/pywps`,
-  loopback_api_path: `http://${loopbackHost}/api`,
+  pavics_project_api_path: `https://${birdhouseHost}/project-api/api`,
+  pavics_magpie_host: `https://${birdhouseHost}/magpie`,
 ```
 
 For now, if one wants to use a custom deployement of either of these services, they must deploy exactly all the others as well, at the ports and paths defined here. These are normally visible on CRIM's github profile.

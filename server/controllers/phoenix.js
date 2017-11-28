@@ -42,7 +42,7 @@ let phoenix = (() => {
 
           // Fetch loopback jobs for this project
           let filter = JSON.stringify({where: {projectId: projectId}});
-          let loopbackResponse = yield request(`${config.loopback_api_path}/Jobs?filter=${filter}`);
+          let loopbackResponse = yield request(`${config.pavics_project_api_path}/Jobs?filter=${filter}`);
           let lbProjectJobs = JSON.parse(loopbackResponse.body);
           // console.log(JSON.parse(loopbackResponse.body));
 
