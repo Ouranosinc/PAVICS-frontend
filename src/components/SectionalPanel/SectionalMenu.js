@@ -59,36 +59,28 @@ class SectionalMenu extends React.Component {
     return (
       <div className={classes['SectionalMenu']}>
         <nav>
-          <OverlayTrigger placement="left" overlay={this.tooltip('Search Datasets')} delay={10}>
-            <a onClick={this.search} title="Search Datasets"
-              className={(this.props.section === constants.PLATFORM_SECTION_SEARCH_DATASETS) ? classes['active'] : ''}>
-              <SearchIcon color={white} />
-            </a>
-          </OverlayTrigger>
-          <OverlayTrigger placement="left" overlay={this.tooltip('Project Management')} delay={10}>
-            <a onClick={this.experience} title="Project Management"
-              className={(this.props.section === constants.PLATFORM_SECTION_PROJECT_MANAGEMENT) ? classes['active'] : ''}>
-              <AssignmentIcon color={white} />
-            </a>
-          </OverlayTrigger>
-          <OverlayTrigger placement="left" overlay={this.tooltip('Data Processing')} delay={10}>
-            <a onClick={this.workflows} title="Data Processing"
-              className={(this.props.section === constants.PLATFORM_SECTION_WORKFLOWS) ? classes['active'] : ''}>
-              <InputIcon color={white} />
-            </a>
-          </OverlayTrigger>
-          <OverlayTrigger placement="left" overlay={this.tooltip('Processes Monitoring')} delay={10}>
-            <a onClick={this.monitor} title="Processes Monitoring"
-              className={(this.props.section === constants.PLATFORM_SECTION_MONITOR) ? classes['active'] : ''}>
-              <Glyphicon glyph="tasks" />
-            </a>
-          </OverlayTrigger>
-          <OverlayTrigger placement="left" overlay={this.tooltip('Account Management')} delay={10}>
-            <a onClick={this.account} title="Account Management"
-              className={(this.props.section === constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT) ? classes['active'] : ''}>
-              <AccountCircleIcon color={white} />
-            </a>
-          </OverlayTrigger>
+          {/*<OverlayTrigger placement="left" overlay={this.tooltip('Search Datasets')} delay={3}>*/}
+          <a onClick={this.search} title="Search Datasets"
+            className={(this.props.section === constants.PLATFORM_SECTION_SEARCH_DATASETS) ? classes['active'] : ''}>
+            <SearchIcon color={white} />
+          </a>
+          {/*</OverlayTrigger>*/}
+          <a onClick={this.experience} title="Project Management"
+            className={(this.props.section === constants.PLATFORM_SECTION_PROJECT_MANAGEMENT) ? classes['active'] : ''}>
+            <AssignmentIcon color={white} />
+          </a>
+          <a onClick={this.workflows} title="Data Processing"
+            className={(this.props.section === constants.PLATFORM_SECTION_WORKFLOWS) ? classes['active'] : ''}>
+            <InputIcon color={white} />
+          </a>
+          <a onClick={this.monitor} title="Processes Monitoring"
+            className={(this.props.section === constants.PLATFORM_SECTION_MONITOR) ? classes['active'] : ''}>
+            <Glyphicon glyph="tasks" />
+          </a>
+          <a onClick={this.account} title="Account Management"
+            className={(this.props.section === constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT) ? classes['active'] : ''}>
+            <AccountCircleIcon color={white} />
+          </a>
         </nav>
       </div>
     );
