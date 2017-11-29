@@ -105,10 +105,12 @@ class ProcessMonitoring extends React.Component {
   }
 
   _onVisualiseDatasets (httpURLArray, aggregate = false) {
-    this.props.monitorActions.visualizeTemporaryResult(httpURLArray, aggregate);
-    this.setState({
-      loadingScreen: <LoadingScreen />
-    });
+    if(httpURLArray.length){
+      this.props.monitorActions.visualizeTemporaryResult(httpURLArray, aggregate);
+      this.setState({
+        loadingScreen: <LoadingScreen />
+      });
+    }
   }
 
   _onShowLogDialog (log) {

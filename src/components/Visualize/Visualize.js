@@ -88,6 +88,7 @@ class Visualize extends React.Component {
   componentDidMount() {
     let filter = JSON.stringify({"where": { "researcherId": 1},"order": "name ASC"});
     this.props.projectAPIActions.fetchProjects({filter: filter });
+    this.props.selectBasemap('Aerial');
 
     // TEST PURPOSE (TimeSlider): Load this dataset when opening the platform
     // let dataset = {

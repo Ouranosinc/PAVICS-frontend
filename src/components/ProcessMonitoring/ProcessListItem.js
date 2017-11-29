@@ -109,22 +109,22 @@ export class ProcessListItem extends React.Component {
       <MenuItem
         primaryText="Download"
         disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS}
-        onTouchTap={(event) => window.open(output.reference, '_blank')}
+        onTouchTap={(event) => { if (this.props.job.status === constants.JOB_SUCCESS_STATUS) window.open(output.reference, '_blank'); }}
         leftIcon={<DownloadIcon />}/>
       <MenuItem
         primaryText="Publish (TODO)"
         disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS}
-        onTouchTap={(event) => alert('TODO: Call Publish WPS')}
+        onTouchTap={(event) => { if (this.props.job.status === constants.JOB_SUCCESS_STATUS) alert('TODO: Call Publish WPS'); }}
         leftIcon={<PublishIcon />}/>
       <MenuItem
         primaryText="Persist"
         disabled={!this._isPersistAvailable(output)}
-        onTouchTap={(event) => this.props.onShowPersistDialog(output)}
+        onTouchTap={(event) => { if(this._isPersistAvailable(output)) this.props.onShowPersistDialog(output); }}
         leftIcon={<PersistIcon  />}/>
       <MenuItem
         primaryText="Visualize"
         disabled={!this._isVisualizeAvailable(output)}
-        onTouchTap={(event) => this.props.onVisualiseDatasets([output.reference])}
+        onTouchTap={(event) => {if(this._isVisualizeAvailable(output)) this.props.onVisualiseDatasets([output.reference]); }}
         leftIcon={<VisualizeIcon />}/>
     </IconMenu>
   }

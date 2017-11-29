@@ -55,7 +55,6 @@ export default class LayerSwitcher extends React.Component {
 
   componentDidMount () {
     this.props.fetchShapefiles();
-    this.setSelectedBaseMap(null, 'Aerial');
   }
 
   _onHideLayerSwitcherPanel () {
