@@ -43,13 +43,18 @@ export default class BigColorPalette extends React.Component {
     };
   }
 
+  /*
+  the local min and max values are used for filling the text fields
+  as such, they always will be strings, however they can arrive as integers from the backends
+  here, we will cast them to strings so that the validations do not fail horribly later on
+   */
   componentWillReceiveProps (nextProps) {
     if (nextProps.variablePreference) {
       if (this.props.variablePreference !== nextProps.variablePreference) {
         this.setState({
           ...this.state,
-          localMin: nextProps.variablePreference.min,
-          localMax: nextProps.variablePreference.max
+          localMin: nextProps.variablePreference.min.toString(),
+          localMax: nextProps.variablePreference.max.toString()
         });
       }
     }
