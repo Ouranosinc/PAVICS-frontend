@@ -201,7 +201,7 @@ class ProcessMonitoring extends React.Component {
                           newOutputs = [];
                           if (output.mimeType === 'application/json' && output.data) {
                             if (Array.isArray(output.data) && typeof output.data[0] === 'string' &&
-                              output.data[0].startsWith('http://') && output.data[0].endsWith('.nc')) {
+                              (output.data[0].startsWith('http://') || output.data[0].startsWith('https://')) && output.data[0].endsWith('.nc')) {
                               output.data.forEach((url, index) => {
                                 newOutputs.push({
                                   dataType: "ComplexData",
@@ -386,7 +386,7 @@ class ProcessMonitoring extends React.Component {
                             // We might have to generate multiple outputs
                             let json = JSON.parse(x.outputs_to_json[i]);
                             if (Array.isArray(json) && typeof json[0] === 'string' &&
-                              json[0].startsWith('http://') && json[0].endsWith('.nc') ) {
+                              (json[0].startsWith('http://') || json[0].startsWith('https://')) && json[0].endsWith('.nc') ) {
                               json.forEach((reference, index) => {
                                 x.outputs.push({
                                   dataType: "ComplexData",

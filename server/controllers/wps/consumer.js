@@ -122,6 +122,7 @@ var consumer = (function () {
           options.url += `aggregate=${aggregate};`;
           console.log('visualizing files:', options.url);
           response = yield request(options);
+          console.log(response.body);
           xml = yield Utils.parseXMLThunk(response.body);
           jsonPath = Utils.extractWPSOutputPath(xml);
           response = yield request(jsonPath);
