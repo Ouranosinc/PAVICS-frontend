@@ -170,7 +170,7 @@ export default class LayerSwitcher extends React.Component {
   makeDatasetsList () {
     return (
       <List
-        style={{height: '225px', overflowY: 'auto'}}
+        style={{height: '221px', overflowY: 'auto'}}
         className={classes['layers']}>
         {
           this.props.currentVisualizedDatasets.map((dataset, i) => {
