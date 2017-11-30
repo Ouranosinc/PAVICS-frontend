@@ -136,7 +136,7 @@ export class ProjectDatasets extends React.Component {
                           tooltipPosition="bottom-left">
                           <MoreVertIcon color={grey400} />
                         </IconButton>}>
-                        <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.opendap_url[0], '_blank')} leftIcon={<Download />} />
+                        <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.fileserver_url[0], '_blank')} leftIcon={<Download />} />
                         <MenuItem primaryText="Remove (TODO)" onTouchTap={(event) => alert('remove ' + dataset.title[0])} leftIcon={<Remove />} />
                         <MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + dataset.title[0])} leftIcon={<ShareIcon />} />
                         <MenuItem primaryText="Visualize All (Aggregated)"
@@ -177,7 +177,7 @@ export class ProjectDatasets extends React.Component {
                                     tooltipPosition="bottom-left">
                                     <MoreVertIcon color={grey400} />
                                   </IconButton>}>
-                                <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.opendap_url[j], '_blank')} leftIcon={<Download />} />
+                                <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.fileserver_url[j], '_blank')} leftIcon={<Download />} />
                                 <MenuItem primaryText="Remove (TODO)" onTouchTap={(event) => alert('remove ' + dataset.title[j])} leftIcon={<Remove />} />
                                 <MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + dataset.title[j])} leftIcon={<ShareIcon />} />
                                 <MenuItem primaryText="Visualize" disabled={disabledNestedVisualize} onTouchTap={(event) => {
@@ -222,7 +222,7 @@ export class ProjectDatasets extends React.Component {
                           tooltipPosition="bottom-left">
                           <MoreVertIcon color={grey400} />
                         </IconButton>}>
-                        <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.opendap_url[0], '_blank')} leftIcon={<Download />} />
+                        <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.fileserver_url[0], '_blank')} leftIcon={<Download />} />
                         <MenuItem primaryText="Remove (TODO)" onTouchTap={(event) => alert('remove ' + dataset.title[0])} leftIcon={<Remove />} />
                         <MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + dataset.title[0])} leftIcon={<ShareIcon />} />
                         <MenuItem primaryText="Visualize" disabled={disabledVisualize} onTouchTap={(event) => {
