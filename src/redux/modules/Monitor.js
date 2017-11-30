@@ -30,7 +30,7 @@ function requestWPSJobs () {
 }
 
 function receiveWPSJobsFailure (error) {
-  NotificationManager.error(`Failed at fetching Phoenix Jobs at address ${error.url}. Returned Status ${error.status}: ${error.message}`);
+  NotificationManager.error(`Failed at fetching Phoenix Jobs at address ${error.url}. Returned Status ${error.status}: ${error.message}`, 'Error', 10000);
   return {
     type: constants.MONITOR_FETCH_WPS_JOBS_FAILURE,
     jobs: {
@@ -71,7 +71,7 @@ function requestPersistTemporaryResult () {
 }
 
 function receivePersistTemporaryResultFailure (error) {
-  NotificationManager.error(`Failed at persisting a temporary result. Returned Status ${error.status}: ${error.message}`);
+  NotificationManager.error(`Failed at persisting a temporary result. Returned Status ${error.status}: ${error.message}`, 'Error', 10000);
   return {
     type: constants.MONITOR_PERSIST_TEMPORARY_RESULT_FAILURE,
     persistedTempDataset: {
@@ -84,7 +84,7 @@ function receivePersistTemporaryResultFailure (error) {
 }
 
 function receivePersistTemporaryResult (data) {
-  NotificationManager.success(`Persisted file with success at ${data.url}`);
+  NotificationManager.success(`Persisted file with success at ${data.url}`, 'Success', 4000);
   return {
     type: constants.MONITOR_PERSIST_TEMPORARY_RESULT_SUCCESS,
     persistedTempDataset: {
@@ -110,7 +110,7 @@ function requestVisualizeTemporaryResult () {
 }
 
 function receiveVisualizeTemporaryResultFailure (error) {
-  NotificationManager.error(`Failed at visualizing a temporary result. Returned Status ${error.status}: ${error.message}`);
+  NotificationManager.error(`Failed at visualizing a temporary result. Returned Status ${error.status}: ${error.message}`, 'Error', 10000);
   return {
     type: constants.MONITOR_VISUALIZE_TEMPORARY_RESULT_FAILURE,
     visualizedTempDatasets: {

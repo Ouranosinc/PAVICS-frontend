@@ -76,7 +76,6 @@ export class SearchCatalogResults extends React.Component {
     this.setState({
       checkedDatasets: []
     });
-    // NotificationManager.success("Dataset(s) added to current project with success. Navigate to 'Project Management' section to see selected dataset(s).");
   }
 
   render () {

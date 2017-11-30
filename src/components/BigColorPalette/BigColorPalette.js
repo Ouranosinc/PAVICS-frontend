@@ -83,7 +83,7 @@ export default class BigColorPalette extends React.Component {
     if (min < max) {
       this.props.setVariablePreferenceBoundaries(this.state.localMin, this.state.localMax);
     } else {
-      NotificationManager.error('Please input valid min max values (min should be smaller than max).');
+      NotificationManager.warning('Please input valid min max values (min should be smaller than max).', 'Warning', 10000);
     }
   }
 

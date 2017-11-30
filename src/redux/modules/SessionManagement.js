@@ -94,12 +94,13 @@ function logout() {
     cookie.remove('auth_tkt');
     myHttp.get('/logout')
       .then(res => {
-        NotificationManager.success(`You have been logged out of the platform.`);
+        NotificationManager.success(`You have been logged out of the platform.`, 'Success', 4000);
         dispatch(sessionLogoutSuccess());
         dispatch(resetSessionInformation());
       })
       .catch(err => {
-        console.log(err);
+        NotificationManager.error(`An error occurred when logging you out of the platform: ${JSON.stringify(err)}`, 'Error', 10000);
+        console.log('error during logout: %o', err);
         dispatch(sessionLogoutFailure());
       });
   };
@@ -117,7 +118,7 @@ function sendCredentialsToZiggurat(username, password) {
         console.log('this shit was actually considered as a sendCredentialsToZiggurat success %o', response);
         if (response.status === 401) {
           dispatch(zigguratLoginFailure());
-          NotificationManager.error(`The user ${username} is not authorized on the platform`);
+          NotificationManager.error(`The user ${username} is not authorized on the platform.`, 'Error', 10000);
         } else {
           dispatch(zigguratLoginSuccess());
           dispatch(checkLogin());
@@ -125,6 +126,7 @@ function sendCredentialsToZiggurat(username, password) {
       })
       .catch(err => {
         dispatch(zigguratLoginFailure());
+        NotificationManager.error(`An error occurred when trying to send credentials to Ziggurat: ${JSON.stringify(err)}`, 'Error', 10000);
         console.log('error in sendCredentialsToZiggurat: %o', err);
       });
   };
@@ -140,12 +142,13 @@ function checkLogin() {
         console.log('received session status: %o', session);
         dispatch(checkLoginSuccess());
         if (session.authenticated === true) {
-          NotificationManager.success('You have been logged in to the platform.');
+          NotificationManager.success('You have been logged in to the platform.', 'Success', 4000);
           dispatch(setSessionInformations(session['user_name'], session['authenticated'], session['user_email'], session['group_names']));
         }
       })
       .catch(err => {
-        console.log(err);
+        NotificationManager.error(`An error occurred when trying to login: ${JSON.stringify(err)}`, 'Error', 10000);
+        console.log('error login: %o', err);
         dispatch(checkLoginFailure());
       });
   };

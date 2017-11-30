@@ -111,7 +111,7 @@ export class SearchCatalog extends React.Component {
   _SaveCriterias () {
     if (this.state.searchCriteriasName.length && this.props.research.selectedFacets.length) {
       if (this.props.researchAPI.items.find( x => x.name === this.state.searchCriteriasName)) {
-        NotificationManager.warning(`Search criteria(s) already exists with the same name. Please specify another name.`);
+        NotificationManager.warning(`Search criteria(s) already exists with the same name. Please specify another name.`, 'Warning', 10000);
       } else {
         this.props.researchAPIActions.createResearch({
           name: this.state.searchCriteriasName,
@@ -134,7 +134,7 @@ export class SearchCatalog extends React.Component {
         // NotificationManager.success("Search criteria(s) was saved with success. Navigate to 'Project Management' section to manage saved search criteria(s).");
       }
     } else {
-      NotificationManager.warning("You need to specify a name and at least one criteria to be able to save the current search criteria(s).");
+      NotificationManager.warning("You need to specify a name and at least one criteria to be able to save the current search criteria(s).", 'Warning', 10000);
     }
   }
 

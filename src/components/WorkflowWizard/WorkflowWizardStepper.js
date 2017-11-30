@@ -45,7 +45,7 @@ export default class WorkflowWizardStepper extends React.Component {
         try {
           if (response.status === 200) {
             this.props.jobAPIActions.createJob({ projectId: this.props.project.currentProject.id, phoenixTaskId: response.task_id });
-            NotificationManager.success('Process has been launched with success, you can now monitor process execution in the monitoring panel', 'Success', 10000);
+            NotificationManager.success('Process has been launched with success, you can now monitor process execution in the monitoring panel', 'Success', 4000);
           } else {
             NotificationManager.error('Process hasn\'t been launched as intended. Make sure the process and required inputs are defined properly', 'Error', 10000);
           }

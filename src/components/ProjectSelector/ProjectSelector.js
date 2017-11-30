@@ -24,7 +24,7 @@ export class ProjectSelector extends React.Component {
   _onSetCurrentProject(id){
     let project = this.props.projectAPI.items.find(x => x.id === id);
     this.props.projectActions.setCurrentProject(project);
-    NotificationManager.info(`Project '${project.name}' has been selected as the current project.`);
+    NotificationManager.info(`Project '${project.name}' has been selected as the current project.`, 'Information', 10000);
     // TODO RESET DATASET SELECTION IN LAYER SWITCHER
     // TODO RESET LAYER SWITCH DATASETS LIST
   }

@@ -79,7 +79,7 @@ class Visualize extends React.Component {
       // Do only once
       if(!this.defaultProjectSet) {
         this.props.projectActions.setCurrentProject(project);
-        NotificationManager.info(`Project '${project.name}' has been selected as the default project.`);
+        NotificationManager.info(`Project '${project.name}' has been selected as the default project.`, 'Information', 10000);
         this.defaultProjectSet = true;
       }
     }
