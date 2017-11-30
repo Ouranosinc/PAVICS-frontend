@@ -29,10 +29,23 @@ export class SearchCatalogResults extends React.Component {
     this._onPageChanged = this._onPageChanged.bind(this);
     this.state = {
       checkedDatasets: [],
+      filesCount: 0,
       confirm: false,
       pageNumber: 1,
       numberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX]
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.research.pavicsDatasets && nextProps.research.pavicsDatasets  !== this.props.research.pavicsDatasets) {
+      let filesCount = 0;
+      nextProps.research.pavicsDatasets.items.forEach((dataset) => {
+        filesCount += dataset.fileserver_url.length;
+      });
+      this.setState({
+        filesCount: filesCount
+      });
+    }
   }
 
   _onPageChanged (pageNumber, numberPerPage) {
@@ -95,7 +108,7 @@ export class SearchCatalogResults extends React.Component {
           <div>
             <Paper style={{ marginTop: 20 }}>
               <List>
-                <Subheader inset={true}>Found <strong>{this.props.research.pavicsDatasets.items.length}</strong> results</Subheader>
+                <Subheader inset={true}>Found <strong>{this.state.filesCount}</strong> total files in <strong>{this.props.research.pavicsDatasets.items.length}</strong> results</Subheader>
                 {paginated.map((x, i) =>
                   <ListItem
                     key={i}

@@ -92,6 +92,7 @@
   }*/
 
   .ol-control {
+    opacity: 1 !important;
     /*padding: 0 !important;
     background-color: #FFF !important;
     border: 1px solid #ddd !important;
@@ -113,7 +114,7 @@
 
   #map .ol-panzoom {
     img {
-      opacity: 0.8;
+      opacity: 0.9;
     }
     top: auto !important;
     bottom: 300px !important;
@@ -129,7 +130,7 @@
     left: 40px !important;
     right: auto !important;
     margin: auto !important;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.7);
   }
 
   /*#map .ol-zoomslider:hover {
