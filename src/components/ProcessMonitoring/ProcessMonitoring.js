@@ -81,7 +81,7 @@ class ProcessMonitoring extends React.Component {
         opacity: 0.8
       });
       this.setState({loadingScreen: null});
-      NotificationManager.success("Dataset has been added the Layer Switcher, data is being loaded on the map...");
+      NotificationManager.info("Dataset has been added the Layer Switcher, data is being loaded on the map...", 'Information', 10000);
     }
   }
 
@@ -420,11 +420,20 @@ class ProcessMonitoring extends React.Component {
                             });
                           }
                         } else {
-                          NotificationManager.error("ComplexData inline should not happen anymore");
+                          x.outputs.push({
+                            dataType: output['wps:Data'][0]['wps:LiteralData'][0]['$']['dataType'],
+                            identifier: (output['ows:Identifier'])? output['ows:Identifier'][0]: 'None',
+                            mimeType: output['wps:Data'][0]['wps:LiteralData'][0]['$']['dataType'],
+                            reference: '',
+                            title: (output['ows:Title'])? output['ows:Title'][0]: 'None',
+                            abstract: (output['ows:Abstract'])?utput['ows:Abstract'][0]: 'None'
+                          });
+                          // console.log(output);
+                          // NotificationManager.error("ComplexData inline should not happen anymore", 'Error', 10000);
                         }
                       } catch(error){
                         console.error(error);
-                        NotificationManager.error("Bad WPS XML Status Output format");
+                        NotificationManager.error("Unsupported WPS XML Status Output format", 'Error', 10000);
                       }
                     }
                   }

@@ -39,7 +39,7 @@ export class ProcessListItem extends React.Component {
 
   extractFileId (reference = '') {
     const SEARCH_VALUE = "wpsoutputs/";
-    let fileId = "";
+    let fileId = "No file reference defined";
     let index = reference.indexOf(SEARCH_VALUE);
     if(index > -1) {
       fileId = reference.substring(index + SEARCH_VALUE.length);
@@ -48,8 +48,6 @@ export class ProcessListItem extends React.Component {
       index = reference.indexOf(SEARCH_VALUE_2);
       if(index > -1) {
         fileId = reference.substring(index + SEARCH_VALUE_2.length);
-      }else{
-        fileId = reference;
       }
     }
     return fileId;
@@ -108,8 +106,8 @@ export class ProcessListItem extends React.Component {
       </IconButton>}>
       <MenuItem
         primaryText="Download"
-        disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS}
-        onTouchTap={(event) => { if (this.props.job.status === constants.JOB_SUCCESS_STATUS) window.open(output.reference, '_blank'); }}
+        disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS || !output.reference.length}
+        onTouchTap={(event) => { if (this.props.job.status === constants.JOB_SUCCESS_STATUS && output.reference.length) window.open(output.reference, '_blank'); }}
         leftIcon={<DownloadIcon />}/>
       <MenuItem
         primaryText="Publish (TODO)"
