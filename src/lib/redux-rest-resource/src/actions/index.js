@@ -99,7 +99,8 @@ const createAction = (actionId, {resourceName, resourcePluralName = getPluralNam
         translatedResourceName = "User";
         break;
       case 'job':
-        translatedResourceName = "Job";
+        if(getActionType(actionId) === 'CREATE') translatedVerb = 'linked to project';
+        translatedResourceName = "Launched job";
         break;
     }
 
@@ -107,13 +108,13 @@ const createAction = (actionId, {resourceName, resourcePluralName = getPluralNam
       .then(applyTransformPipeline(buildTransformPipeline(defaultTransformResponsePipeline, actionOpts.transformResponse)))
       .then(payload => {
         if(successShowSomething) {
-          NotificationManager.success(`${translatedResourceName} was ${translatedVerb} with success`);
+          NotificationManager.success(`${translatedResourceName} was ${translatedVerb} with success`, 'Success', 4000);
         }
         dispatch({type, status: 'resolved', context, options: reduceOpts, receivedAt: Date.now(), ...payload});
       })
       .catch((err) => {
         // Catch HttpErrors
-        NotificationManager.error(`${translatedResourceName} failed at being ${translatedVerb}: Error ${err.statusCode} ${err.body.error.message}`);
+        NotificationManager.error(`${translatedResourceName} failed at being ${translatedVerb}: Error ${err.statusCode} ${err.body.error.message}`, 'Error', 10000);
         if (err.statusCode) {
           dispatch({
             type,
