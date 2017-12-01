@@ -1,12 +1,8 @@
 import React from 'react';
 import classes from './OLComponent.scss';
-// import ol from 'openlayers';
 import Dialog from 'material-ui/Dialog';
 import * as constants from './../../constants';
 import myHttp from './../../../lib/http';
-// Of course any ol3 widget (ol3-layerswitcher, ol3-panzoom) needs ol as global (...)
-// window.ol = ol;
-// require('./../../lib/ol3-panzoom/ol3pz');
 
 // Couldn't figure out the bug when importing inner component css file but it works from node_modules
 let G_BING_API_KEY = 'AtXX65CBBfZXBxm6oMyf_5idMAMI7W6a5GuZ5acVcrYi6lCQayiiBz7_aMHB7JR7';

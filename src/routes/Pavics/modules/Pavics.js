@@ -1,6 +1,5 @@
 import initialState from './../../../store/initialState';
 import * as constants from './../../../constants';
-import ol from 'openlayers';
 import myHttp from './../../../../lib/http';
 
 // SYNC
