@@ -10,7 +10,7 @@ import cookie from 'react-cookies';
 import * as constants from './../../../constants';
 import {
   AccountManagementContainer,
-  ExperienceManagementContainer,
+  ProjectManagementContainer,
   ResearchContainer,
   ProcessMonitoringContainer,
   VisualizeContainer,
@@ -82,7 +82,7 @@ class Pavics extends React.Component {
         );
       case constants.PLATFORM_SECTION_PROJECT_MANAGEMENT:
         return (
-          <ExperienceManagementContainer {...this.props} />
+          <ProjectManagementContainer {...this.props} />
         );
       case constants.PLATFORM_SECTION_WORKFLOWS:
         return (

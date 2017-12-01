@@ -1,13 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import ExperienceManagement from './../../components/ExperienceManagement';
+import ProjectManagement from './../../components/ProjectManagement';
 import { actions as projectActionsCreators } from './../../redux/modules/Project';
 import { actions as projectAPIActionsCreators } from '../../redux/modules/ProjectAPI';
 import { actions as researchActionsCreators } from './../../redux/modules/Research';
 import { actions as researchAPIActionsCreators } from '../../redux/modules/ResearchAPI';
 
-export class ExperienceManagementContainer extends React.Component {
+export class ProjectManagementContainer extends React.Component {
   static propTypes = {
 
   };
@@ -19,7 +19,7 @@ export class ExperienceManagementContainer extends React.Component {
 
   render () {
     return (
-      <ExperienceManagement {...this.props} />
+      <ProjectManagement {...this.props} />
     )
   }
 }
@@ -44,4 +44,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ExperienceManagementContainer)
+)(ProjectManagementContainer)
