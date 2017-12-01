@@ -53,8 +53,8 @@ export default class BigColorPalette extends React.Component {
       if (this.props.variablePreference !== nextProps.variablePreference) {
         this.setState({
           ...this.state,
-          localMin: nextProps.variablePreference.min.toString(),
-          localMax: nextProps.variablePreference.max.toString()
+          localMin: (nextProps.variablePreference.min)? nextProps.variablePreference.min.toString(): '',
+          localMax: (nextProps.variablePreference.max)? nextProps.variablePreference.max.toString(): ''
         });
       }
     }
@@ -94,7 +94,7 @@ export default class BigColorPalette extends React.Component {
   }
 
   render () {
-    if (this.props.variablePreference) {
+    if (this.props.variablePreference && this.props.variablePreference.colorPalette) {
       return (
         <Grid className={classes.BigColorPalette}>
           <Row>
