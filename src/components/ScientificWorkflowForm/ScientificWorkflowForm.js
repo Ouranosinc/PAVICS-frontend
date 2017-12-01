@@ -2,12 +2,9 @@ import React, { Component } from 'react';
 import { NotificationManager } from 'react-notifications';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
 import Paper from 'material-ui/Paper';
 import Done from 'material-ui/svg-icons/action/done';
 import WorkflowSchema from './WorkflowSchema';
-
 var Ajv = require('ajv');
 
 const styles = {
@@ -27,16 +24,16 @@ export default class ScientificWorkflowForm extends Component {
 
   constructor (props) {
     super(props);
-    this.handleChange = this.handleChange.bind(this);
+    this.onWorkflowChanged = this.onWorkflowChanged.bind(this);
     this.tryParseJson = this.tryParseJson.bind(this);
-    this.handleSaveWorkflow = this.handleSaveWorkflow.bind(this);
+    this.onSaveWorkflow = this.onSaveWorkflow.bind(this);
     this.state = {
       json: '',
       dialogOpened: false
     };
   }
 
-  handleChange (e) {
+  onWorkflowChanged (e) {
     this.setState({
       json: e.target.value
     });
@@ -74,20 +71,16 @@ export default class ScientificWorkflowForm extends Component {
     return true;
   }
 
-  handleSaveWorkflow () {
+  onSaveWorkflow () {
     let parsed = this.tryParseJson();
     if(parsed && this.validateAdvancedWorkflowSchema(parsed)) {
       this.props.workflowAPIActions.createWorkflow({
         projectId: this.props.project.currentProject.id,
         json: parsed
       });
-      NotificationManager.success('Workflow has been created with success', 'Success', 4000);
       this.setState({
         json: ''
       });
-    } else {
-      // Added JSON Schema and examples
-      // this.openDialog();
     }
   }
 
@@ -97,16 +90,16 @@ export default class ScientificWorkflowForm extends Component {
         <Paper style={styles.textarea}>
           <TextField
             value={this.state.json}
-            onChange={this.handleChange}
+            onChange={this.onWorkflowChanged}
             multiLine={true}
             rowsMax={15}
             fullWidth={true}
-            hintText="Entrez un workflow en json"/>
+            hintText="Enter a valid JSON workflow"/>
         </Paper>
         <RaisedButton
-          onClick={this.handleSaveWorkflow}
+          onClick={this.onSaveWorkflow}
           style={styles.button}
-          label="Save workflow"
+          label="Create workflow"
           icon={<Done />}/>
       </div>
     );

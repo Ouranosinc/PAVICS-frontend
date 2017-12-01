@@ -246,10 +246,11 @@ export default class ScientificWorkflowStepper extends Component {
           </StepLabel>
           <StepContent>
             <ScientificWorkflowList
+              project={this.props.project}
               goToConfigureAndRunStep={this.goToConfigureAndRunStep}
               workflowAPI={this.props.workflowAPI}
               workflowAPIActions={this.props.workflowAPIActions} />
-            <p style={styles.orParagraph}>Or add a new workflow</p>
+            <p style={styles.orParagraph}>Or create a new workflow</p>
             <ScientificWorkflowForm
               project={this.props.project}
               workflowAPIActions={this.props.workflowAPIActions} />
