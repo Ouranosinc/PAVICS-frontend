@@ -1,6 +1,6 @@
 {
   "name": "pavics-frontend",
-  "version": "0.2.10",
+  "version": "0.2.12",
   "description": "PAVICS",
   "main": "index.js",
   "engines": {
