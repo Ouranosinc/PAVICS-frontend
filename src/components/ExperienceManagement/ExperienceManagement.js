@@ -48,10 +48,10 @@ export class ExperienceManagement extends React.Component {
          (this.state.activeTab === CURRENT_PROJECT_TAB_VALUE) ?
          <div className={classes['ExperienceManagement']} style={{ margin: 20 }}>
            <ProjectSelector {...this.props}/>
-           <ProjectEditor {...this.props}/>
            {
              (this.props.project.currentProject.id) ?
                <div>
+                 <ProjectEditor {...this.props}/>
                  <ProjectDatasets {...this.props} />
                  <ProjectSearchCriterias {...this.props} />
                </div>: null

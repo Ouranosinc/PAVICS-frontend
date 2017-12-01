@@ -80,7 +80,7 @@ export class ProjectCreation extends React.Component {
         <RaisedButton
           onClick={this._onCreateProject}
           label="Create new project"
-          disabled={!this.state.projectName.length}
+          disabled={!this.state.projectName || !this.state.projectName.length}
           style={{marginTop: 20}} />
       </div>
     )

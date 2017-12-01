@@ -1,6 +1,6 @@
 import React from 'react'
 import classes from './ProjectEditor.scss';
-import * as constants from '../../constants';
+import ConfirmDialog from './../../components/ConfirmDialog';
 import Paper from 'material-ui/Paper';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
@@ -18,9 +18,12 @@ export class ProjectEditor extends React.Component {
     this._onSetProjectName = this._onSetProjectName.bind(this);
     this._onSetProjectDescription = this._onSetProjectDescription.bind(this);
     this._onSaveProject = this._onSaveProject.bind(this);
+    this._onDeleteProject = this._onDeleteProject.bind(this);
+    this._onConfirmedProjectDeletion = this._onConfirmedProjectDeletion.bind(this);
     this.state = {
       projectName: '',
-      projectDescription: ''
+      projectDescription: '',
+      confirmDeleteDialogOpened: false
     };
   }
 
@@ -53,6 +56,7 @@ export class ProjectEditor extends React.Component {
       projectDescription: desc
     })
   }
+
   _onSaveProject(event, value){
     this.props.projectAPIActions.updateProject({
       id: this.props.project.currentProject.id,
@@ -61,9 +65,23 @@ export class ProjectEditor extends React.Component {
     });
   }
 
+  _onDeleteProject(){
+    this.setState({
+      confirmDeleteDialogOpened: true
+    });
+  }
+
+  _onConfirmedProjectDeletion(project){
+    this.setState({
+      confirmDeleteDialogOpened: false
+    });
+    this.props.projectActions.setCurrentProject({});
+    this.props.projectAPIActions.deleteProject({id: this.props.project.currentProject.id})
+  }
+
   render () {
     return (
-      <div className={classes['ProjectCreation']}>
+      <div className={classes['ProjectEditor']}>
         <Paper style={{marginTop: 20}}>
           <div className="container">
             <TextField
@@ -87,8 +105,21 @@ export class ProjectEditor extends React.Component {
         <RaisedButton
           onClick={this._onSaveProject}
           label="Save project properties"
-          disabled={!this.state.projectName.length}
+          disabled={!this.state.projectName || !this.state.projectName.length}
           style={{marginTop: 20}} />
+
+        <RaisedButton
+          onClick={this._onDeleteProject}
+          label="Delete project"
+          secondary={true}
+          disabled={!this.state.projectName || !this.state.projectName.length}
+          style={{marginTop: 20, marginLeft: '20px'}} />
+        <ConfirmDialog
+          isOpen={this.state.confirmDeleteDialogOpened}
+          affectedResource={this.props.project.currentProject}
+          onDialogConfirmed={this._onConfirmedProjectDeletion}
+          dialogContent={`Do you really want to delete the project ${this.state.projectName} and all its content?`}>
+        </ConfirmDialog>
       </div>
     )
   }
