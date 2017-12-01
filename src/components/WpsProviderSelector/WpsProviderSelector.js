@@ -24,6 +24,7 @@ export default class WpsProviderSelector extends React.Component {
                 <ListItem key={i}
                           onClick={this.makeChangeProviderCallback(provider.identifier)}
                           leftIcon={<ProviderIcon />}
+                          secondaryTextLines={2}
                           primaryText={provider.title}
                           secondaryText={provider.description}>
                 </ListItem>
