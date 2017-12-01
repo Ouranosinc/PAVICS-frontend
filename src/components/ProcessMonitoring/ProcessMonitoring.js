@@ -426,7 +426,7 @@ class ProcessMonitoring extends React.Component {
                             mimeType: output['wps:Data'][0]['wps:LiteralData'][0]['$']['dataType'],
                             reference: '',
                             title: (output['ows:Title'])? output['ows:Title'][0]: 'None',
-                            abstract: (output['ows:Abstract'])?utput['ows:Abstract'][0]: 'None'
+                            abstract: (output['ows:Abstract'])? output['ows:Abstract'][0]: 'None'
                           });
                           // console.log(output);
                           // NotificationManager.error("ComplexData inline should not happen anymore", 'Error', 10000);
