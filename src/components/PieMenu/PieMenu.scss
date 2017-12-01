@@ -2,6 +2,16 @@
   /*position: absolute;*/
   bottom: 100px;
   left: 100px;
+  .radialnav{
+    .menu{
+      li{
+        pointer-events: none;
+        a{
+          pointer-events: all;
+        }
+      }
+    }
+  }
 }
 .CustomGlyphIcon{
   font-size: 50px;
