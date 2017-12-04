@@ -157,6 +157,7 @@ export default class ScientificWorkflowList extends Component {
               isOpen={this.state.isConfirmDeleteDialogOpened}
               affectedResource={this.state.confirmDeleteDialogResource}
               onDialogConfirmed={this._onConfirmedWorkflowDeletion}
+              onCloseDialog={this._onCloseEditionDialog}
               dialogContent={this.state.confirmDeleteDialogContent}>
             </ConfirmDialog>
             <Dialog

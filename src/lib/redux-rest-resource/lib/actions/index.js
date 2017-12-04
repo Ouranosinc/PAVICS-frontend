@@ -141,7 +141,13 @@ var createAction = function createAction(actionId, _ref2) {
         dispatch(_extends({ type: type, status: 'resolved', context: context, options: reduceOpts, receivedAt: Date.now() }, payload));
       }).catch(function (err) {
         // Catch HttpErrors
-        _reactNotifications.NotificationManager.error(translatedResourceName + ' failed at being ' + translatedVerb + ': Error ' + err.statusCode + ' ' + err.body.error.message, 'Error', 10000);
+        if (err.statusCode && err.body.error) {
+          _reactNotifications.NotificationManager.error(translatedResourceName + ' failed at being ' + translatedVerb + ': Error ' + err.statusCode + ' ' + err.body.error.message, 'Error', 10000);
+        } else if (err.message) {
+          _reactNotifications.NotificationManager.error(translatedResourceName + ' failed at being ' + translatedVerb + ': Error ' + err.message, 'Error', 10000);
+        } else {
+          _reactNotifications.NotificationManager.error(translatedResourceName + ' failed at being ' + translatedVerb + ': Unknown Error', 'Error', 10000);
+        }
         if (err.statusCode) {
           dispatch({
             type: type,
