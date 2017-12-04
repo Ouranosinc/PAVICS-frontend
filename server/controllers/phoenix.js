@@ -36,19 +36,27 @@ let phoenix = (() => {
             },
             rejectUnauthorized: false
           };
-          console.log(`Fetching phoenix at url ${options.url} ...`);
           response = yield request(options);
           let json = JSON.parse(response.body);
+          console.log(`phoenix jobs length at ${options.url}: ${json.jobs.length}`);
 
           // Fetch loopback jobs for this project
           let filter = JSON.stringify({where: {projectId: projectId}});
-          let loopbackResponse = yield request(`${config.pavics_project_api_path}/Jobs?filter=${filter}`);
+          let lbUrl = `${config.pavics_project_api_path}/Jobs?filter=${filter}`;
+          let loopbackResponse = yield request(lbUrl);
           let lbProjectJobs = JSON.parse(loopbackResponse.body);
-          // console.log(JSON.parse(loopbackResponse.body));
+          console.log(`lb jobs length at ${lbUrl}: ${lbProjectJobs.length}`);
 
           // Filter phoenix returned job with loopback results
-          let filteredJobs = json.jobs.filter( (job) => lbProjectJobs.find((lbJob) => lbJob.phoenixTaskId === job.task_id));
-          // console.log(filteredJobs.length);
+          let filteredJobs = [];
+          json.jobs.forEach((job) => {
+            console.log(job.task_id);
+            let lbJob = lbProjectJobs.find((lbJob) => lbJob.phoenixTaskId === job.task_id)
+            if(lbJob) {
+              job.name = lbJob.name;
+              filteredJobs.push(job)
+            }
+          });
 
           // Custom pagination because phoenix pagination suck and is unpredictable
           // And we need loopback project filtering anyway ...
@@ -201,7 +209,6 @@ let phoenix = (() => {
               data[key] = input[1];
             }
           });
-          console.log('data:', data);
           options = {
             method: 'POST',
             headers: {
@@ -209,7 +216,7 @@ let phoenix = (() => {
               'Content-Type': 'multipart/form-data',
               accept: 'text/html'
             },
-            url: `https://outarde.crim.ca:8443/processes/execute?wps=${wps}&process=${process}`,
+            url: `${config.pavics_phoenix_path}/processes/execute?wps=${wps}&process=${process}`,
             form: data,
             rejectUnauthorized: false
           };

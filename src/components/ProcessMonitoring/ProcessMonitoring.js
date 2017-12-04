@@ -250,7 +250,7 @@ class ProcessMonitoring extends React.Component {
 
                   return <ListItem
                     key={i}
-                    primaryText={x.title + ': ' + x.abstract}
+                    primaryText={x.name}
                     secondaryText={
                       <span style={{color: darkBlack}}>
                         <span>Launched on <strong>{moment(x.created).format(constants.PAVICS_DATE_FORMAT)}</strong> using provider <strong>{x.service}</strong>.</span><br/>
