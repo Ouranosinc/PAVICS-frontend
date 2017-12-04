@@ -134,7 +134,7 @@ export class ProjectDatasets extends React.Component {
 
   _onConfirmedFileRemove(dataset) {
     this.props.datasetAPIActions.updateDataset(dataset);
-    this._onCloseDialogDatasetRemove();
+    this._onCloseDialogFileRemove();
   }
 
   _onCloseDialogFileRemove() {
