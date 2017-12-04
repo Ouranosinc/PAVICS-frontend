@@ -20,6 +20,7 @@ export class ProjectEditor extends React.Component {
     this._onSaveProject = this._onSaveProject.bind(this);
     this._onDeleteProject = this._onDeleteProject.bind(this);
     this._onConfirmedProjectDeletion = this._onConfirmedProjectDeletion.bind(this);
+    this._onCloseDialogProjectDeletion = this._onCloseDialogProjectDeletion.bind(this);
     this.state = {
       projectName: '',
       projectDescription: '',
@@ -72,11 +73,15 @@ export class ProjectEditor extends React.Component {
   }
 
   _onConfirmedProjectDeletion(project){
+    this._onCloseDialogProjectDeletion();
+    this.props.projectActions.setCurrentProject({});
+    this.props.projectAPIActions.deleteProject({id: this.props.project.currentProject.id})
+  }
+
+  _onCloseDialogProjectDeletion() {
     this.setState({
       confirmDeleteDialogOpened: false
     });
-    this.props.projectActions.setCurrentProject({});
-    this.props.projectAPIActions.deleteProject({id: this.props.project.currentProject.id})
   }
 
   render () {
@@ -103,13 +108,12 @@ export class ProjectEditor extends React.Component {
         </Paper>
 
         <RaisedButton
-          onClick={this._onSaveProject}
+          onClick={() => this._onSaveProject()}
           label="Save project properties"
           disabled={!this.state.projectName || !this.state.projectName.length}
           style={{marginTop: 20}} />
-
         <RaisedButton
-          onClick={this._onDeleteProject}
+          onClick={() => this._onDeleteProject()}
           label="Delete project"
           secondary={true}
           disabled={!this.state.projectName || !this.state.projectName.length}
@@ -118,6 +122,7 @@ export class ProjectEditor extends React.Component {
           isOpen={this.state.confirmDeleteDialogOpened}
           affectedResource={this.props.project.currentProject}
           onDialogConfirmed={this._onConfirmedProjectDeletion}
+          onCloseDialog={this._onCloseDialogProjectDeletion}
           dialogContent={`Do you really want to delete the project ${this.state.projectName} and all its content?`}>
         </ConfirmDialog>
       </div>

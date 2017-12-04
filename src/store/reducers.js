@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import { routerReducer as router } from 'react-router-redux';
+import { reducers as datasetAPIReducer } from '../redux/modules/DatasetAPI';
 import { reducers as jobAPIReducer } from '../redux/modules/JobAPI';
 import monitorReducer from './../redux/modules/Monitor';
 import projectReducer from './../redux/modules/Project';
@@ -17,6 +18,7 @@ export const makeRootReducer = (asyncReducers) => {
   return combineReducers({
     // Add sync reducers here
     'router': router,
+    'datasetAPI': datasetAPIReducer,
     'jobAPI': jobAPIReducer,
     'monitor': monitorReducer,
     'project': projectReducer,
