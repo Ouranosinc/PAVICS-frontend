@@ -39,7 +39,7 @@ export class ProcessListItem extends React.Component {
 
   extractFileId (reference = '') {
     const SEARCH_VALUE = "wpsoutputs/";
-    let fileId = "";
+    let fileId = "No file reference defined";
     let index = reference.indexOf(SEARCH_VALUE);
     if(index > -1) {
       fileId = reference.substring(index + SEARCH_VALUE.length);
@@ -48,8 +48,6 @@ export class ProcessListItem extends React.Component {
       index = reference.indexOf(SEARCH_VALUE_2);
       if(index > -1) {
         fileId = reference.substring(index + SEARCH_VALUE_2.length);
-      }else{
-        fileId = reference;
       }
     }
     return fileId;
@@ -108,23 +106,23 @@ export class ProcessListItem extends React.Component {
       </IconButton>}>
       <MenuItem
         primaryText="Download"
-        disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS}
-        onTouchTap={(event) => window.open(output.reference, '_blank')}
+        disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS || !output.reference.length}
+        onTouchTap={(event) => { if (this.props.job.status === constants.JOB_SUCCESS_STATUS && output.reference.length) window.open(output.reference, '_blank'); }}
         leftIcon={<DownloadIcon />}/>
       <MenuItem
         primaryText="Publish (TODO)"
         disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS}
-        onTouchTap={(event) => alert('TODO: Call Publish WPS')}
+        onTouchTap={(event) => { if (this.props.job.status === constants.JOB_SUCCESS_STATUS) alert('TODO: Call Publish WPS'); }}
         leftIcon={<PublishIcon />}/>
       <MenuItem
         primaryText="Persist"
         disabled={!this._isPersistAvailable(output)}
-        onTouchTap={(event) => this.props.onShowPersistDialog(output)}
+        onTouchTap={(event) => { if(this._isPersistAvailable(output)) this.props.onShowPersistDialog(output); }}
         leftIcon={<PersistIcon  />}/>
       <MenuItem
         primaryText="Visualize"
         disabled={!this._isVisualizeAvailable(output)}
-        onTouchTap={(event) => this.props.onVisualiseDatasets([output.reference])}
+        onTouchTap={(event) => {if(this._isVisualizeAvailable(output)) this.props.onVisualiseDatasets([output.reference]); }}
         leftIcon={<VisualizeIcon />}/>
     </IconMenu>
   }

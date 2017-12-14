@@ -129,18 +129,19 @@ var createAction = function createAction(actionId, _ref2) {
           translatedResourceName = "User";
           break;
         case 'job':
-          translatedResourceName = "Job";
+          if ((0, _types.getActionType)(actionId) === 'CREATE') translatedVerb = 'linked to project';
+          translatedResourceName = "Launched job";
           break;
       }
 
       return (0, _fetch2.default)(finalFetchUrl, finalFetchOpts).then((0, _transform.applyTransformPipeline)((0, _transform.buildTransformPipeline)(_defaults.defaultTransformResponsePipeline, actionOpts.transformResponse))).then(function (payload) {
         if (successShowSomething) {
-          _reactNotifications.NotificationManager.success(translatedResourceName + ' was ' + translatedVerb + ' with success');
+          _reactNotifications.NotificationManager.success(translatedResourceName + ' was ' + translatedVerb + ' with success', 'Success', 4000);
         }
         dispatch(_extends({ type: type, status: 'resolved', context: context, options: reduceOpts, receivedAt: Date.now() }, payload));
       }).catch(function (err) {
         // Catch HttpErrors
-        _reactNotifications.NotificationManager.error(translatedResourceName + ' failed at being ' + translatedVerb + ': Error ' + err.statusCode + ' ' + err.body.error.message);
+        _reactNotifications.NotificationManager.error(translatedResourceName + ' failed at being ' + translatedVerb + ': Error ' + err.statusCode + ' ' + err.body.error.message, 'Error', 10000);
         if (err.statusCode) {
           dispatch({
             type: type,

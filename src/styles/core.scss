@@ -86,16 +86,67 @@
   }
 
   /* Openlayers overwrite, TODO: Shouldn't be here */
-  .ol-zoom {
+  /*.ol-zoom {
     top: auto !important;
     bottom: .5em !important;
-  }
+  }*/
 
   .ol-control {
+    opacity: 1 !important;
     /*padding: 0 !important;
     background-color: #FFF !important;
     border: 1px solid #ddd !important;
     border-radius: 4px !important;*/
   }
+
+  #map .ol-attribution{
+    display: none;
+  }
+
+  #map .ol-mouse-position {
+    top: auto !important;
+    bottom: 8px !important;
+    right: 25px !important;
+    position: absolute;
+    color: white;
+    font-size: 15px;
+  }
+
+  #map .ol-panzoom {
+    img {
+      opacity: 0.9;
+    }
+    top: auto !important;
+    bottom: 300px !important;
+    left: auto !important;
+    right: auto !important;
+    margin: auto !important;
+    background-color: transparent;
+  }
+
+  #map .ol-scale-line{
+    top: auto !important;
+    bottom: 70px !important;
+    left: 40px !important;
+    right: auto !important;
+    margin: auto !important;
+    background: rgba(0,0,0,0.7);
+  }
+
+  /*#map .ol-zoomslider:hover {
+    background-color: rgba(255,69,0,0.3);
+  }
+
+  #map .ol-zoomslider-thumb {
+    height: 15px;
+    width: 15px;
+    margin: 0;
+    filter: none;
+    background-color: rgba(255,69,0,0.6);
+    border-radius: 20px;
+  }
+  #map a.ol-zoomslider-handle:hover {
+    background-color: rgba(255,69,0,0.7);
+  }*/
 
 }

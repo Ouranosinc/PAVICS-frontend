@@ -81,7 +81,7 @@ export default class ScientificWorkflowForm extends Component {
         projectId: this.props.project.currentProject.id,
         json: parsed
       });
-      NotificationManager.success('Workflow has been created with success', 'Success', 10000);
+      NotificationManager.success('Workflow has been created with success', 'Success', 4000);
       this.setState({
         json: ''
       });

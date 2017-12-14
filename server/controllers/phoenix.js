@@ -79,14 +79,23 @@ let phoenix = (() => {
                   let outputs = job["response_to_json"]['wps:ExecuteResponse']['wps:ProcessOutputs'][0]['wps:Output'];
                   for(let z = 0; z < outputs.length; z++){
                     let output = outputs[z];
-                    if(output['wps:Reference'][0]['$']['mimeType'] === 'application/json'){
-                      let outputPath = output['wps:Reference'][0].$.href || output['wps:Reference'][0].$['xlink:href'];
-                      console.log(`Fetching URL ${outputPath} ...`);
-                      let response = yield request(outputPath);
-                      let json = response.body;
-                      paginatedJobs[i].outputs_to_json.push(json);
-                    }else{
-                      paginatedJobs[i].outputs_to_json.push({});
+                    if(output['wps:Reference']) {
+                      if(output['wps:Reference'][0]['$']['mimeType'] === 'application/json'){
+                        let outputPath = output['wps:Reference'][0].$.href || output['wps:Reference'][0].$['xlink:href'];
+                        console.log(`Fetching URL ${outputPath} ...`);
+                        let response = yield request(outputPath);
+                        let json = response.body;
+                        paginatedJobs[i].outputs_to_json.push(json);
+                      }else{
+                        paginatedJobs[i].outputs_to_json.push({});
+                      }
+                    }else {
+                      console.log(output)
+                      // if(output['wps:Output'][0]['$']['mimeType'] === 'application/json'){
+                      //   paginatedJobs[i].outputs_to_json.push({yolo: 'yolo'});
+                      // }else {
+                        paginatedJobs[i].outputs_to_json.push({});
+                      // }
                     }
                   }
                 }

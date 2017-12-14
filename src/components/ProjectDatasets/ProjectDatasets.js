@@ -136,19 +136,19 @@ export class ProjectDatasets extends React.Component {
                           tooltipPosition="bottom-left">
                           <MoreVertIcon color={grey400} />
                         </IconButton>}>
-                        <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.opendap_url[0], '_blank')} leftIcon={<Download />} />
+                        <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.fileserver_url[0], '_blank')} leftIcon={<Download />} />
                         <MenuItem primaryText="Remove (TODO)" onTouchTap={(event) => alert('remove ' + dataset.title[0])} leftIcon={<Remove />} />
                         <MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + dataset.title[0])} leftIcon={<ShareIcon />} />
                         <MenuItem primaryText="Visualize All (Aggregated)"
                                   disabled={disabledDatasetVisualize}
                                   onTouchTap={(event) => {
-                                    this._onVisualizeDataset(event, dataset, true)
+                                    if (!disabledDatasetVisualize) this._onVisualizeDataset(event, dataset, true);
                                   }}
                                   leftIcon={<Visualize />} />
                         <MenuItem primaryText="Visualize All (Splitted)"
                                   disabled={disabledDatasetVisualize}
                                   onTouchTap={(event) => {
-                                    this._onVisualizeDataset(event, dataset, false)
+                                    if (!disabledDatasetVisualize) this._onVisualizeDataset(event, dataset, false);
                                   }}
                                   leftIcon={<Visualize />} />
                       </IconMenu>
@@ -177,11 +177,11 @@ export class ProjectDatasets extends React.Component {
                                     tooltipPosition="bottom-left">
                                     <MoreVertIcon color={grey400} />
                                   </IconButton>}>
-                                <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.opendap_url[j], '_blank')} leftIcon={<Download />} />
+                                <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.fileserver_url[j], '_blank')} leftIcon={<Download />} />
                                 <MenuItem primaryText="Remove (TODO)" onTouchTap={(event) => alert('remove ' + dataset.title[j])} leftIcon={<Remove />} />
                                 <MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + dataset.title[j])} leftIcon={<ShareIcon />} />
                                 <MenuItem primaryText="Visualize" disabled={disabledNestedVisualize} onTouchTap={(event) => {
-                                  this._onVisualizeDataset(event, dataset, true, j)
+                                  if (!disabledNestedVisualize) this._onVisualizeDataset(event, dataset, true, j);
                                 }} leftIcon={<Visualize />} />
                               </IconMenu>
                             }
@@ -222,11 +222,11 @@ export class ProjectDatasets extends React.Component {
                           tooltipPosition="bottom-left">
                           <MoreVertIcon color={grey400} />
                         </IconButton>}>
-                        <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.opendap_url[0], '_blank')} leftIcon={<Download />} />
+                        <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.fileserver_url[0], '_blank')} leftIcon={<Download />} />
                         <MenuItem primaryText="Remove (TODO)" onTouchTap={(event) => alert('remove ' + dataset.title[0])} leftIcon={<Remove />} />
                         <MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + dataset.title[0])} leftIcon={<ShareIcon />} />
                         <MenuItem primaryText="Visualize" disabled={disabledVisualize} onTouchTap={(event) => {
-                          this._onVisualizeDataset(event, dataset, true, 0)
+                          if (!disabledVisualize) this._onVisualizeDataset(event, dataset, true, 0)
                         }} leftIcon={<Visualize />} />
                       </IconMenu>
                     }

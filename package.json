@@ -1,6 +1,6 @@
 {
   "name": "pavics-frontend",
-  "version": "0.2.10",
+  "version": "0.2.13",
   "description": "PAVICS",
   "main": "index.js",
   "engines": {
@@ -119,7 +119,6 @@
     "moment": "^2.18.1",
     "node-sass": "^4.5.3",
     "normalize.css": "^4.1.1",
-    "openlayers": "^3.17.1",
     "plotly.js": "^1.17.3",
     "postcss-loader": "^0.9.0",
     "rc-slider": "^8.3.3",

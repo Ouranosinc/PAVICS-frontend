@@ -94,6 +94,7 @@ export class TimeSlider extends React.Component {
     this._onHideTimeSliderPanel = this._onHideTimeSliderPanel.bind(this);
     this._onSelectedTime = this._onSelectedTime.bind(this);
     this.state = DEFAULT_STATE;
+    this.playLoopTimeout =  null;
   }
 
   componentWillReceiveProps (nextProps) {
@@ -529,11 +530,11 @@ export class TimeSlider extends React.Component {
                 fullWidth={true}
                 floatingLabelText="Timestep Granularity Level"
                 onChange={(event, index, value) => this._onChangedStepGranularity(value)}>
-                <MenuItem value={MINUTE_VALUE} primaryText="minute(s)" />
-                <MenuItem value={HOUR_VALUE} primaryText="hour(s)" />
-                <MenuItem value={DAY_VALUE} primaryText="day(s)" />
-                <MenuItem value={MONTH_VALUE} primaryText="month(s)" />
-                <MenuItem value={YEAR_VALUE} primaryText="year(s)" />
+                <MenuItem value={MINUTE_VALUE} primaryText="Minute(s)" />
+                <MenuItem value={HOUR_VALUE} primaryText="Hour(s)" />
+                <MenuItem value={DAY_VALUE} primaryText="Day(s)" />
+                <MenuItem value={MONTH_VALUE} primaryText="Month(s)" />
+                <MenuItem value={YEAR_VALUE} primaryText="Year(s)" />
               </SelectField>
             </Col>
             <Col md={4} lg={4}>
@@ -543,47 +544,47 @@ export class TimeSlider extends React.Component {
                 fullWidth={true}
                 floatingLabelText="Play Speed Level"
                 onChange={(event, index, value) => this._onChangedStepSpeed(value)}>
-                <MenuItem value={10000} primaryText="super slow" />
-                <MenuItem value={5000} primaryText="slow" />
-                <MenuItem value={3000} primaryText="medium" />
-                <MenuItem value={1000} primaryText="fast" />
+                <MenuItem value={10000} primaryText="Very Slow (10 seconds)" />
+                <MenuItem value={5000} primaryText="Slow (5 seconds)" />
+                <MenuItem value={3000} primaryText="Medium (3 seconds)" />
+                <MenuItem value={1000} primaryText="Fast (Every second)" />
               </SelectField>
             </Col>
           </Row>
           <Row>
             <Col sm={12}>
               <RaisedButton
-                disabled={(this.state.minDatetime === this.props.currentDateTime) || this.state.disabled}
+                disabled={(this.state.minDatetime === this.props.currentDateTime) || this.state.disabled || this.state.isPlaying}
                 primary={true}
                 icon={<FastBackwardIcon />}
                 style={{margin: '0 5px 0 5px', width: '13%'}}
                 onClick={this._onClickedStepControls.bind(this, FAST_BACKWARD_ACTION)} />
               <RaisedButton
-                disabled={(this.state.minDatetime === this.props.currentDateTime) || this.state.disabled}
+                disabled={(this.state.minDatetime === this.props.currentDateTime) || this.state.disabled || this.state.isPlaying}
                 primary={true}
                 icon={<BackwardIcon />}
                 style={{margin: '0 5px 0 5px', width: '13%'}}
                 onClick={this._onClickedStepControls.bind(this, STEP_BACKWARD_ACTION)} />
               <RaisedButton
-                disabled={this.state.disabled}
+                disabled={this.state.disabled|| this.state.isPlaying}
                 primary={true}
                 icon={<PlayIcon />}
                 style={{margin: '0 5px 0 5px', width: '19%'}}
                 onClick={this._onClickedStepControls.bind(this, PLAY_ACTION)} />
               <RaisedButton
-                disabled={this.state.disabled}
+                disabled={this.state.disabled || !this.state.isPlaying}
                 primary={true}
                 icon={<PauseIcon />}
                 style={{margin: '0 5px 0 5px', width: '19%'}}
                 onClick={this._onClickedStepControls.bind(this, PAUSE_ACTION)} />
               <RaisedButton
-                disabled={(this.state.maxDatetime === this.props.currentDateTime) || this.state.disabled}
+                disabled={(this.state.maxDatetime === this.props.currentDateTime) || this.state.disabled || this.state.isPlaying}
                 primary={true}
                 icon={<ForwardIcon />}
                 style={{margin: '0 5px 0 5px', width: '13%'}}
                 onClick={this._onClickedStepControls.bind(this, STEP_FORWARD_ACTION)} />
               <RaisedButton
-                disabled={(this.state.maxDatetime === this.props.currentDateTime) || this.state.disabled}
+                disabled={(this.state.maxDatetime === this.props.currentDateTime) || this.state.disabled || this.state.isPlaying}
                 primary={true}
                 icon={<FastForwardIcon />}
                 style={{margin: '0 5px 0 5px', width: '13%'}}
@@ -685,40 +686,54 @@ export class TimeSlider extends React.Component {
   _onClickedStepControls (key) {
     switch (key) {
       case FAST_BACKWARD_ACTION:
-        this.dispatchCurrentDateTime(this.state.minDatetime);
+        if(!this.state.isPlaying) this.dispatchCurrentDateTime(this.state.minDatetime);
         break;
       case FAST_FORWARD_ACTION:
-        this.dispatchCurrentDateTime(this.state.maxDatetime);
+        if(!this.state.isPlaying) this.dispatchCurrentDateTime(this.state.maxDatetime);
         break;
       case PAUSE_ACTION:
-        this.setState(
-          {
-            isPlaying: false
-          });
+        if(this.state.isPlaying){
+          this.stopPlayLoop();
+          this.setState(
+            {
+              isPlaying: false
+            });
+        }
         break;
       case PLAY_ACTION:
-        this.setState(
-          {
-            isPlaying: true
-          });
-        this.playLoop(true);
+        if(!this.state.isPlaying) {
+          this.setState(
+            {
+              isPlaying: true
+            });
+          this.playLoop(true);
+        }
         break;
       case STEP_BACKWARD_ACTION:
-        this.moveOneStep(false);
+        if(!this.state.isPlaying) this.moveOneStep(false);
         break;
       case STEP_FORWARD_ACTION:
-        this.moveOneStep(true);
+        if(!this.state.isPlaying) this.moveOneStep(true);
         break;
       default:
         break;
     }
   }
 
+  componentWillUnmount(){
+    this.stopPlayLoop();
+  }
+
+  stopPlayLoop(){
+    clearTimeout(this.playLoopTimeout);
+  }
+
   playLoop (first) {
-    setTimeout(
+    this.stopPlayLoop();
+    this.playLoopTimeout = setTimeout(
       () => {
+        console.log('Play loop executed');
         this.moveOneStep(true);
-        console.log('looping');
         if (this.state.isPlaying) {
           this.playLoop(false);
         }

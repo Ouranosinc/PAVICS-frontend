@@ -1,9 +1,9 @@
 import React from 'react';
 import classes from './OLComponent.scss';
-import ol from 'openlayers';
 import Dialog from 'material-ui/Dialog';
 import * as constants from './../../constants';
 import myHttp from './../../../lib/http';
+
 // Couldn't figure out the bug when importing inner component css file but it works from node_modules
 let G_BING_API_KEY = 'AtXX65CBBfZXBxm6oMyf_5idMAMI7W6a5GuZ5acVcrYi6lCQayiiBz7_aMHB7JR7';
 const INDEX_BASE_MAP = -10;
@@ -120,21 +120,47 @@ class OLComponent extends React.Component {
   }
 
   initMap () {
+    let minZoom = 2;
+    let maxZoom = 13;
+
     this.view = new ol.View(
       {
         center: [-10997148, 8569099],
-        zoom: 4
+        zoom: 4,
+        minZoom: minZoom,
+        maxZoom: maxZoom
       }
     );
+    var scaleLineControl = new ol.control.ScaleLine();
+    let panZoom = new ol.control.PanZoom({
+      imgPath: 'ol3-panzoom/zoombar_black',
+      minZoom: minZoom,
+      maxZoom: maxZoom,
+      slider: true
+    });
     this.map = new ol.Map(
       {
-        controls: [],
+        controls: ol.control.defaults({
+          zoom: false
+        }).extend([
+          scaleLineControl,
+          panZoom
+        ]),
         layers: [],
         target: 'map',
         renderer: 'canvas',
         view: this.view
       }
     );
+
+    let mousePosition = new ol.control.MousePosition({
+      coordinateFormat: ol.coordinate.createStringXY(6),
+      projection: 'EPSG:4326',
+      target: document.getElementById('mouseCoordinates')
+    });
+    // let zoomSlider = new ol.control.ZoomSlider();
+    this.map.addControl(mousePosition);
+    // this.map.addControl(zoomSlider);
   }
 
   createVectorLayer (nameId) {

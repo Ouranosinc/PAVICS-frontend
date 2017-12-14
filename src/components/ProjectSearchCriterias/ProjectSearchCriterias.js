@@ -73,7 +73,7 @@ export class ProjectSearchCriterias extends React.Component {
   _onRestoreSearchCriteria (research) {
     this.onReloadSearchCriteria(research);
     this.props.researchActions.restorePavicsDatasets(research);
-    NotificationManager.warning(`These are ARCHIVED results from a request made on ${moment(research.createdOn).format(constants.PAVICS_DATE_FORMAT)}`);
+    NotificationManager.warning(`These are ARCHIVED results from a request made on ${moment(research.createdOn).format(constants.PAVICS_DATE_FORMAT)}`, 'Warning', 10000);
   }
 
   _onRemoveSearchCriteria (research) {

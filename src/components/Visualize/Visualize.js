@@ -79,7 +79,7 @@ class Visualize extends React.Component {
       // Do only once
       if(!this.defaultProjectSet) {
         this.props.projectActions.setCurrentProject(project);
-        NotificationManager.info(`Project '${project.name}' has been selected as the default project.`);
+        NotificationManager.info(`Project '${project.name}' has been selected as the default project.`, 'Information', 10000);
         this.defaultProjectSet = true;
       }
     }
@@ -88,6 +88,7 @@ class Visualize extends React.Component {
   componentDidMount() {
     let filter = JSON.stringify({"where": { "researcherId": 1},"order": "name ASC"});
     this.props.projectAPIActions.fetchProjects({filter: filter });
+    this.props.selectBasemap('Aerial');
 
     // TEST PURPOSE (TimeSlider): Load this dataset when opening the platform
     // let dataset = {
