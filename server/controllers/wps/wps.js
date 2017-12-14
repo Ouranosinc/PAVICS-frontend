@@ -7,7 +7,7 @@ var wps = (function () {
     getFacets: function * list (next) {
       if (this.method !== 'GET') return yield next;
 
-      let url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=pavicsearch&DataInputs=facets=*&limit=0&distrib=false`;
+      let url = `${config.pavics_catalog_path}?service=WPS&request=execute&version=1.0.0&identifier=pavicsearch&DataInputs=facets=*&limit=0&distrib=false`;
       console.log('consuming: ' + url);
       let response = yield request(url);
       let xmlToJson = yield Utils.parseXMLThunk(response.body);

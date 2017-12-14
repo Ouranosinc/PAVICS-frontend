@@ -12,6 +12,9 @@ debug('Creating default configuration.');
 let serverHost = process.env.PAVICS_FRONTEND_IP || localip;
 let serverProto = process.env.PAVICS_FRONTEND_PROTO || 'http';
 let birdhouseHost = process.env.BIRDHOUSE_HOST || 'outarde.crim.ca';
+let ncwmsHost = process.env.NCWMS_HOST || `https://${birdhouseHost}/twitcher/ows/proxy/ncWMS2/wms`;
+let catalogHost = process.env.CATALOG_HOST || `https://${birdhouseHost}/twitcher/ows/proxy/catalog/pywps`;
+let malleefowlHost = process.env.MALLEEFOWL_HOST || `https://${birdhouseHost}/twitcher/ows/proxy/malleefowl/wps`;
 let PAVICS_WORKFLOW_PROVIDER = process.env.PAVICS_WORKFLOW_PROVIDER || 'malleefowl';
 let PAVICS_RUN_WORKFLOW_IDENTIFIER = process.env.PAVICS_RUN_WORKFLOW_IDENTIFIER || 'custom_workflow';
 let PAVICS_VISUALIZE_IDENTIFIER = process.env.PAVICS_VISUALIZE_IDENTIFIER || 'TODO';
@@ -32,11 +35,11 @@ const config = {
   // ----------------------------------
   // PAVICS Configs
   // ----------------------------------
-  pavics_malleefowl_path: `http://${birdhouseHost}:8091/wps`,
+  pavics_malleefowl_path: malleefowlHost,
   pavics_phoenix_path: `https://${birdhouseHost}:8443`,
   pavics_geoserver_path: `https://${birdhouseHost}/geoserver`,
-  pavics_ncwms_path: `https://${birdhouseHost}/ncWMS2/wms`,
-  pavics_pywps_path: `http://${birdhouseHost}:8086/pywps`,
+  pavics_ncwms_path: ncwmsHost,
+  pavics_catalog_path: catalogHost,
   pavics_project_api_path: `https://${birdhouseHost}/project-api/api`,
   pavics_magpie_host: `https://${birdhouseHost}/magpie`,
   PAVICS_WORKFLOW_PROVIDER: PAVICS_WORKFLOW_PROVIDER,
