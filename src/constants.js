@@ -35,6 +35,7 @@ export const DEFAULT_SELECTED_KEY = 'frequency';
 export const PER_PAGE_OPTIONS = [5, 10, 25];
 export const PER_PAGE_INITIAL_INDEX = 0;
 // WPS processes and forms
+export const INPUT_DATETIME = 'dateTime';
 export const BOOLEAN = 'boolean';
 export const STRING = 'string';
 export const NETCDF = 'ComplexData';

@@ -1,9 +1,12 @@
 import React, {Component} from 'react';
 import Checkbox from 'material-ui/Checkbox';
 import TextField from 'material-ui/TextField';
-import * as constants from './../../constants';
+import DatePicker from 'material-ui/DatePicker';
+import TimePicker from 'material-ui/TimePicker';
 
-export default class WpsProcessFormInput extends Component {
+const {BOOLEAN, INPUT_DATETIME} = require('../../constants');
+
+class WpsProcessFormInput extends Component {
 
   // value not marked as required because it can (somewhat) validly be undefined
   static propTypes = {
@@ -19,11 +22,45 @@ export default class WpsProcessFormInput extends Component {
     value: React.PropTypes.any
   };
 
+  constructor (props) {
+    super(props);
+    this.state = {
+      dateTimeValues: {
+        date: null,
+        time: null
+      }
+    };
+  }
+
+  createDateTime = () => {
+    const date = this.state.dateTimeValues.date;
+    const time = this.state.dateTimeValues.time;
+    const dateString = date ? date.toISOString().split('T')[0] : '';
+    const timeString = time ? time.toISOString().split('T')[1] : '';
+    this.props.handleChange(`${dateString}T${timeString}`, this.props.uniqueIdentifier);
+  };
+  handleDateChange = (event, date) => {
+    this.setState({
+      dateTimeValues: {
+        date: date,
+        time: this.state.dateTimeValues.time
+      }
+    }, () => { this.createDateTime(); });
+  };
+  handleTimeChange = (event, time) => {
+    this.setState({
+      dateTimeValues: {
+        date: this.state.dateTimeValues.date,
+        time: time
+      }
+    }, () => { this.createDateTime(); });
+  };
+
   // it seems the dataType property of the inputs might change unpredictably (we have seen three forms to date) but they all seem to end with the type
   // hence, for string and boolean, implement a type of "endsWith" check instead of pure equivalence
 
   createMarkup () {
-    if (this.props.type.endsWith(constants.BOOLEAN)) {
+    if (this.props.type.endsWith(BOOLEAN)) {
       let value = false;
       if (typeof (this.props.value) === 'boolean') {
         value = this.props.value;
@@ -43,6 +80,32 @@ export default class WpsProcessFormInput extends Component {
             onCheck={(event, value) => this.props.handleChange(event.target.checked, this.props.uniqueIdentifier)}
             value={value} />
           <small>{this.props.description}</small>
+        </div>
+      );
+    }
+    if (this.props.type === INPUT_DATETIME) {
+      return (
+        <div style={{ padding: '15px 0 0' }} className="container">
+          <div className="row">
+            <div className="col-sm-6">
+              <DatePicker
+                autoOk
+                value={this.state.dateTimeValues.date}
+                onChange={this.handleDateChange}
+                style={{ width: '100%' }}
+                hintText={this.props.description}
+                container="inline" />
+            </div>
+            <div className="col-sm-6">
+              <TimePicker
+                autoOk
+                value={this.state.dateTimeValues.time}
+                onChange={this.handleTimeChange}
+                textFieldStyle={{ width: '100%' }}
+                format="24hr" />
+            </div>
+            <input value={this.props.value} name={this.props.name} title={this.props.title} type="hidden" />
+          </div>
         </div>
       );
     }
@@ -81,3 +144,5 @@ export default class WpsProcessFormInput extends Component {
     );
   }
 }
+
+export {WpsProcessFormInput};

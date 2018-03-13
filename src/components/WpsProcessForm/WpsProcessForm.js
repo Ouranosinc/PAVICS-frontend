@@ -1,7 +1,8 @@
 import React from 'react';
 import DeformWrapper from '../DeformWrapper/DeformWrapper';
-import WpsProcessFormInput from '../WpsProcessFormInput/WpsProcessFormInput';
 import * as constants from './../../constants';
+
+const {WpsProcessFormInput} = require('../WpsProcessFormInput/WpsProcessFormInput');
 
 /*
 Wps Process Form
