@@ -33,10 +33,10 @@ class WpsProcessFormInput extends Component {
   }
 
   createDateTime = () => {
-    const date = this.state.dateTimeValues.date;
-    const time = this.state.dateTimeValues.time;
-    const dateString = date ? date.toISOString().split('T')[0] : '';
-    const timeString = time ? time.toISOString().split('T')[1] : '';
+    const date = this.state.dateTimeValues.date || new Date();
+    const time = this.state.dateTimeValues.time || new Date();
+    const dateString = date.toISOString().split('T')[0];
+    const timeString = time.toISOString().split('T')[1];
     this.props.handleChange(`${dateString}T${timeString}`, this.props.uniqueIdentifier);
   };
   handleDateChange = (event, date) => {
@@ -56,10 +56,27 @@ class WpsProcessFormInput extends Component {
     }, () => { this.createDateTime(); });
   };
 
-  // it seems the dataType property of the inputs might change unpredictably (we have seen three forms to date) but they all seem to end with the type
-  // hence, for string and boolean, implement a type of "endsWith" check instead of pure equivalence
+  handleCheckboxChange = (event, value) => {
+    this.props.handleChange(event.target.checked, this.props.uniqueIdentifier);
+  };
+
+  createHandleTextFieldArrayChangeCallback = (index) => {
+    return (event, value) => {
+      this.handleTextFieldArrayChange(event.target.value, index);
+    };
+  };
+
+  handleTextFieldArrayChange = (value, index) => {
+    this.props.handleArrayChange(value, this.props.uniqueIdentifier, index);
+  };
+
+  handleTextFieldChange = (event, value) => {
+    this.props.handleChange(event.target.value, this.props.uniqueIdentifier);
+  };
 
   createMarkup () {
+    // it seems the dataType property of the inputs might change unpredictably (we have seen three forms to date) but they all seem to end with the type
+    // hence, for string and boolean, implement a type of "endsWith" check instead of pure equivalence
     if (this.props.type.endsWith(BOOLEAN)) {
       let value = false;
       if (typeof (this.props.value) === 'boolean') {
@@ -77,7 +94,7 @@ class WpsProcessFormInput extends Component {
             labelPosition="right"
             labelStyle={{ textAlign: 'left' }}
             checked={value}
-            onCheck={(event, value) => this.props.handleChange(event.target.checked, this.props.uniqueIdentifier)}
+            onCheck={this.handleCheckboxChange}
             value={value} />
           <small>{this.props.description}</small>
         </div>
@@ -93,13 +110,14 @@ class WpsProcessFormInput extends Component {
                 value={this.state.dateTimeValues.date}
                 onChange={this.handleDateChange}
                 style={{ width: '100%' }}
-                hintText={this.props.description}
+                hintText={`${this.props.description} - date`}
                 container="inline" />
             </div>
             <div className="col-sm-6">
               <TimePicker
                 autoOk
                 value={this.state.dateTimeValues.time}
+                hintText={`${this.props.description} - time`}
                 onChange={this.handleTimeChange}
                 textFieldStyle={{ width: '100%' }}
                 format="24hr" />
@@ -117,7 +135,7 @@ class WpsProcessFormInput extends Component {
             name={this.props.name}
             fullWidth
             value={this.props.value[i]}
-            onChange={(event, value) => this.props.handleArrayChange(event.target.value, this.props.uniqueIdentifier, i)}
+            onChange={this.createHandleTextFieldArrayChangeCallback(i)}
             hintText={this.props.description}
             floatingLabelText={this.props.title} />
         );
@@ -128,7 +146,7 @@ class WpsProcessFormInput extends Component {
         name={this.props.name}
         fullWidth
         value={this.props.value}
-        onChange={(event, value) => this.props.handleChange(event.target.value, this.props.uniqueIdentifier)}
+        onChange={this.handleTextFieldChange}
         hintText={this.props.description}
         floatingLabelText={this.props.title} />
     );
