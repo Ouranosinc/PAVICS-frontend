@@ -19,7 +19,6 @@ const router = require('koa-router')();
 // Routes
 router.get('/wps/:identifier', consumer.resolve);
 router.get('/phoenix/:identifier', phoenix.consume);
-router.get('/api/wms/capabilities', birdhouse.getCapabilities);
 router.get('/api/wms/visualizableData', birdhouse.fetchVisualizableLayer);
 router.get('/api/wms/dataset/layers', wms.getLayers);
 router.get('/api/facets', wps.getFacets);

@@ -40,7 +40,7 @@ var consumer = (function () {
           if (this.request.query.type) type = `type=${this.request.query.type};`;
           if (this.request.query.limit) limit = `limit=${this.request.query.limit};`;
           if (this.request.query.constraints) constraints = `;constraints=${this.request.query.constraints};`;
-          options.url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=pavicsearch&DataInputs=${limit}facets=*;${type}distrib=true${constraints}`;
+          options.url = `${config.pavics_catalog_path}?service=WPS&request=execute&version=1.0.0&identifier=pavicsearch&DataInputs=${limit}facets=*;${type}distrib=true${constraints}`;
           console.log('fetching pavicsearch: ', options.url);
           response = yield request(options);
           xml = yield Utils.parseXMLThunk(response.body);
@@ -49,7 +49,7 @@ var consumer = (function () {
           this.body = response.body;
           break;
         case 'plotly':
-          options.url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0` +
+          options.url = `${config.pavics_catalog_path}?service=WPS&request=execute&version=1.0.0` +
             `&identifier=ncplotly&DataInputs=opendap_url=${this.request.query['opendap_url']}` +
             `;variable_name=${this.request.query['variable_name']}` +
             `;time_initial_indice=` + this.request.query['time_initial_indice'] +
@@ -73,7 +73,7 @@ var consumer = (function () {
           let lat = this.request.query['lat'];
           let time = this.request.query['time'];
           let dataInputs = `opendap_url=${opendapUrl};variable=${variable};nearest_to=lon:${lon};nearest_to=lat:${lat};nearest_to=time:${time}`;
-          options.url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=getpoint&DataInputs=${dataInputs}`;
+          options.url = `${config.pavics_catalog_path}?service=WPS&request=execute&version=1.0.0&identifier=getpoint&DataInputs=${dataInputs}`;
           console.log('getting point:', options.url);
           response = yield request(options);
           xml = yield Utils.parseXMLThunk(response.body);
@@ -83,7 +83,7 @@ var consumer = (function () {
           break;
         case 'crawl':
           let dataset = this.request.query['dateset_id'];
-          options.url = `${config.pavics_pywps_path}?service=WPS&request=execute&version=1.0.0&identifier=pavicrawler&storeExecuteResponse=true&DataInputs=targetfiles=${dataset}`;
+          options.url = `${config.pavics_catalog_path}?service=WPS&request=execute&version=1.0.0&identifier=pavicrawler&storeExecuteResponse=true&DataInputs=targetfiles=${dataset}`;
           console.log('crawling a file:', options.url);
           response = yield request(options);
           xml = yield Utils.parseXMLThunk(response.body);
