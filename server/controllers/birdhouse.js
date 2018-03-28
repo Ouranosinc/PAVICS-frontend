@@ -81,15 +81,3 @@ module.exports.fetchVisualizableLayer = function * list () {
     error: 'no visualizable output'
   };
 };
-module.exports.getCapabilities = function * list (next) {
-  if (this.method !== 'GET') {
-    return yield next;
-  }
-  let options = {
-    url: `${config.pavics_ncwms_path}?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0`
-  };
-  // Yay, HTTP requests with no callbacks!
-  let response = yield request(options);
-  this.body = yield parseXMLThunk(response.body);
-};
-
