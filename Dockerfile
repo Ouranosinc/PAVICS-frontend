@@ -1,12 +1,12 @@
 # PAVICS-Platform
 #
-# VERSION 0.2.13
+# VERSION 1.0.0
 FROM node:8.2.1
 MAINTAINER Renaud Hébert-Legault <renaud.hebert-legault@crim.ca>
-LABEL Description="PAVICS Platform - Based on Node.js, React, Redux, Webpack, OpenLayers, Koa and MaterialUI" Vendor="CRIM" Version="0.2.13"
+LABEL Description="PAVICS Platform - Based on Node.js, React, Redux, Webpack, OpenLayers, Koa and MaterialUI" Vendor="CRIM" Version="1.0.0"
 WORKDIR /frontend
 
-ENV NODE_ENV=development
+ENV NODE_ENV=production
 ENV BIRDHOUSE_HOST=outarde.crim.ca
 ADD package.json package.json
 ADD package-lock.json package-lock.json
