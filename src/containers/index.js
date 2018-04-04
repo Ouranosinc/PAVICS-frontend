@@ -1,5 +1,5 @@
 import AccountManagementContainer from './AccountManagement';
-import ExperienceManagementContainer from './ExperienceManagement';
+import ProjectManagementContainer from './ProjectManagement';
 import ResearchContainer from './Research';
 import VisualizeContainer from './Visualize';
 import WorkflowWizardContainer from './WorkflowWizard';
@@ -7,7 +7,7 @@ import ProcessMonitoringContainer from './ProcessMonitoring';
 
 export {
   AccountManagementContainer,
-  ExperienceManagementContainer,
+  ProjectManagementContainer,
   ResearchContainer,
   ProcessMonitoringContainer,
   VisualizeContainer,

@@ -147,7 +147,11 @@ export default class ScientificWorkflowStepper extends Component {
         // if(xhr.responseURL.indexOf('/processes/loading') !== -1){ // Deprecated but workek well with phoenix execute() Accept text/html
         try {
           if (response.status === 200) {
-            this.props.jobAPIActions.createJob({ projectId: this.props.project.currentProject.id, phoenixTaskId: response.task_id });
+            this.props.jobAPIActions.createJob({
+              projectId: this.props.project.currentProject.id,
+              phoenixTaskId: response.task_id,
+              name: this.state.workflow.name
+            });
             NotificationManager.success('Workflow has been launched with success, you can now monitor workflow execution in the monitoring panel', 'Success', 10000);
           } else {
             NotificationManager.error('Workflow hasn\'t been launched as intended. Make sure the workflow and required inputs are defined properly', 'Error', 10000);
@@ -246,10 +250,11 @@ export default class ScientificWorkflowStepper extends Component {
           </StepLabel>
           <StepContent>
             <ScientificWorkflowList
+              project={this.props.project}
               goToConfigureAndRunStep={this.goToConfigureAndRunStep}
               workflowAPI={this.props.workflowAPI}
               workflowAPIActions={this.props.workflowAPIActions} />
-            <p style={styles.orParagraph}>Or add a new workflow</p>
+            <p style={styles.orParagraph}>Or create a new workflow</p>
             <ScientificWorkflowForm
               project={this.props.project}
               workflowAPIActions={this.props.workflowAPIActions} />

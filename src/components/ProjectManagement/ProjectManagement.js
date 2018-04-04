@@ -1,5 +1,5 @@
 import React from 'react';
-import classes from './ExperienceManagement.scss';
+import classes from './ProjectManagement.scss';
 import ProjectCreation from './../../components/ProjectCreation';
 import ProjectDatasets from './../../components/ProjectDatasets';
 import ProjectSearchCriterias from './../../components/ProjectSearchCriterias';
@@ -10,7 +10,7 @@ import { Tabs, Tab } from 'material-ui/Tabs';
 const CURRENT_PROJECT_TAB_VALUE = "CURRENT_PROJECT_TAB_VALUE";
 const CREATE_PROJECT_TAB_VALUE = "CREATE_PROJECT_TAB_VALUE";
 
-export class ExperienceManagement extends React.Component {
+export class ProjectManagement extends React.Component {
   static propTypes = {
     project: React.PropTypes.object.isRequired,
     projectActions: React.PropTypes.object.isRequired,
@@ -46,12 +46,12 @@ export class ExperienceManagement extends React.Component {
      <Tab value={CURRENT_PROJECT_TAB_VALUE} label="Current project">
        {
          (this.state.activeTab === CURRENT_PROJECT_TAB_VALUE) ?
-         <div className={classes['ExperienceManagement']} style={{ margin: 20 }}>
+         <div className={classes['ProjectManagement']} style={{ margin: 20 }}>
            <ProjectSelector {...this.props}/>
-           <ProjectEditor {...this.props}/>
            {
              (this.props.project.currentProject.id) ?
                <div>
+                 <ProjectEditor {...this.props}/>
                  <ProjectDatasets {...this.props} />
                  <ProjectSearchCriterias {...this.props} />
                </div>: null
@@ -62,7 +62,7 @@ export class ExperienceManagement extends React.Component {
      <Tab value={CREATE_PROJECT_TAB_VALUE} label="Create new project">
        {
          (this.state.activeTab === CREATE_PROJECT_TAB_VALUE) ?
-           <div className={classes['ExperienceManagement']} style={{ margin: 20 }}>
+           <div className={classes['ProjectManagement']} style={{ margin: 20 }}>
              <ProjectCreation  {...this.props}/>
            </div>: null
        }
@@ -72,4 +72,4 @@ export class ExperienceManagement extends React.Component {
   }
 }
 
-export default ExperienceManagement
+export default ProjectManagement

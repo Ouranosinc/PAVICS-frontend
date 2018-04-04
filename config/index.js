@@ -40,7 +40,7 @@ const config = {
   pavics_geoserver_path: `https://${birdhouseHost}/geoserver`,
   pavics_ncwms_path: ncwmsHost,
   pavics_catalog_path: catalogHost,
-  pavics_project_api_path: `https://${birdhouseHost}/project-api/api`,
+  pavics_project_api_path: process.env.PAVICS_PROJECT_API_URL || `https://${birdhouseHost}/project-api/api`,
   pavics_magpie_host: `https://${birdhouseHost}/magpie`,
   PAVICS_WORKFLOW_PROVIDER: PAVICS_WORKFLOW_PROVIDER,
   PAVICS_RUN_WORKFLOW_IDENTIFIER: PAVICS_RUN_WORKFLOW_IDENTIFIER,

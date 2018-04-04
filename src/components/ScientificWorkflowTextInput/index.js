@@ -1,0 +1,2 @@
+import ScientificWorkflowTextInput from './ScientificWorkflowTextInput'
+export default ScientificWorkflowTextInput

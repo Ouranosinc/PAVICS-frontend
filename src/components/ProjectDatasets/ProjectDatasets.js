@@ -18,33 +18,48 @@ import FolderSpecial from 'material-ui/svg-icons/notification/folder-special';
 import File from 'material-ui/svg-icons/editor/insert-drive-file';
 import ShareIcon from 'material-ui/svg-icons/social/person-add';
 import ExpandableIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-down';
+import ConfirmDialog from './../../components/ConfirmDialog';
 
 export class ProjectDatasets extends React.Component {
   static propTypes = {
     project: React.PropTypes.object.isRequired,
     projectActions: React.PropTypes.object.isRequired,
-    projectAPI: React.PropTypes.object.isRequired,
-    projectAPIActions: React.PropTypes.object.isRequired
+    datasetAPI: React.PropTypes.object.isRequired,
+    datasetAPIActions: React.PropTypes.object.isRequired
   };
 
   constructor(props) {
     super(props);
     this._onVisualizeDataset = this._onVisualizeDataset.bind(this);
     this._onDatasetsPageChanged = this._onDatasetsPageChanged.bind(this);
+    this._onOpenConfirmRemoveDatasetDialog = this._onOpenConfirmRemoveDatasetDialog.bind(this);
+    this._onConfirmedDatasetRemove = this._onConfirmedDatasetRemove.bind(this);
+    this._onCloseDialogDatasetRemove = this._onCloseDialogDatasetRemove.bind(this);
+    this._onOpenConfirmRemoveFileDialog = this._onOpenConfirmRemoveFileDialog.bind(this);
+    this._onConfirmedFileRemove = this._onConfirmedFileRemove.bind(this);
+    this._onCloseDialogFileRemove = this._onCloseDialogFileRemove.bind(this);
     this.state = {
       datasetsPageNumber: 1,
-      datasetsNumberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX]
+      datasetsNumberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX],
+      isConfirmDatasetRemoveDialogOpened: false,
+      confirmDatasetRemoveDialogContent: '',
+      confirmDatasetRemoveDialogResource: null,
+      isConfirmFileRemoveDialogOpened: false,
+      confirmFileRemoveDialogContent: '',
+      confirmFileRemoveDialogResource: null
     };
   }
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.project.currentProject && nextProps.project.currentProject !== this.props.project.currentProject) {
-      this.props.projectAPIActions.fetchProjectDatasets({ projectId: nextProps.project.currentProject.id});
+      let filter = JSON.stringify({where: { projectId: nextProps.project.currentProject.id}});
+      this.props.datasetAPIActions.fetchDatasets({filter: filter});
     }
   }
 
   componentWillMount() {
-    this.props.projectAPIActions.fetchProjectDatasets({ projectId: this.props.project.currentProject.id});
+    let filter = JSON.stringify({where: { projectId: this.props.project.currentProject.id}});
+    this.props.datasetAPIActions.fetchDatasets({filter: filter});
   }
 
   _onDatasetsPageChanged (pageNumber, numberPerPage) {
@@ -62,7 +77,10 @@ export class ProjectDatasets extends React.Component {
     dataset['opendap_url'] = [dataset.opendap_url[index]];
     dataset['fileserver_url'] = [dataset.fileserver_url[index]];
     dataset['catalog_url'] = [dataset.catalog_url[index]];
-    // TODO, do the same for 'title', 'last_modified', 'resourcename', etc. ??
+    dataset['resourcename'] = [dataset.resourcename[index]];
+    dataset['title'] = [dataset.title[index]];
+    dataset['url'] = [dataset.url[index]];
+    dataset['last_modified'] = [dataset.last_modified[index]];
     return dataset;
   }
 
@@ -94,9 +112,70 @@ export class ProjectDatasets extends React.Component {
     }
   }
 
+  _onOpenConfirmRemoveFileDialog (dataset, index) {
+    let cpy = JSON.parse(JSON.stringify(dataset));
+    cpy.datetime_min.splice(index , 1);
+    cpy.datetime_max.splice(index , 1);
+    cpy.abstract.splice(index , 1);
+    cpy.wms_url.splice(index , 1);
+    cpy.opendap_url.splice(index , 1);
+    cpy.fileserver_url.splice(index , 1);
+    cpy.catalog_url.splice(index , 1);
+    cpy.resourcename.splice(index , 1);
+    cpy.title.splice(index , 1);
+    cpy.url.splice(index , 1);
+    cpy.last_modified.splice(index , 1);
+    this.setState({
+      isConfirmFileRemoveDialogOpened: true,
+      confirmFileRemoveDialogContent: `Do you really want to remove the file '${dataset.title[index]}' from the dataset?`,
+      confirmFileRemoveDialogResource: cpy
+    });
+  }
+
+  _onConfirmedFileRemove(dataset) {
+    this.props.datasetAPIActions.updateDataset(dataset);
+    this._onCloseDialogFileRemove();
+  }
+
+  _onCloseDialogFileRemove() {
+    this.setState({
+      isConfirmFileRemoveDialogOpened: false,
+      confirmFileRemoveDialogContent: '',
+      confirmFileRemoveDialogResource: null
+    });
+  }
+
+
+  _onOpenConfirmRemoveDatasetDialog (dataset) {
+    this.setState({
+      isConfirmDatasetRemoveDialogOpened: true,
+      confirmDatasetRemoveDialogContent: `Do you really want to remove the dataset '${dataset.aggregate_title}' from the current project?`,
+      confirmDatasetRemoveDialogResource: dataset
+    });
+  }
+
+  _onConfirmedDatasetRemove(dataset) {
+    this.props.datasetAPIActions.deleteDataset({ id: dataset.id });
+    this._onCloseDialogDatasetRemove();
+  }
+
+  _onCloseDialogDatasetRemove() {
+    this.setState({
+      isConfirmDatasetRemoveDialogOpened: false,
+      confirmDatasetRemoveDialogContent: '',
+      confirmDatasetRemoveDialogResource: null
+    });
+  }
+
+  onDownloadAllClicked(dataset) {
+    dataset.fileserver_url.forEach((url) => {
+      window.open(url, '_blank');
+    });
+  }
+
   render () {
     let datasetsStart = (this.state.datasetsPageNumber - 1) * this.state.datasetsNumberPerPage;
-    let datasetsPaginated = this.props.projectAPI.datasets.items.slice(datasetsStart, datasetsStart + this.state.datasetsNumberPerPage);
+    let datasetsPaginated = this.props.datasetAPI.items.slice(datasetsStart, datasetsStart + this.state.datasetsNumberPerPage);
     return (
       <div className={classes['ProjectDatasets']}>
         <Paper style={{marginTop: 20}}>
@@ -136,9 +215,9 @@ export class ProjectDatasets extends React.Component {
                           tooltipPosition="bottom-left">
                           <MoreVertIcon color={grey400} />
                         </IconButton>}>
-                        <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.fileserver_url[0], '_blank')} leftIcon={<Download />} />
-                        <MenuItem primaryText="Remove (TODO)" onTouchTap={(event) => alert('remove ' + dataset.title[0])} leftIcon={<Remove />} />
-                        <MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + dataset.title[0])} leftIcon={<ShareIcon />} />
+                        <MenuItem primaryText="Download All" onTouchTap={(event) => this.onDownloadAllClicked(dataset)} leftIcon={<Download />} />
+                        <MenuItem primaryText="Remove" onTouchTap={() => this._onOpenConfirmRemoveDatasetDialog(dataset)} leftIcon={<Remove />} />
+                        {/*<MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + dataset.title[0])} leftIcon={<ShareIcon />} />*/}
                         <MenuItem primaryText="Visualize All (Aggregated)"
                                   disabled={disabledDatasetVisualize}
                                   onTouchTap={(event) => {
@@ -178,8 +257,8 @@ export class ProjectDatasets extends React.Component {
                                     <MoreVertIcon color={grey400} />
                                   </IconButton>}>
                                 <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.fileserver_url[j], '_blank')} leftIcon={<Download />} />
-                                <MenuItem primaryText="Remove (TODO)" onTouchTap={(event) => alert('remove ' + dataset.title[j])} leftIcon={<Remove />} />
-                                <MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + dataset.title[j])} leftIcon={<ShareIcon />} />
+                                <MenuItem primaryText="Remove file" onTouchTap={() => {this._onOpenConfirmRemoveFileDialog(dataset, j)}} leftIcon={<Remove />} />
+                                {/*<MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + dataset.title[j])} leftIcon={<ShareIcon />} />*/}
                                 <MenuItem primaryText="Visualize" disabled={disabledNestedVisualize} onTouchTap={(event) => {
                                   if (!disabledNestedVisualize) this._onVisualizeDataset(event, dataset, true, j);
                                 }} leftIcon={<Visualize />} />
@@ -223,8 +302,8 @@ export class ProjectDatasets extends React.Component {
                           <MoreVertIcon color={grey400} />
                         </IconButton>}>
                         <MenuItem primaryText="Download" onTouchTap={(event) => window.open(dataset.fileserver_url[0], '_blank')} leftIcon={<Download />} />
-                        <MenuItem primaryText="Remove (TODO)" onTouchTap={(event) => alert('remove ' + dataset.title[0])} leftIcon={<Remove />} />
-                        <MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + dataset.title[0])} leftIcon={<ShareIcon />} />
+                        <MenuItem primaryText="Remove" onTouchTap={() => {this._onOpenConfirmRemoveDatasetDialog(dataset)}} leftIcon={<Remove />} />
+                        {/*<MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + dataset.title[0])} leftIcon={<ShareIcon />} />*/}
                         <MenuItem primaryText="Visualize" disabled={disabledVisualize} onTouchTap={(event) => {
                           if (!disabledVisualize) this._onVisualizeDataset(event, dataset, true, 0)
                         }} leftIcon={<Visualize />} />
@@ -237,11 +316,25 @@ export class ProjectDatasets extends React.Component {
             })}
           </List>
           <Pagination
-            total={this.props.projectAPI.datasets.items.length}
+            total={this.props.datasetAPI.items.length}
             initialPerPageOptionIndex={constants.PER_PAGE_INITIAL_INDEX}
             perPageOptions={constants.PER_PAGE_OPTIONS}
             onChange={this._onDatasetsPageChanged} />
         </Paper>
+        <ConfirmDialog
+          isOpen={this.state.isConfirmDatasetRemoveDialogOpened}
+          affectedResource={this.state.confirmDatasetRemoveDialogResource}
+          onDialogConfirmed={this._onConfirmedDatasetRemove}
+          onCloseDialog={this._onCloseDialogDatasetRemove}
+          dialogContent={this.state.confirmDatasetRemoveDialogContent}>
+        </ConfirmDialog>
+        <ConfirmDialog
+          isOpen={this.state.isConfirmFileRemoveDialogOpened}
+          affectedResource={this.state.confirmFileRemoveDialogResource}
+          onDialogConfirmed={this._onConfirmedFileRemove}
+          onCloseDialog={this._onCloseDialogFileRemove}
+          dialogContent={this.state.confirmFileRemoveDialogContent}>
+        </ConfirmDialog>
       </div>
     )
   }

@@ -8,12 +8,12 @@ const research = createResource({
 const projectDatasets = createResource({
   name: 'projectDatasets',
   pluralName: 'projectDatasets',
-  url: `${__PAVICS_PROJECT_API_PATH__}/Projects/:projectId/datasets`
+  url: `${__PAVICS_PROJECT_API_PATH__}/Projects/:projectId/datasets/:fk`
 });
 const projectResearchs = createResource({
   name: 'projectResearchs',
   pluralName: 'projectResearchs',
-  url: `${__PAVICS_PROJECT_API_PATH__}/Projects/:projectId/researchs`
+  url: `${__PAVICS_PROJECT_API_PATH__}/Projects/:projectId/researchs/:fk`
 });
 
 const types = {

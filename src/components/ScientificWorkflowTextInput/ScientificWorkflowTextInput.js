@@ -16,24 +16,28 @@ const styles = {
   }
 };
 
-export default class ScientificWorkflowForm extends Component {
+export default class ScientificWorkflowTextInput extends Component {
   static propTypes = {
-    project: React.PropTypes.object.isRequired,
-    workflowAPIActions: React.PropTypes.object.isRequired
+    workflow: React.PropTypes.string
   };
 
   constructor (props) {
     super(props);
-    this.onWorkflowChanged = this.onWorkflowChanged.bind(this);
-    this.tryParseJson = this.tryParseJson.bind(this);
-    this.onSaveWorkflow = this.onSaveWorkflow.bind(this);
+    this._onWorkflowChanged = this._onWorkflowChanged.bind(this);
     this.state = {
-      json: '',
-      dialogOpened: false
+      json: (props.workflow) ? props.workflow: ''
     };
   }
 
-  onWorkflowChanged (e) {
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.workflow && nextProps.workflow !== this.props.workflow) {
+      this.state = {
+        json: nextProps.workflow
+      };
+    }
+  }
+
+  _onWorkflowChanged (e) {
     this.setState({
       json: e.target.value
     });
@@ -49,7 +53,6 @@ export default class ScientificWorkflowForm extends Component {
       NotificationManager.warning('The value you entered is not valid JSON. You can visit https://jsonlint.com to correct the errors.', 'Warning', 10000);
       return false;
     }
-
   }
 
   validateAdvancedWorkflowSchema (object) {
@@ -71,37 +74,15 @@ export default class ScientificWorkflowForm extends Component {
     return true;
   }
 
-  onSaveWorkflow () {
-    let parsed = this.tryParseJson();
-    if(parsed && this.validateAdvancedWorkflowSchema(parsed)) {
-      this.props.workflowAPIActions.createWorkflow({
-        projectId: this.props.project.currentProject.id,
-        json: parsed
-      });
-      this.setState({
-        json: ''
-      });
-    }
-  }
-
   render () {
     return (
-      <div>
-        <Paper style={styles.textarea}>
-          <TextField
-            value={this.state.json}
-            onChange={this.onWorkflowChanged}
-            multiLine={true}
-            rowsMax={15}
-            fullWidth={true}
-            hintText="Enter a valid JSON workflow"/>
-        </Paper>
-        <RaisedButton
-          onClick={this.onSaveWorkflow}
-          style={styles.button}
-          label="Create workflow"
-          icon={<Done />}/>
-      </div>
+      <TextField
+        value={this.state.json}
+        onChange={this._onWorkflowChanged}
+        multiLine={true}
+        rowsMax={15}
+        fullWidth={true}
+        hintText="Enter a valid JSON workflow"/>
     );
   }
 }

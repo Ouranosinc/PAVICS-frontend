@@ -9,6 +9,7 @@ WORKDIR /frontend
 ENV NODE_ENV=development
 ENV BIRDHOUSE_HOST=outarde.crim.ca
 ADD package.json package.json
+ADD package-lock.json package-lock.json
 RUN npm install
 ADD . .
 
