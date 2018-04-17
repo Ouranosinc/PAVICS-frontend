@@ -61,7 +61,7 @@ const RESEARCHER_HANDLERS = {
 };
 
 // Reducer
-const initialState = {
+export const initialState = {
   currentResearcher: {
     email: 'renaud.hebert-legault@crim.ca',
     id: 1,

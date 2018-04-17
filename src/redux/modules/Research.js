@@ -147,58 +147,6 @@ export function fetchPavicsDatasets (type = 'Aggregate', limit = 10000) {
       );*/
   };
 }
-function requestEsgfDatasets () {
-  return {
-    type: constants.FETCH_ESGF_DATASETS_REQUEST,
-    esgfDatasets: {
-      requestedAt: Date.now(),
-      isFetching: true,
-      items: []
-    }
-  };
-}
-function receiveEsgfDatasetsFailure (error) {
-  return {
-    type: constants.FETCH_ESGF_DATASETS_FAILURE,
-    esgfDatasets: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      items: [],
-      error: error
-    }
-  };
-}
-function receiveEsgfDatasets (datasets) {
-  return {
-    type: constants.FETCH_ESGF_DATASETS_SUCCESS,
-    esgfDatasets: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      items: datasets,
-      error: null
-    }
-  };
-}
-// EXTERNAL ESGF CATALOG
-function fetchEsgfDatasets () {
-  return function (dispatch, getState) {
-    dispatch(requestEsgfDatasets());
-    // Get current added facets by querying store
-    let facets = getState().research.selectedFacets;
-    let constraints = '';
-    facets.forEach(function (facet, i) {
-      constraints += `${(i > 0) ? ',' : ''}${facet.key}:${facet.value}`;
-    });
-    return myHttp.get(`/api/datasets/esgf?constraints=${constraints}`)
-      .then(response => response.json())
-      .then(json =>
-        dispatch(receiveEsgfDatasets(json))
-      )
-      .catch(error =>
-        dispatch(receiveEsgfDatasetsFailure(error))
-      );
-  };
-}
 
 function fetchFacets () {
   return function (dispatch) {
@@ -274,15 +222,6 @@ const HANDLERS = {
   [constants.REMOVE_ALL_FACET_KEY_VALUE]: (state, action) => {
     return ({...state, selectedFacets: []});
   },
-  [constants.FETCH_ESGF_DATASETS_REQUEST]: (state, action) => {
-    return ({...state, esgfDatasets: action.esgfDatasets});
-  },
-  [constants.FETCH_ESGF_DATASETS_FAILURE]: (state, action) => {
-    return ({...state, esgfDatasets: action.esgfDatasets});
-  },
-  [constants.FETCH_ESGF_DATASETS_SUCCESS]: (state, action) => {
-    return ({...state, esgfDatasets: action.esgfDatasets});
-  },
   [constants.FETCH_PAVICS_DATASETS_REQUEST]: (state, action) => {
     return ({...state, pavicsDatasets: action.pavicsDatasets});
   },
@@ -298,7 +237,7 @@ const HANDLERS = {
 };
 
 // Reducer
-const initialState = {
+export const initialState = {
   selectedFacets: [],
   facets: {
     requestedAt: null,
@@ -312,13 +251,6 @@ const initialState = {
     requestedAt: null,
     isFetching: false,
     data: {},
-    error: null
-  },
-  esgfDatasets: { // NOT USED
-    requestedAt: null,
-    receivedAt: null,
-    isFetching: false,
-    items: [],
     error: null
   },
   pavicsDatasets: {

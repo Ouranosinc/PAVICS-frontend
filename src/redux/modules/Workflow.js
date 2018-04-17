@@ -241,7 +241,7 @@ const WORKFLOW_HANDLERS = {
 };
 
 // Reducer
-const initialState = {
+export const initialState = {
   selectedProcess: {
     url: '',
     identifier: '',

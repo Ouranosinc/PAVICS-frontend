@@ -24,7 +24,7 @@ const HANDLERS = {
 };
 
 // Reducer
-const initialState = {
+export const initialState = {
   currentProject: {}
 };
 export default function (state = initialState, action) {
