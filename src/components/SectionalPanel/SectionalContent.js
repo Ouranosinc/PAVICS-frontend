@@ -14,7 +14,7 @@ class SectionalContent extends React.Component {
   render () {
     return (
       <div className={classes['SectionalContent']}>
-        <div className={(this.props.showContent) ? classes['ShownContent'] : classes['HiddenContent']}>
+        <div id="cy-sectional-content" className={(this.props.showContent) ? classes['ShownContent'] : classes['HiddenContent']}>
           <AppBar
             title={this.props.title}
             iconElementRight={<IconButton><InfoIcon /></IconButton>}
