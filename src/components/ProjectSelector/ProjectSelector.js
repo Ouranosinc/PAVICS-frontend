@@ -35,6 +35,7 @@ export class ProjectSelector extends React.Component {
         <Paper style={{marginTop: 20}}>
           <div className="container">
             <SelectField
+              id="cy-project-selector"
               fullWidth={true}
               floatingLabelText="Current project"
               value={this.props.project.currentProject.id}

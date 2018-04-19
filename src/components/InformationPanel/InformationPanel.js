@@ -81,7 +81,7 @@ export default class InformationPanel extends React.Component {
         <AppBar
           title="Point Informations"
           iconElementLeft={<IconButton><InfoIcon /></IconButton>}
-          iconElementRight={<IconButton><MinimizeIcon onTouchTap={(event) => this._onHideInformationPanel()} /></IconButton>} />
+          iconElementRight={<IconButton className="cy-minimize-btn"><MinimizeIcon onTouchTap={(event) => this._onHideInformationPanel()} /></IconButton>} />
         <div className={classes['Content']}>
           {content}
         </div>

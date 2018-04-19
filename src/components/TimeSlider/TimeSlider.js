@@ -427,7 +427,7 @@ export class TimeSlider extends React.Component {
         <AppBar
           title="Temporal Slider"
           iconElementLeft={<IconButton><AccessTimeIcon /></IconButton>}
-          iconElementRight={<IconButton><MinimizeIcon onTouchTap={(event) => this._onHideTimeSliderPanel()} /></IconButton>} />
+          iconElementRight={<IconButton className="cy-minimize-btn"><MinimizeIcon onTouchTap={(event) => this._onHideTimeSliderPanel()} /></IconButton>} />
         <div className="container">
           <Row>
             <Col md={4} lg={4}>

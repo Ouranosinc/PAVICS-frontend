@@ -62,11 +62,13 @@ export class ProjectCreation extends React.Component {
         <Paper style={{marginTop: 20}}>
           <div className="container">
             <TextField
+              id="cy-project-name-tf"
               hintText="Define a project name"
               fullWidth={true}
               onChange={(event, value) => this._onSetNewProjectName(value)}
               floatingLabelText="Project name" />
             <TextField
+              id="cy-project-description-tf"
               hintText="Write a project description"
               fullWidth={true}
               multiLine={true}
@@ -78,6 +80,7 @@ export class ProjectCreation extends React.Component {
         </Paper>
 
         <RaisedButton
+          id="cy-create-project-btn"
           onClick={this._onCreateProject}
           label="Create new project"
           disabled={!this.state.projectName || !this.state.projectName.length}
