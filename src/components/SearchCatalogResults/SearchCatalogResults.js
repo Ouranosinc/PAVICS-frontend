@@ -97,7 +97,7 @@ export class SearchCatalogResults extends React.Component {
     if (this.props.research.pavicsDatasets.isFetching) {
       mainComponent =
         <Paper style={{ marginTop: 20 }}>
-          <Loader name="datasets" />
+          <Loader id="cy-search-results-loader" name="datasets" />
         </Paper>;
     } else {
       if (this.props.research.pavicsDatasets.items.length) {
@@ -108,7 +108,7 @@ export class SearchCatalogResults extends React.Component {
           <div>
             <Paper style={{ marginTop: 20 }}>
               <List>
-                <Subheader inset={true}>Found <strong>{this.state.filesCount}</strong> total files in <strong>{this.props.research.pavicsDatasets.items.length}</strong> results</Subheader>
+                <Subheader id="cy-search-results-count" inset={true}>Found <strong>{this.state.filesCount}</strong> total files in <strong>{this.props.research.pavicsDatasets.items.length}</strong> results</Subheader>
                 {paginated.map((x, i) =>
                   <ListItem
                     key={i}
@@ -162,14 +162,14 @@ export class SearchCatalogResults extends React.Component {
           mainComponent =
             <Paper style={{ marginTop: 20 }}>
               <List>
-                <Subheader>No results found.</Subheader>
+                <Subheader id="cy-search-no-results-sh">No results found.</Subheader>
               </List>
             </Paper>;
         } else {
           mainComponent =
             <Paper style={{ marginTop: 20 }}>
               <List>
-                <Subheader>Select at least one facet to launch dataset's search</Subheader>
+                <Subheader id="cy-search-no-facets-sh">Select at least one facet to launch dataset's search</Subheader>
               </List>
             </Paper>;
         }

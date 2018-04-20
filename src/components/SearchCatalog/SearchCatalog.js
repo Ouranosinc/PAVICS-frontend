@@ -147,16 +147,17 @@ export class SearchCatalog extends React.Component {
         (this.props.research.facets.items.length === 0) ?
           <Paper style={{ marginTop: 20 }}>
             <List>
-              <Subheader>No facets found.</Subheader>
+              <Subheader id="cy-search-no-facets">No facets found.</Subheader>
             </List>
           </Paper>
           : (
           <div>
             <Paper>
-              <div className="container">
+              <div className="container" id="cy-search-facets">
                 <Row>
                   <Col sm={12} md={6} lg={6}>
                     <SelectField
+                      data-cy="load-criterias-sf"
                       style={{width: '95%'}}
                       fullWidth={true}
                       floatingLabelText="Load criteria(s)"
@@ -181,6 +182,7 @@ export class SearchCatalog extends React.Component {
                   </Col>*/}
                   <Col sm={12} md={6} lg={6}>
                     <SelectField
+                      data-cy="add-criteria-sf"
                       style={{width: '95%'}}
                       floatingLabelText="Add additional criteria"
                       value={this.state.selectedKey}
@@ -211,6 +213,7 @@ export class SearchCatalog extends React.Component {
                 </Row>
                 <Col>
                   <TextField
+                    data-cy="criterias-name-tf"
                     hintText="Define a name"
                     fullWidth={true}
                     onChange={(event, value) => this._onSetSearchCriteriasName(value)}
@@ -219,12 +222,14 @@ export class SearchCatalog extends React.Component {
               </div>
             </Paper>
             <RaisedButton
+              data-cy="save-criterias-btn"
               onClick={this._SaveCriterias}
               label="Save search criteria(s)"
               icon={<SaveIcon />}
               disabled={!this.props.research.selectedFacets.length}
               style={{marginTop: 20}} />
             <RaisedButton
+              data-cy="reset-criterias-btn"
               onClick={this._ResetCriterias}
               label="Reset"
               icon={<RefreshIcon />}

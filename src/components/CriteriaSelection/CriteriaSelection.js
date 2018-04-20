@@ -49,8 +49,9 @@ class CriteriaSelection extends React.Component {
   render () {
     return (
       <Col sm={12} md={6} lg={6}>
-        <List>
+        <List id={`cy-search-facet-${this.props.criteriaName.toLowerCase()}-list`}>
           <ListItem
+            id={`cy-search-facet-${this.props.criteriaName.toLowerCase()}`}
             nestedListStyle={{
               position: 'absolute', zIndex: '9999', width: '100%', maxHeight: '150px', overflowY: 'scroll', opacity: '1',
               background: 'white', transform: 'scaleY(1)', transformOrigin: 'left top 0px',
@@ -69,6 +70,7 @@ class CriteriaSelection extends React.Component {
                 const exists = this.props.research.selectedFacets.filter(x => x.value === variable.value);
                 if(exists.length) checked = true;
                 return <ListItem
+                  id={`cy-search-facet-${this.props.criteriaName.toLowerCase()}-${variable.value}`}
                   key={i}
                   primaryText={`${variable.value} (${variable.count})`}
                   leftCheckbox={<Checkbox value={variable.value} checked={checked} onCheck={this._onSelectRow} />}

@@ -125,7 +125,7 @@ class Pagination extends Component {
       .replace('{to}', to);
 
     return (
-      <div style={styles.pagination}>
+      <div style={styles.pagination} id="cy-pagination" data-cy-page-count={count} data-cy-from={from} data-cy-to={to} data-cy-total={total}>
         <div style={Object.assign({}, styles.elements, styles.pageSelect)}>
           <div style={styles.label}>{`${texts.page} `}</div>
           <SelectField
@@ -160,7 +160,7 @@ class Pagination extends Component {
           </SelectField>
         </div>
         <div style={styles.elements}>
-          <div style={styles.label}>{`${showing}`}</div>
+          <div style={styles.label} id="cy-pagination-showing">{`${showing}`}</div>
           <IconButton
             disabled={currentPageIndex === 1 || !total}
             onTouchTap={e => this.handleChangePage(currentPageIndex - 1, e)}>
