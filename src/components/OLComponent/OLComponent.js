@@ -133,7 +133,7 @@ class OLComponent extends React.Component {
     );
     var scaleLineControl = new ol.control.ScaleLine();
     let panZoom = new ol.control.PanZoom({
-      imgPath: 'ol3-panzoom/zoombar_black',
+      imgPath: 'lib/ol3-panzoom/zoombar_black',
       minZoom: minZoom,
       maxZoom: maxZoom,
       slider: true
