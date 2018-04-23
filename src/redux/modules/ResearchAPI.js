@@ -1,4 +1,4 @@
-import {createResource, mergeReducers} from './../../lib/redux-rest-resource';
+import {createResource, mergeReducers} from './../../static/lib/redux-rest-resource';
 
 const research = createResource({
   name: 'research',
