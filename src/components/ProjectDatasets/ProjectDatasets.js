@@ -177,7 +177,7 @@ export class ProjectDatasets extends React.Component {
     let datasetsStart = (this.state.datasetsPageNumber - 1) * this.state.datasetsNumberPerPage;
     let datasetsPaginated = this.props.datasetAPI.items.slice(datasetsStart, datasetsStart + this.state.datasetsNumberPerPage);
     return (
-      <div className={classes['ProjectDatasets']}>
+      <div id="cy-project-datasets" className={classes['ProjectDatasets']}>
         <Paper style={{marginTop: 20}}>
           <List>
             <Subheader>Current project dataset(s)</Subheader>
@@ -194,6 +194,7 @@ export class ProjectDatasets extends React.Component {
               if(dataset.type === "Aggregate") {
                 return (
                   <ListItem
+                    className="cy-project-dataset-item"
                     key={i}
                     primaryText={dataset.aggregate_title}
                     secondaryText={

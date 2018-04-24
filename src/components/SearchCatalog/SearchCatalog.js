@@ -24,6 +24,7 @@ export class SearchCatalog extends React.Component {
     projectActions: React.PropTypes.object.isRequired,
     projectAPI: React.PropTypes.object.isRequired,
     projectAPIActions: React.PropTypes.object.isRequired,
+    sessionManagement: React.PropTypes.object.isRequired,
     research: React.PropTypes.object.isRequired,
     researchActions: React.PropTypes.object.isRequired,
     researchAPI: React.PropTypes.object.isRequired,
@@ -51,10 +52,15 @@ export class SearchCatalog extends React.Component {
     this._SaveCriterias = this._SaveCriterias.bind(this);
     this._onChangeSearchType = this._onChangeSearchType.bind(this);
     this._onSetSearchCriteriasName = this._onSetSearchCriteriasName.bind(this);
+    if(!this.props.sessionManagement.sessionStatus.user.authenticated) {
+      NotificationManager.warning(`You need to be authenticated to use search datasets features.`, 'Warning', 10000);
+    }
   }
 
   componentWillMount() {
-    this.props.researchActions.fetchPavicsDatasets(this.state.type, 0);
+    if (!this.props.research.pavicsDatasets.items.length && this.props.research.pavicsDatasets.isFetching === false) {
+      this.props.researchActions.fetchPavicsDatasetsAndFacets(this.state.type, 0);
+    }
     let filter = JSON.stringify({ where: {projectId: this.props.project.currentProject.id}});
     this.props.researchAPIActions.fetchResearchs({ filter: filter });
   }
@@ -63,7 +69,7 @@ export class SearchCatalog extends React.Component {
     this.setState({
       type: value
     });
-    this.props.researchActions.fetchPavicsDatasets(value);
+    this.props.researchActions.fetchPavicsDatasetsAndFacets(value);
   }
 
   _onLoadSavedCriteria (id) {
@@ -105,7 +111,7 @@ export class SearchCatalog extends React.Component {
       searchCriteriasName: ''
     });
     this.props.researchActions.clearFacetKeyValuePairs();
-    this.props.researchActions.fetchPavicsDatasets();
+    this.props.researchActions.fetchPavicsDatasetsAndFacets();
   }
 
   _SaveCriterias () {
@@ -119,138 +125,113 @@ export class SearchCatalog extends React.Component {
           facets: this.props.research.selectedFacets,
           results: this.props.research.pavicsDatasets.items
         });
-        // this.props.researchAPIActions.getResearch({
-        //   id: 1,
-        //   filter: JSON.stringify({yolo:"yolo"})
-        // });
-        // this.props.researchAPIActions.updateResearch({
-        //   id: 1,
-        //   filter: JSON.stringify({yolo:"yolo"})
-        // });
-        // this.props.researchAPIActions.deleteResearch({
-        //   id: 1,
-        //   filter: JSON.stringify({yolo:"yolo"})
-        // });
-        // NotificationManager.success("Search criteria(s) was saved with success. Navigate to 'Project Management' section to manage saved search criteria(s).");
       }
     } else {
       NotificationManager.warning("You need to specify a name and at least one criteria to be able to save the current search criteria(s).", 'Warning', 10000);
     }
   }
 
-  _mainComponent () {
-    let mainComponent;
-    if (this.props.research.facets.isFetching) {
-      mainComponent = <Loader name="facets" />;
-    } else {
-      mainComponent = (
-        (this.props.research.facets.items.length === 0) ?
-          <Paper style={{ marginTop: 20 }}>
-            <List>
-              <Subheader id="cy-search-no-facets">No facets found.</Subheader>
-            </List>
-          </Paper>
-          : (
-          <div>
-            <Paper>
-              <div className="container" id="cy-search-facets">
-                <Row>
-                  <Col sm={12} md={6} lg={6}>
-                    <SelectField
-                      data-cy="load-criterias-sf"
-                      style={{width: '95%'}}
-                      fullWidth={true}
-                      floatingLabelText="Load criteria(s)"
-                      value={this.state.selectedSavedCriteria}
-                      onChange={(event, index, value) => this._onLoadSavedCriteria(value)}>
-                      {
-                        this.props.researchAPI.items.map((search, i) => {
-                          return <MenuItem key={i} value={search.id} primaryText={search.name} />;
-                        })
-                      }
-                    </SelectField>
-                  </Col>
-                  {/*<Col sm={12} md={4} lg={4}>
-                    <SelectField
-                      style={{width: '95%'}}
-                      value={this.state.type}
-                      floatingLabelText="Type"
-                      onChange={(event, index, value) => this._onChangeSearchType(value)}>
-                      <MenuItem value="Aggregate" primaryText="Dataset" />
-                      <MenuItem value="FileAsAggregate" primaryText="File" />
-                    </SelectField>
-                  </Col>*/}
-                  <Col sm={12} md={6} lg={6}>
-                    <SelectField
-                      data-cy="add-criteria-sf"
-                      style={{width: '95%'}}
-                      floatingLabelText="Add additional criteria"
-                      value={this.state.selectedKey}
-                      onChange={(event, index, value) => this._onAddCriteriaKey(value)}>
-                      {
-                        this.props.research.facets.items.map((x, i) => {
-                          return (this.state.criteriaKeys.includes(x.key))
-                            ? null
-                            : <MenuItem key={i} value={x.key} primaryText={x.key} />;
-                        })
-                      }
-                    </SelectField>
-                  </Col>
-                </Row>
-                <Row style={{marginBottom: 15}}>
-                  {
-                    this.state.criteriaKeys.map((facetKey, i) => {
-                      return <CriteriaSelection
-                        fetchDatasets={() => this.props.researchActions.fetchPavicsDatasets(this.state.type)}
-                        key={i}
-                        criteriaName={facetKey}
-                        variables={this.props.research.facets.items.find(x => x.key === facetKey)}
-                        menuStyle="HERE!!!!"
-                        research={this.props.research}
-                        researchActions={this.props.researchActions} />;
-                    })
-                  }
-                </Row>
-                <Col>
-                  <TextField
-                    data-cy="criterias-name-tf"
-                    hintText="Define a name"
-                    fullWidth={true}
-                    onChange={(event, value) => this._onSetSearchCriteriasName(value)}
-                    floatingLabelText="Search Criteria(s) Name" />
-                </Col>
-              </div>
-            </Paper>
-            <RaisedButton
-              data-cy="save-criterias-btn"
-              onClick={this._SaveCriterias}
-              label="Save search criteria(s)"
-              icon={<SaveIcon />}
-              disabled={!this.props.research.selectedFacets.length}
-              style={{marginTop: 20}} />
-            <RaisedButton
-              data-cy="reset-criterias-btn"
-              onClick={this._ResetCriterias}
-              label="Reset"
-              icon={<RefreshIcon />}
-              disabled={!this.props.research.selectedFacets.length}
-              style={{marginTop: 20, marginLeft: 20}} />
-            <SearchCatalogResults
-              clickTogglePanel={this.props.clickTogglePanel}
-              research={this.props.research}
-              project={this.props.project}
-              projectAPIActions={this.props.projectAPIActions} />
-          </div>
-        )
-      );
-    }
-    return mainComponent;
-  }
-
   render () {
     return (
       <div style={{ margin: 20 }}>
-        {this._mainComponent()}
+        <div>
+          {
+            (this.props.research.facets.length === 0) ?
+              (<Paper style={{marginTop: 20}}>
+                <List>
+                  <Subheader id="cy-search-no-facets">No facets found.</Subheader>
+                </List>
+              </Paper>)
+              : (
+              <Paper>
+                <div className="container" id="cy-search-facets">
+                  <Row>
+                    <Col sm={12} md={6} lg={6}>
+                      <SelectField
+                        id="cy-load-criterias-sf"
+                        style={{width: '95%'}}
+                        fullWidth={true}
+                        floatingLabelText="Load criteria(s)"
+                        value={this.state.selectedSavedCriteria}
+                        onChange={(event, index, value) => this._onLoadSavedCriteria(value)}>
+                        {
+                          this.props.researchAPI.items.map((search, i) => {
+                            return <MenuItem key={i} value={search.id} primaryText={search.name}/>;
+                          })
+                        }
+                      </SelectField>
+                    </Col>
+                    {/*<Col sm={12} md={4} lg={4}>
+                     <SelectField
+                     style={{width: '95%'}}
+                     value={this.state.type}
+                     floatingLabelText="Type"
+                     onChange={(event, index, value) => this._onChangeSearchType(value)}>
+                     <MenuItem value="Aggregate" primaryText="Dataset" />
+                     <MenuItem value="FileAsAggregate" primaryText="File" />
+                     </SelectField>
+                     </Col>*/}
+                    <Col sm={12} md={6} lg={6}>
+                      <SelectField
+                        id="cy-add-criteria-sf"
+                        style={{width: '95%'}}
+                        floatingLabelText="Add additional criteria"
+                        value={this.state.selectedKey}
+                        onChange={(event, index, value) => this._onAddCriteriaKey(value)}>
+                        {
+                          this.props.research.facets.map((x, i) => {
+                            return (this.state.criteriaKeys.includes(x.key))
+                              ? null
+                              : <MenuItem key={i} value={x.key} primaryText={x.key}/>;
+                          })
+                        }
+                      </SelectField>
+                    </Col>
+                  </Row>
+                  <Row style={{marginBottom: 15}}>
+                    {
+                      this.state.criteriaKeys.map((facetKey, i) => {
+                        return <CriteriaSelection
+                          fetchDatasets={() => this.props.researchActions.fetchPavicsDatasetsAndFacets(this.state.type)}
+                          key={i}
+                          criteriaName={facetKey}
+                          variables={this.props.research.facets.find(x => x.key === facetKey)}
+                          research={this.props.research}
+                          researchActions={this.props.researchActions}/>;
+                      })
+                    }
+                  </Row>
+                  <Col>
+                    <TextField
+                      id="cy-criterias-name-tf"
+                      hintText="Define a name"
+                      fullWidth={true}
+                      onChange={(event, value) => this._onSetSearchCriteriasName(value)}
+                      floatingLabelText="Search Criteria(s) Name"/>
+                  </Col>
+                </div>
+              </Paper>)
+          }
+          <RaisedButton
+            id="cy-save-criterias-btn"
+            onClick={this._SaveCriterias}
+            label="Save search criteria(s)"
+            icon={<SaveIcon />}
+            disabled={!this.props.research.selectedFacets.length}
+            style={{marginTop: 20}}/>
+          <RaisedButton
+            id="cy-reset-criterias-btn"
+            onClick={this._ResetCriterias}
+            label="Reset"
+            icon={<RefreshIcon />}
+            disabled={!this.props.research.selectedFacets.length}
+            style={{marginTop: 20, marginLeft: 20}}/>
+          <SearchCatalogResults
+            clickTogglePanel={this.props.clickTogglePanel}
+            research={this.props.research}
+            project={this.props.project}
+            projectAPIActions={this.props.projectAPIActions}/>
+        </div>
       </div>
     );
   }

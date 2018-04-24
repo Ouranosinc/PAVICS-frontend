@@ -105,12 +105,13 @@ export class SearchCatalogResults extends React.Component {
         let paginated = this.props.research.pavicsDatasets.items.slice(start, start + this.state.numberPerPage);
         let confirmation = null;
         mainComponent =
-          <div>
+          <div id="cy-search-results">
             <Paper style={{ marginTop: 20 }}>
               <List>
                 <Subheader id="cy-search-results-count" inset={true}>Found <strong>{this.state.filesCount}</strong> total files in <strong>{this.props.research.pavicsDatasets.items.length}</strong> results</Subheader>
                 {paginated.map((x, i) =>
                   <ListItem
+                    className="cy-dataset-result-item"
                     key={i}
                     leftCheckbox={<Checkbox value={x.dataset_id} onCheck={this._onCheckedDataset} />}
                     primaryText={`${x.aggregate_title} (${x.fileserver_url.length} file${(x.fileserver_url.length > 1)? 's': ''})` }
@@ -151,6 +152,7 @@ export class SearchCatalogResults extends React.Component {
                 onChange={this._onPageChanged} />
             </Paper>
             <RaisedButton
+              id="cy-add-datasets-btn"
               disabled={!this.state.checkedDatasets.length}
               onClick={this._onAddCheckedDatasetsToProject}
               icon={<AddIcon />}

@@ -19,6 +19,7 @@ class Visualize extends React.Component {
     projectAPI: React.PropTypes.object.isRequired,
     projectActions: React.PropTypes.object.isRequired,
     projectAPIActions: React.PropTypes.object.isRequired,
+    researchActions: React.PropTypes.object.isRequired,
     selectMapManipulationMode: React.PropTypes.func.isRequired,
     selectedDatasetCapabilities: React.PropTypes.object.isRequired,
     currentDisplayedDataset: React.PropTypes.object.isRequired,
@@ -88,6 +89,7 @@ class Visualize extends React.Component {
   componentDidMount() {
     let filter = JSON.stringify({"where": { "researcherId": 1},"order": "name ASC"});
     this.props.projectAPIActions.fetchProjects({filter: filter });
+    this.props.researchActions.fetchPavicsDatasetsAndFacets('Aggregate', 0);
     this.props.selectBasemap('Aerial');
 
     // TEST PURPOSE (TimeSlider): Load this dataset when opening the platform

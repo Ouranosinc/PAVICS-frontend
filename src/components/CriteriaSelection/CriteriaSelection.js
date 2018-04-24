@@ -65,6 +65,7 @@ class CriteriaSelection extends React.Component {
             initiallyOpen={false}
             primaryTogglesNestedList={true}
             nestedItems={
+              (this.props.variables &&  this.props.variables.values.length)?
               this.props.variables.values.map((variable, i) => {
                 let checked = false;
                 const exists = this.props.research.selectedFacets.filter(x => x.value === variable.value);
@@ -75,7 +76,8 @@ class CriteriaSelection extends React.Component {
                   primaryText={`${variable.value} (${variable.count})`}
                   leftCheckbox={<Checkbox value={variable.value} checked={checked} onCheck={this._onSelectRow} />}
                 />
-              })
+              }):
+              []
             }
           />
         </List>

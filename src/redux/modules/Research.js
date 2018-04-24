@@ -2,55 +2,19 @@ import myHttp from './../../../lib/http';
 
 // Constants
 export const constants = {
-  CREATE_RESEARCH_REQUEST: 'RESEARCH.CREATE_RESEARCH_REQUEST',
-  CREATE_RESEARCH_FAILURE: 'RESEARCH.CREATE_RESEARCH_FAILURE',
-  CREATE_RESEARCH_SUCCESS: 'RESEARCH.CREATE_RESEARCH_SUCCESS',
   ADD_FACET_KEY_VALUE_PAIR: 'RESEARCH.ADD_FACET_KEY_VALUE_PAIR',
   REMOVE_FACET_KEY_VALUE_PAIR: 'RESEARCH.REMOVE_FACET_KEY_VALUE_PAIR',
   REMOVE_ALL_FACET_KEY_VALUE: 'RESEARCH.REMOVE_ALL_FACET_KEY_VALUE',
   FETCH_FACETS_REQUEST: 'RESEARCH.FETCH_FACETS_REQUEST',
   FETCH_FACETS_FAILURE: 'RESEARCH.FETCH_FACETS_FAILURE',
   FETCH_FACETS_SUCCESS: 'RESEARCH.FETCH_FACETS_SUCCESS',
-  FETCH_PAVICS_DATASETS_REQUEST: 'RESEARCH.FETCH_PAVICS_DATASETS_REQUEST',
-  FETCH_PAVICS_DATASETS_FAILURE: 'RESEARCH.FETCH_PAVICS_DATASETS_FAILURE',
-  FETCH_PAVICS_DATASETS_SUCCESS: 'RESEARCH.FETCH_PAVICS_DATASETS_SUCCESS',
+  FETCH_PAVICS_DATASETS_FACETS_REQUEST: 'RESEARCH.FETCH_PAVICS_DATASETS_FACETS_REQUEST',
+  FETCH_PAVICS_DATASETS_FACETS_FAILURE: 'RESEARCH.FETCH_PAVICS_DATASETS_FACETS_FAILURE',
+  FETCH_PAVICS_DATASETS_FACETS_SUCCESS: 'RESEARCH.FETCH_PAVICS_DATASETS_FACETS_SUCCESS',
   RESTORE_PAVICS_DATASETS: 'RESEARCH.RESTORE_PAVICS_DATASETS'
 };
 
 // Actions
-function fetchFacetsrequest () {
-  return {
-    type: constants.FETCH_FACETS_REQUEST,
-    facets: {
-      receivedAt: 1, // TODO: Fix
-      requestedAt: Date.now(),
-      isFetching: true,
-      items: []
-    }
-  };
-}
-function fetchFacetsSuccess (facets) {
-  return {
-    type: constants.FETCH_FACETS_SUCCESS,
-    facets: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      items: facets,
-      error: null
-    }
-  };
-}
-function fetchFacetsFailure (error) {
-  return {
-    type: constants.FETCH_FACETS_FAILURE,
-    facets: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      items: [],
-      error: error
-    }
-  };
-}
 export function restorePavicsDatasets (searchCriteria) {
   return {
     type: constants.RESTORE_PAVICS_DATASETS,
@@ -62,9 +26,9 @@ export function restorePavicsDatasets (searchCriteria) {
     }
   };
 }
-function requestPavicsDatasets () {
+function requestPavicsDatasetsAndFacets () {
   return {
-    type: constants.FETCH_PAVICS_DATASETS_REQUEST,
+    type: constants.FETCH_PAVICS_DATASETS_FACETS_REQUEST,
     pavicsDatasets: {
       requestedAt: Date.now(),
       isFetching: true,
@@ -72,9 +36,9 @@ function requestPavicsDatasets () {
     }
   };
 }
-export function receivePavicsDatasetsFailure (error) {
+export function receivePavicsDatasetsAndFacetsFailure (error) {
   return {
-    type: constants.FETCH_PAVICS_DATASETS_FAILURE,
+    type: constants.FETCH_PAVICS_DATASETS_FACETS_FAILURE,
     pavicsDatasets: {
       receivedAt: Date.now(),
       isFetching: false,
@@ -83,9 +47,10 @@ export function receivePavicsDatasetsFailure (error) {
     }
   };
 }
-export function receivePavicsDatasets (datasets) {
+export function receivepavicsDatasetsAndFacets (datasets, facets) {
   return {
-    type: constants.FETCH_PAVICS_DATASETS_SUCCESS,
+    type: constants.FETCH_PAVICS_DATASETS_FACETS_SUCCESS,
+    facets: facets,
     pavicsDatasets: {
       receivedAt: Date.now(),
       isFetching: false,
@@ -96,9 +61,9 @@ export function receivePavicsDatasets (datasets) {
 }
 
 // Returns dataset results AND facet counts
-export function fetchPavicsDatasets (type = 'Aggregate', limit = 10000) {
+export function fetchPavicsDatasetsAndFacets (type = 'Aggregate', limit = 10000) {
   return function (dispatch, getState) {
-    dispatch(requestPavicsDatasets());
+    dispatch(requestPavicsDatasetsAndFacets());
     // Get current added facets by querying store
     let facets = getState().research.selectedFacets;
     let constraints = '';
@@ -113,8 +78,6 @@ export function fetchPavicsDatasets (type = 'Aggregate', limit = 10000) {
         // Dataset result
         let datasets = json.response.docs;
         datasets.sort((a, b) => a.dataset_id.localeCompare(b.dataset_id));
-        dispatch(receivePavicsDatasets(datasets));
-
         // Facet result
         let facets = [];
         json['responseHeader']['params']['facet.field'].forEach(function (key) {
@@ -139,22 +102,12 @@ export function fetchPavicsDatasets (type = 'Aggregate', limit = 10000) {
             facets[keyIndex].values = values;
           }
         }
-        dispatch(fetchFacetsSuccess(facets));
+        dispatch(receivepavicsDatasetsAndFacets(datasets, facets));
 
       })
-      /*.catch(error =>
-        dispatch(receivePavicsDatasetsFailure(error))
-      );*/
-  };
-}
-
-function fetchFacets () {
-  return function (dispatch) {
-    dispatch(fetchFacetsrequest());
-    return myHttp.get('/api/facets')
-      .then(response => response.json())
-      .then(json => dispatch(fetchFacetsSuccess(json)))
-      .catch(error => dispatch(fetchFacetsFailure(error)));
+      .catch(error =>
+        dispatch(receivePavicsDatasetsAndFacetsFailure(error))
+      );
   };
 }
 function addFacetKeyValuePair (key, value) {
@@ -179,8 +132,7 @@ function clearFacetKeyValuePairs () {
 
 // Exported Action Creators
 export const actions = {
-  fetchFacets,
-  fetchPavicsDatasets,
+  fetchPavicsDatasetsAndFacets,
   restorePavicsDatasets,
   addFacetKeyValuePair,
   removeFacetKeyValuePair,
@@ -189,15 +141,6 @@ export const actions = {
 
 // Handlers
 const HANDLERS = {
-  [constants.FETCH_FACETS_REQUEST]: (state, action) => {
-    return ({...state, facets: action.facets});
-  },
-  [constants.FETCH_FACETS_SUCCESS]: (state, action) => {
-    return ({...state, facets: action.facets});
-  },
-  [constants.FETCH_FACETS_FAILURE]: (state, action) => {
-    return ({...state, facets: action.facets});
-  },
   [constants.ADD_FACET_KEY_VALUE_PAIR]: (state, action) => {
     let facets = state.selectedFacets.concat({key: action.key, value: action.value});
     facets.sort(function (a, b) {
@@ -222,14 +165,14 @@ const HANDLERS = {
   [constants.REMOVE_ALL_FACET_KEY_VALUE]: (state, action) => {
     return ({...state, selectedFacets: []});
   },
-  [constants.FETCH_PAVICS_DATASETS_REQUEST]: (state, action) => {
+  [constants.FETCH_PAVICS_DATASETS_FACETS_REQUEST]: (state, action) => {
     return ({...state, pavicsDatasets: action.pavicsDatasets});
   },
-  [constants.FETCH_PAVICS_DATASETS_FAILURE]: (state, action) => {
+  [constants.FETCH_PAVICS_DATASETS_FACETS_FAILURE]: (state, action) => {
     return ({...state, pavicsDatasets: action.pavicsDatasets});
   },
-  [constants.FETCH_PAVICS_DATASETS_SUCCESS]: (state, action) => {
-    return ({...state, pavicsDatasets: action.pavicsDatasets});
+  [constants.FETCH_PAVICS_DATASETS_FACETS_SUCCESS]: (state, action) => {
+    return ({...state, pavicsDatasets: action.pavicsDatasets, facets: action.facets});
   },
   [constants.RESTORE_PAVICS_DATASETS]: (state, action) => {
     return ({...state, pavicsDatasets: action.pavicsDatasets});
@@ -239,20 +182,7 @@ const HANDLERS = {
 // Reducer
 export const initialState = {
   selectedFacets: [],
-  facets: {
-    requestedAt: null,
-    receivedAt: null,
-    isFetching: false,
-    items: [],
-    error: null
-  },
-  selectedDataset: { // NOT USED
-    receivedAt: null,
-    requestedAt: null,
-    isFetching: false,
-    data: {},
-    error: null
-  },
+  facets: [],
   pavicsDatasets: {
     requestedAt: null,
     receivedAt: null,
