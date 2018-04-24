@@ -1,4 +1,4 @@
-1. user goes to pavics.ouranos.ca, logs in with dhuard (which has normal user permission)
+1. user goes to pavics.ouranos.ca, logs in with dhuard (which has normal user permission, ie access to public files and services)
 2. Browse through existing projects, decides to create new one (My new project)
 3. Goes into search interface and search for the ClimEx project, RCP4.5 experiment, daily resolution tasmin datasets.
 4. Adds resulting dataset to workspace and saves the search criteria for later.
