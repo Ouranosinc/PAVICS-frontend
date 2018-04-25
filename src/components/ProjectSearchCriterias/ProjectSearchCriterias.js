@@ -38,9 +38,8 @@ export class ProjectSearchCriterias extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.project.currentProject && nextProps.project.currentProject !== this.props.project.currentProject) {
-      let filter = JSON.stringify({where: { projectId: this.props.project.currentProject.id}});
+      let filter = JSON.stringify({where: { projectId: nextProps.project.currentProject.id}});
       this.props.researchAPIActions.fetchResearchs({filter: filter});
-      this.props.projectAPIActions.fetchProjectResearchs({ projectId: nextProps.project.currentProject.id});
     }
   }
 
@@ -129,7 +128,7 @@ export class ProjectSearchCriterias extends React.Component {
             })}
           </List>
           <Pagination
-            total={this.props.projectAPI.researchs.items.length}
+            total={this.props.researchAPI.items.length}
             initialPerPageOptionIndex={constants.PER_PAGE_INITIAL_INDEX}
             perPageOptions={constants.PER_PAGE_OPTIONS}
             onChange={this._onCriteriasPageChanged} />
