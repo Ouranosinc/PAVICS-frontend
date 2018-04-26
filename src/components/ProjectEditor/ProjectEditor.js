@@ -91,6 +91,7 @@ export class ProjectEditor extends React.Component {
           <div className="container">
             <TextField
               id="cy-project-name-tf"
+              data-cy-project-id={this.props.project.currentProject.id}
               hintText="Define a name"
               value={this.state.projectName}
               fullWidth={true}

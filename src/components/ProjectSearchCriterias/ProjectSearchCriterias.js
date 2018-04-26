@@ -111,13 +111,13 @@ export class ProjectSearchCriterias extends React.Component {
                   rightIconButton={
                     <IconMenu iconButtonElement={
                       <IconButton
-                        id="cy-actions-btn"
+                        className="cy-actions-btn"
                         touch={true}
                         tooltip="Actions"
                         tooltipPosition="bottom-left">
                         <MoreVertIcon color={grey400} />
                       </IconButton>}>
-                      <MenuItem id="cy-rename-item" primaryText="Rename (TODO)" onTouchTap={(event) => alert('rename ' + research.name)} leftIcon={<Rename />} />
+                      {/*<MenuItem id="cy-rename-item" primaryText="Rename (TODO)" onTouchTap={(event) => alert('rename ' + research.name)} leftIcon={<Rename />} />*/}
                       <MenuItem id="cy-restore-item" primaryText="Restore results" onTouchTap={(event) => this._onRestoreSearchCriteria(research)} leftIcon={<Restore />} />
                       <MenuItem id="cy-relaunch-item" primaryText="Relaunch search" onTouchTap={(event) => this._onRelaunchSearch(research)} leftIcon={<Relaunch />} />
                       <MenuItem id="cy-remove-item" primaryText="Remove" onTouchTap={(event) => this._onRemoveSearchCriteria(research)} leftIcon={<Remove />} />
