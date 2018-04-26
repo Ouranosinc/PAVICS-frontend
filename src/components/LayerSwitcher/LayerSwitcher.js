@@ -253,7 +253,7 @@ export default class LayerSwitcher extends React.Component {
           <AppBar
             title="Layer Switcher"
             iconElementLeft={<IconButton><LayersIcon /></IconButton>}
-            iconElementRight={<IconButton><MinimizeIcon onTouchTap={this._onHideLayerSwitcherPanel} /></IconButton>} />
+            iconElementRight={<IconButton onTouchTap={this._onHideLayerSwitcherPanel}><MinimizeIcon /></IconButton>} />
           <Tabs>
             <Tab
               style={{height: '100%'}}
