@@ -1,6 +1,7 @@
 import myHttp from './../../../lib/http';
 import cookie from 'react-cookies';
 import { NotificationManager } from 'react-notifications';
+import {AUTH_COOKIE} from '../../constants';
 
 // Constants
 export const constants = {
@@ -91,7 +92,9 @@ function resetSessionInformation() {
 function logout() {
   return dispatch => {
     dispatch(sessionLogoutRequest());
-    cookie.remove('auth_tkt');
+    while (undefined !== cookie.load(AUTH_COOKIE)) {
+      cookie.remove(AUTH_COOKIE);
+    }
     myHttp.get('/logout')
       .then(res => {
         NotificationManager.success(`You have been logged out of the platform.`, 'Success', 4000);
