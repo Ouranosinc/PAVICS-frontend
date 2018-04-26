@@ -47,7 +47,7 @@ let phoenix = (() => {
           let loopbackResponse = yield request(lbUrl);
           let lbProjectJobs = [];
           if(loopbackResponse.body) {
-            let lbProjectJobs = JSON.parse(loopbackResponse.body);
+            lbProjectJobs = JSON.parse(loopbackResponse.body);
           }
           console.log(`lb jobs length at ${lbUrl}: ${lbProjectJobs.length}`);
 
