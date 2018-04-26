@@ -74,15 +74,17 @@ export default class SessionStatus extends Component {
         </SelectField>
         <br />
         <TextField
+          id="cy-login-user-tf"
           value={this.state.username}
           onChange={this.handleUsernameChange} hintText="Username" />
         <br />
         <TextField
+          id="cy-login-password-tf"
           value={this.state.password}
           onChange={this.handlePasswordChange}
           hintText="Password"
           type="password" /><br />
-        <RaisedButton onTouchTap={this.submit} label="Login" primary />
+        <RaisedButton id="cy-login-btn"  onTouchTap={this.submit} label="Login" primary />
       </div>
     );
   }
