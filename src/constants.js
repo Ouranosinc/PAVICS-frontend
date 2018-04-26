@@ -43,6 +43,8 @@ export const LABEL_NETCDF = 'ComplexData.resource';
 export const LABEL_OPENDAP = 'string.resource';
 export const LABEL_SHAPEFILE = 'string.typename';
 export const LABEL_FEATURE_IDS = 'string.featureids';
+// session
+export const AUTH_COOKIE = 'auth_tkt';
 // variable preferences
 export const VARIABLE_PR = 'pr';
 export const VARIABLE_PCP = 'pcp';
@@ -50,16 +52,3 @@ export const VARIABLE_BOUNDARY_MAX = 'max';
 export const VARIABLE_BOUNDARY_MIN = 'min';
 // keys
 export const KEY_ENTER = 'Enter';
-// session
-export const AUTH_COOKIE = 'auth_tkt';
-export const ZIGGURAT_LOGIN_REQUEST = 'ZIGGURAT_LOGIN_REQUEST';
-export const ZIGGURAT_LOGIN_FAILURE = 'ZIGGURAT_LOGIN_FAILURE';
-export const ZIGGURAT_LOGIN_SUCCESS = 'ZIGGURAT_LOGIN_SUCCESS';
-export const SESSION_LOGOUT_REQUEST = 'SESSION_LOGOUT_REQUEST';
-export const SESSION_LOGOUT_FAILURE = 'SESSION_LOGOUT_FAILURE';
-export const SESSION_LOGOUT_SUCCESS = 'SESSION_LOGOUT_SUCCESS';
-export const SESSION_CHECK_LOGIN_REQUEST = 'SESSION_CHECK_LOGIN_REQUEST';
-export const SESSION_CHECK_LOGIN_FAILURE = 'SESSION_CHECK_LOGIN_FAILURE';
-export const SESSION_CHECK_LOGIN_SUCCESS = 'SESSION_CHECK_LOGIN_SUCCESS';
-export const SET_SESSION_INFORMATIONS = 'SET_SESSION_INFORMATIONS';
-export const RESET_SESSION_INFORMATIONS = 'RESET_SESSION_INFORMATIONS';

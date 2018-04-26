@@ -7,14 +7,7 @@ import * as workflowActionCreators from './../../../redux/modules/Workflow';
 import { actions as researchActionsCreators } from '../../../redux/modules/ResearchAPI';
 import {actions as sessionActions} from '../../../redux/modules/SessionManagement';
 import cookie from 'react-cookies';
-import {
-  AUTH_COOKIE,
-  PLATFORM_SECTION_WORKFLOWS,
-  PLATFORM_SECTION_ACCOUNT_MANAGEMENT,
-  PLATFORM_SECTION_SEARCH_DATASETS,
-  PLATFORM_SECTION_PROJECT_MANAGEMENT,
-  PLATFORM_SECTION_MONITOR,
-} from '../../../constants';
+import * as constants from './../../../constants';
 import {
   AccountManagementContainer,
   ProjectManagementContainer,
@@ -29,19 +22,21 @@ import { NotificationContainer, NotificationManager } from 'react-notifications'
 class Pavics extends React.Component {
   static propTypes = {
     addDatasetsToVisualize: React.PropTypes.func.isRequired,
-    checkLogin: React.PropTypes.func.isRequired,
     // chooseStep: React.PropTypes.func.isRequired,
     goToSection: React.PropTypes.func.isRequired,
     platform: React.PropTypes.object.isRequired,
     fetchVisualizableData: React.PropTypes.func.isRequired
   };
 
-  constructor (props) {
+  constructor(props) {
     super(props);
-    const authCookie = cookie.load(AUTH_COOKIE);
+    const authCookie = cookie.load(constants.AUTH_COOKIE);
+    console.log(authCookie);
     if (authCookie) {
       console.log('checking login');
       this.props.checkLogin();
+    } else {
+
     }
   }
 
@@ -81,19 +76,19 @@ class Pavics extends React.Component {
 
   makeSection () {
     switch (this.props.platform.section) {
-      case PLATFORM_SECTION_SEARCH_DATASETS:
+      case constants.PLATFORM_SECTION_SEARCH_DATASETS:
         return (
           <ResearchContainer {...this.props} />
         );
-      case PLATFORM_SECTION_PROJECT_MANAGEMENT:
+      case constants.PLATFORM_SECTION_PROJECT_MANAGEMENT:
         return (
           <ProjectManagementContainer {...this.props} />
         );
-      case PLATFORM_SECTION_WORKFLOWS:
+      case constants.PLATFORM_SECTION_WORKFLOWS:
         return (
           <WorkflowWizardContainer {...this.props} />
         );
-      case PLATFORM_SECTION_MONITOR:
+      case constants.PLATFORM_SECTION_MONITOR:
         return (
           <ProcessMonitoringContainer
             addDatasetsToVisualize={this.props.addDatasetsToVisualize}
@@ -102,7 +97,7 @@ class Pavics extends React.Component {
             workflowActions={this.props.workflowActions}
             fetchVisualizableData={this.props.fetchVisualizableData} />
         );
-      case PLATFORM_SECTION_ACCOUNT_MANAGEMENT:
+      case constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT:
         return (
           <AccountManagementContainer {...this.props} />
         );
@@ -113,15 +108,15 @@ class Pavics extends React.Component {
 
   makeTitle () {
     switch (this.props.platform.section) {
-      case PLATFORM_SECTION_SEARCH_DATASETS:
+      case constants.PLATFORM_SECTION_SEARCH_DATASETS:
         return "Search Datasets";
-      case PLATFORM_SECTION_PROJECT_MANAGEMENT:
+      case constants.PLATFORM_SECTION_PROJECT_MANAGEMENT:
         return "Project Management";
-      case PLATFORM_SECTION_WORKFLOWS:
+      case constants.PLATFORM_SECTION_WORKFLOWS:
         return "Data Processing";
-      case PLATFORM_SECTION_MONITOR:
+      case constants.PLATFORM_SECTION_MONITOR:
         return "Processes Monitoring";
-      case PLATFORM_SECTION_ACCOUNT_MANAGEMENT:
+      case constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT:
         return "Account Management";
       default:
         return "";

@@ -1,60 +1,62 @@
 import myHttp from './../../../lib/http';
 import cookie from 'react-cookies';
-import {NotificationManager} from 'react-notifications';
-import {
-  AUTH_COOKIE,
-  ZIGGURAT_LOGIN_REQUEST,
-  ZIGGURAT_LOGIN_SUCCESS,
-  ZIGGURAT_LOGIN_FAILURE,
-  SESSION_CHECK_LOGIN_REQUEST,
-  SESSION_CHECK_LOGIN_FAILURE,
-  SESSION_CHECK_LOGIN_SUCCESS,
-  SESSION_LOGOUT_REQUEST,
-  SESSION_LOGOUT_FAILURE,
-  SESSION_LOGOUT_SUCCESS,
-  SET_SESSION_INFORMATIONS,
-  RESET_SESSION_INFORMATIONS,
-} from '../../constants';
+import { NotificationManager } from 'react-notifications';
 
-function zigguratLoginRequest () {
+// Constants
+export const constants = {
+  ZIGGURAT_LOGIN_REQUEST: 'ZIGGURAT_LOGIN_REQUEST',
+  ZIGGURAT_LOGIN_FAILURE: 'ZIGGURAT_LOGIN_FAILURE',
+  ZIGGURAT_LOGIN_SUCCESS: 'ZIGGURAT_LOGIN_SUCCESS',
+  SESSION_LOGOUT_REQUEST: 'SESSION_LOGOUT_REQUEST',
+  SESSION_LOGOUT_FAILURE: 'SESSION_LOGOUT_FAILURE',
+  SESSION_LOGOUT_SUCCESS: 'SESSION_LOGOUT_SUCCESS',
+  SESSION_CHECK_LOGIN_REQUEST: 'SESSION_CHECK_LOGIN_REQUEST',
+  SESSION_CHECK_LOGIN_FAILURE: 'SESSION_CHECK_LOGIN_FAILURE',
+  SESSION_CHECK_LOGIN_SUCCESS: 'SESSION_CHECK_LOGIN_SUCCESS',
+  SET_SESSION_INFORMATIONS: 'SET_SESSION_INFORMATIONS',
+  RESET_SESSION_INFORMATIONS: 'RESET_SESSION_INFORMATIONS',
+  SESSION_LOGOUT: 'SESSION_LOGOUT',
+};
+
+function zigguratLoginRequest() {
   return {
-    type: ZIGGURAT_LOGIN_REQUEST,
+    type: constants.ZIGGURAT_LOGIN_REQUEST,
   };
 }
 
-function zigguratLoginSuccess () {
+function zigguratLoginSuccess() {
   return {
-    type: ZIGGURAT_LOGIN_SUCCESS,
+    type: constants.ZIGGURAT_LOGIN_SUCCESS,
   };
 }
 
-function zigguratLoginFailure () {
+function zigguratLoginFailure() {
   return {
-    type: ZIGGURAT_LOGIN_FAILURE,
+    type: constants.ZIGGURAT_LOGIN_FAILURE,
   };
 }
 
-function checkLoginRequest () {
+function checkLoginRequest() {
   return {
-    type: SESSION_CHECK_LOGIN_REQUEST,
+    type: constants.SESSION_CHECK_LOGIN_REQUEST,
   };
 }
 
-function checkLoginSuccess () {
+function checkLoginSuccess() {
   return {
-    type: SESSION_CHECK_LOGIN_SUCCESS,
+    type: constants.SESSION_CHECK_LOGIN_SUCCESS,
   };
 }
 
-function checkLoginFailure () {
+function checkLoginFailure() {
   return {
-    type: SESSION_CHECK_LOGIN_FAILURE,
+    type: constants.SESSION_CHECK_LOGIN_FAILURE,
   };
 }
 
-function setSessionInformations (user, authenticated, email, groups) {
+function setSessionInformations(user, authenticated, email, groups) {
   return {
-    type: SET_SESSION_INFORMATIONS,
+    type: constants.SET_SESSION_INFORMATIONS,
     user: user,
     authenticated: authenticated,
     email: email,
@@ -62,39 +64,37 @@ function setSessionInformations (user, authenticated, email, groups) {
   };
 }
 
-function sessionLogoutRequest () {
+function sessionLogoutRequest() {
   return {
-    type: SESSION_LOGOUT_REQUEST,
+    type: constants.SESSION_LOGOUT_REQUEST,
   };
 }
 
-function sessionLogoutSuccess () {
+function sessionLogoutSuccess() {
   return {
-    type: SESSION_LOGOUT_SUCCESS,
+    type: constants.SESSION_LOGOUT_SUCCESS,
   };
 }
 
-function sessionLogoutFailure () {
+function sessionLogoutFailure() {
   return {
-    type: SESSION_LOGOUT_FAILURE,
+    type: constants.SESSION_LOGOUT_FAILURE,
   };
 }
 
-function resetSessionInformation () {
+function resetSessionInformation() {
   return {
-    type: RESET_SESSION_INFORMATIONS,
+    type: constants.RESET_SESSION_INFORMATIONS,
   };
 }
 
-function logout () {
+function logout() {
   return dispatch => {
     dispatch(sessionLogoutRequest());
-    while (undefined !== cookie.load(AUTH_COOKIE)) {
-      cookie.remove(AUTH_COOKIE);
-    }
+    cookie.remove('auth_tkt');
     myHttp.get('/logout')
-      .then(() => {
-        NotificationManager.success('You have been logged out of the platform.', 'Success', 4000);
+      .then(res => {
+        NotificationManager.success(`You have been logged out of the platform.`, 'Success', 4000);
         dispatch(sessionLogoutSuccess());
         dispatch(resetSessionInformation());
       })
@@ -106,7 +106,7 @@ function logout () {
   };
 }
 
-function sendCredentialsToZiggurat (username, password) {
+function sendCredentialsToZiggurat(username, password) {
   return (dispatch) => {
     dispatch(zigguratLoginRequest());
     myHttp.postUrlEncodedForm('/login', {
@@ -132,7 +132,7 @@ function sendCredentialsToZiggurat (username, password) {
   };
 }
 
-function checkLogin () {
+function checkLogin() {
   return (dispatch) => {
     console.log('in actual checking login');
     dispatch(checkLoginRequest());
@@ -163,26 +163,23 @@ export const actions = {
 
 // Handlers
 const HANDLERS = {
-  // abusing arrow functions auto return for single lining them
-  [ZIGGURAT_LOGIN_REQUEST]: state => state,
-  [ZIGGURAT_LOGIN_SUCCESS]: state => state,
-  [ZIGGURAT_LOGIN_FAILURE]: state => state,
-  [SESSION_CHECK_LOGIN_REQUEST]: state => state,
-  [SESSION_CHECK_LOGIN_SUCCESS]: state => state,
-  [SESSION_CHECK_LOGIN_FAILURE]: state => state,
-  [SET_SESSION_INFORMATIONS]: (state, action) => {
-    return ({
-      ...state, sessionStatus: {
-        user: {
-          username: action.user,
-          authenticated: action.authenticated,
-          email: action.email,
-          groupe: action.groups,
-        },
-      }
-    });
+  [constants.ZIGGURAT_LOGIN_REQUEST]: (state, action) => { return state; },
+  [constants.ZIGGURAT_LOGIN_SUCCESS]: (state, action) => { return state; },
+  [constants.ZIGGURAT_LOGIN_FAILURE]: (state, action) => { return state; },
+  [constants.SESSION_CHECK_LOGIN_REQUEST]: (state, action) => { return state; },
+  [constants.SESSION_CHECK_LOGIN_SUCCESS]: (state, action) => { return state; },
+  [constants.SESSION_CHECK_LOGIN_FAILURE]: (state, action) => { return state; },
+  [constants.SET_SESSION_INFORMATIONS]: (state, action) => {
+    return ({...state, sessionStatus: {
+      user: {
+        username: action.user,
+        authenticated: action.authenticated,
+        email: action.email,
+        groupe: action.groups,
+      },
+    }});
   },
-  [RESET_SESSION_INFORMATIONS]: (state) => {
+  [constants.RESET_SESSION_INFORMATIONS]: (state, action) => {
     return ({...state, sessionStatus: initialState.sessionStatus});
   },
 };
@@ -199,7 +196,7 @@ export const initialState = {
   },
 };
 
-export default function (state = initialState, action) {
+export default function(state = initialState, action) {
   const handler = HANDLERS[action.type];
   return handler ? handler(state, action) : state;
 }
