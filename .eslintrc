@@ -24,6 +24,7 @@
     "max-len": [2, 180, 2],
     "space-in-parens": "off",
     "react/jsx-curly-spacing": "off",
-    "react/jsx-indent": "off"
+    "react/jsx-indent": "off",
+    "comma-dangle": "off"
   }
 }

@@ -19,6 +19,15 @@ function datasetHasWmsUrls (dataset) {
   return !!(dataset.wms_url && dataset.wms_url.length > 0);
 }
 
+function getMaxPoly (polys) {
+  const polyObj = [];
+  for (let b = 0; b < polys.length; b++) {
+    polyObj.push({ poly: polys[b], area: polys[b].getArea() });
+  }
+  polyObj.sort(function (a, b) { return a.area - b.area });
+  return polyObj[polyObj.length - 1].poly;
+}
+
 class OLComponent extends React.Component {
   static propTypes = {
     currentDateTime: React.PropTypes.string.isRequired,
@@ -286,22 +295,23 @@ class OLComponent extends React.Component {
 
   createPolygonStyleFunction () {
     return (feature, resolution) => {
-      let fill = new ol.style.Fill(
-        {
-          color: 'rgba(0,255,255,0.5)'
-        }
-      );
-      let stroke = new ol.style.Stroke(
-        {
-          color: 'rgba(255,255,255,0.5)'
-        }
-      );
-      let style = new ol.style.Style({
-        stroke: stroke,
-        fill: fill,
-        text: this.createTextStyle(feature, resolution, this.config.polygons)
-      });
-      return [style];
+      // first style is the actual filling of the region
+      // second is the label with added hack to work around multi polygons having multiple labels
+      return [
+        new ol.style.Style({
+          stroke: new ol.style.Stroke({ color: 'rgba(255,255,255,0.5)' }),
+          fill: new ol.style.Fill({ color: 'rgba(0,255,255,0.5)' })
+        }),
+        new ol.style.Style({
+          text: this.createTextStyle(feature, resolution, this.config.polygons),
+          geometry: feature => {
+            if (feature.getGeometry().getType() === 'MultiPolygon') {
+              return getMaxPoly(feature.getGeometry().getPolygons()).getInteriorPoint();
+            }
+            return feature.getGeometry().getInteriorPoint();
+          }
+        })
+      ];
     };
   }
 
