@@ -92,9 +92,9 @@ function resetSessionInformation() {
 function logout() {
   return dispatch => {
     dispatch(sessionLogoutRequest());
-    while (undefined !== cookie.load(AUTH_COOKIE)) {
+    // while (undefined !== cookie.load(AUTH_COOKIE)) {
       cookie.remove(AUTH_COOKIE);
-    }
+    // }
     myHttp.get('/logout')
       .then(res => {
         NotificationManager.success(`You have been logged out of the platform.`, 'Success', 4000);
