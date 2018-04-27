@@ -48,7 +48,7 @@ export default class SessionStatus extends Component {
     return (
       <div>
         Hello {this.props.sessionStatus.user.username}!<br />
-        <RaisedButton onTouchTap={this.props.logout} label="Logout" primary />
+        <RaisedButton id="cy-logout-btn" onTouchTap={this.props.logout} label="Logout" primary />
       </div>
     );
   }
@@ -66,6 +66,7 @@ export default class SessionStatus extends Component {
     return (
       <div>
         <SelectField
+          id="cy-login-provider-sf"
           floatingLabelText="Login Authority"
           value={this.state.provider}
           onChange={this.handleProviderChange}>
@@ -73,15 +74,17 @@ export default class SessionStatus extends Component {
         </SelectField>
         <br />
         <TextField
+          id="cy-login-user-tf"
           value={this.state.username}
           onChange={this.handleUsernameChange} hintText="Username" />
         <br />
         <TextField
+          id="cy-login-password-tf"
           value={this.state.password}
           onChange={this.handlePasswordChange}
           hintText="Password"
           type="password" /><br />
-        <RaisedButton onTouchTap={this.submit} label="Login" primary />
+        <RaisedButton id="cy-login-btn"  onTouchTap={this.submit} label="Login" primary />
       </div>
     );
   }

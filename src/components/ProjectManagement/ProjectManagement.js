@@ -43,7 +43,7 @@ export class ProjectManagement extends React.Component {
    <Tabs
      onChange={(value) => this.handleTabChange(value)}
      value={this.state.activeTab}>
-     <Tab value={CURRENT_PROJECT_TAB_VALUE} label="Current project">
+     <Tab id="cy-current-project-tab" value={CURRENT_PROJECT_TAB_VALUE} label="Current project">
        {
          (this.state.activeTab === CURRENT_PROJECT_TAB_VALUE) ?
          <div className={classes['ProjectManagement']} style={{ margin: 20 }}>
@@ -59,7 +59,7 @@ export class ProjectManagement extends React.Component {
          </div>: null
        }
      </Tab>
-     <Tab value={CREATE_PROJECT_TAB_VALUE} label="Create new project">
+     <Tab id="cy-create-project-tab" value={CREATE_PROJECT_TAB_VALUE} label="Create new project">
        {
          (this.state.activeTab === CREATE_PROJECT_TAB_VALUE) ?
            <div className={classes['ProjectManagement']} style={{ margin: 20 }}>

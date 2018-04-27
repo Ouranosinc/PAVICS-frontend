@@ -35,13 +35,14 @@ export class ProjectSelector extends React.Component {
         <Paper style={{marginTop: 20}}>
           <div className="container">
             <SelectField
+              id="cy-project-selector"
               fullWidth={true}
               floatingLabelText="Current project"
               value={this.props.project.currentProject.id}
               onChange={(event, index, value) => this._onSetCurrentProject(value)}>
               {
                 this.props.projectAPI.items.map((project, i) => {
-                  return <MenuItem key={i} value={project.id} primaryText={project.name} />;
+                  return <MenuItem data-cy-item-project-id={project.id} key={i} value={project.id} primaryText={project.name} />;
                 })
               }
             </SelectField>

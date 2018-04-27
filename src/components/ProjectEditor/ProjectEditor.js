@@ -90,12 +90,15 @@ export class ProjectEditor extends React.Component {
         <Paper style={{marginTop: 20}}>
           <div className="container">
             <TextField
+              id="cy-project-name-tf"
+              data-cy-project-id={this.props.project.currentProject.id}
               hintText="Define a name"
               value={this.state.projectName}
               fullWidth={true}
               onChange={(event, value) => this._onSetProjectName(value)}
               floatingLabelText="Project name" />
             <TextField
+              id="cy-project-description-tf"
               hintText="Write a project description"
               value={this.state.projectDescription}
               fullWidth={true}
@@ -108,11 +111,13 @@ export class ProjectEditor extends React.Component {
         </Paper>
 
         <RaisedButton
+          id="cy-save-project-btn"
           onClick={() => this._onSaveProject()}
           label="Save project properties"
           disabled={!this.state.projectName || !this.state.projectName.length}
           style={{marginTop: 20}} />
         <RaisedButton
+          id="cy-delete-project-btn"
           onClick={() => this._onDeleteProject()}
           label="Delete project"
           secondary={true}

@@ -38,9 +38,8 @@ export class ProjectSearchCriterias extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.project.currentProject && nextProps.project.currentProject !== this.props.project.currentProject) {
-      let filter = JSON.stringify({where: { projectId: this.props.project.currentProject.id}});
+      let filter = JSON.stringify({where: { projectId: nextProps.project.currentProject.id}});
       this.props.researchAPIActions.fetchResearchs({filter: filter});
-      this.props.projectAPIActions.fetchProjectResearchs({ projectId: nextProps.project.currentProject.id});
     }
   }
 
@@ -67,7 +66,7 @@ export class ProjectSearchCriterias extends React.Component {
 
   _onRelaunchSearch (research) {
     this.onReloadSearchCriteria(research);
-    this.props.researchActions.fetchPavicsDatasets();
+    this.props.researchActions.fetchPavicsDatasetsAndFacets();
   }
 
   _onRestoreSearchCriteria (research) {
@@ -84,13 +83,14 @@ export class ProjectSearchCriterias extends React.Component {
     let criteriasStart = (this.state.criteriasPageNumber - 1) * this.state.criteriasNumberPerPage;
     let criteriasPaginated = this.props.researchAPI.items.slice(criteriasStart, criteriasStart + this.state.criteriasNumberPerPage);
     return (
-      <div className={classes['ProjectSearchCriterias']}>
+      <div id="cy-project-search-criterias" className={classes['ProjectSearchCriterias']}>
         <Paper style={{marginTop: 20}}>
           <List>
             <Subheader>Manage search criteria(s)</Subheader>
             {criteriasPaginated.map((research, index) => {
               return (
                 <ListItem
+                  className="cy-project-search-criterias-item"
                   key={index}
                   primaryText={research.name}
                   secondaryText={
@@ -111,15 +111,16 @@ export class ProjectSearchCriterias extends React.Component {
                   rightIconButton={
                     <IconMenu iconButtonElement={
                       <IconButton
+                        className="cy-actions-btn"
                         touch={true}
                         tooltip="Actions"
                         tooltipPosition="bottom-left">
                         <MoreVertIcon color={grey400} />
                       </IconButton>}>
-                      <MenuItem primaryText="Rename (TODO)" onTouchTap={(event) => alert('rename ' + research.name)} leftIcon={<Rename />} />
-                      <MenuItem primaryText="Restore results" onTouchTap={(event) => this._onRestoreSearchCriteria(research)} leftIcon={<Restore />} />
-                      <MenuItem primaryText="Relaunch search" onTouchTap={(event) => this._onRelaunchSearch(research)} leftIcon={<Relaunch />} />
-                      <MenuItem primaryText="Remove" onTouchTap={(event) => this._onRemoveSearchCriteria(research)} leftIcon={<Remove />} />
+                      {/*<MenuItem id="cy-rename-item" primaryText="Rename (TODO)" onTouchTap={(event) => alert('rename ' + research.name)} leftIcon={<Rename />} />*/}
+                      <MenuItem id="cy-restore-item" primaryText="Restore results" onTouchTap={(event) => this._onRestoreSearchCriteria(research)} leftIcon={<Restore />} />
+                      <MenuItem id="cy-relaunch-item" primaryText="Relaunch search" onTouchTap={(event) => this._onRelaunchSearch(research)} leftIcon={<Relaunch />} />
+                      <MenuItem id="cy-remove-item" primaryText="Remove" onTouchTap={(event) => this._onRemoveSearchCriteria(research)} leftIcon={<Remove />} />
                     </IconMenu>
                   }
                 />
@@ -127,7 +128,7 @@ export class ProjectSearchCriterias extends React.Component {
             })}
           </List>
           <Pagination
-            total={this.props.projectAPI.researchs.items.length}
+            total={this.props.researchAPI.items.length}
             initialPerPageOptionIndex={constants.PER_PAGE_INITIAL_INDEX}
             perPageOptions={constants.PER_PAGE_OPTIONS}
             onChange={this._onCriteriasPageChanged} />

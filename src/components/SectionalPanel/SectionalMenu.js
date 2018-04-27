@@ -58,26 +58,26 @@ class SectionalMenu extends React.Component {
   render () {
     return (
       <div className={classes['SectionalMenu']}>
-        <nav>
+        <nav id="cy-sectional-menu">
           {/*<OverlayTrigger placement="left" overlay={this.tooltip('Search Datasets')} delay={3}>*/}
-          <a onClick={this.search} title="Search Datasets"
+          <a id="cy-search-datasets" onClick={this.search} title="Search Datasets"
             className={(this.props.section === constants.PLATFORM_SECTION_SEARCH_DATASETS) ? classes['active'] : ''}>
             <SearchIcon color={white} />
           </a>
           {/*</OverlayTrigger>*/}
-          <a onClick={this.experience} title="Project Management"
+          <a id="cy-project-management" onClick={this.experience} title="Project Management"
             className={(this.props.section === constants.PLATFORM_SECTION_PROJECT_MANAGEMENT) ? classes['active'] : ''}>
             <AssignmentIcon color={white} />
           </a>
-          <a onClick={this.workflows} title="Data Processing"
+          <a id="cy-data-processing"onClick={this.workflows} title="Data Processing"
             className={(this.props.section === constants.PLATFORM_SECTION_WORKFLOWS) ? classes['active'] : ''}>
             <InputIcon color={white} />
           </a>
-          <a onClick={this.monitor} title="Processes Monitoring"
+          <a id="cy-process-monitoring"onClick={this.monitor} title="Processes Monitoring"
             className={(this.props.section === constants.PLATFORM_SECTION_MONITOR) ? classes['active'] : ''}>
             <Glyphicon glyph="tasks" />
           </a>
-          <a onClick={this.account} title="Account Management"
+          <a id="cy-account-management" onClick={this.account} title="Account Management"
             className={(this.props.section === constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT) ? classes['active'] : ''}>
             <AccountCircleIcon color={white} />
           </a>

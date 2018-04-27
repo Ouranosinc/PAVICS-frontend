@@ -57,7 +57,7 @@ export default class MapControls extends React.Component {
         <AppBar
           title="Map Controls"
           iconElementLeft={<IconButton><MapControlsIcon /></IconButton>}
-          iconElementRight={<IconButton onTouchTap={(event) => this._onHideMapControlsPanel()}><MinimizeIcon /></IconButton>} />
+          iconElementRight={<IconButton className="cy-minimize-btn" onTouchTap={(event) => this._onHideMapControlsPanel()}><MinimizeIcon /></IconButton>} />
         <div className="container">
           <h4>Mouse Click Mode</h4>
           <RadioButtonGroup

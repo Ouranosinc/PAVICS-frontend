@@ -41,6 +41,8 @@ const config = {
   pavics_ncwms_path: ncwmsHost,
   pavics_catalog_path: catalogHost,
   pavics_project_api_path: process.env.PAVICS_PROJECT_API_URL || `https://${birdhouseHost}/project-api/api`,
+  // pavics_project_api_internal_url is needed in dev mode since centos vm etc/hosts hasn't its value modified but windows host has (pluvier -­> dev IP)
+  pavics_project_api_internal_url: process.env.PAVICS_PROJECT_API_INTERNAL_URL || `https://${birdhouseHost}/project-api/api`, // DEV
   pavics_magpie_host: `https://${birdhouseHost}/magpie`,
   PAVICS_WORKFLOW_PROVIDER: PAVICS_WORKFLOW_PROVIDER,
   PAVICS_RUN_WORKFLOW_IDENTIFIER: PAVICS_RUN_WORKFLOW_IDENTIFIER,

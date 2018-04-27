@@ -24,11 +24,13 @@ export class ConfirmDialog extends React.Component {
       onRequestClose={() => this.props.onCloseDialog()}
       actions={[
         <RaisedButton
+          id="cy-confirm-cancel-btn"
           label="Cancel"
           keyboardFocused={false}
           onTouchTap={() => this.props.onCloseDialog()}
         />,
         <RaisedButton
+          id="cy-confirm-ok-btn"
           label="OK"
           primary={true}
           style={{marginLeft: '10px'}}

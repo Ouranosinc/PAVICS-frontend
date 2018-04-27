@@ -96,7 +96,7 @@ export default class BigColorPalette extends React.Component {
   render () {
     if (this.props.variablePreference && this.props.variablePreference.colorPalette) {
       return (
-        <Grid className={classes.BigColorPalette}>
+        <Grid id="cy-big-color-palette" className={classes.BigColorPalette}>
           <Row>
             <Col xs={2} md={1} mdOffset={2}>
               <div className={classes.BoundaryInput}>

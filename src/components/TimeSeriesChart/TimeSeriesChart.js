@@ -120,7 +120,7 @@ class TimeSeriesChart extends React.Component {
         <AppBar
           title="Time Series Chart"
           iconElementLeft={<IconButton><TimelineIcon /></IconButton>}
-          iconElementRight={<IconButton onTouchTap={(event) => this._onHideChartPanel()}><MinimizeIcon /></IconButton>} />
+          iconElementRight={<IconButton className="cy-minimize-btn" onTouchTap={(event) => this._onHideChartPanel()}><MinimizeIcon /></IconButton>} />
         <div className={classes['Chart']}>
           {content}
           <div className={((this.props.plotlyData.isFetching || this.props.currentScalarValue.isFetching) &&
