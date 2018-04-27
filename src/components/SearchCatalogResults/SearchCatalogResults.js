@@ -79,11 +79,17 @@ export class SearchCatalogResults extends React.Component {
 
   _onAddCheckedDatasetsToProject () {
     this.state.checkedDatasets.forEach((dataset) => {
-      // TODO validate dataset_id unicity
+      // TODO validate dataset_id unicity, else server with return an alert and user will be prompted an unuseful alert 500
       dataset.projectId = this.props.project.currentProject.id;
-      dataset.datetime_max = dataset.datetime_max.map(x => x.toString()); // TODOD Remove this
-      dataset.datetime_min = dataset.datetime_min.map(x => x.toString()); // TODOD Remove this
-      delete dataset.id; // Loopback fails this
+      // TODO: We could also affect default values for every missing property, so we don't have to make sure they exist applicaiton-wide
+      if (!dataset.datetime_min) {
+        dataset.datetime_min = []
+      }
+      if (!dataset.datetime_max) {
+        dataset.datetime_max = []
+      }
+      delete dataset.id; // Delete id, else, Loopback will fail this because he wont be able to define a unique id
+      // TODO: Send this id in another property if dataset.id ever become relevant to the platform
       this.props.projectAPIActions.createProjectDatasets(dataset);
     });
     this.setState({
