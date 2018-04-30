@@ -19,7 +19,9 @@ let phoenix = (() => {
             },
             rejectUnauthorized: false
           };
+          console.log(`Fetching phoenix at url ${options.url}`)
           response = yield request(options);
+          console.log(response.body)
           this.body = response.body;
           break;
         case 'jobs' :
