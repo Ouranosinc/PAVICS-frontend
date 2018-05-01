@@ -3,6 +3,7 @@ import classes from './OLComponent.scss';
 import Dialog from 'material-ui/Dialog';
 import * as constants from './../../constants';
 import myHttp from './../../../lib/http';
+import { NotificationManager } from 'react-notifications';
 
 // Couldn't figure out the bug when importing inner component css file but it works from node_modules
 let G_BING_API_KEY = 'AtXX65CBBfZXBxm6oMyf_5idMAMI7W6a5GuZ5acVcrYi6lCQayiiBz7_aMHB7JR7';
@@ -452,35 +453,58 @@ class OLComponent extends React.Component {
     console.log('setting new dataset layer', dataset);
     const currentWmsCapabilitiesUrl = dataset.wms_url[dataset.currentFileIndex];
     myHttp.get(currentWmsCapabilitiesUrl)
-      .then(response => response.text())
+      .then(response => {
+        if(response.status === 200) {
+          return response.text();
+        } else {
+          // Typically: 401 Unauthorized
+          throw new Error(`${response.status} ${response.statusText}`)
+        }
+      })
       .then(text => {
         const parser = new ol.format.WMSCapabilities();
-        const capabilities = parser.read(text);
-        const resourceUrl = capabilities['Service']['OnlineResource'];
-        console.log('fetched capabilities %o for wms url %s', capabilities, currentWmsCapabilitiesUrl);
+        let capabilities = "";
+        try {
+          capabilities = parser.read(text);
+          console.log('fetched capabilities %o for wms url %s', capabilities, currentWmsCapabilitiesUrl);
+        } catch(err){
+          // The server might still return a code 200 containing an error
+          // Might be an Apache error returning HTML containing H1 tag, Else just return everything
+          let h1 = '';
+          text.replace(/<h1>(.*?)<\/h1>/g, (match, g1) => h1 = g1);
+          throw new Error((h1.length)? h1: text)
+        }
+        const index = currentWmsCapabilitiesUrl.indexOf('?');
+        if(index < 0) {
+          throw new Error('Could not find exact WMS Server URL needed for following GetMetadata requests');
+        }
+        const wmsServerUrl = currentWmsCapabilitiesUrl.substring(0, index);
+        // We cannot trust anymore what's returned by GetCapabilities: capabilities['Service']['OnlineResource'];
 
         /*
-        here we assume that the layer that actually contains the information we want to display is the first one of the dataset
-        for instance, there could be layers containing lat or lon in the return values of the capabilities
-        hopefully the relevant variable will always be the first one
+         here we assume that the layer that actually contains the information we want to display is the first one of the dataset
+         for instance, there could be layers containing lat or lon in the return values of the capabilities
+         hopefully the relevant variable will always be the first one
          */
         const layer = capabilities['Capability']['Layer']['Layer'][0]['Layer'][0];
         const layerName = layer['Name'];
         const minMaxBracket = `${dataset['variable_min']},${dataset['variable_max']}`;
         console.log('current dataset min max bracket: %s', minMaxBracket);
-        this.setDatasetLayer(minMaxBracket, layerName, resourceUrl, dataset.opacity, `default-scalar/${dataset.variable_palette}`);
+        this.setDatasetLayer(minMaxBracket, layerName, wmsServerUrl, dataset.opacity, `default-scalar/${dataset.variable_palette}`);
 
         if (layer['Dimension']) {
           const timeDimension = this.findDimension(layer['Dimension'], 'time');
           const date = timeDimension.values.substring(0, 24);
-          this.props.fetchWMSLayerTimesteps(resourceUrl, layerName, date);
+          this.props.fetchWMSLayerTimesteps(wmsServerUrl, layerName, date);
           // this.props.setCurrentDateTime(date);
         }
 
         this.props.setSelectedDatasetCapabilities(capabilities);
-        this.props.fetchWMSLayerDetails(resourceUrl, layerName);
+        this.props.fetchWMSLayerDetails(wmsServerUrl, layerName);
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        NotificationManager.error(`Method GetCapabilities failed at being fetched from the NcWMS2 server: ${err}`, 'Error', 10000);
+      });
   }
 
   updateColorPalette () {
