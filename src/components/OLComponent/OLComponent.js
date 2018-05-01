@@ -49,7 +49,8 @@ class OLComponent extends React.Component {
     fetchWMSLayerDetails: React.PropTypes.func.isRequired,
     fetchWMSLayerTimesteps: React.PropTypes.func.isRequired,
     fetchPlotlyData: React.PropTypes.func.isRequired,
-    fetchScalarValue: React.PropTypes.func.isRequired
+    fetchScalarValue: React.PropTypes.func.isRequired,
+    testWMSGetMapPermission: React.PropTypes.func.isRequired,
   };
 
   config = {
@@ -452,6 +453,8 @@ class OLComponent extends React.Component {
   updateDatasetWmsLayer (dataset) {
     console.log('setting new dataset layer', dataset);
     const currentWmsCapabilitiesUrl = dataset.wms_url[dataset.currentFileIndex];
+    NotificationManager.info(`Dataset is being loaded on the map, it may take a few seconds...`, 'Information', 3000);
+
     myHttp.get(currentWmsCapabilitiesUrl)
       .then(response => {
         if(response.status === 200) {
@@ -501,6 +504,8 @@ class OLComponent extends React.Component {
 
         this.props.setSelectedDatasetCapabilities(capabilities);
         this.props.fetchWMSLayerDetails(wmsServerUrl, layerName);
+        // Normally fetched entirely by OpenLayers, but we want to an error when returning an error: ex. 401 Unauthorized
+        this.props.testWMSGetMapPermission(wmsServerUrl, layerName);
       })
       .catch(err => {
         NotificationManager.error(`Method GetCapabilities failed at being fetched from the NcWMS2 server: ${err}`, 'Error', 10000);

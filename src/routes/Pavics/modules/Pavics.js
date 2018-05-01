@@ -338,6 +338,25 @@ export function fetchWMSLayerTimesteps (url, layer, day) {
     });
   };
 }
+export function testWMSGetMapPermission (url, layer) {
+  // Removed dispatch events since this route does not return any useful data
+  return function (dispatch) {
+    return myHttp.get(`${url}?REQUEST=GetMap&LAYERS=${layer}`)
+      .then(response => {
+        if(response.status !== 200) {
+          throw new Error(`${response.status} ${response.statusText}`);
+        }
+        try {
+          //text.contains('Must provide a value for VERSION')
+          return response.text()
+        } catch(err) {
+          throw new Error('Failed at parsing XML response');
+        }
+      })
+      .then(text => console.log(text))
+      .catch(error => NotificationManager.error(`Method GetMap failed at being fetched from the NcWMS2 server: ${error}`, 'Error', 10000));
+  };
+}
 function setJobs (jobs) {
   return {
     type: constants.MONITOR_SET_JOBS,
