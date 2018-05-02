@@ -95,6 +95,7 @@ export class TimeSlider extends React.Component {
     this._onSelectedTime = this._onSelectedTime.bind(this);
     this.state = DEFAULT_STATE;
     this.playLoopTimeout =  null;
+    this.hasDatasetChanged = false;
   }
 
   componentWillReceiveProps (nextProps) {
@@ -108,8 +109,13 @@ export class TimeSlider extends React.Component {
         }
       );
     }
-    if (nextProps.currentDisplayedDataset && nextProps.currentDisplayedDataset !== this.props.currentDisplayedDataset && !nextProps.currentDisplayedDataset['dataset_id']) {
-      this.setState(DEFAULT_STATE);
+    if(nextProps.currentDisplayedDataset && nextProps.currentDisplayedDataset !== this.props.currentDisplayedDataset ) {
+      if (!nextProps.currentDisplayedDataset['dataset_id']) {
+        this.setState(DEFAULT_STATE);
+      }
+      if (nextProps.currentDisplayedDataset['uniqueLayerSwitcherId'] !== this.props.currentDisplayedDataset['uniqueLayerSwitcherId']) {
+        this.hasDatasetChanged = true;
+      }
     }
   }
 
@@ -120,9 +126,12 @@ export class TimeSlider extends React.Component {
   init() {
     if (!this.props.selectedWMSLayerDetails.isFetching && !this.props.selectedWMSLayerTimesteps.isFetching) {
       if (this.props.selectedWMSLayerDetails.data.datesWithData) {
-        this.changeGlobalRange(); // This will also triggers -­> this.dispatchCurrentDateTime (this.state.minDatetime);
-        this.changeTimesteps();
         this.setState({disabled: false});
+        if(this.hasDatasetChanged){
+          this.changeGlobalRange(); // This will also triggers -­> this.dispatchCurrentDateTime (this.state.minDatetime);
+          this.changeTimesteps();
+          this.hasDatasetChanged = false;
+        }
       }
     }else {
       this.setState({disabled: true});
