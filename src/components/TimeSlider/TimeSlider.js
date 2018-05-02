@@ -113,36 +113,34 @@ export class TimeSlider extends React.Component {
     }
   }
 
-  // TODO DELETE
+  componentDidMount() {
+    this.init();
+  }
+
+  init() {
+    if (!this.props.selectedWMSLayerDetails.isFetching && !this.props.selectedWMSLayerTimesteps.isFetching) {
+      if (this.props.selectedWMSLayerDetails.data.datesWithData) {
+        this.changeGlobalRange(); // This will also triggers -­> this.dispatchCurrentDateTime (this.state.minDatetime);
+        this.changeTimesteps();
+        this.setState({disabled: false});
+      }
+    }else {
+      this.setState({disabled: true});
+    }
+    // TODO DISABLE SOME MONTHS/YEARS IF MISSING DATA
+  }
+
   componentDidUpdate (prevProps, prevState) {
     // Context: We have two async fetch requests and we have no idea which one will be proceeded first
     // And we need both values to be fetched to calculate ranges and steps
     if (this.props.selectedWMSLayerDetails && this.props.selectedWMSLayerDetails.data &&
       (this.props.selectedWMSLayerDetails.data !== prevProps.selectedWMSLayerDetails.data)) {
-      if (!this.props.selectedWMSLayerDetails.isFetching && !this.props.selectedWMSLayerTimesteps.isFetching) {
-        if (this.props.selectedWMSLayerDetails.data.datesWithData) {
-          this.changeGlobalRange(); // -­> this.dispatchCurrentDateTime (this.state.minDatetime);
-          this.changeTimesteps();
-          this.setState({disabled: false});
-        }
-      }else {
-        this.setState({disabled: true});
-      }
-      // TODO DISABLE SOME MONTHS/YEARS IF MISSING DATA
+      this.init();
     }
 
     if (this.props.selectedWMSLayerTimesteps && this.props.selectedWMSLayerTimesteps.data &&
       (this.props.selectedWMSLayerTimesteps.data !== prevProps.selectedWMSLayerTimesteps.data)) {
-      if (!this.props.selectedWMSLayerDetails.isFetching && !this.props.selectedWMSLayerTimesteps.isFetching) {
-        if (this.props.selectedWMSLayerDetails.data.datesWithData) {
-          this.changeGlobalRange();
-          this.changeTimesteps();
-          this.setState({disabled: false});
-        }
-      }else {
-        this.setState({disabled: true});
-      }
-      // TODO DISABLE SOME MONTHS/YEARS IF MISSING DATA
+      this.init();
     }
   }
 
