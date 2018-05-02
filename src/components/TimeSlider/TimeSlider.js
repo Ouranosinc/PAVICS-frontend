@@ -121,12 +121,12 @@ export class TimeSlider extends React.Component {
       (this.props.selectedWMSLayerDetails.data !== prevProps.selectedWMSLayerDetails.data)) {
       if (!this.props.selectedWMSLayerDetails.isFetching && !this.props.selectedWMSLayerTimesteps.isFetching) {
         if (this.props.selectedWMSLayerDetails.data.datesWithData) {
-          this.changeGlobalRange();
+          this.changeGlobalRange(); // -­> this.dispatchCurrentDateTime (this.state.minDatetime);
           this.changeTimesteps();
           this.setState({disabled: false});
-        } else {
-          this.setState(DEFAULT_STATE);
         }
+      }else {
+        this.setState({disabled: true});
       }
       // TODO DISABLE SOME MONTHS/YEARS IF MISSING DATA
     }
@@ -137,10 +137,10 @@ export class TimeSlider extends React.Component {
         if (this.props.selectedWMSLayerDetails.data.datesWithData) {
           this.changeGlobalRange();
           this.changeTimesteps();
-          // this.setState({disabled: false});
-        } else {
-          // this.setState(DEFAULT_STATE);
+          this.setState({disabled: false});
         }
+      }else {
+        this.setState({disabled: true});
       }
       // TODO DISABLE SOME MONTHS/YEARS IF MISSING DATA
     }
@@ -175,10 +175,10 @@ export class TimeSlider extends React.Component {
     let maxDatetime = this.props.currentDisplayedDataset.datetime_max[this.props.currentDisplayedDataset.datetime_max.length - 1];
 
     // Define MIN and MAX dataset datetime values
-    this.setState({
+    /*this.setState({
       minDatetime: minDatetime,
       maxDatetime: maxDatetime
-    });
+    });*/
 
     let marksYears = {},
         firstYear = parseInt(moment.parseZone(minDatetime).year(), 10),
@@ -265,16 +265,15 @@ export class TimeSlider extends React.Component {
     }
     this.setState(
       {
-        currentDate: this.props.currentDateTime.substring(0, 10),
-        currentMonthDay: this.props.currentDateTime.substring(5, 10),
-        currentTime: `${this.props.currentDateTime.substring(11, 24)}`,
-        currentYear: `${this.props.currentDateTime.substring(0, 4)}`,
+        minDatetime: minDatetime,
+        maxDatetime: maxDatetime,
         firstYear: firstYear,
         lastYear: lastYear,
         marksYears: marksYears,
         yearDataMarks: yearDataMarks,
       }
     );
+    this.dispatchCurrentDateTime (minDatetime);
   }
 
   changeTimesteps () {

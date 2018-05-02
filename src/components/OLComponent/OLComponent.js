@@ -455,61 +455,63 @@ class OLComponent extends React.Component {
     const currentWmsCapabilitiesUrl = dataset.wms_url[dataset.currentFileIndex];
     NotificationManager.info(`Dataset is being loaded on the map, it may take a few seconds...`, 'Information', 3000);
 
-    myHttp.get(currentWmsCapabilitiesUrl)
-      .then(response => {
-        if(response.status === 200) {
-          return response.text();
-        } else {
-          // Typically: 401 Unauthorized
-          throw new Error(`${response.status} ${response.statusText}`)
-        }
-      })
-      .then(text => {
-        const parser = new ol.format.WMSCapabilities();
-        let capabilities = "";
-        try {
-          capabilities = parser.read(text);
-          console.log('fetched capabilities %o for wms url %s', capabilities, currentWmsCapabilitiesUrl);
-        } catch(err){
-          // The server might still return a code 200 containing an error
-          // Might be an Apache error returning HTML containing H1 tag, Else just return everything
-          let h1 = '';
-          text.replace(/<h1>(.*?)<\/h1>/g, (match, g1) => h1 = g1);
-          throw new Error((h1.length)? h1: text)
-        }
-        const index = currentWmsCapabilitiesUrl.indexOf('?');
-        if(index < 0) {
-          throw new Error('Could not find exact WMS Server URL needed for following GetMetadata requests');
-        }
-        const wmsServerUrl = currentWmsCapabilitiesUrl.substring(0, index);
-        // We cannot trust anymore what's returned by GetCapabilities: capabilities['Service']['OnlineResource'];
+    if(currentWmsCapabilitiesUrl && currentWmsCapabilitiesUrl.length) {
+      myHttp.get(currentWmsCapabilitiesUrl)
+        .then(response => {
+          if(response.status === 200) {
+            return response.text();
+          } else {
+            // Typically: 401 Unauthorized
+            throw new Error(`${response.status} ${response.statusText}`)
+          }
+        })
+        .then(text => {
+          const parser = new ol.format.WMSCapabilities();
+          let capabilities = "";
+          try {
+            capabilities = parser.read(text);
+            console.log('fetched capabilities %o for wms url %s', capabilities, currentWmsCapabilitiesUrl);
+          } catch(err){
+            // The server might still return a code 200 containing an error
+            // Might be an Apache error returning HTML containing H1 tag, Else just return everything
+            let h1 = '';
+            text.replace(/<h1>(.*?)<\/h1>/g, (match, g1) => h1 = g1);
+            throw new Error((h1.length)? h1: text)
+          }
+          const index = currentWmsCapabilitiesUrl.indexOf('?');
+          if(index < 0) {
+            throw new Error('Could not find exact WMS Server URL needed for following GetMetadata requests');
+          }
+          const wmsServerUrl = currentWmsCapabilitiesUrl.substring(0, index);
+          // We cannot trust anymore what's returned by GetCapabilities: capabilities['Service']['OnlineResource'];
 
-        /*
-         here we assume that the layer that actually contains the information we want to display is the first one of the dataset
-         for instance, there could be layers containing lat or lon in the return values of the capabilities
-         hopefully the relevant variable will always be the first one
-         */
-        const layer = capabilities['Capability']['Layer']['Layer'][0]['Layer'][0];
-        const layerName = layer['Name'];
-        const minMaxBracket = `${dataset['variable_min']},${dataset['variable_max']}`;
-        console.log('current dataset min max bracket: %s', minMaxBracket);
-        this.setDatasetLayer(minMaxBracket, layerName, wmsServerUrl, dataset.opacity, `default-scalar/${dataset.variable_palette}`);
+          /*
+           here we assume that the layer that actually contains the information we want to display is the first one of the dataset
+           for instance, there could be layers containing lat or lon in the return values of the capabilities
+           hopefully the relevant variable will always be the first one
+           */
+          const layer = capabilities['Capability']['Layer']['Layer'][0]['Layer'][0];
+          const layerName = layer['Name'];
+          const minMaxBracket = `${dataset['variable_min']},${dataset['variable_max']}`;
+          console.log('current dataset min max bracket: %s', minMaxBracket);
+          this.setDatasetLayer(minMaxBracket, layerName, wmsServerUrl, dataset.opacity, `default-scalar/${dataset.variable_palette}`);
 
-        if (layer['Dimension']) {
-          const timeDimension = this.findDimension(layer['Dimension'], 'time');
-          const date = timeDimension.values.substring(0, 24);
-          this.props.fetchWMSLayerTimesteps(wmsServerUrl, layerName, date);
-          // this.props.setCurrentDateTime(date);
-        }
+          if (layer['Dimension']) {
+            const timeDimension = this.findDimension(layer['Dimension'], 'time');
+            const date = timeDimension.values.substring(0, 24);
+            this.props.fetchWMSLayerTimesteps(wmsServerUrl, layerName, date);
+            // this.props.setCurrentDateTime(date);
+          }
 
-        this.props.setSelectedDatasetCapabilities(capabilities);
-        this.props.fetchWMSLayerDetails(wmsServerUrl, layerName);
-        // Normally fetched entirely by OpenLayers, but we want to an error when returning an error: ex. 401 Unauthorized
-        this.props.testWMSGetMapPermission(wmsServerUrl, layerName);
-      })
-      .catch(err => {
-        NotificationManager.error(`Method GetCapabilities failed at being fetched from the NcWMS2 server: ${err}`, 'Error', 10000);
-      });
+          this.props.setSelectedDatasetCapabilities(capabilities);
+          this.props.fetchWMSLayerDetails(wmsServerUrl, layerName);
+          // Normally fetched entirely by OpenLayers, but we want to an error when returning an error: ex. 401 Unauthorized
+          this.props.testWMSGetMapPermission(wmsServerUrl, layerName);
+        })
+        .catch(err => {
+          NotificationManager.error(`Method GetCapabilities failed at being fetched from the NcWMS2 server: ${err}`, 'Error', 10000);
+        });
+    }
   }
 
   updateColorPalette () {
@@ -594,9 +596,15 @@ class OLComponent extends React.Component {
         this.updateDatasetWmsLayer(newDataset);
       }
 
-      // if the dataset simply has changed, reload the layer
-      if ( (newDataset['dataset_id'] !== oldDataset['dataset_id']) ) {
+      // if the dataset has changed, reload the layey
+      if ( (newDataset['dataset_id'] !== oldDataset['dataset_id'])) {
+        // if the dataset_id has changed, reload the layer
         console.log('dataset id has changed and we update the wms layer. new: %s, old: %s', newDataset['dataset_id'], oldDataset['dataset_id']);
+        this.updateDatasetWmsLayer(newDataset);
+      } else if((newDataset['uniqueLayerSwitcherId'] !== oldDataset['uniqueLayerSwitcherId'])) {
+        // Could be the same dataset_id but different files in the layer switcher
+        // We could compare newDataset.fileserver_url[newDataset.currentFileIndex] and oldDataset.fileserver_url[oldDataset.currentFileIndex]
+        console.log('uniqueLayerSwitcherId has changed and we update the wms layer. new: %s, old: %s', newDataset['uniqueLayerSwitcherId'], oldDataset['uniqueLayerSwitcherId']);
         this.updateDatasetWmsLayer(newDataset);
       }
 

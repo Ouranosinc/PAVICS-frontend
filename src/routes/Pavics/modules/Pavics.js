@@ -353,7 +353,7 @@ export function testWMSGetMapPermission (url, layer) {
           throw new Error('Failed at parsing XML response');
         }
       })
-      .then(text => console.log(text))
+      .then(text => {/*console.log(text)*/})
       .catch(error => NotificationManager.error(`Method GetMap failed at being fetched from the NcWMS2 server: ${error}`, 'Error', 10000));
   };
 }
