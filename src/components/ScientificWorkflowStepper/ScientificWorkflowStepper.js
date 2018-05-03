@@ -64,9 +64,11 @@ export default class ScientificWorkflowStepper extends Component {
     if (workflow.json && workflow.json.tasks) {
       let inputsThatShouldBeProvided = [];
       let tasks = workflow.json.tasks;
-      workflow.json.parallel_groups.forEach((group) => {
-        tasks = tasks.concat(group.tasks);
-      });
+      if(workflow.json.parallel_groups) {
+        workflow.json.parallel_groups.forEach((group) => {
+          tasks = tasks.concat(group.tasks);
+        });
+      }
       let validProviders = [];
       this.props.workflow.providers.items.map(elem => validProviders.push(elem.identifier));
       // validate that each task has a valid provider
@@ -187,9 +189,11 @@ export default class ScientificWorkflowStepper extends Component {
       console.log('this pair', pair);
       let keys = pair[0].split('.');
       let tasks = toFillWorkflow.tasks;
-      toFillWorkflow.parallel_groups.forEach((group) => {
-        tasks = tasks.concat(group.tasks);
-      });
+      if(toFillWorkflow.parallel_groups) {
+        toFillWorkflow.parallel_groups.forEach((group) => {
+          tasks = tasks.concat(group.tasks);
+        });
+      }
       for (let i = 0, nb = tasks.length; i !== nb; i++) {
         // if the process identifier is not the same, we know it's not the right input
         if (tasks[i].inputs && tasks[i].identifier === keys[0]) {
