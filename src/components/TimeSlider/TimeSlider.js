@@ -95,6 +95,7 @@ export class TimeSlider extends React.Component {
     this._onSelectedTime = this._onSelectedTime.bind(this);
     this.state = DEFAULT_STATE;
     this.playLoopTimeout =  null;
+    this.hasDatasetChanged = false;
   }
 
   componentWillReceiveProps (nextProps) {
@@ -108,41 +109,47 @@ export class TimeSlider extends React.Component {
         }
       );
     }
-    if (nextProps.currentDisplayedDataset && nextProps.currentDisplayedDataset !== this.props.currentDisplayedDataset && !nextProps.currentDisplayedDataset['dataset_id']) {
-      this.setState(DEFAULT_STATE);
+    if(nextProps.currentDisplayedDataset && nextProps.currentDisplayedDataset !== this.props.currentDisplayedDataset ) {
+      if (!nextProps.currentDisplayedDataset['dataset_id']) {
+        this.setState(DEFAULT_STATE);
+      }
+      if (nextProps.currentDisplayedDataset['uniqueLayerSwitcherId'] !== this.props.currentDisplayedDataset['uniqueLayerSwitcherId']) {
+        this.hasDatasetChanged = true;
+      }
     }
   }
 
-  // TODO DELETE
+  componentDidMount() {
+    this.init();
+  }
+
+  init() {
+    if (!this.props.selectedWMSLayerDetails.isFetching && !this.props.selectedWMSLayerTimesteps.isFetching) {
+      if (this.props.selectedWMSLayerDetails.data.datesWithData) {
+        this.setState({disabled: false});
+        if(this.hasDatasetChanged){
+          this.changeGlobalRange(); // This will also triggers -­> this.dispatchCurrentDateTime (this.state.minDatetime);
+          this.changeTimesteps();
+          this.hasDatasetChanged = false;
+        }
+      }
+    }else {
+      this.setState({disabled: true});
+    }
+    // TODO DISABLE SOME MONTHS/YEARS IF MISSING DATA
+  }
+
   componentDidUpdate (prevProps, prevState) {
     // Context: We have two async fetch requests and we have no idea which one will be proceeded first
     // And we need both values to be fetched to calculate ranges and steps
     if (this.props.selectedWMSLayerDetails && this.props.selectedWMSLayerDetails.data &&
       (this.props.selectedWMSLayerDetails.data !== prevProps.selectedWMSLayerDetails.data)) {
-      if (!this.props.selectedWMSLayerDetails.isFetching && !this.props.selectedWMSLayerTimesteps.isFetching) {
-        if (this.props.selectedWMSLayerDetails.data.datesWithData) {
-          this.changeGlobalRange();
-          this.changeTimesteps();
-          this.setState({disabled: false});
-        } else {
-          this.setState(DEFAULT_STATE);
-        }
-      }
-      // TODO DISABLE SOME MONTHS/YEARS IF MISSING DATA
+      this.init();
     }
 
     if (this.props.selectedWMSLayerTimesteps && this.props.selectedWMSLayerTimesteps.data &&
       (this.props.selectedWMSLayerTimesteps.data !== prevProps.selectedWMSLayerTimesteps.data)) {
-      if (!this.props.selectedWMSLayerDetails.isFetching && !this.props.selectedWMSLayerTimesteps.isFetching) {
-        if (this.props.selectedWMSLayerDetails.data.datesWithData) {
-          this.changeGlobalRange();
-          this.changeTimesteps();
-          // this.setState({disabled: false});
-        } else {
-          // this.setState(DEFAULT_STATE);
-        }
-      }
-      // TODO DISABLE SOME MONTHS/YEARS IF MISSING DATA
+      this.init();
     }
   }
 
@@ -175,10 +182,10 @@ export class TimeSlider extends React.Component {
     let maxDatetime = this.props.currentDisplayedDataset.datetime_max[this.props.currentDisplayedDataset.datetime_max.length - 1];
 
     // Define MIN and MAX dataset datetime values
-    this.setState({
+    /*this.setState({
       minDatetime: minDatetime,
       maxDatetime: maxDatetime
-    });
+    });*/
 
     let marksYears = {},
         firstYear = parseInt(moment.parseZone(minDatetime).year(), 10),
@@ -265,16 +272,15 @@ export class TimeSlider extends React.Component {
     }
     this.setState(
       {
-        currentDate: this.props.currentDateTime.substring(0, 10),
-        currentMonthDay: this.props.currentDateTime.substring(5, 10),
-        currentTime: `${this.props.currentDateTime.substring(11, 24)}`,
-        currentYear: `${this.props.currentDateTime.substring(0, 4)}`,
+        minDatetime: minDatetime,
+        maxDatetime: maxDatetime,
         firstYear: firstYear,
         lastYear: lastYear,
         marksYears: marksYears,
         yearDataMarks: yearDataMarks,
       }
     );
+    this.dispatchCurrentDateTime (minDatetime);
   }
 
   changeTimesteps () {
