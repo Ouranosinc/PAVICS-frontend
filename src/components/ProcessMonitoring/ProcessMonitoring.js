@@ -31,8 +31,7 @@ class ProcessMonitoring extends React.Component {
     monitor: React.PropTypes.object.isRequired,
     monitorActions: React.PropTypes.object.isRequired,
     project: React.PropTypes.object.isRequired,
-    sessionManagement: React.PropTypes.object.isRequired,
-    fetchVisualizableData: React.PropTypes.func.isRequired
+    sessionManagement: React.PropTypes.object.isRequired
   };
 
   constructor (props) {

@@ -468,16 +468,6 @@ function setLayer (layer) {
     layer: layer
   };
 }
-export function fetchVisualizableData (statusLocation) {
-  return dispatch => {
-    return myHttp.get(`/api/wms/visualizableData?status=${statusLocation}`)
-      .then(response => response.json())
-      .then(json => dispatch(setLayer(json)))
-      .catch(err => {
-        console.log(err);
-      });
-  };
-}
 export function goToSection (section) {
   return dispatch => dispatch(setSection(section));
 }

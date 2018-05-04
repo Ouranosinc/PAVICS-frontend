@@ -24,8 +24,7 @@ class Pavics extends React.Component {
     addDatasetsToVisualize: React.PropTypes.func.isRequired,
     // chooseStep: React.PropTypes.func.isRequired,
     goToSection: React.PropTypes.func.isRequired,
-    platform: React.PropTypes.object.isRequired,
-    fetchVisualizableData: React.PropTypes.func.isRequired
+    platform: React.PropTypes.object.isRequired
   };
 
   constructor(props) {
@@ -94,8 +93,7 @@ class Pavics extends React.Component {
             addDatasetsToVisualize={this.props.addDatasetsToVisualize}
             selectCurrentDisplayedDataset={this.props.selectCurrentDisplayedDataset}
             workflow={this.props.workflow}
-            workflowActions={this.props.workflowActions}
-            fetchVisualizableData={this.props.fetchVisualizableData} />
+            workflowActions={this.props.workflowActions} />
         );
       case constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT:
         return (
