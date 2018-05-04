@@ -248,7 +248,7 @@ export default class ScientificWorkflowStepper extends Component {
     return (
       <Stepper activeStep={this.state.activeStep} orientation="vertical">
         <Step>
-          <StepLabel style={styleStepLabel}>
+          <StepLabel id="cy-configure-run-step" style={styleStepLabel}>
             Choose the 'Configure & Run' action of the desired workflow
             <span style={innerStyleStepLabel}>{(this.state.workflow)? this.state.workflow.name: ''}</span>
           </StepLabel>

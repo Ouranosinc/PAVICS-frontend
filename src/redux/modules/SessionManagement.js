@@ -97,7 +97,7 @@ function logout() {
     // }
     myHttp.get('/logout')
       .then(res => {
-        NotificationManager.success(`You have been logged out of the platform.`, 'Success', 4000);
+        NotificationManager.success(`You have been logged out of the platform.`, 'Success', 10000);
         dispatch(sessionLogoutSuccess());
         dispatch(resetSessionInformation());
       })
@@ -145,7 +145,7 @@ function checkLogin() {
         console.log('received session status: %o', session);
         dispatch(checkLoginSuccess());
         if (session.authenticated === true) {
-          NotificationManager.success('You have been logged in to the platform.', 'Success', 4000);
+          NotificationManager.success('You have been logged in to the platform.', 'Success', 10000);
           dispatch(setSessionInformations(session['user_name'], session['authenticated'], session['user_email'], session['group_names']));
         }
       })

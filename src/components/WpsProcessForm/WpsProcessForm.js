@@ -174,11 +174,12 @@ export default class WpsProcessForm extends React.Component {
     console.log('creating deform wrapper for inputs %o, current state: %o', this.props.workflow.selectedProcessInputs, this.state);
     return (
       <DeformWrapper
+        id="cy-process-form"
         formId={this.props.formId}
         execute={this.props.executeProcess}>
         {this.props.workflow.selectedProcessInputs.map((input, i) => {
           return (
-            <div key={i}>
+            <div key={i} className="cy-process-form-field">
               <WpsProcessFormInput
                 name={input.name}
                 type={input.dataType}

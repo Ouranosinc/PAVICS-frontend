@@ -77,6 +77,7 @@ export default class ScientificWorkflowTextInput extends Component {
   render () {
     return (
       <TextField
+        id="cy-confirm-edit-workflow-tf"
         value={this.state.json}
         onChange={this._onWorkflowChanged}
         multiLine={true}
