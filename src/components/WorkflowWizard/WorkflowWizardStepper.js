@@ -85,6 +85,7 @@ export default class WorkflowWizardStepper extends React.Component {
           </StepLabel>
           <StepContent>
             <RaisedButton
+              id="cy-step-back-btn"
               label="Back"
               onClick={this.props.workflowActions.getLastStep}
               icon={<BackIcon />} />
@@ -98,6 +99,7 @@ export default class WorkflowWizardStepper extends React.Component {
           <StepContent>
             <div>
               <RaisedButton
+                id="cy-step-back-btn"
                 label="Back"
                 onClick={this.props.workflowActions.getLastStep}
                 icon={<BackIcon />} />

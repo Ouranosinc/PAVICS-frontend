@@ -10,6 +10,7 @@ class ExecuteButton extends React.Component {
   render () {
     return (
       <RaisedButton
+        id="cy-execute-process-btn"
         onClick={this.props.executeProcess}
         icon={<ExecuteIcon />}
         label="Execute process" />
