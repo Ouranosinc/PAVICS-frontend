@@ -1,6 +1,7 @@
 import initialState from './../../../store/initialState';
 import * as constants from './../../../constants';
 import myHttp from './../../../../lib/http';
+import { NotificationManager } from 'react-notifications';
 
 // SYNC
 const SET_WMS_LAYER = 'Visualize.SET_WMS_LAYER';
@@ -295,28 +296,65 @@ export function fetchWMSLayerDetails (url, layer) {
   return function (dispatch) {
     dispatch(requestWMSLayerDetails());
     return myHttp.get(`${url}?request=GetMetadata&item=layerDetails&layerName=${layer}`)
-      .then(response => response.json())
+      .then(response => {
+        if(response.status !== 200) {
+          throw new Error(`${response.status} ${response.statusText}`);
+        }
+        try {
+          return response.json()
+        } catch(err) {
+          throw new Error('Failed at parsing JSON response');
+        }
+      })
       .then(json =>
         dispatch(receiveWMSLayerDetails(json))
       )
-      .catch(error =>
+      .catch(error => {
+        NotificationManager.error(`Method GetMetadata LayerDetails failed at being fetched from the NcWMS2 server: ${error}`, 'Error', 10000);
         dispatch(receiveWMSLayerDetailsFailure(error))
-      );
+      });
   };
 }
 export function fetchWMSLayerTimesteps (url, layer, day) {
   return function (dispatch) {
     dispatch(requestWMSLayerTimesteps());
     return myHttp.get(`${url}?request=GetMetadata&item=timesteps&day=${day}&layerName=${layer}`)
-      .then(response => response.json())
+      .then(response => {
+        if(response.status !== 200) {
+          throw new Error(`${response.status} ${response.statusText}`);
+        }
+        try {
+          return response.json()
+        } catch(err) {
+          throw new Error('Failed at parsing JSON response');
+        }
+      })
       .then(json =>
         dispatch(receiveWMSLayerTimesteps(json))
-      );
-    // TODO FIX THIS HAPPEN FOR NO REASON
-    /* .catch(error => {
-     console.log(error);
-     dispatch(receiveWMSLayerTimestepsFailure(error));
-     }); */
+      )
+    .catch(error => {
+      NotificationManager.error(`Method GetMetadata TimeSteps failed at being fetched from the NcWMS2 server: ${error}`, 'Error', 10000);
+      dispatch(receiveWMSLayerTimestepsFailure(error))
+    });
+  };
+}
+export function testWMSGetMapPermission (url, layer) {
+  // Removed dispatch events since this route does not return any useful data
+  return function (dispatch) {
+    return myHttp.get(`${url}?REQUEST=GetMap&LAYERS=${layer}`)
+      .then(response => {
+        if(response.status !== 200) {
+          throw new Error(`${response.status} ${response.statusText}`);
+        }
+        try {
+          //text.contains('Must provide a value for VERSION')
+          return response.text()
+        } catch(err) {
+          throw new Error('Failed at parsing XML response');
+        }
+      })
+      .then(text => {/*console.log(text)*/})
+      .catch(error => NotificationManager.error(`Method GetMap failed at being fetched from the NcWMS2 server: ${error}`, 'Error', 10000));
   };
 }
 function setJobs (jobs) {
@@ -466,16 +504,6 @@ function setLayer (layer) {
   return {
     type: SET_WMS_LAYER,
     layer: layer
-  };
-}
-export function fetchVisualizableData (statusLocation) {
-  return dispatch => {
-    return myHttp.get(`/api/wms/visualizableData?status=${statusLocation}`)
-      .then(response => response.json())
-      .then(json => dispatch(setLayer(json)))
-      .catch(err => {
-        console.log(err);
-      });
   };
 }
 export function goToSection (section) {

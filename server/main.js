@@ -13,14 +13,12 @@ const debug = _debug('app:server');
 const paths = config.utils_paths;
 const app = new Koa();
 // Controllers
-import {birdhouse, wms, consumer, wps, phoenix} from './controllers';
+import {consumer, wps, phoenix} from './controllers';
 const router = require('koa-router')();
 
 // Routes
 router.get('/wps/:identifier', consumer.resolve);
 router.get('/phoenix/:identifier', phoenix.consume);
-router.get('/api/wms/visualizableData', birdhouse.fetchVisualizableLayer);
-router.get('/api/wms/dataset/layers', wms.getLayers);
 router.get('/api/facets', wps.getFacets);
 router.get('/api/climate_indicators', wps.getClimateIndicators);
 router.get('/session', proxy({

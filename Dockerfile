@@ -13,5 +13,5 @@ ADD package-lock.json package-lock.json
 RUN npm install
 ADD . .
 
-CMD ["npm","start"]
+CMD /bin/bash ./bin/startup.sh
 EXPOSE 3000

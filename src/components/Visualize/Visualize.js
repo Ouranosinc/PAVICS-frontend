@@ -54,7 +54,8 @@ class Visualize extends React.Component {
     resetSelectedRegions: React.PropTypes.func.isRequired,
     layer: React.PropTypes.any,
     setVariablePreferenceBoundaries: React.PropTypes.func.isRequired,
-    variablePreferences: React.PropTypes.object.isRequired
+    variablePreferences: React.PropTypes.object.isRequired,
+    testWMSGetMapPermission: React.PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -314,6 +315,7 @@ class Visualize extends React.Component {
               selectedShapefile={this.props.selectedShapefile}
               setCurrentDateTime={this.props.setCurrentDateTime}
               setSelectedDatasetCapabilities={this.props.setSelectedDatasetCapabilities}
+              testWMSGetMapPermission={this.props.testWMSGetMapPermission}
               ref={this.setOLComponentReference} />
           </div>
           <BigColorPalette
