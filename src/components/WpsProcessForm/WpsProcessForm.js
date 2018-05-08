@@ -103,17 +103,21 @@ export default class WpsProcessForm extends React.Component {
 
    */
 
-  verifyMeaningfulValues (props) {
+  verifyMeaningfulValues (props, oldProps = {}) {
     console.log('verifying meaningful values in %o, current state: %o', props, this.state);
 
     let changedState = {};
     // For each input, if any has the right mimetype and name, propagate new information
+    // If not, fields will be loaded with workflow default values if defined
     for(let inputName in this.state.formData) {
       if (inputName.startsWith(constants.LABEL_NETCDF.split('.')[0]) && inputName.endsWith(constants.LABEL_NETCDF.split('.')[1])) {
         if (props.currentDisplayedDataset['url']) {
           changedState[inputName] = props.currentDisplayedDataset['url'];
         } else {
-          changedState[inputName] = '';
+          // If dataset unselected => reset value, else value might be the workflow default value (so do nothing)
+          if (oldProps&& oldProps.currentDisplayedDataset && oldProps.currentDisplayedDataset['url']) {
+            changedState[inputName] = '';
+          }
         }
       }
 
@@ -121,7 +125,10 @@ export default class WpsProcessForm extends React.Component {
         if (props.currentDisplayedDataset['opendap_url']) {
           changedState[inputName] = props.currentDisplayedDataset['opendap_url'];
         } else {
-          changedState[inputName] = '';
+          // If dataset unselected => reset value, else value might be the workflow default value (so do nothing)
+          if (oldProps && oldProps.currentDisplayedDataset && oldProps.currentDisplayedDataset['opendap_url']) {
+            changedState[inputName] = '';
+          }
         }
       }
 
@@ -130,15 +137,21 @@ export default class WpsProcessForm extends React.Component {
         if (props.selectedShapefile['wmsParams'] && props.selectedShapefile['wmsParams']['LAYERS']) {
           changedState[inputName] = props.selectedShapefile['wmsParams']['LAYERS'];
         } else {
-          // changedState[inputName] = '';
+          // If shapefile unselected => reset value, else value might be the workflow default value (so do nothing)
+          if (oldProps && oldProps.selectedShapefile && oldProps.selectedShapefile['wmsParams'] && oldProps.selectedShapefile['wmsParams']['LAYERS']) {
+            changedState[inputName] = '';
+          }
         }
       }
 
       if (inputName.startsWith(constants.LABEL_FEATURE_IDS.split('.')[0]) && inputName.endsWith(constants.LABEL_FEATURE_IDS.split('.')[1])) {
-        if (props.selectedRegions) {
+        if (props.selectedRegions && props.selectedRegions.length) {
           changedState[inputName] = props.selectedRegions;
         } else {
-          changedState[inputName] = []
+          // If region unselected => reset value, else value might be the workflow default value (so do nothing)
+          if (oldProps && oldProps.selectedRegions && oldProps.selectedRegions.length) {
+            changedState[inputName] = []
+          }
         }
       }
     }
@@ -156,7 +169,7 @@ export default class WpsProcessForm extends React.Component {
     if(nextProps.workflow.selectedProcessInputs && this.props.workflow.selectedProcessInputs !== nextProps.workflow.selectedProcessInputs) {
       this.buildFormData(nextProps)
     }
-    this.verifyMeaningfulValues(nextProps);
+    this.verifyMeaningfulValues(nextProps, this.props);
   }
 
   handleChange (value, uniqueIdentifier) {
