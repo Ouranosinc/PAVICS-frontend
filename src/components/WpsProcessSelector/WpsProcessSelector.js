@@ -6,15 +6,14 @@ import Paper from 'material-ui/Paper';
 
 export default class WpsProcessSelector extends React.Component {
   static propTypes = {
+    onSearchKeywordChanged: React.PropTypes.func.isRequired,
+    searchKeyword: React.PropTypes.string.isRequired,
     workflow: React.PropTypes.object.isRequired,
     workflowActions: React.PropTypes.object.isRequired
   };
 
   constructor(props) {
     super(props);
-    this.state = {
-      searchKeyWord: ''
-    }
   }
 
   makeChooseProcessCallback (process) {
@@ -31,11 +30,11 @@ export default class WpsProcessSelector extends React.Component {
       'margin': '10px 0'
     };
     let filteredProcesses = this.props.workflow.processes;
-    if (this.state.searchKeyWord.length) {
+    if (this.props.searchKeyword.length) {
       filteredProcesses = this.props.workflow.processes.filter((process) => {
-        return process.identifier.toUpperCase().includes(this.state.searchKeyWord.toUpperCase()) ||
-          process.title.toUpperCase().includes(this.state.searchKeyWord.toUpperCase()) ||
-          process.description.toUpperCase().includes(this.state.searchKeyWord.toUpperCase());
+        return process.identifier.toUpperCase().includes(this.props.searchKeyword.toUpperCase()) ||
+          process.title.toUpperCase().includes(this.props.searchKeyword.toUpperCase()) ||
+          process.description.toUpperCase().includes(this.props.searchKeyword.toUpperCase());
       });
     }
     return (
@@ -44,9 +43,10 @@ export default class WpsProcessSelector extends React.Component {
           <div className="container">
             <TextField
               id="cy-filter-by-keyword"
+              value={this.props.searchKeyword}
               hintText="Filter list by keyword"
               fullWidth={true}
-              onChange={(event, value) => this.setState({searchKeyWord: value})}
+              onChange={(event, value) => this.props.onSearchKeywordChanged(value)}
               floatingLabelText="Filter by" />
           </div>
         </Paper>

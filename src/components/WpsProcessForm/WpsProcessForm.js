@@ -31,7 +31,6 @@ we should be able to expect that  the combination of datatype and name will be u
 where there can be more than one input with the name "resource" with the type ComplexData
 for all intent and purposes however, that should be left for the input renderer to manage
 at this level, the form data should be a flat array or dataType.name values
-
  */
 
 const makeUniqueIdentifier = input => {
@@ -140,6 +139,7 @@ export default class WpsProcessForm extends React.Component {
           // If shapefile unselected => reset value, else value might be the workflow default value (so do nothing)
           if (oldProps && oldProps.selectedShapefile && oldProps.selectedShapefile['wmsParams'] && oldProps.selectedShapefile['wmsParams']['LAYERS']) {
             changedState[inputName] = '';
+            // FIXME: empty selectedRegions array since value won't fit anymore
           }
         }
       }
