@@ -25,7 +25,25 @@ export default class WorkflowWizardStepper extends React.Component {
 
   constructor (props) {
     super(props);
+    this.state = {
+      searchKeyword: ''
+    };
+    this.onProcessSelectionBackButtonClicked = this.onProcessSelectionBackButtonClicked.bind(this);
+    this.onSearchKeywordChanged = this.onSearchKeywordChanged.bind(this);
     this.execute = this.execute.bind(this);
+  }
+
+  onProcessSelectionBackButtonClicked() {
+    this.props.workflowActions.getLastStep();
+    this.setState({
+      searchKeyword: ''
+    })
+  }
+
+  onSearchKeywordChanged(value) {
+    this.setState({
+      searchKeyword: value
+    })
   }
 
   execute () {
@@ -85,10 +103,13 @@ export default class WorkflowWizardStepper extends React.Component {
           </StepLabel>
           <StepContent>
             <RaisedButton
+              id="cy-step-back-btn"
               label="Back"
-              onClick={this.props.workflowActions.getLastStep}
+              onClick={this.onProcessSelectionBackButtonClicked}
               icon={<BackIcon />} />
             <WpsProcessSelector
+              onSearchKeywordChanged={this.onSearchKeywordChanged}
+              searchKeyword={this.state.searchKeyword}
               workflow={this.props.workflow}
               workflowActions={this.props.workflowActions} />
           </StepContent>
@@ -98,6 +119,7 @@ export default class WorkflowWizardStepper extends React.Component {
           <StepContent>
             <div>
               <RaisedButton
+                id="cy-step-back-btn"
                 label="Back"
                 onClick={this.props.workflowActions.getLastStep}
                 icon={<BackIcon />} />

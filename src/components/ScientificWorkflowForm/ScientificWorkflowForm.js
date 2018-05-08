@@ -76,6 +76,7 @@ export default class ScientificWorkflowForm extends Component {
     if(parsed && this.validateAdvancedWorkflowSchema(parsed)) {
       this.props.workflowAPIActions.createWorkflow({
         projectId: this.props.project.currentProject.id,
+        name: parsed.name,
         json: parsed
       });
       this.setState({
@@ -86,9 +87,10 @@ export default class ScientificWorkflowForm extends Component {
 
   render () {
     return (
-      <div>
+      <div id="cy-create-workflow">
         <Paper style={styles.textarea}>
           <TextField
+            id="cy-create-workflow-json-content-tf"
             value={this.state.json}
             onChange={this.onWorkflowChanged}
             multiLine={true}
@@ -97,6 +99,7 @@ export default class ScientificWorkflowForm extends Component {
             hintText="Enter a valid JSON workflow"/>
         </Paper>
         <RaisedButton
+          id="cy-create-workflow-btn"
           onClick={this.onSaveWorkflow}
           style={styles.button}
           label="Create workflow"

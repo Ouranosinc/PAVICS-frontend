@@ -31,7 +31,6 @@ we should be able to expect that  the combination of datatype and name will be u
 where there can be more than one input with the name "resource" with the type ComplexData
 for all intent and purposes however, that should be left for the input renderer to manage
 at this level, the form data should be a flat array or dataType.name values
-
  */
 
 const makeUniqueIdentifier = input => {
@@ -61,18 +60,25 @@ export default class WpsProcessForm extends React.Component {
 
   constructor (props) {
     super(props);
-    let formData = {};
-    this.props.workflow.selectedProcessInputs.forEach((input) => {
-      formData[makeUniqueIdentifier(input)] = input.defaultValue || '';
-    });
     this.state = {
-      formData: formData
+      formData: {}
     };
     this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount () {
+    this.buildFormData(this.props);
     this.verifyMeaningfulValues(this.props);
+  }
+
+  buildFormData(props) {
+    let formData = {};
+    props.workflow.selectedProcessInputs.forEach((input) => {
+      formData[makeUniqueIdentifier(input)] = input.defaultValue || '';
+    });
+    this.state = {
+      formData: formData
+    };
   }
 
   /*
@@ -96,31 +102,58 @@ export default class WpsProcessForm extends React.Component {
 
    */
 
-  verifyMeaningfulValues (props) {
+  verifyMeaningfulValues (props, oldProps = {}) {
     console.log('verifying meaningful values in %o, current state: %o', props, this.state);
 
     let changedState = {};
+    // For each input, if any has the right mimetype and name, propagate new information
+    // If not, fields will be loaded with workflow default values if defined
+    for(let inputName in this.state.formData) {
+      if (inputName.startsWith(constants.LABEL_NETCDF.split('.')[0]) && inputName.endsWith(constants.LABEL_NETCDF.split('.')[1])) {
+        if (props.currentDisplayedDataset['url']) {
+          changedState[inputName] = props.currentDisplayedDataset['url'];
+        } else {
+          // If dataset unselected => reset value, else value might be the workflow default value (so do nothing)
+          if (oldProps&& oldProps.currentDisplayedDataset && oldProps.currentDisplayedDataset['url']) {
+            changedState[inputName] = '';
+          }
+        }
+      }
 
-    if (props.currentDisplayedDataset['url']) {
-      changedState[constants.LABEL_NETCDF] = props.currentDisplayedDataset['url'];
-    } else {
-      changedState[constants.LABEL_NETCDF] = '';
-    }
+      if (inputName.startsWith(constants.LABEL_OPENDAP.split('.')[0]) && inputName.endsWith(constants.LABEL_OPENDAP.split('.')[1])) {
+        if (props.currentDisplayedDataset['opendap_url']) {
+          changedState[inputName] = props.currentDisplayedDataset['opendap_url'];
+        } else {
+          // If dataset unselected => reset value, else value might be the workflow default value (so do nothing)
+          if (oldProps && oldProps.currentDisplayedDataset && oldProps.currentDisplayedDataset['opendap_url']) {
+            changedState[inputName] = '';
+          }
+        }
+      }
 
-    if (props.currentDisplayedDataset['opendap_url']) {
-      changedState[constants.LABEL_OPENDAP] = props.currentDisplayedDataset['opendap_url'];
-    } else {
-      changedState[constants.LABEL_OPENDAP] = '';
-    }
 
-    if (props.selectedShapefile['wmsParams'] && props.selectedShapefile['wmsParams']['LAYERS']) {
-      changedState[constants.LABEL_SHAPEFILE] = props.selectedShapefile['wmsParams']['LAYERS'];
-    } else {
-      changedState[constants.LABEL_SHAPEFILE] = '';
-    }
+      if (inputName.startsWith(constants.LABEL_SHAPEFILE.split('.')[0]) && inputName.endsWith(constants.LABEL_SHAPEFILE.split('.')[1])) {
+        if (props.selectedShapefile['wmsParams'] && props.selectedShapefile['wmsParams']['LAYERS']) {
+          changedState[inputName] = props.selectedShapefile['wmsParams']['LAYERS'];
+        } else {
+          // If shapefile unselected => reset value, else value might be the workflow default value (so do nothing)
+          if (oldProps && oldProps.selectedShapefile && oldProps.selectedShapefile['wmsParams'] && oldProps.selectedShapefile['wmsParams']['LAYERS']) {
+            changedState[inputName] = '';
+            // FIXME: empty selectedRegions array since value won't fit anymore
+          }
+        }
+      }
 
-    if (props.selectedRegions) {
-      changedState[constants.LABEL_FEATURE_IDS] = props.selectedRegions;
+      if (inputName.startsWith(constants.LABEL_FEATURE_IDS.split('.')[0]) && inputName.endsWith(constants.LABEL_FEATURE_IDS.split('.')[1])) {
+        if (props.selectedRegions && props.selectedRegions.length) {
+          changedState[inputName] = props.selectedRegions;
+        } else {
+          // If region unselected => reset value, else value might be the workflow default value (so do nothing)
+          if (oldProps && oldProps.selectedRegions && oldProps.selectedRegions.length) {
+            changedState[inputName] = []
+          }
+        }
+      }
     }
 
     this.setState({
@@ -133,7 +166,10 @@ export default class WpsProcessForm extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    this.verifyMeaningfulValues(nextProps);
+    if(nextProps.workflow.selectedProcessInputs && this.props.workflow.selectedProcessInputs !== nextProps.workflow.selectedProcessInputs) {
+      this.buildFormData(nextProps)
+    }
+    this.verifyMeaningfulValues(nextProps, this.props);
   }
 
   handleChange (value, uniqueIdentifier) {
@@ -174,11 +210,12 @@ export default class WpsProcessForm extends React.Component {
     console.log('creating deform wrapper for inputs %o, current state: %o', this.props.workflow.selectedProcessInputs, this.state);
     return (
       <DeformWrapper
+        id="cy-process-form"
         formId={this.props.formId}
         execute={this.props.executeProcess}>
         {this.props.workflow.selectedProcessInputs.map((input, i) => {
           return (
-            <div key={i}>
+            <div key={i} className="cy-process-form-field">
               <WpsProcessFormInput
                 name={input.name}
                 type={input.dataType}

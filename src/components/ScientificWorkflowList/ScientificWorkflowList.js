@@ -119,7 +119,7 @@ export default class ScientificWorkflowList extends Component {
       let start = (this.state.pageNumber - 1) * this.state.numberPerPage;
       let paginated = this.props.workflowAPI.items.slice(start, start + this.state.numberPerPage);
       return (
-        <div>
+        <div id="cy-workflow-list">
           <Paper>
             <List>
               {
@@ -127,20 +127,22 @@ export default class ScientificWorkflowList extends Component {
                   return (
                     <div>
                       <ListItem
+                        className="cy-workflow-item"
                         style={{width: '98%'}}
                         primaryText={workflow.json.name || workflow.json}
                         leftIcon={<DeviceHub />} key={i}
                         rightIconButton={
                           <IconMenu iconButtonElement={
                             <IconButton
+                              className="cy-actions-btn"
                               touch={true}
                               tooltip="Actions"
                               tooltipPosition="bottom-left">
                               <MoreVertIcon color={grey400} />
                             </IconButton>}>
-                            <MenuItem leftIcon={<Build />} onTouchTap={() => this._onRunWorkflowClicked(workflow)}>Configure & Run</MenuItem>
-                            <MenuItem leftIcon={<Create />} onTouchTap={() => this._onEditWorkflowClicked(workflow)}>Edit</MenuItem>
-                            <MenuItem leftIcon={<Remove />} onTouchTap={() => {this._onOpenConfirmWorkflowDeletionDialog(workflow)}}>Delete</MenuItem>
+                            <MenuItem id="cy-configure-run-item" leftIcon={<Build />} onTouchTap={() => this._onRunWorkflowClicked(workflow)}>Configure & Run</MenuItem>
+                            <MenuItem id="cy-edit-item" leftIcon={<Create />} onTouchTap={() => this._onEditWorkflowClicked(workflow)}>Edit</MenuItem>
+                            <MenuItem id="cy-delete-item" leftIcon={<Remove />} onTouchTap={() => {this._onOpenConfirmWorkflowDeletionDialog(workflow)}}>Delete</MenuItem>
                             </IconMenu>
                         }/>
                       </div>
@@ -171,11 +173,13 @@ export default class ScientificWorkflowList extends Component {
               onRequestClose={this._onCloseEditionDialog}
               actions={[
                 <RaisedButton
+                  id="cy-confirm-cancel-btn"
                   label="Cancel"
                   keyboardFocused={false}
                   onTouchTap={this._onCloseEditionDialog}
                 />,
                 <RaisedButton
+                  id="cy-confirm-save-btn"
                   label="Save"
                   primary={true}
                   style={{marginLeft: '10px'}}
@@ -192,7 +196,9 @@ export default class ScientificWorkflowList extends Component {
       );
     } else {
       return (
-        <div><Paper style={style.noWorkflows}>No workflows yet</Paper></div>
+        <div>
+          <Paper id="cy-no-workflow-found" style={style.noWorkflows}>No workflows yet</Paper>
+        </div>
       );
     }
   }

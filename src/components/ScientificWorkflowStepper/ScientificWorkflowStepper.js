@@ -218,6 +218,7 @@ export default class ScientificWorkflowStepper extends Component {
     }
     let stringified = JSON.stringify(toFillWorkflow);
     toSendData.append('workflow_string', stringified);
+    localStorage.setItem('executed_workflow', stringified);
     console.log('workflow json:', stringified);
     this.execute(toSendData);
   }
@@ -248,7 +249,7 @@ export default class ScientificWorkflowStepper extends Component {
     return (
       <Stepper activeStep={this.state.activeStep} orientation="vertical">
         <Step>
-          <StepLabel style={styleStepLabel}>
+          <StepLabel id="cy-configure-run-step" style={styleStepLabel}>
             Choose the 'Configure & Run' action of the desired workflow
             <span style={innerStyleStepLabel}>{(this.state.workflow)? this.state.workflow.name: ''}</span>
           </StepLabel>
@@ -270,7 +271,12 @@ export default class ScientificWorkflowStepper extends Component {
             this.state.isParsing
               ? (
                 <StepContent>
-                  <Paper style={{textAlign: 'center', padding: '15px'}}>
+                  <RaisedButton
+                    id="cy-step-back-btn"
+                    label="Back"
+                    onClick={this.handlePrev}
+                    icon={<BackIcon />} />
+                  <Paper style={{margin: '10px 0', textAlign: 'center', padding: '15px'}}>
                     <CircularProgress />
                     <p>Parsing Workflow</p>
                   </Paper>
@@ -279,6 +285,7 @@ export default class ScientificWorkflowStepper extends Component {
               : (
                 <StepContent>
                   <RaisedButton
+                    id="cy-step-back-btn"
                     label="Back"
                     onClick={this.handlePrev}
                     icon={<BackIcon />} />

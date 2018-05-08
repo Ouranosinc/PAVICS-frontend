@@ -94,7 +94,7 @@ export default class WorkflowWizard extends React.Component {
         <Tabs
           onChange={(value) => this.handleTabChange(value)}
           value={this.state.activeTab}>
-          <Tab value={WORKFLOW_TAB_VALUE} label="Scientific Workflows">
+          <Tab id="cy-scientific-workflow-tab" value={WORKFLOW_TAB_VALUE} label="Scientific Workflows">
             {
               (this.state.activeTab === WORKFLOW_TAB_VALUE) ?
                 <ScientificWorkflowStepper
@@ -113,7 +113,7 @@ export default class WorkflowWizard extends React.Component {
                   workflowAPIActions={this.props.workflowAPIActions} /> : null
             }
           </Tab>
-          <Tab value={PROCESS_TAB_VALUE} label="WPS Processes">
+          <Tab id="cy-wps-processes-tab" value={PROCESS_TAB_VALUE} label="WPS Processes">
             {
               (this.state.activeTab === PROCESS_TAB_VALUE) ?
                 <WorkflowWizardStepper

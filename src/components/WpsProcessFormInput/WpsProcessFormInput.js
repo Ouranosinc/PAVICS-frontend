@@ -154,7 +154,7 @@ class WpsProcessFormInput extends Component {
 
   render () {
     return (
-      <div>
+      <div data-cy-name={this.props.name}>
         {this.props.maxOccurs > 1 ? <input type="hidden" name="__start__" value={this.props.name + ':sequence'} /> : ''}
         {this.createMarkup()}
         {this.props.maxOccurs > 1 ? <input type="hidden" name="__end__" value={this.props.name + ':sequence'} /> : ''}
