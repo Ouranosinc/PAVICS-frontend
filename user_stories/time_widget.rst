@@ -13,6 +13,8 @@
 (The granularity and time stepping work like a charm! )
 11. User sets granularity to month
 12. User presses Play
+13. The time steps are shown as a movie (rapid, fluid changes between time steps... I know this won't be done for the demo)
+14. User presses Pause, animation stops.
 
 I suggest tool tips for the time widget:
 - First time step
