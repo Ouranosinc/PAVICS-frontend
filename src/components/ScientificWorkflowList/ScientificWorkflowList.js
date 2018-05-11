@@ -125,7 +125,7 @@ export default class ScientificWorkflowList extends Component {
               {
                 paginated.map((workflow, i) => {
                   return (
-                    <div>
+                    <div key={i}>
                       <ListItem
                         className="cy-workflow-item"
                         style={{width: '98%'}}

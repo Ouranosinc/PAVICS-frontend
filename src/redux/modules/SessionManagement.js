@@ -1,4 +1,4 @@
-import myHttp from './../../../lib/http';
+import myHttp from '../../util/http';
 import cookie from 'react-cookies';
 import { NotificationManager } from 'react-notifications';
 import {AUTH_COOKIE} from '../../constants';

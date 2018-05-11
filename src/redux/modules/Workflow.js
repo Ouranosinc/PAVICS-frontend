@@ -1,4 +1,4 @@
-import myHttp from './../../../lib/http';
+import myHttp from '../../util/http';
 // Constants
 export const constants = {
   WORKFLOW_CHANGE_STEP: 'WORKFLOW_CHANGE_STEP',

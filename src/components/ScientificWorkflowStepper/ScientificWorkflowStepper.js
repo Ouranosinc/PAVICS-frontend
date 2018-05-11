@@ -8,7 +8,7 @@ import { Step, Stepper, StepLabel, StepContent } from 'material-ui/Stepper';
 import CircularProgress from 'material-ui/CircularProgress';
 import Paper from 'material-ui/Paper';
 import WpsProcessForm from '../WpsProcessForm';
-import myHttp from './../../../lib/http';
+import myHttp from '../../util/http';
 const styles = {
   orParagraph: {
     margin: '10px 0',

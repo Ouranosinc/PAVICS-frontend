@@ -95,6 +95,7 @@ export default class WpsProcessForm extends React.Component {
   if dataset change
    if exists ComplexData.resource update state with urls
    if exists string.resource update state with opendap_urls
+   TODO if exists string.url update state with catalog_urls
   if shapefile change
    if exists string.typename update state with layer name
   if region selected
@@ -131,6 +132,7 @@ export default class WpsProcessForm extends React.Component {
         }
       }
 
+      // TODO Support for thredds catalog url autofill based on dataset selection: string.url update state with catalog_urls
 
       if (inputName.startsWith(constants.LABEL_SHAPEFILE.split('.')[0]) && inputName.endsWith(constants.LABEL_SHAPEFILE.split('.')[1])) {
         if (props.selectedShapefile['wmsParams'] && props.selectedShapefile['wmsParams']['LAYERS']) {

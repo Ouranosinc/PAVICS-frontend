@@ -7,7 +7,7 @@ import WpsProcessDetails from './../../components/WpsProcessDetails';
 import WpsProcessForm from './../../components/WpsProcessForm';
 import RaisedButton from 'material-ui/RaisedButton';
 import BackIcon from 'material-ui/svg-icons/navigation/arrow-back';
-import myHttp from './../../../lib/http';
+import myHttp from '../../util/http';
 
 const FORM_PROCESS_ID = 'form-individual-process';
 

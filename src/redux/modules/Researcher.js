@@ -1,4 +1,4 @@
-import myHttp from './../../../lib/http';
+import myHttp from '../../util/http';
 // Constants
 export const constants = {
   RESEARCHER_SET_CURRENT_RESEARCHER: 'RESEARCHER_SET_CURRENT_RESEARCHER',

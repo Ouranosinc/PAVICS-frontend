@@ -59,31 +59,31 @@ export class PieMenu extends React.Component {
       <div className={classes['PieMenu']}>
         <nav className={classes['radialnav']}>
           <ul className={classes['menu']}>
-            <li>
+            <li id="cy-menu-point-info-toggle">
                 <a href="#" onClick={this._toggleInfoPanel} title="Toggle Point Informations"
                    className={this.props.mapPanelStatus[constants.VISUALIZE_INFO_PANEL] ? classes['IsOpen'] : ''}>
                   <InfoIcon color={white} style={customSvgStyle} />
                 </a>
             </li>
-            <li>
+            <li id="cy-menu-time-series-toggle">
               <a href="#" onClick={this._toggleChartPanel} title="Toggle Time Series Chart"
                  className={this.props.mapPanelStatus[constants.VISUALIZE_CHART_PANEL] ? classes['IsOpen'] : ''}>
                 <ChartIcon color={white} style={customSvgStyle} />
               </a>
             </li>
-            <li>
+            <li id="cy-menu-layer-switcher-toggle">
               <a href="#" onClick={this._toggleLayerSwitcherPanel} title="Toggle Layer Switcher"
                  className={this.props.mapPanelStatus[constants.VISUALIZE_LAYER_SWITCHER_PANEL] ? classes['IsOpen'] : ''}>
                 <LayersIcon color={white} style={customSvgStyle} />
               </a>
             </li>
-            <li>
+            <li id="cy-menu-temporal-slider-toggle">
               <a href="#" onClick={this._toggleTimeSliderPanel} title="Toggle Temporal Slider"
                  className={this.props.mapPanelStatus[constants.VISUALIZE_TIME_SLIDER_PANEL] ? classes['IsOpen'] : ''}>
                 <AccessTimeIcon color={white} style={customSvgStyle} />
               </a>
             </li>
-            <li>
+            <li id="cy-menu-map-controls-toggle">
               <a href="#" onClick={this._toggleMapControlsPanel} title="Toggle Map Controls"
                  className={this.props.mapPanelStatus[constants.VISUALIZE_MAP_CONTROLS_PANEL] ? classes['IsOpen'] : ''}>
                 <MapControlsIcon color={white} style={customSvgStyle} />
