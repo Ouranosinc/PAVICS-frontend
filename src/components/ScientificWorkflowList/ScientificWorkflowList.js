@@ -125,12 +125,12 @@ export default class ScientificWorkflowList extends Component {
               {
                 paginated.map((workflow, i) => {
                   return (
-                    <div>
+                    <div key={i}>
                       <ListItem
                         className="cy-workflow-item"
                         style={{width: '98%'}}
                         primaryText={workflow.json.name || workflow.json}
-                        leftIcon={<DeviceHub />} key={i}
+                        leftIcon={<DeviceHub />}
                         rightIconButton={
                           <IconMenu iconButtonElement={
                             <IconButton
