@@ -3,6 +3,7 @@ import Checkbox from 'material-ui/Checkbox';
 import TextField from 'material-ui/TextField';
 import DatePicker from 'material-ui/DatePicker';
 import TimePicker from 'material-ui/TimePicker';
+import AddIcon from 'material-ui/svg-icons/content/add';
 
 const {BOOLEAN, INPUT_DATETIME} = require('../../constants');
 
@@ -152,14 +153,34 @@ class WpsProcessFormInput extends Component {
     );
   }
 
-  render () {
+  addLineInput () {
+    console.log('adding input');
+  }
+
+  renderMultiplePossibleInputs () {
     return (
-      <div data-cy-name={this.props.name}>
-        {this.props.maxOccurs > 1 ? <input type="hidden" name="__start__" value={this.props.name + ':sequence'} /> : ''}
+      <div className="input-group" data-cy-name={this.props.name}>
+        <input type="hidden" name="__start__" value={this.props.name + ':sequence'} />
         {this.createMarkup()}
-        {this.props.maxOccurs > 1 ? <input type="hidden" name="__end__" value={this.props.name + ':sequence'} /> : ''}
+        <div className="input-group-btn"><AddIcon className="clickable" onClick={this.addLineInput} /></div>
+        <input type="hidden" name="__end__" value={this.props.name + ':sequence'} />
       </div>
     );
+  }
+
+  renderSinglePossibleInput () {
+    return (
+      <div data-cy-name={this.props.name}>
+        {this.createMarkup()}
+      </div>
+    );
+  }
+
+  render () {
+    if (this.props.maxOccurs > 1) {
+      return this.renderMultiplePossibleInputs();
+    }
+    return this.renderSinglePossibleInput();
   }
 }
 
