@@ -106,7 +106,7 @@ export class ProcessListItem extends React.Component {
       </IconButton>}>
       <MenuItem
         primaryText="Download"
-        disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS || !output.reference.length}
+        disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS || (output.reference === undefined || !output.reference.length)}
         onTouchTap={(event) => { if (this.props.job.status === constants.JOB_SUCCESS_STATUS && output.reference.length) window.open(output.reference, '_blank'); }}
         leftIcon={<DownloadIcon />}/>
       <MenuItem

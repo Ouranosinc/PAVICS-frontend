@@ -200,6 +200,10 @@ class ProcessMonitoring extends React.Component {
                         let newOutputs = [];
                         parralelTask.outputs.forEach(output => {
                           newOutputs = [];
+                          // FIXME: No idea ATM why output.data is sometimes parsed sometimes not
+                          if(output.mimeType === 'application/json' && typeof output.data === 'string') {
+                            output.data = JSON.parse(output.data);
+                          }
                           if (output.mimeType === 'application/json' && output.data) {
                             if (Array.isArray(output.data) && typeof output.data[0] === 'string' &&
                               (output.data[0].startsWith('http://') || output.data[0].startsWith('https://')) && output.data[0].endsWith('.nc')) {

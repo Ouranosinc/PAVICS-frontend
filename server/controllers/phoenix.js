@@ -226,6 +226,7 @@ let phoenix = (() => {
             form: data,
             rejectUnauthorized: false
           };
+          console.log(`${config.pavics_phoenix_path}/processes/execute?wps=${wps}&process=${process}`)
           response = yield request(options);
           this.body = response.body;
           break;
