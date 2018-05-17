@@ -399,7 +399,7 @@ class OLComponent extends React.Component {
     let shapefile = this.props.selectedShapefile;
     console.log('change shapefile:', shapefile);
     this.layers[LAYER_SELECTED_REGIONS].getSource().clear();
-    this.map.removeLayer(this.layers[prevProps.selectedShapefile.title]);
+    this.map.removeLayer(this.layers[LAYER_REGIONS/*prevProps.selectedShapefile.title*/]);
     let source = new ol.source.TileWMS(
       {
         url: shapefile.wmsUrl,
