@@ -74,8 +74,8 @@ export default class WpsProcessForm extends React.Component {
   buildFormData (props) {
     let formData = {};
     props.workflow.selectedProcessInputs.forEach((input) => {
-      if (input.allowedValues.length > 0) {
-        formData[makeUniqueIdentifier(input)] = [input.defaultValue] || [''];
+      if (input.selectable) {
+        formData[makeUniqueIdentifier(input)] = input.defaultValue ? [input.defaultValue] : [];
       } else {
         formData[makeUniqueIdentifier(input)] = input.defaultValue || '';
       }
@@ -217,17 +217,7 @@ export default class WpsProcessForm extends React.Component {
         id="cy-process-form"
         formId={this.props.formId}
         execute={this.props.executeProcess}>
-        {this.props.workflow.selectedProcessInputs.map((input, i) => {
-          let inputDefinition = new InputDefinition(
-            input.name,
-            input.dataType,
-            input.title,
-            input.description,
-            input.defaultValue,
-            input.minOccurs > 0,
-            input.maxOccurs,
-            input.allowedValues
-          );
+        {this.props.workflow.selectedProcessInputs.map((inputDefinition, i) => {
           const uniqueIdentifier = makeUniqueIdentifier(inputDefinition);
           return (
             <div key={i} className="cy-process-form-field">

@@ -136,8 +136,11 @@ class WpsProcessFormInput extends Component {
         <div>
           <SelectField
             multiple
+            fullWidth
+            className="cy-workflow-input-select-field"
             value={this.props.value}
             onChange={this.handleSelectFieldChange}
+            hintText={this.props.inputDefinition.description}
             floatingLabelText={this.props.inputDefinition.title}>
             {this.props.inputDefinition.allowedValues.map((value, i) => {
               return (

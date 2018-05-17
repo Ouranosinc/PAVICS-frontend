@@ -1,35 +1,41 @@
 import * as constants from './../../constants';
 
 export class InputDefinition {
+
   name;
   dataType;
   title;
   description;
-  required;
-  defaultValue;
+  minOccurs;
   maxOccurs;
+  defaultValue;
   allowedValues;
+
   constructor (
     name,
     dataType,
     title,
     description,
-    required,
-    defaultValue,
+    minOccurs,
     maxOccurs,
+    defaultValue,
     allowedValues
   ) {
     this.name = name || '';
     this.dataType = dataType || constants.STRING;
     this.title = title || '';
     this.description = description || '';
-    this.required = required || true;
-    this.defaultValue = defaultValue || '';
+    this.minOccurs = minOccurs || 1;
     this.maxOccurs = maxOccurs || 1;
+    this.defaultValue = defaultValue || '';
     this.allowedValues = allowedValues || [];
   }
 
   get selectable () {
     return this.allowedValues.length > 0;
+  }
+
+  get required () {
+    return this.minOccurs > 0;
   }
 }

@@ -1,4 +1,5 @@
 import myHttp from './../../../lib/http';
+import {InputDefinition} from '../../components/WpsProcessFormInput/InputDefinition';
 // Constants
 export const constants = {
   WORKFLOW_CHANGE_STEP: 'WORKFLOW_CHANGE_STEP',
@@ -75,7 +76,7 @@ function setSelectedProcessValues (key, value) {
   return {
     type: constants.WORKFLOW_SET_ACTIVE_PROCESS_VALUES,
     key: key,
-    value: valuefv
+    value: value
   };
 }
 
@@ -115,7 +116,20 @@ function fetchProcessInputs (provider, process) {
     return myHttp.get(`/phoenix/inputs?provider=${provider}&process=${process}`)
       .then(response => response.json())
       .then(json => {
-        dispatch(setProcessInputs(json.inputs));
+        let inputDefinitions = [];
+        json.inputs.map((input) => {
+          inputDefinitions.push(new InputDefinition(
+            input.name,
+            input.dataType,
+            input.title,
+            input.description,
+            input.minOccurs,
+            input.maxOccurs,
+            input.defaultValue,
+            input.allowedValues
+          ));
+        });
+        dispatch(setProcessInputs(inputDefinitions));
       })
       .catch(err => {
         console.log(err);
