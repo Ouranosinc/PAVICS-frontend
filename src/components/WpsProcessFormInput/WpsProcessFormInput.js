@@ -10,15 +10,10 @@ class WpsProcessFormInput extends Component {
 
   // value not marked as required because it can (somewhat) validly be undefined
   static propTypes = {
-    type: React.PropTypes.string.isRequired,
-    name: React.PropTypes.string.isRequired,
-    title: React.PropTypes.string.isRequired,
+    inputDefinition: React.PropTypes.object.isRequired,
     uniqueIdentifier: React.PropTypes.string.isRequired,
-    description: React.PropTypes.string.isRequired,
     handleChange: React.PropTypes.func.isRequired,
     handleArrayChange: React.PropTypes.func.isRequired,
-    minOccurs: React.PropTypes.number.isRequired,
-    maxOccurs: React.PropTypes.number.isRequired,
     value: React.PropTypes.any
   };
 
@@ -74,10 +69,14 @@ class WpsProcessFormInput extends Component {
     this.props.handleChange(event.target.value, this.props.uniqueIdentifier);
   };
 
+  handleSelectFieldChange = (event, key, payload) => {
+    this.props.handleChange(payload, this.props.uniqueIdentifier);
+  };
+
   createMarkup () {
     // it seems the dataType property of the inputs might change unpredictably (we have seen three forms to date) but they all seem to end with the type
     // hence, for string and boolean, implement a type of "endsWith" check instead of pure equivalence
-    if (this.props.type.endsWith(BOOLEAN)) {
+    if (this.props.inputDefinition.dataType.endsWith(BOOLEAN)) {
       let value = false;
       if (typeof (this.props.value) === 'boolean') {
         value = this.props.value;
@@ -89,18 +88,18 @@ class WpsProcessFormInput extends Component {
       return (
         <div>
           <Checkbox
-            name={this.props.name}
-            label={this.props.title}
+            name={this.props.inputDefinition.name}
+            label={this.props.inputDefinition.title}
             labelPosition="right"
             labelStyle={{ textAlign: 'left' }}
             checked={value}
             onCheck={this.handleCheckboxChange}
             value={value} />
-          <small>{this.props.description}</small>
+          <small>{this.props.inputDefinition.description}</small>
         </div>
       );
     }
-    if (this.props.type === INPUT_DATETIME) {
+    if (this.props.inputDefinition.dataType === INPUT_DATETIME) {
       return (
         <div style={{ padding: '15px 0 0' }} className="container">
           <div className="row">
@@ -110,19 +109,19 @@ class WpsProcessFormInput extends Component {
                 value={this.state.dateTimeValues.date}
                 onChange={this.handleDateChange}
                 style={{ width: '100%' }}
-                hintText={`${this.props.description} - date`}
+                hintText={`${this.props.inputDefinition.description} - date`}
                 container="inline" />
             </div>
             <div className="col-sm-6">
               <TimePicker
                 autoOk
                 value={this.state.dateTimeValues.time}
-                hintText={`${this.props.description} - time`}
+                hintText={`${this.props.inputDefinition.description} - time`}
                 onChange={this.handleTimeChange}
                 textFieldStyle={{ width: '100%' }}
                 format="24hr" />
             </div>
-            <input value={this.props.value} name={this.props.name} title={this.props.title} type="hidden" />
+            <input value={this.props.value} name={this.props.inputDefinition.name} title={this.props.inputDefinition.title} type="hidden" />
           </div>
         </div>
       );
@@ -132,32 +131,32 @@ class WpsProcessFormInput extends Component {
         return (
           <TextField
             key={i}
-            name={this.props.name}
+            name={this.props.inputDefinition.name}
             fullWidth
             value={this.props.value[i]}
             onChange={this.createHandleTextFieldArrayChangeCallback(i)}
-            hintText={this.props.description}
-            floatingLabelText={this.props.title} />
+            hintText={this.props.inputDefinition.description}
+            floatingLabelText={this.props.inputDefinition.title} />
         );
       });
     }
     return (
       <TextField
-        name={this.props.name}
+        name={this.props.inputDefinition.name}
         fullWidth
         value={this.props.value}
         onChange={this.handleTextFieldChange}
-        hintText={this.props.description}
-        floatingLabelText={this.props.title} />
+        hintText={this.props.inputDefinition.description}
+        floatingLabelText={this.props.inputDefinition.title} />
     );
   }
 
   render () {
     return (
-      <div data-cy-name={this.props.name}>
-        {this.props.maxOccurs > 1 ? <input type="hidden" name="__start__" value={this.props.name + ':sequence'} /> : ''}
+      <div data-cy-name={this.props.inputDefinition.name}>
+        {this.props.inputDefinition.maxOccurs > 1 ? <input type="hidden" name="__start__" value={this.props.inputDefinition.name + ':sequence'} /> : ''}
         {this.createMarkup()}
-        {this.props.maxOccurs > 1 ? <input type="hidden" name="__end__" value={this.props.name + ':sequence'} /> : ''}
+        {this.props.inputDefinition.maxOccurs > 1 ? <input type="hidden" name="__end__" value={this.props.inputDefinition.name + ':sequence'} /> : ''}
       </div>
     );
   }
