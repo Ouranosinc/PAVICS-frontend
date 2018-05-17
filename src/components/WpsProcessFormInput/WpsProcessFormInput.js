@@ -29,7 +29,8 @@ class WpsProcessFormInput extends Component {
       dateTimeValues: {
         date: null,
         time: null
-      }
+      },
+      occurences: 1
     };
   }
 
@@ -153,16 +154,18 @@ class WpsProcessFormInput extends Component {
     );
   }
 
-  addLineInput () {
-    console.log('adding input');
-  }
+  addLineInput = () => {
+    this.setState({...this.state, occurences: this.state.occurences + 1});
+  };
 
   renderMultiplePossibleInputs () {
     return (
       <div className="input-group" data-cy-name={this.props.name}>
         <input type="hidden" name="__start__" value={this.props.name + ':sequence'} />
-        {this.createMarkup()}
-        <div className="input-group-btn"><AddIcon className="clickable" onClick={this.addLineInput} /></div>
+        {
+          Array.from({ length: this.state.occurences }, (value, i) => this.createMarkup())
+        }
+        <div className="input-group-btn bottom-align-text"><AddIcon className="clickable" onClick={this.addLineInput} /></div>
         <input type="hidden" name="__end__" value={this.props.name + ':sequence'} />
       </div>
     );
