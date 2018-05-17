@@ -182,7 +182,7 @@ export class SearchCatalog extends React.Component {
                           this.props.research.facets.map((x, i) => {
                             return (this.state.criteriaKeys.includes(x.key))
                               ? null
-                              : <MenuItem key={i} value={x.key} primaryText={x.key}/>;
+                              : <MenuItem id={`cy-add-criteria-${x.key}`}key={i} value={x.key} primaryText={x.key}/>;
                           })
                         }
                       </SelectField>
