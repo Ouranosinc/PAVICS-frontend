@@ -119,7 +119,7 @@ export default class LayerSwitcher extends React.Component {
               return (
                 <ListItem
                   className="cy-layerswitcher-shapefile-item"
-                  id={`cy-shapefile-name-${shapeFile}`}
+                  id={`cy-shapefile-name-${shapeFile.title}`}
                   primaryText={shapeFile.title}
                   key={i}
                   leftCheckbox={
