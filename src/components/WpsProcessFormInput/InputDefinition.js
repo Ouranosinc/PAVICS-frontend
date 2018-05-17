@@ -28,4 +28,8 @@ export class InputDefinition {
     this.maxOccurs = maxOccurs || 1;
     this.allowedValues = allowedValues || [];
   }
+
+  get selectable () {
+    return this.allowedValues.length > 0;
+  }
 }

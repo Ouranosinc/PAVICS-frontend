@@ -3,6 +3,8 @@ import Checkbox from 'material-ui/Checkbox';
 import TextField from 'material-ui/TextField';
 import DatePicker from 'material-ui/DatePicker';
 import TimePicker from 'material-ui/TimePicker';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
 
 const {BOOLEAN, INPUT_DATETIME} = require('../../constants');
 
@@ -126,6 +128,35 @@ class WpsProcessFormInput extends Component {
         </div>
       );
     }
+
+    // since the value of the select field must be an array to support the multiple selection
+    // leave this check before the isArray one, or the fields will be rendered as text fields on next rendering
+    if (this.props.inputDefinition.selectable) {
+      return (
+        <div>
+          <SelectField
+            multiple
+            value={this.props.value}
+            onChange={this.handleSelectFieldChange}
+            floatingLabelText={this.props.inputDefinition.title}>
+            {this.props.inputDefinition.allowedValues.map((value, i) => {
+              return (
+                <MenuItem
+                  key={i}
+                  value={value}
+                  primaryText={value} />
+              );
+            })}
+          </SelectField>
+          { this.props.value
+            ? this.props.value.map(
+              (selectedRegion, i) => <input key={i} type="hidden" name={this.props.inputDefinition.name} value={selectedRegion} />
+            ) : null
+          }
+        </div>
+      );
+    }
+
     if (Array.isArray(this.props.value) && this.props.value.length > 0) {
       return this.props.value.map((elem, i) => {
         return (

@@ -71,10 +71,14 @@ export default class WpsProcessForm extends React.Component {
     this.verifyMeaningfulValues(this.props);
   }
 
-  buildFormData(props) {
+  buildFormData (props) {
     let formData = {};
     props.workflow.selectedProcessInputs.forEach((input) => {
-      formData[makeUniqueIdentifier(input)] = input.defaultValue || '';
+      if (input.allowedValues.length > 0) {
+        formData[makeUniqueIdentifier(input)] = [input.defaultValue] || [''];
+      } else {
+        formData[makeUniqueIdentifier(input)] = input.defaultValue || '';
+      }
     });
     this.state = {
       formData: formData
