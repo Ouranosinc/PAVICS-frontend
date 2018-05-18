@@ -1,8 +1,8 @@
 import React from 'react';
 import DeformWrapper from '../DeformWrapper/DeformWrapper';
 import * as constants from './../../constants';
-
-const {WpsProcessFormInput} = require('../WpsProcessFormInput/WpsProcessFormInput');
+import {InputDefinition} from '../WpsProcessFormInput/InputDefinition';
+import {WpsProcessFormInput} from '../WpsProcessFormInput/WpsProcessFormInput';
 
 /*
 Wps Process Form
@@ -71,10 +71,14 @@ export default class WpsProcessForm extends React.Component {
     this.verifyMeaningfulValues(this.props);
   }
 
-  buildFormData(props) {
+  buildFormData (props) {
     let formData = {};
     props.workflow.selectedProcessInputs.forEach((input) => {
-      formData[makeUniqueIdentifier(input)] = input.defaultValue || '';
+      if (input.selectable) {
+        formData[makeUniqueIdentifier(input)] = input.defaultValue ? [input.defaultValue] : [];
+      } else {
+        formData[makeUniqueIdentifier(input)] = input.defaultValue || '';
+      }
     });
     this.state = {
       formData: formData
@@ -215,18 +219,14 @@ export default class WpsProcessForm extends React.Component {
         id="cy-process-form"
         formId={this.props.formId}
         execute={this.props.executeProcess}>
-        {this.props.workflow.selectedProcessInputs.map((input, i) => {
+        {this.props.workflow.selectedProcessInputs.map((inputDefinition, i) => {
+          const uniqueIdentifier = makeUniqueIdentifier(inputDefinition);
           return (
             <div key={i} className="cy-process-form-field">
               <WpsProcessFormInput
-                name={input.name}
-                type={input.dataType}
-                title={input.title}
-                uniqueIdentifier={makeUniqueIdentifier(input)}
-                description={input.description}
-                value={this.state.formData[makeUniqueIdentifier(input)]}
-                minOccurs={input.minOccurs}
-                maxOccurs={input.maxOccurs}
+                inputDefinition={inputDefinition}
+                uniqueIdentifier={uniqueIdentifier}
+                value={this.state.formData[uniqueIdentifier]}
                 handleArrayChange={this.handleArrayChange}
                 handleChange={this.handleChange} />
             </div>

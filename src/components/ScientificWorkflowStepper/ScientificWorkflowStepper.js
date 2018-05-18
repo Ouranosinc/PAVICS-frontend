@@ -9,6 +9,7 @@ import CircularProgress from 'material-ui/CircularProgress';
 import Paper from 'material-ui/Paper';
 import WpsProcessForm from '../WpsProcessForm';
 import myHttp from '../../util/http';
+import {InputDefinition} from "../WpsProcessFormInput/InputDefinition";
 const styles = {
   orParagraph: {
     margin: '10px 0',
@@ -104,13 +105,16 @@ export default class ScientificWorkflowStepper extends Component {
                 NotificationManager.warning(`The input ${inputName} is not a valid input for the process ${thisTaskProcessIdentifier}, it should be one of ${validInputNames.join(', ')}.`, 'Warning', 10000);
               }
               console.log('process description:', processDescription);
-              inputsThatShouldBeProvided.push({
-                name: `${thisTaskProcessIdentifier}.${inputName}`,
-                dataType: processDescription.inputs[validInputIndex].dataType,
-                description: processDescription.inputs[validInputIndex].description,
-                title: processDescription.inputs[validInputIndex].title,
-                defaultValue: thisTask.inputs[inputName]
-              });
+              inputsThatShouldBeProvided.push(new InputDefinition(
+                `${thisTaskProcessIdentifier}.${inputName}`,
+                processDescription.inputs[validInputIndex].dataType,
+                processDescription.inputs[validInputIndex].title,
+                processDescription.inputs[validInputIndex].description,
+                processDescription.inputs[validInputIndex].minOccurs,
+                processDescription.inputs[validInputIndex].maxOccurs,
+                thisTask.inputs[inputName],
+                processDescription.inputs[validInputIndex].allowedValues
+              ));
             }
           }
         }
