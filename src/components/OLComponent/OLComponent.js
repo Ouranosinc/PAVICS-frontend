@@ -2,7 +2,7 @@ import React from 'react';
 import classes from './OLComponent.scss';
 import Dialog from 'material-ui/Dialog';
 import * as constants from './../../constants';
-import myHttp from './../../../lib/http';
+import myHttp from '../../util/http';
 import { NotificationManager } from 'react-notifications';
 
 // Couldn't figure out the bug when importing inner component css file but it works from node_modules
@@ -11,8 +11,9 @@ const INDEX_BASE_MAP = -10;
 const INDEX_DATASET_LAYER = 1;
 const INDEX_SHAPEFILE = 10;
 const INDEX_SELECTED_REGIONS = 100;
-const LAYER_SELECTED_REGIONS = 'selectedRegions';
-const LAYER_DATASET = 'dataset_layer';
+const LAYER_SELECTED_REGIONS = 'LAYER_SELECTED_REGIONS';
+const LAYER_REGIONS = 'LAYER_REGIONS';
+const LAYER_DATASET = 'LAYER_DATASET';
 // not exactly sure if the selected regions index is working
 // when base map is at 1 it shadows the selected regions
 
@@ -98,6 +99,7 @@ class OLComponent extends React.Component {
         extent: extent
       }
     );
+    layer.set('nameId', title);
     this.layers[title] = layer;
     this.map.getLayers().insertAt(position, layer);
     console.log('addTileWMSLayer:', layer);
@@ -120,7 +122,9 @@ class OLComponent extends React.Component {
       }
     );
     this.map.getLayers().insertAt(INDEX_BASE_MAP, layer);
+    layer.set('nameId', title);
     this.layers[title] = layer;
+
   }
 
   getLayer (title) {
@@ -163,6 +167,7 @@ class OLComponent extends React.Component {
         view: this.view
       }
     );
+    window.cyCurrentMap = this.map;
 
     let mousePosition = new ol.control.MousePosition({
       coordinateFormat: ol.coordinate.createStringXY(6),
@@ -394,7 +399,7 @@ class OLComponent extends React.Component {
     let shapefile = this.props.selectedShapefile;
     console.log('change shapefile:', shapefile);
     this.layers[LAYER_SELECTED_REGIONS].getSource().clear();
-    this.map.removeLayer(this.layers[prevProps.selectedShapefile.title]);
+    this.map.removeLayer(this.layers[LAYER_REGIONS]);
     let source = new ol.source.TileWMS(
       {
         url: shapefile.wmsUrl,
@@ -403,7 +408,7 @@ class OLComponent extends React.Component {
     );
     this.addTileWMSLayer(
       INDEX_SHAPEFILE,
-      shapefile.title,
+      LAYER_REGIONS,
       source,
       0.4
     );

@@ -149,7 +149,7 @@ export class ProcessListItem extends React.Component {
     if(this.props.job.status === constants.JOB_SUCCESS_STATUS){
       return <ListItem
         style={{marginLeft: (this.props.indentationLevel * 18) + "px"}}
-        primaryText={this.props.job.title + ': ' + this.props.job.abstract}
+        primaryText={(this.props.job.name && this.props.job.name.length)? this.props.job.name: `${this.props.job.title}: ${this.props.job.abstract}`}
         secondaryText={secondaryText}
         secondaryTextLines={2}
         rightIconButton={
@@ -191,7 +191,7 @@ export class ProcessListItem extends React.Component {
 
       return <ListItem
         style={{marginLeft: (this.props.indentationLevel * 18) + "px"}}
-        primaryText={this.props.job.title + ': ' + this.props.job.abstract}
+        primaryText={(this.props.job.name && this.props.job.name.length)? this.props.job.name: `${this.props.job.title}: ${this.props.job.abstract}`}
         secondaryText={secondaryText}
         secondaryTextLines={2}
         rightIcon={this.buildMinimalIconMenuActions()}

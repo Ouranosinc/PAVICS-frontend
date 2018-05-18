@@ -199,7 +199,7 @@ export class ProjectDatasets extends React.Component {
                     primaryText={dataset.aggregate_title}
                     secondaryText={
                       <p>
-                        <span style={{color: darkBlack}}>{dataset.fileserver_url.length + ' Files'}</span><br />
+                        <span className="cy-dataset-multiple-file-title" style={{color: darkBlack}}>{dataset.fileserver_url.length + ' Files'}</span><br />
                         <strong>Keywords: </strong>{dataset.keywords.join(', ')}
                       </p>
                     }
@@ -289,7 +289,7 @@ export class ProjectDatasets extends React.Component {
                     primaryText={dataset.aggregate_title}
                     secondaryText={
                       <p>
-                        <span style={{color: darkBlack}}>{dataset.title[0]}</span><br />
+                        <span className="cy-dataset-single-file-title" style={{color: darkBlack}}>{dataset.title[0]}</span><br />
                         <strong>Keywords: </strong>{dataset.keywords.join(', ')}
                       </p>
                     }

@@ -118,6 +118,8 @@ export default class LayerSwitcher extends React.Component {
             this.props.publicShapeFiles.map( (shapeFile, i) => {
               return (
                 <ListItem
+                  className="cy-layerswitcher-shapefile-item"
+                  id={`cy-shapefile-name-${shapeFile.title}`}
                   primaryText={shapeFile.title}
                   key={i}
                   leftCheckbox={
@@ -149,6 +151,7 @@ export default class LayerSwitcher extends React.Component {
             this.props.baseMaps.map((map, i) => {
               return (
                 <ListItem
+                  className="cy-layerswitcher-basemap-item"
                   primaryText={map}
                   key={i}
                   leftCheckbox={
@@ -185,6 +188,7 @@ export default class LayerSwitcher extends React.Component {
             return (
               <ListItem
                 key={i}
+                className="cy-layerswitcher-dataset-item"
                 primaryText={dataset['aggregate_title']}
                 secondaryText={<span>{secondaryText}</span>}
                 secondaryTextLines={1}
@@ -256,6 +260,7 @@ export default class LayerSwitcher extends React.Component {
             iconElementRight={<IconButton className="cy-minimize-btn" onTouchTap={this._onHideLayerSwitcherPanel}><MinimizeIcon /></IconButton>} />
           <Tabs>
             <Tab
+              id="cy-layerswitcher-datasets-tab"
               style={{height: '100%'}}
               icon={<FontIcon className="material-icons">satellite</FontIcon>}
               label="Datasets">
@@ -266,6 +271,7 @@ export default class LayerSwitcher extends React.Component {
                 <div style={{width: '35%', display: 'inline-block'}}>
                   <Subheader>
                     <RaisedButton
+                      id="cy-reset-dataset-btn"
                       style={{marginLeft: '10px'}}
                       onClick={this.resetDatasetLayer}
                       label="Reset" />
@@ -276,11 +282,13 @@ export default class LayerSwitcher extends React.Component {
               </Paper>
             </Tab>
             <Tab
+              id="cy-layerswitcher-regions-tab"
               icon={<FontIcon className="material-icons">local_library</FontIcon>}
               label="Regions">
               <Paper zDepth={2}>
                 <Subheader>
                   <RaisedButton
+                    id="cy-reset-shapefile-btn"
                     onClick={this.resetShapefile}
                     label="Reset" />
                 </Subheader>
@@ -288,6 +296,7 @@ export default class LayerSwitcher extends React.Component {
               </Paper>
             </Tab>
             <Tab
+              id="cy-layerswitcher-basemaps-tab"
               style={{height: '100%'}}
               icon={<FontIcon className="material-icons">map</FontIcon>}
               label="Base Maps">

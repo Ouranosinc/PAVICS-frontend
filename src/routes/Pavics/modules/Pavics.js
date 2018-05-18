@@ -1,6 +1,6 @@
 import initialState from './../../../store/initialState';
 import * as constants from './../../../constants';
-import myHttp from './../../../../lib/http';
+import myHttp from '../../../util/http';
 import { NotificationManager } from 'react-notifications';
 
 // SYNC

@@ -1,4 +1,5 @@
-import myHttp from './../../../lib/http';
+
+import myHttp from '../../util/http';
 import {InputDefinition} from '../../components/WpsProcessFormInput/InputDefinition';
 // Constants
 export const constants = {

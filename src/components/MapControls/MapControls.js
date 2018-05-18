@@ -65,8 +65,8 @@ export default class MapControls extends React.Component {
             onChange={this.props.selectMapManipulationMode}
             name="map-manipulation-mode"
             defaultSelected={constants.VISUALIZE_MODE_VISUALIZE}>
-            <RadioButton value={constants.VISUALIZE_MODE_VISUALIZE} label="Grid Point Values" />
-            <RadioButton value={constants.VISUALIZE_MODE_JOB_MANAGEMENT} label="Region Selection" />
+            <RadioButton id="cy-grid-point-values-btn" value={constants.VISUALIZE_MODE_VISUALIZE} label="Grid Point Values" />
+            <RadioButton id="cy-region-selection-btn" value={constants.VISUALIZE_MODE_JOB_MANAGEMENT} label="Region Selection" />
           </RadioButtonGroup>
           <Divider />
           <h4>Toggle Full Screen Mode</h4>

@@ -1,5 +1,5 @@
 import { NotificationManager } from 'react-notifications';
-import myHttp from './../../../lib/http';
+import myHttp from '../../util/http';
 
 // Constants
 export const constants = {

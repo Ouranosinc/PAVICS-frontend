@@ -195,6 +195,7 @@ let phoenix = (() => {
             },
             rejectUnauthorized: false
           };
+          console.log(`Fetching URL: ${options.url}`)
           response = yield request(options);
           this.body = response.body;
           break;
