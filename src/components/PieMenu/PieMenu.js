@@ -60,10 +60,14 @@ export class PieMenu extends React.Component {
         <nav className={classes['radialnav']}>
           <ul className={classes['menu']}>
             <li id="cy-menu-point-info-toggle">
+              <span>
                 <a href="#" onClick={this._toggleInfoPanel} title="Toggle Point Informations"
                    className={this.props.mapPanelStatus[constants.VISUALIZE_INFO_PANEL] ? classes['IsOpen'] : ''}>
-                  <InfoIcon color={white} style={customSvgStyle} />
+                  <span id="cy-menu-point-info-toggle2">
+                    <InfoIcon color={white} style={customSvgStyle} />
+                  </span>
                 </a>
+              </span>
             </li>
             <li id="cy-menu-time-series-toggle">
               <a href="#" onClick={this._toggleChartPanel} title="Toggle Time Series Chart"
@@ -75,7 +79,7 @@ export class PieMenu extends React.Component {
               <a href="#" onClick={this._toggleLayerSwitcherPanel} title="Toggle Layer Switcher"
                  className={this.props.mapPanelStatus[constants.VISUALIZE_LAYER_SWITCHER_PANEL] ? classes['IsOpen'] : ''}>
                 <LayersIcon color={white} style={customSvgStyle} />
-              </a>
+              </a>«
             </li>
             <li id="cy-menu-temporal-slider-toggle">
               <a href="#" onClick={this._toggleTimeSliderPanel} title="Toggle Temporal Slider"

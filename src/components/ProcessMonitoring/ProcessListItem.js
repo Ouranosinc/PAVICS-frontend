@@ -55,6 +55,7 @@ export class ProcessListItem extends React.Component {
 
   buildMinimalIconMenuActions() {
     let logMenuItem = <MenuItem
+      id="cy-logs-item"
       primaryText="Show Logs"
       onTouchTap={(event) => this.props.onShowLogDialog(this.props.job.log)}
       leftIcon={<LogIcon />}/>;
@@ -73,22 +74,26 @@ export class ProcessListItem extends React.Component {
     return (
       <IconMenu iconButtonElement={
           <IconButton
+            className="cy-actions-btn"
             touch={true}
             tooltipPosition="bottom-left">
             <MoreVertIcon color={grey400}/>
           </IconButton>
         }>
         <MenuItem
+          id="cy-status-item"
           primaryText="Browse XML Status File"
           onTouchTap={(event) => window.open(this.props.job.status_location, '_blank')}
           leftIcon={<FileIcon />}/>
         {logMenuItem}
         <MenuItem
+          id="cy-visualize-all-agg-item"
           primaryText="Visualize All (Aggregated)"
           disabled={!visualizableTaskOutputs.length}
           onTouchTap={(event) => this.props.onVisualiseDatasets(visualizableTaskOutputs, true)}
           leftIcon={<VisualizeIcon />}/>
         <MenuItem
+          id="cy-visualize-all-split-item"
           primaryText="Visualize All (Splitted)"
           disabled={!visualizableTaskOutputs.length}
           onTouchTap={(event) => this.props.onVisualiseDatasets(visualizableTaskOutputs, false)}
@@ -100,26 +105,31 @@ export class ProcessListItem extends React.Component {
   buildBasicIconMenuActions(output) {
     return <IconMenu iconButtonElement={
       <IconButton
+        className="cy-actions-btn"
         touch={true}
         tooltipPosition="bottom-left">
         <MoreVertIcon color={grey400}/>
       </IconButton>}>
       <MenuItem
+        id="cy-download-item"
         primaryText="Download"
         disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS || (output.reference === undefined || !output.reference.length)}
         onTouchTap={(event) => { if (this.props.job.status === constants.JOB_SUCCESS_STATUS && output.reference.length) window.open(output.reference, '_blank'); }}
         leftIcon={<DownloadIcon />}/>
       <MenuItem
+        id="cy-publish-item"
         primaryText="Publish (TODO)"
         disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS}
         onTouchTap={(event) => { if (this.props.job.status === constants.JOB_SUCCESS_STATUS) alert('TODO: Call Publish WPS'); }}
         leftIcon={<PublishIcon />}/>
       <MenuItem
+        id="cy-persist-item"
         primaryText="Persist"
         disabled={!this._isPersistAvailable(output)}
         onTouchTap={(event) => { if(this._isPersistAvailable(output)) this.props.onShowPersistDialog(output); }}
         leftIcon={<PersistIcon  />}/>
       <MenuItem
+        id="cy-visualize-item"
         primaryText="Visualize"
         disabled={!this._isVisualizeAvailable(output)}
         onTouchTap={(event) => {if(this._isVisualizeAvailable(output)) this.props.onVisualiseDatasets([output.reference]); }}
@@ -148,6 +158,7 @@ export class ProcessListItem extends React.Component {
     }
     if(this.props.job.status === constants.JOB_SUCCESS_STATUS){
       return <ListItem
+        className={`cy-monitoring-list-item cy-monitoring-level-${this.props.indentationLevel}`}
         style={{marginLeft: (this.props.indentationLevel * 18) + "px"}}
         primaryText={(this.props.job.name && this.props.job.name.length)? this.props.job.name: `${this.props.job.title}: ${this.props.job.abstract}`}
         secondaryText={secondaryText}
@@ -161,9 +172,10 @@ export class ProcessListItem extends React.Component {
         nestedItems={
           this.props.job.outputs.map((output, k) => {
             return <ListItem
+              className={`cy-monitoring-list-item cy-monitoring-level-${this.props.indentationLevel + 1}`}
               key={k}
               style={{marginLeft: ((this.props.indentationLevel + 1) * 18) + "px"}}
-              primaryText={<p>{output.title}: {output.abstract}</p>}
+              primaryText={(output.name && output.name.length)? output.name: `${output.title}: ${output.abstract}`}
               secondaryText={<p>File: {this.extractFileId(output.reference)} <br/>Type: <strong>{output.mimeType}</strong></p>}
               secondaryTextLines={2}
               leftIcon={<FileIcon />}
@@ -177,19 +189,21 @@ export class ProcessListItem extends React.Component {
     }else{
       // Not a success has typically no outputs and only a log file to be shown
       let logMenuItem = <MenuItem
+        id="cy-logs-item"
         primaryText="Show Logs"
         onTouchTap={(event) => this.props.onShowLogDialog(this.props.job.log)}
         leftIcon={<LogIcon />}/>;
       if(this.props.job.status === constants.JOB_ACCEPTED_STATUS){
         secondaryText =
           <span style={{color: darkBlack}}>
-            <span>Will be launched soon using provider using provider <strong>{this.props.job.service}</strong>.</span><br/>
+            <span>Will be launched soon using provider <strong>{this.props.job.service}</strong>.</span><br/>
             <StatusElement job={this.props.job} />
           </span>;
         logMenuItem = null
       }
 
       return <ListItem
+        className={`cy-monitoring-list-item cy-monitoring-level-${this.props.indentationLevel}`}
         style={{marginLeft: (this.props.indentationLevel * 18) + "px"}}
         primaryText={(this.props.job.name && this.props.job.name.length)? this.props.job.name: `${this.props.job.title}: ${this.props.job.abstract}`}
         secondaryText={secondaryText}

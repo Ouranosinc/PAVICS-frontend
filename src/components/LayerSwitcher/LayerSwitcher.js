@@ -197,7 +197,9 @@ export default class LayerSwitcher extends React.Component {
                     name="currentDisplayedDataset"
                     valueSelected={this.props.currentDisplayedDataset.uniqueLayerSwitcherId}
                     onChange={this.setCurrentDisplayedDataset}>
-                    <RadioButton value={dataset.uniqueLayerSwitcherId} />
+                    <RadioButton
+                      data-cy-selected={this.props.currentDisplayedDataset.uniqueLayerSwitcherId === dataset.uniqueLayerSwitcherId}
+                      value={dataset.uniqueLayerSwitcherId} />
                   </RadioButtonGroup>
                 } />
             );
