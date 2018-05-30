@@ -68,10 +68,13 @@ class Pagination extends Component {
   }
 
   handleChangePage (page) {
-    this.setState({
-      currentPageIndex: page
-    });
-    this.onChange(page, this.props.perPageOptions[this.state.selectedPerPageOptionIndex]);
+    let maxPage = Math.ceil(this.props.total / this.props.perPageOptions[this.state.selectedPerPageOptionIndex]);
+    if (page >= 1 && page <= maxPage) {
+      this.setState({
+        currentPageIndex: page
+      });
+      this.onChange(page, this.props.perPageOptions[this.state.selectedPerPageOptionIndex]);
+    }
   }
 
   handleChangePerPage (perPage) {
