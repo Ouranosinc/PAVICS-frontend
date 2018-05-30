@@ -28,22 +28,23 @@ export class StatusElement extends React.Component {
     let status = null;
     switch (this.props.job.status) {
       case constants.JOB_ACCEPTED_STATUS:
-        status = <strong style={warningStyle}>PENDING</strong>;
+        status = <strong className="cy-monitoring-status" style={warningStyle}>PENDING</strong>;
         break;
       case constants.JOB_STARTED_STATUS:
-        status = <strong style={infoStyle}>IN PROGRESS ({(this.props.job.progress) ? this.props.job.progress : 0}%)</strong>;
+        status = <strong style={infoStyle}><span className="cy-monitoring-status">IN PROGRESS</span>
+          ({(this.props.job.progress) ? this.props.job.progress : 0}%)</strong>;
         break;
       case constants.JOB_SUCCESS_STATUS:
-        status = <strong style={successStyle}>COMPLETED</strong>;
+        status = <strong className="cy-monitoring-status" style={successStyle}>COMPLETED</strong>;
         break;
       case constants.JOB_FAILED_STATUS:
-        status = <strong style={errorStyle}>FAILED</strong>;
+        status = <strong className="cy-monitoring-status" style={errorStyle}>FAILED</strong>;
         break;
       case constants.JOB_PAUSED_STATUS:
-        status = <strong style={warningStyle}>PAUSED</strong>;
+        status = <strong className="cy-monitoring-status" style={warningStyle}>PAUSED</strong>;
         break;
       default:
-        status = <strong >UNKNOWN STATUS</strong>;
+        status = <strong className="cy-monitoring-status">UNKNOWN STATUS</strong>;
         break;
     }
     return (<span>

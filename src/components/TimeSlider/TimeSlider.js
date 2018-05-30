@@ -434,7 +434,7 @@ export class TimeSlider extends React.Component {
           title="Temporal Slider"
           iconElementLeft={<IconButton><AccessTimeIcon /></IconButton>}
           iconElementRight={<IconButton className="cy-minimize-btn" onTouchTap={(event) => this._onHideTimeSliderPanel()}><MinimizeIcon /></IconButton>} />
-        <div className="container">
+        <div className="container" id="cy-timeslider" data-cy-enabled={!this.state.disabled}>
           <Row>
             <Col md={4} lg={4}>
               <TextField

@@ -60,10 +60,12 @@ export class PieMenu extends React.Component {
         <nav className={classes['radialnav']}>
           <ul className={classes['menu']}>
             <li id="cy-menu-point-info-toggle">
-                <a href="#" onClick={this._toggleInfoPanel} title="Toggle Point Informations"
-                   className={this.props.mapPanelStatus[constants.VISUALIZE_INFO_PANEL] ? classes['IsOpen'] : ''}>
+              <a href="#" onClick={this._toggleInfoPanel} title="Toggle Point Informations"
+                 className={this.props.mapPanelStatus[constants.VISUALIZE_INFO_PANEL] ? classes['IsOpen'] : ''}>
+                <span id="cy-menu-point-info-toggle2">
                   <InfoIcon color={white} style={customSvgStyle} />
-                </a>
+                </span>
+              </a>
             </li>
             <li id="cy-menu-time-series-toggle">
               <a href="#" onClick={this._toggleChartPanel} title="Toggle Time Series Chart"

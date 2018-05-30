@@ -186,6 +186,7 @@ class ProcessMonitoring extends React.Component {
                   //Threat FAILED and SUCCESSFULL workflow (both are expandable)
                   let tasks = [];
                   let logMenu = <MenuItem
+                    id="cy-logs-item"
                     primaryText="Show Logs"
                     onTouchTap={(event) => this._onShowLogDialog(x.log)}
                     leftIcon={<LogIcon />}/>;
@@ -246,12 +247,14 @@ class ProcessMonitoring extends React.Component {
                   if(x.status === constants.JOB_SUCCESS_STATUS) {
                     let LogFileURL = x["response_to_json"]['wps:ExecuteResponse']['wps:ProcessOutputs'][0]['wps:Output'][1]['wps:Reference'][0]['$']['xlink:href'];
                     logMenu = <MenuItem
+                      id="cy-logs-item"
                       primaryText="Browse Log File"
                       onTouchTap={(event) => window.open(LogFileURL, '_blank')}
                       leftIcon={<FileIcon />}/>
                   }
 
                   return <ListItem
+                    className={`cy-monitoring-list-item cy-monitoring-level-0`}
                     key={i}
                     primaryText={(x.name && x.name.length)? x.name: `${x.title}: ${x.abstract}`}
                     secondaryText={
@@ -264,12 +267,14 @@ class ProcessMonitoring extends React.Component {
                     rightIconButton={
                       <IconMenu iconButtonElement={
                         <IconButton
+                          className="cy-actions-btn"
                           touch={true}
                           tooltipPosition="bottom-left">
                           <MoreVertIcon color={grey400}/>
                         </IconButton>
                       }>
                         <MenuItem
+                          id="cy-status-item"
                           primaryText="Browse XML Status File"
                           onTouchTap={(event) => window.open(x.status_location, '_blank')}
                           leftIcon={<FileIcon />}/>
@@ -318,6 +323,7 @@ class ProcessMonitoring extends React.Component {
                           // TODO Visualize all for subtasks
                           return  (
                           <ListItem
+                            className={`cy-monitoring-list-item cy-monitoring-level-parallel`}
                             key={j}
                             primaryText={taskName}
                             secondaryText={
@@ -332,17 +338,20 @@ class ProcessMonitoring extends React.Component {
                             rightIcon={
                               <IconMenu iconButtonElement={
                                 <IconButton
+                                  className="cy-actions-btn"
                                   touch={true}
                                   tooltipPosition="bottom-left">
                                   <MoreVertIcon color={grey400}/>
                                 </IconButton>
                               }>
                                 <MenuItem
+                                  id="cy-visualize-all-agg-item"
                                   primaryText="Visualize All (Aggregated)"
                                   disabled={!visualizableOutputs.length}
                                   onTouchTap={(event) => this._onVisualiseDatasets(visualizableOutputs, true)}
                                   leftIcon={<VisualizeIcon />}/>
                                 <MenuItem
+                                  id="cy-visualize-all-split-item"
                                   primaryText="Visualize All (Splitted)"
                                   disabled={!visualizableOutputs.length}
                                   onTouchTap={(event) => this._onVisualiseDatasets(visualizableOutputs, false)}
@@ -461,7 +470,7 @@ class ProcessMonitoring extends React.Component {
     return (
       <div>
         {this.state.loadingScreen}
-        <div className="container">
+        <div id="cy-process-monitoring" className="container">
           <Paper style={{ marginTop: 20 }}>
             {mainComponent}
             {pagination}

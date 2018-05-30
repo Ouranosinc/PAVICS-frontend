@@ -114,6 +114,7 @@ export class PersistResultDialog extends React.Component {
 
   render () {
       return <Dialog
+        id="cy-persist-dialog"
         title="Persist result"
         modal={false}
         open={this.props.isOpen}
@@ -121,12 +122,14 @@ export class PersistResultDialog extends React.Component {
         actions={
           [
             <RaisedButton
+              id="cy-persist-dialog-launch-btn"
               label="Launch Persist"
               primary={true}
               keyboardFocused={true}
               onTouchTap={(event) => this.onPersistOutputClicked()}
               style={{marginRight: '10px' }} />,
             <RaisedButton
+              id="cy-persist-dialog-close-btn"
               label="Close"
               primary={false}
               keyboardFocused={false}
@@ -137,6 +140,7 @@ export class PersistResultDialog extends React.Component {
         <Card expanded={this.state.expanded} onExpandChange={this.handleExpandChange}>
           <CardText>
             <TextField
+              id="cy-resource-link-tf"
               hintText="Resource"
               fullWidth={true}
               disabled={true}
@@ -151,6 +155,7 @@ export class PersistResultDialog extends React.Component {
           </CardText>
           <CardText>
             <Toggle
+              id="cy-advanced-toggle"
               toggled={this.state.expanded}
               onToggle={this.handleToggle}
               labelPosition="right"
@@ -159,6 +164,7 @@ export class PersistResultDialog extends React.Component {
           </CardText>
           <CardText expandable={true}>
             <TextField
+              id="cy-workspace-path-tf"
               hintText="Location"
               fullWidth={true}
               value={this.state.location}

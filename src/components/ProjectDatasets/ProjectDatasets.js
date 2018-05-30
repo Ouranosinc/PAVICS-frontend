@@ -194,7 +194,7 @@ export class ProjectDatasets extends React.Component {
               if(dataset.type === "Aggregate") {
                 return (
                   <ListItem
-                    className="cy-project-dataset-item"
+                    className="cy-project-dataset-item cy-project-dataset-level-0"
                     key={i}
                     primaryText={dataset.aggregate_title}
                     secondaryText={
@@ -218,7 +218,7 @@ export class ProjectDatasets extends React.Component {
                           <MoreVertIcon color={grey400} />
                         </IconButton>}>
                         <MenuItem id="cy-download-all-item" primaryText="Download All" onTouchTap={(event) => this.onDownloadAllClicked(dataset)} leftIcon={<Download />} />
-                        <MenuItem id="cy-remove-item" primaryText="Remove" onTouchTap={() => this._onOpenConfirmRemoveDatasetDialog(dataset)} leftIcon={<Remove />} />
+                        <MenuItem id="cy-remove-all-item" primaryText="Remove" onTouchTap={() => this._onOpenConfirmRemoveDatasetDialog(dataset)} leftIcon={<Remove />} />
                         {/*<MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + dataset.title[0])} leftIcon={<ShareIcon />} />*/}
                         <MenuItem id="cy-visualize-all-agg-item"primaryText="Visualize All (Aggregated)"
                                   disabled={disabledDatasetVisualize}
@@ -244,7 +244,7 @@ export class ProjectDatasets extends React.Component {
                         }
                         return (
                           <ListItem
-                            className="cy-project-dataset-item"
+                            className="cy-project-dataset-item cy-project-dataset-level-1"
                             style={{width: '98%'}}
                             key={j}
                             primaryText={dataset.title[j]}
@@ -284,7 +284,7 @@ export class ProjectDatasets extends React.Component {
                 }
                 return(
                   <ListItem
-                    className="cy-project-dataset-item"
+                    className="cy-project-dataset-item cy-project-dataset-level-0"
                     key={i}
                     primaryText={dataset.aggregate_title}
                     secondaryText={
