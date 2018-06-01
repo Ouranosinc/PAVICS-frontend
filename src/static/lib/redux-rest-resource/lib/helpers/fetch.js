@@ -118,6 +118,7 @@ var buildFetchOpts = exports.buildFetchOpts = function buildFetchOpts(context, _
 var fetch = function fetch(url) {
   var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
+  options.credentials = 'include';
   // Support options.query
   var builtUrl = Object.keys(options.query || []).reduce(function (wipUrl, queryParam) {
     var queryParamValue = (0, _util.isString)(options.query[queryParam]) ? options.query[queryParam] : JSON.stringify(options.query[queryParam]);

@@ -23,7 +23,8 @@ export class ProjectManagement extends React.Component {
     addDatasetsToVisualize: React.PropTypes.func.isRequired,
     removeSearchCriteriasFromProject: React.PropTypes.func.isRequired,
     selectCurrentDisplayedDataset: React.PropTypes.func.isRequired,
-    goToSection: React.PropTypes.func.isRequired
+    goToSection: React.PropTypes.func.isRequired,
+    sessionManagement: React.PropTypes.object.isRequired,
   };
   constructor (props) {
     super(props);

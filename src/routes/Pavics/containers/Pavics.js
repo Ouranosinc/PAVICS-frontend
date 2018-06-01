@@ -2,10 +2,11 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import * as actionCreators from './../modules/Pavics';
-import * as workflowActionCreators from './../../../redux/modules/Workflow';
-import { actions as researchActionsCreators } from '../../../redux/modules/ResearchAPI';
-import {actions as sessionActions} from '../../../redux/modules/SessionManagement';
+import * as pavicsActions from './../modules/Pavics';
+import { actions as projectAPIActions } from '../../../redux/modules/ProjectAPI';
+import { actions as researchActions } from '../../../redux/modules/Research';
+import { actions as sessionActions } from '../../../redux/modules/SessionManagement';
+
 import cookie from 'react-cookies';
 import * as constants from './../../../constants';
 import {
@@ -41,6 +42,16 @@ class Pavics extends React.Component {
 
   componentWillMount () {
     this.startErrorLog();
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.sessionManagement.sessionStatus &&
+        this.props.sessionManagement.sessionStatus !== nextProps.sessionManagement.sessionStatus &&
+        nextProps.sessionManagement.sessionStatus.user && nextProps.sessionManagement.sessionStatus.user.username.length) {
+      let filter = JSON.stringify({"where": { "user": nextProps.sessionManagement.sessionStatus.user.username},"order": "name ASC"});
+      this.props.fetchProjects({filter: filter });
+      this.props.fetchPavicsDatasetsAndFacets('Aggregate', 0);
+    }
   }
 
   startErrorLog () {
@@ -89,11 +100,7 @@ class Pavics extends React.Component {
         );
       case constants.PLATFORM_SECTION_MONITOR:
         return (
-          <ProcessMonitoringContainer
-            addDatasetsToVisualize={this.props.addDatasetsToVisualize}
-            selectCurrentDisplayedDataset={this.props.selectCurrentDisplayedDataset}
-            workflow={this.props.workflow}
-            workflowActions={this.props.workflowActions} />
+          <ProcessMonitoringContainer {...this.props} />
         );
       case constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT:
         return (
@@ -129,7 +136,6 @@ class Pavics extends React.Component {
           <SectionalPanel
             section={this.props.platform.section}
             goToSection={this.props.goToSection}
-            // chooseStep={this.props.workflowActions.chooseStep}
             showContent={this.makeSection() !== null}
             currentContent={this.makeSection()}
             currentTitle={this.makeTitle()}/>
@@ -140,19 +146,18 @@ class Pavics extends React.Component {
   }
 }
 
-// const mapActionCreators = dispatch => ({
-//   researchActions: bindActionCreators({...researchActionsCreators}, dispatch)
-// });
-
-const mapActionCreators = {
-  ...actionCreators,
-  ...workflowActionCreators,
-  ...sessionActions,
-};
 const mapStateToProps = state => {
   return {
     ...state.pavics.visualize,
     platform: state.pavics.platform,
+    sessionManagement: state.sessionManagement
   };
 };
+const mapActionCreators = {
+  ...pavicsActions,
+  checkLogin: sessionActions.checkLogin,
+  fetchPavicsDatasetsAndFacets: researchActions.fetchPavicsDatasetsAndFacets,
+  fetchProjects: projectAPIActions.fetchProjects,
+};
+
 export default connect(mapStateToProps, mapActionCreators)(Pavics);

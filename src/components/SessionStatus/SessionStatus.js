@@ -36,6 +36,7 @@ export default class SessionStatus extends Component {
 
   constructor (props) {
     super(props);
+    this.logout = this.logout.bind(this);
     this.state = {
       provider: PROVIDER_ZIGGURAT,
       username: '',
@@ -44,11 +45,17 @@ export default class SessionStatus extends Component {
     };
   }
 
+  logout() {
+    // TODO reset redux state to initialState
+    alert('TODO: reset redux state to initialState');
+    this.props.logout();
+  }
+
   makeUserCard () {
     return (
       <div>
         Hello {this.props.sessionStatus.user.username}!<br />
-        <RaisedButton id="cy-logout-btn" onTouchTap={this.props.logout} label="Logout" primary />
+        <RaisedButton id="cy-logout-btn" onTouchTap={this.logout} label="Logout" primary />
       </div>
     );
   }
