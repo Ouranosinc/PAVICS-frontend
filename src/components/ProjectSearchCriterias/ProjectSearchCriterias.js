@@ -38,15 +38,14 @@ export class ProjectSearchCriterias extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.project.currentProject && nextProps.project.currentProject !== this.props.project.currentProject) {
-      let filter = JSON.stringify({where: { projectId: nextProps.project.currentProject.id}});
-      this.props.researchAPIActions.fetchResearchs({filter: filter});
+      this.props.researchAPIActions.fetchResearchs({ projectId: this.props.project.currentProject.id});
     }
   }
 
   componentWillMount() {
-    let filter = JSON.stringify({where: { projectId: this.props.project.currentProject.id}});
-    this.props.researchAPIActions.fetchResearchs({filter: filter});
-    this.props.projectAPIActions.fetchProjectResearchs({ projectId: this.props.project.currentProject.id});
+    if (this.props.project.currentProject.id) {
+      this.props.researchAPIActions.fetchResearchs({ projectId: this.props.project.currentProject.id});
+    }
   }
 
   _onCriteriasPageChanged (pageNumber, numberPerPage) {
@@ -76,7 +75,9 @@ export class ProjectSearchCriterias extends React.Component {
   }
 
   _onRemoveSearchCriteria (research) {
-    this.props.researchAPIActions.deleteResearch({id: research.id});
+    if (this.props.project.currentProject.id) {
+      this.props.researchAPIActions.deleteResearch({projectId: this.props.project.currentProject.id, id: research.id});
+    }
   }
 
   render () {

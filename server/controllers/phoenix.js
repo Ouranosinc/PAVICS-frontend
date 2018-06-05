@@ -43,8 +43,7 @@ let phoenix = (() => {
           console.log(`phoenix jobs length at ${options.url}: ${json.jobs.length}`);
 
           // Fetch loopback jobs for this project
-          let filter = JSON.stringify({where: {projectId: projectId}});
-          let lbUrl = `${config.pavics_project_api_internal_url}/Jobs?filter=${filter}`;
+          let lbUrl = `${config.pavics_project_api_internal_url}/Projects/${projectId}/jobs`;
           console.log(`Fetching loopback jobs at URL : ${lbUrl}`);
           let loopbackResponse = yield request(lbUrl);
           let lbProjectJobs = [];

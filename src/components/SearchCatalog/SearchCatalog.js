@@ -61,8 +61,9 @@ export class SearchCatalog extends React.Component {
     if (!this.props.research.pavicsDatasets.items.length && this.props.research.pavicsDatasets.isFetching === false) {
       this.props.researchActions.fetchPavicsDatasetsAndFacets(this.state.type, 0);
     }
-    let filter = JSON.stringify({ where: {projectId: this.props.project.currentProject.id}});
-    this.props.researchAPIActions.fetchResearchs({ filter: filter });
+    if (this.props.project.currentProject.id) {
+      this.props.researchAPIActions.fetchResearchs({ projectId: this.props.project.currentProject.id});
+    }
   }
 
   _onChangeSearchType (value) {

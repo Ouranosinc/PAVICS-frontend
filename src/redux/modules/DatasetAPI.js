@@ -2,7 +2,7 @@ import {createResource, mergeReducers} from './../../static/lib/redux-rest-resou
 
 const dataset = createResource({
   name: 'dataset',
-  url: `${__PAVICS_PROJECT_API_PATH__}/Datasets/:id?filter=:filter`
+  url: `${__PAVICS_PROJECT_API_PATH__}/Projects/:projectId/datasets/:id?filter=:filter`
 });
 
 const types = {

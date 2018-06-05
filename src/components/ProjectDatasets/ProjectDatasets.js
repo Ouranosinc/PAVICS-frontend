@@ -52,14 +52,14 @@ export class ProjectDatasets extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.project.currentProject && nextProps.project.currentProject !== this.props.project.currentProject) {
-      let filter = JSON.stringify({where: { projectId: nextProps.project.currentProject.id}});
-      this.props.datasetAPIActions.fetchDatasets({filter: filter});
+      this.props.datasetAPIActions.fetchDatasets({projectId: nextProps.project.currentProject.id});
     }
   }
 
   componentWillMount() {
-    let filter = JSON.stringify({where: { projectId: this.props.project.currentProject.id}});
-    this.props.datasetAPIActions.fetchDatasets({filter: filter});
+    if (this.props.project.currentProject.id) {
+      this.props.datasetAPIActions.fetchDatasets({projectId: this.props.project.currentProject.id});
+    }
   }
 
   _onDatasetsPageChanged (pageNumber, numberPerPage) {
@@ -133,8 +133,11 @@ export class ProjectDatasets extends React.Component {
   }
 
   _onConfirmedFileRemove(dataset) {
-    this.props.datasetAPIActions.updateDataset(dataset);
-    this._onCloseDialogFileRemove();
+    if (this.props.project.currentProject.id) {
+      dataset.projectId = this.props.project.currentProject.id;
+      this.props.datasetAPIActions.updateDataset(dataset);
+      this._onCloseDialogFileRemove();
+    }
   }
 
   _onCloseDialogFileRemove() {
@@ -155,8 +158,10 @@ export class ProjectDatasets extends React.Component {
   }
 
   _onConfirmedDatasetRemove(dataset) {
-    this.props.datasetAPIActions.deleteDataset({ id: dataset.id });
-    this._onCloseDialogDatasetRemove();
+    if (this.props.project.currentProject.id) {
+      this.props.datasetAPIActions.deleteDataset({ projectId: this.props.project.currentProject.id, id: dataset.id });
+      this._onCloseDialogDatasetRemove();
+    }
   }
 
   _onCloseDialogDatasetRemove() {
