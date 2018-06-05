@@ -9,17 +9,13 @@ import LayerSwitcher from '../../components/LayerSwitcher';
 import TimeSeriesChart from './../../components/TimeSeriesChart';
 import MapControls from './../../components/MapControls';
 import * as constants from '../../constants';
-import { NotificationManager } from 'react-notifications';
 import BigColorPalette from '../BigColorPalette/BigColorPalette';
 
 class Visualize extends React.Component {
   static propTypes = {
     goToSection: React.PropTypes.func.isRequired,
     project: React.PropTypes.object.isRequired,
-    projectAPI: React.PropTypes.object.isRequired,
-    projectActions: React.PropTypes.object.isRequired,
-    projectAPIActions: React.PropTypes.object.isRequired,
-    researchActions: React.PropTypes.object.isRequired,
+    // TODO: Move following into visualize redux module
     selectMapManipulationMode: React.PropTypes.func.isRequired,
     selectedDatasetCapabilities: React.PropTypes.object.isRequired,
     currentDisplayedDataset: React.PropTypes.object.isRequired,
@@ -66,25 +62,12 @@ class Visualize extends React.Component {
     mapPanelStatus[constants.VISUALIZE_CHART_PANEL] = false;
     mapPanelStatus[constants.VISUALIZE_LAYER_SWITCHER_PANEL] = true;
     mapPanelStatus[constants.VISUALIZE_TIME_SLIDER_PANEL] = true;
-    this.defaultProjectSet = false;
     this.state = {
       mapPanelStatus: mapPanelStatus,
       OLComponentReference: {}
     };
     this._onToggleMapPanel = this._onToggleMapPanel.bind(this);
     this.setOLComponentReference = this.setOLComponentReference.bind(this);
-  }
-
-  componentWillReceiveProps (nextProps) {
-    if(nextProps.projectAPI && nextProps.projectAPI.items.length && nextProps.projectAPI.items !== this.props.projectAPI.items) {
-      let project = nextProps.projectAPI.items[0];
-      // Do only once
-      if(!this.defaultProjectSet) {
-        this.props.projectActions.setCurrentProject(project);
-        NotificationManager.info(`Project '${project.name}' has been selected as the default project.`, 'Information', 10000);
-        this.defaultProjectSet = true;
-      }
-    }
   }
 
   componentDidMount() {

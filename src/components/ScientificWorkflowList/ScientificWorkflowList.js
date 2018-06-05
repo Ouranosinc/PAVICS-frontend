@@ -63,10 +63,10 @@ export default class ScientificWorkflowList extends Component {
   }
 
   _onConfirmedWorkflowDeletion (workflow) {
-    this.props.workflowAPIActions.deleteWorkflow({ id: workflow.id });
-    this.setState({
-      isConfirmDeleteDialogOpened: false
-    });
+    if(this.props.project.currentProject.id) {
+      this.props.workflowAPIActions.deleteWorkflow({projectId: this.props.project.currentProject.id, id: workflow.id});
+      this.setState({isConfirmDeleteDialogOpened: false});
+    }
   }
 
 

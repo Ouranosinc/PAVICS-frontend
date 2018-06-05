@@ -144,7 +144,7 @@ var createAction = function createAction(actionId, _ref2) {
         if (err.statusCode && err.body.error) {
           _reactNotifications.NotificationManager.error(translatedResourceName + ' failed at being ' + translatedVerb + ': Error ' + err.statusCode + ' ' + err.body.error.message, 'Error', 10000);
         } else if (err.message) {
-          // Code or Parsing error actually, happens on 204 No Content results
+          // Code or Parsing throwing error
           _reactNotifications.NotificationManager.error(translatedResourceName + ' failed at being ' + translatedVerb + ': Error ' + err.message, 'Error', 10000);
         } else {
           _reactNotifications.NotificationManager.error(translatedResourceName + ' failed at being ' + translatedVerb + ': Unknown Error', 'Error', 10000);

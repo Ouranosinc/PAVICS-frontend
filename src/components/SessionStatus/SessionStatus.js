@@ -46,8 +46,6 @@ export default class SessionStatus extends Component {
   }
 
   logout() {
-    // TODO reset redux state to initialState
-    alert('TODO: reset redux state to initialState');
     this.props.logout();
   }
 
