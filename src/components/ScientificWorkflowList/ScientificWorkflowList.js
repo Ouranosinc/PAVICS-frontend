@@ -24,6 +24,7 @@ const style = {
     padding: '20px'
   }
 };
+const WORKFLOW_PER_PAGE_INITIAL_INDEX = 1;
 export default class ScientificWorkflowList extends Component {
   static propTypes = {
     project: React.PropTypes.object.isRequired,
@@ -45,7 +46,7 @@ export default class ScientificWorkflowList extends Component {
     this._onEditWorkflowSaved = this._onEditWorkflowSaved.bind(this);
     this.state = {
       pageNumber: 1,
-      numberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX],
+      numberPerPage: constants.PER_PAGE_OPTIONS[WORKFLOW_PER_PAGE_INITIAL_INDEX],
       isConfirmDeleteDialogOpened: false,
       confirmDeleteDialogContent: '',
       confirmDeleteDialogResource: null,
@@ -152,7 +153,7 @@ export default class ScientificWorkflowList extends Component {
             </List>
             <Pagination
               total={this.props.workflowAPI.items.length}
-              initialPerPageOptionIndex={constants.PER_PAGE_INITIAL_INDEX}
+              initialPerPageOptionIndex={WORKFLOW_PER_PAGE_INITIAL_INDEX}
               perPageOptions={constants.PER_PAGE_OPTIONS}
               onChange={this._onPageChanged}/>
             <ConfirmDialog
