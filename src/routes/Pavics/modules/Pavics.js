@@ -4,6 +4,7 @@ import myHttp from '../../../util/http';
 import { NotificationManager } from 'react-notifications';
 
 // SYNC
+const RESET_VISUALIZE_STATE = 'Visualize.RESET_VISUALIZE_STATE';
 const SET_WMS_LAYER = 'Visualize.SET_WMS_LAYER';
 const SET_SHAPEFILES = 'Visualize.SET_SHAPEFILES';
 const SET_SELECTED_COLOR_PALETTE = 'Visualize.SET_SELECTED_COLOR_PALETTE';
@@ -40,6 +41,12 @@ const FETCH_SCALAR_VALUE_SUCCESS = 'Visualize.FETCH_SCALAR_VALUE_SUCCESS';
 // ------------------------------------
 // Actions
 // ------------------------------------
+export function resetVisualizeState() {
+  return {
+    type: RESET_VISUALIZE_STATE,
+    visualizeInitialState: initialState.visualize
+  };
+}
 export function addSearchCriteriasToProject (searchCriterias) {
   return {
     type: ADD_SEARCH_CRITERIAS_TO_PROJECTS,
@@ -523,6 +530,9 @@ export function setVariablePreferenceBoundaries (min, max) {
 }
 
 const VISUALIZE_HANDLERS = {
+  [RESET_VISUALIZE_STATE]: (state, action) => {
+    return {...action.visualizeInitialState};
+  },
   [constants.VISUALIZE_SET_MAP_MANIPULATION_MODE]: (state, action) => {
     return {...state, mapManipulationMode: action.mode};
   },

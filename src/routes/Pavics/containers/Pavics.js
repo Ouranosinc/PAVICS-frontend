@@ -86,11 +86,10 @@ class Pavics extends React.Component {
   }
 
   triggerOnLogoutActions() {
-    // TODO GOOD: Reset redux state (how?)
-    // TODO BAD but OK: reload page
+    this.props.resetVisualizeState();
+    // TODO: Could reset all redux store modules, but following two functions are fine for now
     this.props.fetchByMagpieAccessProjects();
     this.props.setCurrentProject({});
-    alert('TODO: reset redux state to initialState');
   }
 
   triggerOnProjectsFetchedActions(props) {
