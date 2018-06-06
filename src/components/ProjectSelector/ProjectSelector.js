@@ -17,8 +17,8 @@ export class ProjectSelector extends React.Component {
   }
 
   componentWillMount() {
-    // let filter = JSON.stringify({"where": { "researcherId": 1},"order": "name ASC"});
-    // this.props.projectAPIActions.fetchProjects({filter: filter });
+    // Commented since it will trigger another warning if no project returned
+    // this.props.projectAPIActions.fetchByMagpieAccessProjects();
   }
 
   _onSetCurrentProject(id){

@@ -5,14 +5,14 @@ const research = createResource({
   name: 'project',
   url: `${__PAVICS_PROJECT_API_PATH__}/Projects/:id?filter=:filter`,
   actions: {
-    byMagpieAccess: {
+    fetchByMagpieAccess: {
       url: `${__PAVICS_PROJECT_API_PATH__}/Projects/projectsByMagpieAccess`,
       method: 'GET',
       gerundName: 'fetching',
       reduce: (state, action) => {
         let projects = [];
         let isFetching = true;
-        if(action.code && action.code === 200 && action.body && action.body.projects.length) {
+        if(action.code && action.code === 200 && action.body && action.body.projects) {
           projects = action.body.projects;
           isFetching = false;
         }

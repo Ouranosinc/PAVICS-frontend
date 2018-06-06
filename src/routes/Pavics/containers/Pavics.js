@@ -69,24 +69,26 @@ class Pavics extends React.Component {
 
     // If projects were fetched try to automatically select the first one returned
     // Note, Do only once per login action
-    if(nextProps.projectAPI && nextProps.projectAPI.items !== this.props.projectAPI.items &&
-    this.props.projectAPI.isFetching === true && nextProps.projectAPI.isFetching === false) {
+    if(nextProps.projectAPI && this.props.projectAPI.isFetching === true && nextProps.projectAPI.isFetching === false) {
       this.triggerOnProjectsFetchedActions(nextProps);
     }
 
-    // TODO: After a project was sucessfully created, select it as current project
+    // After a project was sucessfully created, select it as current project
+    if(nextProps.projectAPI && this.props.projectAPI.isCreating === true && nextProps.projectAPI.isCreating === false) {
+      this.triggerOnProjectCreatedActions(nextProps);
+    }
   }
 
   triggerOnLoginActions() {
     this.shouldSetDefaultProject = true; // Default project can now be automatically selected
-    this.props.byMagpieAccessProjects();
+    this.props.fetchByMagpieAccessProjects();
     this.props.fetchPavicsDatasetsAndFacets('Aggregate', 0);
   }
 
   triggerOnLogoutActions() {
     // TODO GOOD: Reset redux state (how?)
     // TODO BAD but OK: reload page
-    this.props.byMagpieAccessProjects();
+    this.props.fetchByMagpieAccessProjects();
     this.props.setCurrentProject({});
     alert('TODO: reset redux state to initialState');
   }
@@ -96,7 +98,7 @@ class Pavics extends React.Component {
       // Do only once per login action, if it already occurred, ignore all futures project fetches
       if (props.projectAPI.items.length) {
         // If there's more than one project returned, select automatically the first one returned
-        let project = props.projectAPI.items[0];
+        const project = props.projectAPI.items[0];
         this.props.setCurrentProject(project);
         NotificationManager.info(`Project '${project.name}' has been selected as the default project.`, 'Information', 10000);
         this.shouldSetDefaultProject = false; // Deactivate default project auto selection until next login action
@@ -105,6 +107,14 @@ class Pavics extends React.Component {
         NotificationManager.warning(`You do not have access to any project at the moment. 
         Please create your own new project before going any further.`, 'Information', 10000);
       }
+    }
+  }
+
+  triggerOnProjectCreatedActions(props) {
+    if (props.projectAPI.items.length) {
+      const project = props.projectAPI.items[props.projectAPI.items.length - 1];
+      this.props.setCurrentProject(project);
+      NotificationManager.info(`Project '${project.name}' has been selected as the current project.`, 'Information', 10000);
     }
   }
 
@@ -219,7 +229,7 @@ const mapActionCreators = {
   ...pavicsActions,
   checkLogin: sessionActions.checkLogin,
   fetchPavicsDatasetsAndFacets: researchActions.fetchPavicsDatasetsAndFacets,
-  byMagpieAccessProjects: projectAPIActions.byMagpieAccessProjects,
+  fetchByMagpieAccessProjects: projectAPIActions.fetchByMagpieAccessProjects,
   setCurrentProject: projectActions.setCurrentProject
 };
 
