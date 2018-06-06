@@ -202,7 +202,9 @@ class Pavics extends React.Component {
             goToSection={this.props.goToSection}
             showContent={this.makeSection() !== null}
             currentContent={this.makeSection()}
-            currentTitle={this.makeTitle()}/>
+            currentTitle={this.makeTitle()}
+            project={this.props.project}
+            sessionManagement={this.props.sessionManagement} />
           <NotificationContainer />
         </div>
       </MuiThemeProvider>
