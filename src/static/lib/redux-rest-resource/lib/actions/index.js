@@ -86,6 +86,7 @@ var createAction = function createAction(actionId, _ref2) {
       var successShowSomething = false;
       var translatedVerb = '';
       var translatedResourceName = resourceName;
+      console.log((0, _types.getActionType)(actionId));
       switch ((0, _types.getActionType)(actionId)) {
         case 'CREATE':
           successShowSomething = true;
@@ -103,6 +104,11 @@ var createAction = function createAction(actionId, _ref2) {
         case 'GET':
           translatedVerb = '';
           successShowSomething = false;
+          break;
+        case 'SHARE_TO_USER':
+        case 'SHARE_TO_GROUP':
+          translatedVerb = 'shared';
+          successShowSomething = true;
           break;
         default:
           break;

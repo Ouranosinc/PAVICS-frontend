@@ -55,7 +55,7 @@ export default class SessionStatus extends Component {
   makeUserCard () {
     return (
       <div>
-        <h3>Logged in</h3>
+        <h3>Logged in as "{this.props.sessionStatus.user.username}"</h3>
         <TextField
           fullWidth={true}
           disabled={true}

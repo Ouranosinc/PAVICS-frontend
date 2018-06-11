@@ -20,8 +20,13 @@ const research = createResource({
       },
       isArray: true
     },
-    share: {
-      url: `${__PAVICS_PROJECT_API_PATH__}/Projects/share`,
+    shareToUser: {
+      url: `${__PAVICS_PROJECT_API_PATH__}/Projects/:id/shareToUser`,
+      method: 'POST',
+      gerundName: 'sharing'
+    },
+    shareToGroup: {
+      url: `${__PAVICS_PROJECT_API_PATH__}/Projects/:id/shareToGroup`,
       method: 'POST',
       gerundName: 'sharing'
     }

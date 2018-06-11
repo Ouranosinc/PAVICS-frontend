@@ -3,7 +3,6 @@ import classes from './ProjectSelector.scss';
 import MenuItem from 'material-ui/MenuItem';
 import Paper from 'material-ui/Paper';
 import SelectField from 'material-ui/SelectField';
-import TextField from 'material-ui/TextField';
 import { NotificationManager } from 'react-notifications';
 
 export class ProjectSelector extends React.Component {

@@ -56,6 +56,7 @@ const createAction = (actionId, {resourceName, resourcePluralName = getPluralNam
     let successShowSomething = false;
     let translatedVerb = '';
     let translatedResourceName = resourceName;
+    console.log(getActionType(actionId));
     switch (getActionType(actionId)){
       case 'CREATE':
         successShowSomething = true;
@@ -73,6 +74,11 @@ const createAction = (actionId, {resourceName, resourcePluralName = getPluralNam
       case 'GET':
         translatedVerb = '';
         successShowSomething = false;
+        break;
+      case 'SHARE_TO_USER':
+      case 'SHARE_TO_GROUP':
+        translatedVerb = 'shared';
+        successShowSomething = true;
         break;
       default:
         break;
