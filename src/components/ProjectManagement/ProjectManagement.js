@@ -71,7 +71,7 @@ export class ProjectManagement extends React.Component {
            </div>: null
        }
      </Tab>
-     <Tab id="cy-create-project-tab" value={SHARE_PROJECT_TAB_VALUE} label="Share project">
+     <Tab id="cy-share-project-tab" value={SHARE_PROJECT_TAB_VALUE} label="Share project">
        {
          (this.state.activeTab === SHARE_PROJECT_TAB_VALUE) ?
            <div style={{ margin: 20 }}>

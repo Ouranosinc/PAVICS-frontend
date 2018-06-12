@@ -90,6 +90,7 @@ var consumer = (function () {
           // let jsonPath = Utils.extractWPSOutputPath(xml);
           // response = yield request(jsonPath);
           this.body = xml;
+          break;
         case 'persist':
           let resource = this.request.query['resource'];
           let location = this.request.query['location'];
@@ -108,6 +109,7 @@ var consumer = (function () {
             this.status = 500;
             this.body = {message: xml['wps:ExecuteResponse']['wps:Status'][0]['wps:ProcessFailed'][0]['wps:ExceptionReport'][0]['ows:Exception'][0]['ows:ExceptionText'][0]};
           }
+          break;
         case 'visualize':
           let aggregate = this.request.query['aggregate'];
           let resources = this.request.query['resource']; //Array of strings
@@ -127,6 +129,7 @@ var consumer = (function () {
           jsonPath = Utils.extractWPSOutputPath(xml);
           response = yield request(jsonPath);
           this.body = response.body;
+          break;
       }
     }
   };

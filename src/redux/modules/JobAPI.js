@@ -2,7 +2,7 @@ import {createResource, mergeReducers} from './../../static/lib/redux-rest-resou
 
 const job = createResource({
   name: 'job',
-  url: `${__PAVICS_PROJECT_API_PATH__}Projects/:projectId/jobs/:id?filter=:filter`
+  url: `${__PAVICS_PROJECT_API_PATH__}/Projects/:projectId/jobs/:id?filter=:filter`
 });
 
 const types = {

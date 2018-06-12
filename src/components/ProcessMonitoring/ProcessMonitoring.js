@@ -80,7 +80,7 @@ class ProcessMonitoring extends React.Component {
         opacity: 0.8
       });
       this.setState({loadingScreen: null});
-      NotificationManager.info("Dataset has been added the Layer Switcher, data is being loaded on the map...", 'Information', 10000);
+      // NotificationManager.info("Dataset has been added the Layer Switcher, data is being loaded on the map...", 'Information', 10000);
     }
   }
 

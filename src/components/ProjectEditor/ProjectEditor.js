@@ -62,6 +62,8 @@ export class ProjectEditor extends React.Component {
   _onSaveProject(event, value){
     this.props.projectAPIActions.updateProject({
       id: this.props.project.currentProject.id,
+      owner: this.props.project.currentProject.owner,
+      magpieId: this.props.project.currentProject.magpieId,
       name: this.state.projectName,
       description: this.state.projectDescription,
     });
@@ -112,6 +114,7 @@ export class ProjectEditor extends React.Component {
             {
               this.props.project.currentProject.permissions.map((permission, i) =>
                 <Checkbox
+                  className="cy-project-permission-cb"
                   disabled
                   label={permission.toUpperCase()}
                   checked={true} />
