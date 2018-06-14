@@ -1,20 +1,21 @@
-import React from 'react'
+import React from 'react';
+import PropTypes from 'prop-types';
 import classes from './ProjectShare.scss';
 import ConfirmDialog from './../../components/ConfirmDialog';
-import Paper from 'material-ui/Paper';
-import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
-import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
-import Checkbox from 'material-ui/Checkbox';
-import Subheader from 'material-ui/Subheader';
+import Paper from'@material-ui/core/Paper';
+import Button from'@material-ui/core/Button';
+import TextField from'@material-ui/core/TextField';
+import {Radio, RadioGroup} from'@material-ui/core/Radio';
+import Select from'@material-ui/core/Select';
+import MenuItem from'@material-ui/core/MenuItem';
+import Checkbox from'@material-ui/core/Checkbox';
+import ListSubheader from'@material-ui/core/ListSubheader';
 
 export class ProjectShare extends React.Component {
   static propTypes = {
-    project: React.PropTypes.object.isRequired,
-    projectAPIActions: React.PropTypes.object.isRequired,
-    sessionManagement: React.PropTypes.object.isRequired,
+    project: PropTypes.object.isRequired,
+    projectAPIActions: PropTypes.object.isRequired,
+    sessionManagement: PropTypes.object.isRequired,
   };
 
   constructor(props) {
@@ -100,22 +101,22 @@ export class ProjectShare extends React.Component {
         <Paper style={{marginTop: 20}}>
           <div className="container">
             <h4>Share to</h4>
-            <RadioButtonGroup
+            <RadioGroup
               name="type"
               defaultSelected={this.state.type}
               style={{marginTop: '15px'}}
               onChange={(event, value) => {this.onUpdateStateKey('type', value)}}>
-              <RadioButton
+              <Radio
                 id="cy-share-type-user-rb"
                 value="user"
                 label="User"
               />
-              <RadioButton
+              <Radio
                 id="cy-share-type-group-rb"
                 value="group"
                 label="Group users"
               />
-            </RadioButtonGroup>
+            </RadioGroup>
             {
               (this.state.type === 'user')?
               <TextField
@@ -125,7 +126,7 @@ export class ProjectShare extends React.Component {
                 onChange={(event, value) => this.onUpdateStateKey('user', value)}
                 hintText="Username"
                 floatingLabelText="Define username" />:
-              <SelectField
+              <Select
                 id="cy-group-selector"
                 fullWidth
                 value={this.state.group}
@@ -141,7 +142,7 @@ export class ProjectShare extends React.Component {
                       primaryText={group} />
                   );
                 })}
-              </SelectField>
+              </Select>
             }
             <h4>Project permissions to be shared</h4>
             <Checkbox
@@ -158,7 +159,7 @@ export class ProjectShare extends React.Component {
           </div>
         </Paper>
 
-        <RaisedButton
+        <Button variant="contained"
           id="cy-share-project-btn"
           onClick={() => this.onShareProject()}
           label="Share project"

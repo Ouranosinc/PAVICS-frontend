@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import PropTypes from 'prop-types';
 import style from './Panel.scss'
 class Panel extends React.Component {
   render()

@@ -1,22 +1,21 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import moment from 'moment';
 import { NotificationManager } from 'react-notifications';
 import classes from './ProjectSearchCriterias.scss';
 import * as constants from '../../constants';
 import Pagination from './../../components/Pagination';
-import {List, ListItem} from 'material-ui/List';
-import {grey400, darkBlack} from 'material-ui/styles/colors';
-import Subheader from 'material-ui/Subheader';
-import Paper from 'material-ui/Paper';
-import IconMenu from 'material-ui/IconMenu';
-import MenuItem from 'material-ui/MenuItem';
-import IconButton from 'material-ui/IconButton';
-import Remove from 'material-ui/svg-icons/action/delete';
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-import AddedCriterias from 'material-ui/svg-icons/image/add-to-photos';
-import Relaunch from 'material-ui/svg-icons/action/youtube-searched-for';
-import Rename from 'material-ui/svg-icons/image/edit';
-import Restore from 'material-ui/svg-icons/action/restore-page';
+import {List, ListItem} from'@material-ui/core/List';
+import ListSubheader from'@material-ui/core/ListSubheader';
+import Paper from'@material-ui/core/Paper';
+// import IconMenu from'@material-ui/core/IconMenu';
+import MenuItem from'@material-ui/core/MenuItem';
+import IconButton from'@material-ui/core/IconButton';
+import Remove from '@material-ui/icons/Delete';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import AddedCriterias from '@material-ui/icons/AddToPhotos';
+import Relaunch from '@material-ui/icons/YoutubeSearchedFor';
+import Restore from '@material-ui/icons/RestorePage';
 
 export class ProjectSearchCriterias extends React.Component {
   static propTypes = {
@@ -87,7 +86,7 @@ export class ProjectSearchCriterias extends React.Component {
       <div id="cy-project-search-criterias" className={classes['ProjectSearchCriterias']}>
         <Paper style={{marginTop: 20}}>
           <List>
-            <Subheader>Manage search criteria(s)</Subheader>
+            <ListSubheader>Manage search criteria(s)</ListSubheader>
             {criteriasPaginated.map((research, index) => {
               return (
                 <ListItem
@@ -96,7 +95,7 @@ export class ProjectSearchCriterias extends React.Component {
                   primaryText={research.name}
                   secondaryText={
                     <p>
-                      <span style={{color: darkBlack}}>{research.results.length} results on {moment(research.createdOn).format(constants.PAVICS_DATE_FORMAT)}</span><br />
+                      <span>{research.results.length} results on {moment(research.createdOn).format(constants.PAVICS_DATE_FORMAT)}</span><br />
                       <strong>Facets: </strong>
                       <span>
                         {
@@ -109,21 +108,20 @@ export class ProjectSearchCriterias extends React.Component {
                   }
                   secondaryTextLines={2}
                   leftIcon={<AddedCriterias />}
-                  rightIconButton={
+                  /*rightIconButton={
                     <IconMenu iconButtonElement={
                       <IconButton
                         className="cy-actions-btn"
                         touch={true}
                         tooltip="Actions"
                         tooltipPosition="bottom-left">
-                        <MoreVertIcon color={grey400} />
+                        <MoreVertIcon />
                       </IconButton>}>
-                      {/*<MenuItem id="cy-rename-item" primaryText="Rename (TODO)" onTouchTap={(event) => alert('rename ' + research.name)} leftIcon={<Rename />} />*/}
                       <MenuItem id="cy-restore-item" primaryText="Restore results" onTouchTap={(event) => this._onRestoreSearchCriteria(research)} leftIcon={<Restore />} />
                       <MenuItem id="cy-relaunch-item" primaryText="Relaunch search" onTouchTap={(event) => this._onRelaunchSearch(research)} leftIcon={<Relaunch />} />
                       <MenuItem id="cy-remove-item" primaryText="Remove" onTouchTap={(event) => this._onRemoveSearchCriteria(research)} leftIcon={<Remove />} />
                     </IconMenu>
-                  }
+                  }*/
                 />
               );
             })}

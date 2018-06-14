@@ -1,19 +1,20 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import * as classes from './InformationPanel.scss';
 import * as constants from './../../constants';
 import Loader from './../../components/Loader';
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
+import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from'@material-ui/core/Table';
 import {Alert} from 'react-bootstrap';
-import Paper from 'material-ui/Paper';
-import AppBar from 'material-ui/AppBar';
-import IconButton from 'material-ui/IconButton';
-import InfoIcon from 'material-ui/svg-icons/action/description';
-import MinimizeIcon from 'material-ui/svg-icons/content/remove';
+import Paper from'@material-ui/core/Paper';
+import AppBar from'@material-ui/core/AppBar';
+import IconButton from'@material-ui/core/IconButton';
+import InfoIcon from '@material-ui/icons/Description';
+import MinimizeIcon from '@material-ui/icons/Remove';
 
 export default class InformationPanel extends React.Component {
   static propTypes = {
-    onToggleMapPanel: React.PropTypes.func.isRequired,
-    currentScalarValue: React.PropTypes.object.isRequired
+    onToggleMapPanel: PropTypes.func.isRequired,
+    currentScalarValue: PropTypes.object.isRequired
   };
 
   constructor () {

@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
-import Checkbox from 'material-ui/Checkbox';
-import TextField from 'material-ui/TextField';
-import DatePicker from 'material-ui/DatePicker';
-import TimePicker from 'material-ui/TimePicker';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
+import PropTypes from 'prop-types';
+import Checkbox from'@material-ui/core/Checkbox';
+import TextField from'@material-ui/core/TextField';
+// import DatePicker from'@material-ui/core/DatePicker';
+// import TimePicker from'@material-ui/core/TimePicker';
+import Select from'@material-ui/core/Select';
+import MenuItem from'@material-ui/core/MenuItem';
 
 const {BOOLEAN, INPUT_DATETIME} = require('../../constants');
 
@@ -12,11 +13,11 @@ class WpsProcessFormInput extends Component {
 
   // value not marked as required because it can (somewhat) validly be undefined
   static propTypes = {
-    inputDefinition: React.PropTypes.object.isRequired,
-    uniqueIdentifier: React.PropTypes.string.isRequired,
-    handleChange: React.PropTypes.func.isRequired,
-    handleArrayChange: React.PropTypes.func.isRequired,
-    value: React.PropTypes.any
+    inputDefinition: PropTypes.object.isRequired,
+    uniqueIdentifier: PropTypes.string.isRequired,
+    handleChange: PropTypes.func.isRequired,
+    handleArrayChange: PropTypes.func.isRequired,
+    value: PropTypes.any
   };
 
   constructor (props) {
@@ -71,7 +72,7 @@ class WpsProcessFormInput extends Component {
     this.props.handleChange(event.target.value, this.props.uniqueIdentifier);
   };
 
-  handleSelectFieldChange = (event, key, payload) => {
+  handleSelectChange = (event, key, payload) => {
     this.props.handleChange(payload, this.props.uniqueIdentifier);
   };
 
@@ -105,7 +106,7 @@ class WpsProcessFormInput extends Component {
       return (
         <div style={{ padding: '15px 0 0' }} className="container">
           <div className="row">
-            <div className="col-sm-6">
+            {/*<div className="col-sm-6">
               <DatePicker
                 autoOk
                 value={this.state.dateTimeValues.date}
@@ -122,7 +123,7 @@ class WpsProcessFormInput extends Component {
                 onChange={this.handleTimeChange}
                 textFieldStyle={{ width: '100%' }}
                 format="24hr" />
-            </div>
+            </div>*/}
             <input value={this.props.value} name={this.props.inputDefinition.name} title={this.props.inputDefinition.title} type="hidden" />
           </div>
         </div>
@@ -134,12 +135,12 @@ class WpsProcessFormInput extends Component {
     if (this.props.inputDefinition.selectable) {
       return (
         <div>
-          <SelectField
+          <Select
             multiple
             fullWidth
             className="cy-workflow-input-select-field"
             value={this.props.value}
-            onChange={this.handleSelectFieldChange}
+            onChange={this.handleSelectChange}
             hintText={this.props.inputDefinition.description}
             floatingLabelText={this.props.inputDefinition.title}>
             {this.props.inputDefinition.allowedValues.map((value, i) => {
@@ -150,7 +151,7 @@ class WpsProcessFormInput extends Component {
                   primaryText={value} />
               );
             })}
-          </SelectField>
+          </Select>
           { this.props.value
             ? this.props.value.map(
               (selectedRegion, i) => <input key={i} type="hidden" name={this.props.inputDefinition.name} value={selectedRegion} />

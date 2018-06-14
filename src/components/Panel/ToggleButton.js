@@ -1,9 +1,10 @@
-import React from 'react'
+import React from 'react';
+import PropTypes from 'prop-types';
 import classes from './Panel.scss'
 export class ToggleButton extends React.Component {
   static propTypes = {
-    icon: React.PropTypes.string.isRequired,
-    onClick: React.PropTypes.func.isRequired
+    icon: PropTypes.string.isRequired,
+    onClick: PropTypes.func.isRequired
   };
 
   render() {

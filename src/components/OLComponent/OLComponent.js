@@ -1,6 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import classes from './OLComponent.scss';
-import Dialog from 'material-ui/Dialog';
+import Dialog from'@material-ui/core/Dialog';
 import * as constants from './../../constants';
 import myHttp from '../../util/http';
 import { NotificationManager } from 'react-notifications';
@@ -32,26 +33,26 @@ function getMaxPoly (polys) {
 
 class OLComponent extends React.Component {
   static propTypes = {
-    currentDateTime: React.PropTypes.string.isRequired,
-    mapManipulationMode: React.PropTypes.string.isRequired,
-    setCurrentDateTime: React.PropTypes.func.isRequired,
-    selectedRegions: React.PropTypes.array.isRequired,
-    selectedColorPalette: React.PropTypes.string.isRequired,
-    currentDisplayedDataset: React.PropTypes.object.isRequired,
-    selectedShapefile: React.PropTypes.object.isRequired,
-    selectedBasemap: React.PropTypes.string.isRequired,
-    selectedDatasetCapabilities: React.PropTypes.object.isRequired,
-    setSelectedDatasetCapabilities: React.PropTypes.func.isRequired,
-    selectRegion: React.PropTypes.func.isRequired,
-    unselectRegion: React.PropTypes.func.isRequired,
-    capabilities: React.PropTypes.object,
-    dataset: React.PropTypes.object,
-    layer: React.PropTypes.object.isRequired,
-    fetchWMSLayerDetails: React.PropTypes.func.isRequired,
-    fetchWMSLayerTimesteps: React.PropTypes.func.isRequired,
-    fetchPlotlyData: React.PropTypes.func.isRequired,
-    fetchScalarValue: React.PropTypes.func.isRequired,
-    testWMSGetMapPermission: React.PropTypes.func.isRequired,
+    currentDateTime: PropTypes.string.isRequired,
+    mapManipulationMode: PropTypes.string.isRequired,
+    setCurrentDateTime: PropTypes.func.isRequired,
+    selectedRegions: PropTypes.array.isRequired,
+    selectedColorPalette: PropTypes.string.isRequired,
+    currentDisplayedDataset: PropTypes.object.isRequired,
+    selectedShapefile: PropTypes.object.isRequired,
+    selectedBasemap: PropTypes.string.isRequired,
+    selectedDatasetCapabilities: PropTypes.object.isRequired,
+    setSelectedDatasetCapabilities: PropTypes.func.isRequired,
+    selectRegion: PropTypes.func.isRequired,
+    unselectRegion: PropTypes.func.isRequired,
+    capabilities: PropTypes.object,
+    dataset: PropTypes.object,
+    layer: PropTypes.object.isRequired,
+    fetchWMSLayerDetails: PropTypes.func.isRequired,
+    fetchWMSLayerTimesteps: PropTypes.func.isRequired,
+    fetchPlotlyData: PropTypes.func.isRequired,
+    fetchScalarValue: PropTypes.func.isRequired,
+    testWMSGetMapPermission: PropTypes.func.isRequired,
   };
 
   config = {

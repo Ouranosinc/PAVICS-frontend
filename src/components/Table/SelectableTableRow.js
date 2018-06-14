@@ -1,10 +1,12 @@
-import React from 'react'
+import React from 'react';
+import PropTypes from 'prop-types';
+
 class SelectableTableRow extends React.Component {
   static propTypes = {
-    fields: React.PropTypes.array.isRequired,
-    onChangeCb: React.PropTypes.func.isRequired,
-    value: React.PropTypes.string.isRequired,
-    checked: React.PropTypes.bool.isRequired,
+    fields: PropTypes.array.isRequired,
+    onChangeCb: PropTypes.func.isRequired,
+    value: PropTypes.string.isRequired,
+    checked: PropTypes.bool.isRequired,
   };
 
   render() {

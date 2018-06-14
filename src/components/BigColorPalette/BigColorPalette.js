@@ -1,6 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {Grid, Row, Col} from 'react-bootstrap';
-import TextField from 'material-ui/TextField';
+import TextField from'@material-ui/core/TextField';
 import * as classes from './BigColorPalette.scss';
 import * as constants from '../../constants';
 import {NotificationManager} from 'react-notifications';
@@ -28,8 +29,8 @@ on external changes
  */
 export default class BigColorPalette extends React.Component {
   static propTypes = {
-    variablePreference: React.PropTypes.object,
-    setVariablePreferenceBoundaries: React.PropTypes.func.isRequired
+    variablePreference: PropTypes.object,
+    setVariablePreferenceBoundaries: PropTypes.func.isRequired
   };
   constructor (props) {
     super(props);

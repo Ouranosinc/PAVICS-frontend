@@ -1,7 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import * as pavicsActions from './../modules/Pavics';
 import { actions as projectActions } from '../../../redux/modules/Project';
 import { actions as projectAPIActions } from '../../../redux/modules/ProjectAPI';
@@ -23,10 +24,10 @@ import { NotificationContainer, NotificationManager } from 'react-notifications'
 
 class Pavics extends React.Component {
   static propTypes = {
-    addDatasetsToVisualize: React.PropTypes.func.isRequired,
-    // chooseStep: React.PropTypes.func.isRequired,
-    goToSection: React.PropTypes.func.isRequired,
-    platform: React.PropTypes.object.isRequired
+    addDatasetsToVisualize: PropTypes.func.isRequired,
+    // chooseStep: PropTypes.func.isRequired,
+    goToSection: PropTypes.func.isRequired,
+    platform: PropTypes.object.isRequired
   };
 
   constructor(props) {

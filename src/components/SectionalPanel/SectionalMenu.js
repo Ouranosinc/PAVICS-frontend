@@ -1,20 +1,20 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import classes from './SectionalPanel.scss';
 import { NotificationManager } from 'react-notifications';
 import { Glyphicon } from 'react-bootstrap';
 import * as constants from './../../constants';
-import AccountCircleIcon from 'material-ui/svg-icons/action/account-circle';
-import AssignmentIcon from 'material-ui/svg-icons/action/assignment';
-import InputIcon from 'material-ui/svg-icons/action/input';
-import SearchIcon from 'material-ui/svg-icons/action/search';
-import {white} from 'material-ui/styles/colors';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import AssignmentIcon from '@material-ui/icons/Assignment';
+import InputIcon from '@material-ui/icons/Input';
+import SearchIcon from '@material-ui/icons/Search';
 
 class SectionalMenu extends React.Component {
   static propTypes = {
-    goToSection: React.PropTypes.func.isRequired,
-    section: React.PropTypes.string.isRequired,
-    sessionManagement: React.PropTypes.object.isRequired,
-    project: React.PropTypes.object.isRequired
+    goToSection: PropTypes.func.isRequired,
+    section: PropTypes.string.isRequired,
+    sessionManagement: PropTypes.object.isRequired,
+    project: PropTypes.object.isRequired
   };
   search = () => {
     if (constants.PLATFORM_SECTION_SEARCH_DATASETS !== this.props.section) {
@@ -100,15 +100,15 @@ class SectionalMenu extends React.Component {
         <nav id="cy-sectional-menu">
           <a id="cy-search-datasets" onClick={this.search} title="Search Datasets"
             className={(this.props.section === constants.PLATFORM_SECTION_SEARCH_DATASETS) ? classes['active'] : ''}>
-            <SearchIcon color={white} />
+            <SearchIcon />
           </a>
           <a id="cy-project-management" onClick={this.experience} title="Project Management"
-            className={(this.props.section === constants.PLATFORM_SECTION_PROJECT_MANAGEMENT) ? classes['active'] : ''}>
-            <AssignmentIcon color={white} />
+            className={(this.props.section === constants.PLATFORM_SECTION_PROJECT_MANAGEMENFT) ? classes['active'] : ''}>
+            <AssignmentIcon />
           </a>
           <a id="cy-data-processing"onClick={this.workflows} title="Data Processing"
             className={(this.props.section === constants.PLATFORM_SECTION_WORKFLOWS) ? classes['active'] : ''}>
-            <InputIcon color={white} />
+            <InputIcon />
           </a>
           <a id="cy-process-monitoring"onClick={this.monitor} title="Processes Monitoring"
             className={(this.props.section === constants.PLATFORM_SECTION_MONITOR) ? classes['active'] : ''}>
@@ -116,7 +116,7 @@ class SectionalMenu extends React.Component {
           </a>
           <a id="cy-account-management" onClick={this.account} title="Account Management"
             className={(this.props.section === constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT) ? classes['active'] : ''}>
-            <AccountCircleIcon color={white} />
+            <AccountCircleIcon />
           </a>
         </nav>
       </div>

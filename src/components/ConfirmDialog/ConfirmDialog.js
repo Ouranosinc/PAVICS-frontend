@@ -1,14 +1,15 @@
 import React from 'react';
-import RaisedButton from 'material-ui/RaisedButton';
-import Dialog from 'material-ui/Dialog';
+import PropTypes from 'prop-types';
+import Button from'@material-ui/core/Button';
+import Dialog from'@material-ui/core/Dialog';
 
 export class ConfirmDialog extends React.Component {
   static propTypes = {
-    isOpen: React.PropTypes.bool.isRequired,
-    affectedResource: React.PropTypes.object.isRequired,
-    onDialogConfirmed: React.PropTypes.func.isRequired,
-    onCloseDialog: React.PropTypes.func.isRequired,
-    dialogContent: React.PropTypes.string.isRequired,
+    isOpen: PropTypes.bool.isRequired,
+    affectedResource: PropTypes.object.isRequired,
+    onDialogConfirmed: PropTypes.func.isRequired,
+    onCloseDialog: PropTypes.func.isRequired,
+    dialogContent: PropTypes.string.isRequired,
   };
 
   constructor(props) {
@@ -23,13 +24,13 @@ export class ConfirmDialog extends React.Component {
       open={this.props.isOpen}
       onRequestClose={() => this.props.onCloseDialog()}
       actions={[
-        <RaisedButton
+        <Button variant="contained"
           id="cy-confirm-cancel-btn"
           label="Cancel"
           keyboardFocused={false}
           onTouchTap={() => this.props.onCloseDialog()}
         />,
-        <RaisedButton
+        <Button variant="contained"
           id="cy-confirm-ok-btn"
           label="OK"
           primary={true}

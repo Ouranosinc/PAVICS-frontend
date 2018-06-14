@@ -1,35 +1,36 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Loader from './../../components/Loader';
 import { NotificationManager } from 'react-notifications';
 import SearchCatalogResults from './../../components/SearchCatalogResults';
 import CriteriaSelection from './../../components/CriteriaSelection';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
-import Paper from 'material-ui/Paper';
+import Select from'@material-ui/core/Select';
+import MenuItem from'@material-ui/core/MenuItem';
+import Paper from'@material-ui/core/Paper';
 import { Row, Col } from 'react-bootstrap';
-import Subheader from 'material-ui/Subheader';
-import {List} from 'material-ui/List';
-import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
-import RefreshIcon from 'material-ui/svg-icons/navigation/refresh';
-import SaveIcon from 'material-ui/svg-icons/content/save';
+import ListSubheader from'@material-ui/core/ListSubheader';
+import {List} from'@material-ui/core/List';
+import Button from'@material-ui/core/Button';
+import TextField from'@material-ui/core/TextField';
+import RefreshIcon from '@material-ui/icons/Refresh';
+import SaveIcon from '@material-ui/icons/Save';
 
 export class SearchCatalog extends React.Component {
   static propTypes = {
-    currentProjectSearchCriterias: React.PropTypes.array.isRequired,
-    clickTogglePanel: React.PropTypes.func.isRequired,
-    addSearchCriteriasToProject: React.PropTypes.func.isRequired,
-    addDatasetsToProject: React.PropTypes.func.isRequired,
-    project: React.PropTypes.object.isRequired,
-    projectActions: React.PropTypes.object.isRequired,
-    projectAPI: React.PropTypes.object.isRequired,
-    projectAPIActions: React.PropTypes.object.isRequired,
-    sessionManagement: React.PropTypes.object.isRequired,
-    research: React.PropTypes.object.isRequired,
-    researchActions: React.PropTypes.object.isRequired,
-    researchAPI: React.PropTypes.object.isRequired,
-    researchAPIActions: React.PropTypes.object.isRequired,
-    panelControls: React.PropTypes.object.isRequired
+    currentProjectSearchCriterias: PropTypes.array.isRequired,
+    clickTogglePanel: PropTypes.func.isRequired,
+    addSearchCriteriasToProject: PropTypes.func.isRequired,
+    addDatasetsToProject: PropTypes.func.isRequired,
+    project: PropTypes.object.isRequired,
+    projectActions: PropTypes.object.isRequired,
+    projectAPI: PropTypes.object.isRequired,
+    projectAPIActions: PropTypes.object.isRequired,
+    sessionManagement: PropTypes.object.isRequired,
+    research: PropTypes.object.isRequired,
+    researchActions: PropTypes.object.isRequired,
+    researchAPI: PropTypes.object.isRequired,
+    researchAPIActions: PropTypes.object.isRequired,
+    panelControls: PropTypes.object.isRequired
   };
 
   state = {
@@ -140,7 +141,7 @@ export class SearchCatalog extends React.Component {
             (this.props.research.facets.length === 0) ?
               (<Paper style={{marginTop: 20}}>
                 <List>
-                  <Subheader id="cy-search-no-facets">No facets found.</Subheader>
+                  <ListSubheader id="cy-search-no-facets">No facets found.</ListSubheader>
                 </List>
               </Paper>)
               : (
@@ -148,7 +149,7 @@ export class SearchCatalog extends React.Component {
                 <div className="container" id="cy-search-facets">
                   <Row>
                     <Col sm={12} md={6} lg={6}>
-                      <SelectField
+                      <Select
                         id="cy-load-criterias-sf"
                         style={{width: '95%'}}
                         fullWidth={true}
@@ -160,20 +161,20 @@ export class SearchCatalog extends React.Component {
                             return <MenuItem key={i} value={search.id} primaryText={search.name}/>;
                           })
                         }
-                      </SelectField>
+                      </Select>
                     </Col>
                     {/*<Col sm={12} md={4} lg={4}>
-                     <SelectField
+                     <Select
                      style={{width: '95%'}}
                      value={this.state.type}
                      floatingLabelText="Type"
                      onChange={(event, index, value) => this._onChangeSearchType(value)}>
                      <MenuItem value="Aggregate" primaryText="Dataset" />
                      <MenuItem value="FileAsAggregate" primaryText="File" />
-                     </SelectField>
+                     </Select>
                      </Col>*/}
                     <Col sm={12} md={6} lg={6}>
-                      <SelectField
+                      <Select
                         id="cy-add-criteria-sf"
                         style={{width: '95%'}}
                         floatingLabelText="Add additional criteria"
@@ -186,7 +187,7 @@ export class SearchCatalog extends React.Component {
                               : <MenuItem id={`cy-add-criteria-${x.key}`}key={i} value={x.key} primaryText={x.key}/>;
                           })
                         }
-                      </SelectField>
+                      </Select>
                     </Col>
                   </Row>
                   <Row style={{marginBottom: 15}}>
@@ -213,14 +214,14 @@ export class SearchCatalog extends React.Component {
                 </div>
               </Paper>)
           }
-          <RaisedButton
+          <Button variant="contained"
             id="cy-save-criterias-btn"
             onClick={this._SaveCriterias}
             label="Save search criteria(s)"
             icon={<SaveIcon />}
             disabled={!this.props.research.selectedFacets.length}
             style={{marginTop: 20}}/>
-          <RaisedButton
+          <Button variant="contained"
             id="cy-reset-criterias-btn"
             onClick={this._ResetCriterias}
             label="Reset"

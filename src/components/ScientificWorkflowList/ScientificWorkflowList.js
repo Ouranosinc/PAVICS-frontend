@@ -1,22 +1,22 @@
 import React, { Component } from 'react';
-import Paper from 'material-ui/Paper';
-import CircularProgress from 'material-ui/CircularProgress';
-import { List, ListItem } from 'material-ui/List';
-import IconMenu from 'material-ui/IconMenu';
-import MenuItem from 'material-ui/MenuItem';
-import IconButton from 'material-ui/IconButton';
-import { grey400 } from 'material-ui/styles/colors';
-import Dialog from 'material-ui/Dialog';
-import RaisedButton from 'material-ui/RaisedButton';
-import Remove from 'material-ui/svg-icons/action/delete';
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-import Create from 'material-ui/svg-icons/content/create';
-import Build from 'material-ui/svg-icons/action/build';
-import DeviceHub from 'material-ui/svg-icons/hardware/device-hub';
+import PropTypes from 'prop-types';
+import Paper from'@material-ui/core/Paper';
+import CircularProgress from'@material-ui/core/CircularProgress';
+import { List, ListItem } from'@material-ui/core/List';
+// import IconMenu from'@material-ui/core/IconMenu';
+import MenuItem from'@material-ui/core/MenuItem';
+import IconButton from'@material-ui/core/IconButton';
+import Dialog from'@material-ui/core/Dialog';
+import Button from'@material-ui/core/Button';
+import Remove from '@material-ui/icons/Delete';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Create from '@material-ui/icons/Create';
+import Build from '@material-ui/icons/Build';
+import DeviceHub from '@material-ui/icons/DeviceHub';
 import Pagination from '../Pagination';
 import * as constants from '../../constants';
 import ConfirmDialog from './../../components/ConfirmDialog';
-import TextField from 'material-ui/TextField';
+import TextField from'@material-ui/core/TextField';
 import ScientificWorkflowTextInput from './../../components/ScientificWorkflowTextInput';
 
 const style = {
@@ -27,10 +27,10 @@ const style = {
 const WORKFLOW_PER_PAGE_INITIAL_INDEX = 1;
 export default class ScientificWorkflowList extends Component {
   static propTypes = {
-    project: React.PropTypes.object.isRequired,
-    workflowAPI: React.PropTypes.object.isRequired,
-    workflowAPIActions: React.PropTypes.object.isRequired,
-    goToConfigureAndRunStep: React.PropTypes.func.isRequired
+    project: PropTypes.object.isRequired,
+    workflowAPI: PropTypes.object.isRequired,
+    workflowAPIActions: PropTypes.object.isRequired,
+    goToConfigureAndRunStep: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -132,20 +132,20 @@ export default class ScientificWorkflowList extends Component {
                         style={{width: '98%'}}
                         primaryText={workflow.json.name || workflow.json}
                         leftIcon={<DeviceHub />} key={i}
-                        rightIconButton={
+                        /*rightIconButton={
                           <IconMenu iconButtonElement={
                             <IconButton
                               className="cy-actions-btn"
                               touch={true}
                               tooltip="Actions"
                               tooltipPosition="bottom-left">
-                              <MoreVertIcon color={grey400} />
+                              <MoreVertIcon />
                             </IconButton>}>
                             <MenuItem id="cy-configure-run-item" leftIcon={<Build />} onTouchTap={() => this._onRunWorkflowClicked(workflow)}>Configure & Run</MenuItem>
                             <MenuItem id="cy-edit-item" leftIcon={<Create />} onTouchTap={() => this._onEditWorkflowClicked(workflow)}>Edit</MenuItem>
                             <MenuItem id="cy-delete-item" leftIcon={<Remove />} onTouchTap={() => {this._onOpenConfirmWorkflowDeletionDialog(workflow)}}>Delete</MenuItem>
                             </IconMenu>
-                        }/>
+                        }*//>
                       </div>
                   );
                 })
@@ -173,13 +173,13 @@ export default class ScientificWorkflowList extends Component {
               open={this.state.isEditionDialogOpened}
               onRequestClose={this._onCloseEditionDialog}
               actions={[
-                <RaisedButton
+                <Button variant="contained"
                   id="cy-confirm-cancel-btn"
                   label="Cancel"
                   keyboardFocused={false}
                   onTouchTap={this._onCloseEditionDialog}
                 />,
-                <RaisedButton
+                <Button variant="contained"
                   id="cy-confirm-save-btn"
                   label="Save"
                   primary={true}

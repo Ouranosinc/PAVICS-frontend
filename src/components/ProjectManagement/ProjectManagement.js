@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import classes from './ProjectManagement.scss';
 import ProjectShare from './../../components/ProjectShare';
 import ProjectCreation from './../../components/ProjectCreation';
@@ -6,7 +7,7 @@ import ProjectDatasets from './../../components/ProjectDatasets';
 import ProjectSearchCriterias from './../../components/ProjectSearchCriterias';
 import ProjectSelector from './../../components/ProjectSelector';
 import ProjectEditor from './../../components/ProjectEditor';
-import { Tabs, Tab } from 'material-ui/Tabs';
+import { Tabs, Tab } from'@material-ui/core/Tabs';
 
 const CURRENT_PROJECT_TAB_VALUE = "CURRENT_PROJECT_TAB_VALUE";
 const CREATE_PROJECT_TAB_VALUE = "CREATE_PROJECT_TAB_VALUE";
@@ -14,19 +15,19 @@ const SHARE_PROJECT_TAB_VALUE = "SHARE_PROJECT_TAB_VALUE";
 
 export class ProjectManagement extends React.Component {
   static propTypes = {
-    project: React.PropTypes.object.isRequired,
-    projectActions: React.PropTypes.object.isRequired,
-    projectAPI: React.PropTypes.object.isRequired,
-    projectAPIActions: React.PropTypes.object.isRequired,
-    researchActions: React.PropTypes.object.isRequired,
-    currentProjectDatasets: React.PropTypes.array.isRequired,
-    currentProjectSearchCriterias: React.PropTypes.array.isRequired,
-    currentVisualizedDatasets: React.PropTypes.array.isRequired,
-    addDatasetsToVisualize: React.PropTypes.func.isRequired,
-    removeSearchCriteriasFromProject: React.PropTypes.func.isRequired,
-    selectCurrentDisplayedDataset: React.PropTypes.func.isRequired,
-    goToSection: React.PropTypes.func.isRequired,
-    sessionManagement: React.PropTypes.object.isRequired,
+    project: PropTypes.object.isRequired,
+    projectActions: PropTypes.object.isRequired,
+    projectAPI: PropTypes.object.isRequired,
+    projectAPIActions: PropTypes.object.isRequired,
+    researchActions: PropTypes.object.isRequired,
+    currentProjectDatasets: PropTypes.array.isRequired,
+    currentProjectSearchCriterias: PropTypes.array.isRequired,
+    currentVisualizedDatasets: PropTypes.array.isRequired,
+    addDatasetsToVisualize: PropTypes.func.isRequired,
+    removeSearchCriteriasFromProject: PropTypes.func.isRequired,
+    selectCurrentDisplayedDataset: PropTypes.func.isRequired,
+    goToSection: PropTypes.func.isRequired,
+    sessionManagement: PropTypes.object.isRequired,
   };
   constructor (props) {
     super(props);

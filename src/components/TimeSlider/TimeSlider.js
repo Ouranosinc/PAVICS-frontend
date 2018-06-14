@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as constants from '../../constants';
 require('rc-slider/assets/index.css');
@@ -6,23 +7,21 @@ import moment from 'moment';
 import classes from './TimeSlider.scss';
 import Slider  from 'rc-slider';
 import { Col, Row} from 'react-bootstrap'
-import Paper from 'material-ui/Paper';
-import AppBar from 'material-ui/AppBar';
-import Divider from 'material-ui/Divider';
-import Subheader from 'material-ui/Subheader';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
-import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
-import IconButton from 'material-ui/IconButton';
-import AccessTimeIcon from 'material-ui/svg-icons/device/access-time';
-import PlayIcon from 'material-ui/svg-icons/av/play-arrow';
-import PauseIcon from 'material-ui/svg-icons/av/pause';
-import ForwardIcon from 'material-ui/svg-icons/av/skip-next';
-import BackwardIcon from 'material-ui/svg-icons/av/skip-previous';
-import FastForwardIcon from 'material-ui/svg-icons/av/fast-forward';
-import FastBackwardIcon from 'material-ui/svg-icons/av/fast-rewind';
-import MinimizeIcon from 'material-ui/svg-icons/content/remove';
+import Paper from'@material-ui/core/Paper';
+import AppBar from'@material-ui/core/AppBar';
+import Select from'@material-ui/core/Select';
+import MenuItem from'@material-ui/core/MenuItem';
+import Button from'@material-ui/core/Button';
+import TextField from'@material-ui/core/TextField';
+import IconButton from'@material-ui/core/IconButton';
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
+import PlayIcon from '@material-ui/icons/PlayArrow';
+import PauseIcon from '@material-ui/icons/Pause';
+import ForwardIcon from '@material-ui/icons/SkipNext';
+import BackwardIcon from '@material-ui/icons/SkipPrevious';
+import FastForwardIcon from '@material-ui/icons/FastForward';
+import FastBackwardIcon from '@material-ui/icons/FastRewind';
+import MinimizeIcon from '@material-ui/icons/Remove';
 
 /* Constants */
 const DIVIDER = 100000;
@@ -71,16 +70,16 @@ const DEFAULT_STATE = {
 export class TimeSlider extends React.Component {
   static propTypes = {
     // Not sure why monthsRange and yearsRange, but maybe for future range selection?
-    monthsRange: React.PropTypes.bool.isRequired,
-    yearsRange: React.PropTypes.bool.isRequired,
-    currentDateTime: React.PropTypes.string.isRequired,
-    currentDisplayedDataset: React.PropTypes.object.isRequired,
-    selectedDatasetCapabilities: React.PropTypes.object.isRequired,
-    selectedWMSLayerDetails: React.PropTypes.object.isRequired,
-    selectedWMSLayerTimesteps: React.PropTypes.object.isRequired,
-    setCurrentDateTime: React.PropTypes.func.isRequired,
-    selectCurrentDisplayedDataset: React.PropTypes.func.isRequired,
-    onToggleMapPanel: React.PropTypes.func.isRequired
+    monthsRange: PropTypes.bool.isRequired,
+    yearsRange: PropTypes.bool.isRequired,
+    currentDateTime: PropTypes.string.isRequired,
+    currentDisplayedDataset: PropTypes.object.isRequired,
+    selectedDatasetCapabilities: PropTypes.object.isRequired,
+    selectedWMSLayerDetails: PropTypes.object.isRequired,
+    selectedWMSLayerTimesteps: PropTypes.object.isRequired,
+    setCurrentDateTime: PropTypes.func.isRequired,
+    selectCurrentDisplayedDataset: PropTypes.func.isRequired,
+    onToggleMapPanel: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -446,7 +445,7 @@ export class TimeSlider extends React.Component {
                 floatingLabelText="Current Date" />
             </Col>
             <Col md={4} lg={4}>
-              <SelectField
+              <Select
                 disabled={this.state.disabled}
                 value={this.state.currentTime}
                 fullWidth={true}
@@ -457,7 +456,7 @@ export class TimeSlider extends React.Component {
                   this.state.timesteps.map((x) => {return <MenuItem key={x} value={x} primaryText={x.substring(0, 8)} />; }) :
                   <MenuItem value="00:00:00.000Z" primaryText="00:00:00" />
                 }
-              </SelectField>
+              </Select>
             </Col>
             <Col md={4} lg={4}>
               <TextField
@@ -530,7 +529,7 @@ export class TimeSlider extends React.Component {
                 floatingLabelText="Timestep Length" />
             </Col>
             <Col md={4} lg={4}>
-              <SelectField
+              <Select
                 disabled={this.state.disabled}
                 value={this.state.stepGranularity}
                 fullWidth={true}
@@ -541,10 +540,10 @@ export class TimeSlider extends React.Component {
                 <MenuItem value={DAY_VALUE} primaryText="Day(s)" />
                 <MenuItem value={MONTH_VALUE} primaryText="Month(s)" />
                 <MenuItem value={YEAR_VALUE} primaryText="Year(s)" />
-              </SelectField>
+              </Select>
             </Col>
             <Col md={4} lg={4}>
-              <SelectField
+              <Select
                 disabled={this.state.disabled}
                 value={this.state.stepSpeed}
                 fullWidth={true}
@@ -554,42 +553,42 @@ export class TimeSlider extends React.Component {
                 <MenuItem value={5000} primaryText="Slow (5 seconds)" />
                 <MenuItem value={3000} primaryText="Medium (3 seconds)" />
                 <MenuItem value={1000} primaryText="Fast (Every second)" />
-              </SelectField>
+              </Select>
             </Col>
           </Row>
           <Row>
             <Col sm={12}>
-              <RaisedButton
+              <Button variant="contained"
                 disabled={(this.state.minDatetime === this.props.currentDateTime) || this.state.disabled || this.state.isPlaying}
                 primary={true}
                 icon={<FastBackwardIcon />}
                 style={{margin: '0 5px 0 5px', width: '13%'}}
                 onClick={this._onClickedStepControls.bind(this, FAST_BACKWARD_ACTION)} />
-              <RaisedButton
+              <Button variant="contained"
                 disabled={(this.state.minDatetime === this.props.currentDateTime) || this.state.disabled || this.state.isPlaying}
                 primary={true}
                 icon={<BackwardIcon />}
                 style={{margin: '0 5px 0 5px', width: '13%'}}
                 onClick={this._onClickedStepControls.bind(this, STEP_BACKWARD_ACTION)} />
-              <RaisedButton
+              <Button variant="contained"
                 disabled={this.state.disabled|| this.state.isPlaying}
                 primary={true}
                 icon={<PlayIcon />}
                 style={{margin: '0 5px 0 5px', width: '19%'}}
                 onClick={this._onClickedStepControls.bind(this, PLAY_ACTION)} />
-              <RaisedButton
+              <Button variant="contained"
                 disabled={this.state.disabled || !this.state.isPlaying}
                 primary={true}
                 icon={<PauseIcon />}
                 style={{margin: '0 5px 0 5px', width: '19%'}}
                 onClick={this._onClickedStepControls.bind(this, PAUSE_ACTION)} />
-              <RaisedButton
+              <Button variant="contained"
                 disabled={(this.state.maxDatetime === this.props.currentDateTime) || this.state.disabled || this.state.isPlaying}
                 primary={true}
                 icon={<ForwardIcon />}
                 style={{margin: '0 5px 0 5px', width: '13%'}}
                 onClick={this._onClickedStepControls.bind(this, STEP_FORWARD_ACTION)} />
-              <RaisedButton
+              <Button variant="contained"
                 disabled={(this.state.maxDatetime === this.props.currentDateTime) || this.state.disabled || this.state.isPlaying}
                 primary={true}
                 icon={<FastForwardIcon />}

@@ -1,16 +1,17 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import classes from './SectionalPanel.scss';
 import { SectionalMenu, SectionalContent } from './.';
 
 class SectionalPanel extends React.Component {
   static propTypes = {
-    goToSection: React.PropTypes.func.isRequired,
-    section: React.PropTypes.string.isRequired,
-    currentContent: React.PropTypes.object,
-    currentTitle: React.PropTypes.string.isRequired,
-    showContent: React.PropTypes.bool.isRequired,
-    sessionManagement: React.PropTypes.object.isRequired,
-    project: React.PropTypes.object.isRequired,
+    goToSection: PropTypes.func.isRequired,
+    section: PropTypes.string.isRequired,
+    currentContent: PropTypes.object,
+    currentTitle: PropTypes.string.isRequired,
+    showContent: PropTypes.bool.isRequired,
+    sessionManagement: PropTypes.object.isRequired,
+    project: PropTypes.object.isRequired,
   };
 
   render () {

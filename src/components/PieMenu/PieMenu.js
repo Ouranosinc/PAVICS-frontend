@@ -1,12 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import * as constants from './../../constants';
 import classes from './PieMenu.scss';
-import AccessTimeIcon from 'material-ui/svg-icons/device/access-time';
-import ChartIcon from 'material-ui/svg-icons/action/timeline';
-import LayersIcon from 'material-ui/svg-icons/maps/layers';
-import MapControlsIcon from 'material-ui/svg-icons/maps/my-location';
-import InfoIcon from 'material-ui/svg-icons/action/description';
-import {white} from 'material-ui/styles/colors';
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
+import ChartIcon from '@material-ui/icons/Timeline';
+import LayersIcon from '@material-ui/icons/Layers';
+import MapControlsIcon from '@material-ui/icons/MyLocation';
+import InfoIcon from '@material-ui/icons/Description';
 
 const customSvgStyle = {
   'height': '70px',
@@ -16,8 +16,8 @@ const customSvgStyle = {
 
 export class PieMenu extends React.Component {
   static propTypes = {
-    mapPanelStatus: React.PropTypes.object.isRequired,
-    onToggleMapPanel: React.PropTypes.func.isRequired
+    mapPanelStatus: PropTypes.object.isRequired,
+    onToggleMapPanel: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -63,26 +63,26 @@ export class PieMenu extends React.Component {
               <a href="#" onClick={this._toggleInfoPanel} title="Toggle Point Informations"
                  className={this.props.mapPanelStatus[constants.VISUALIZE_INFO_PANEL] ? classes['IsOpen'] : ''}>
                 <span id="cy-menu-point-info-toggle2">
-                  <InfoIcon color={white} style={customSvgStyle} />
+                  <InfoIcon style={customSvgStyle} />
                 </span>
               </a>
             </li>
             <li id="cy-menu-time-series-toggle">
               <a href="#" onClick={this._toggleChartPanel} title="Toggle Time Series Chart"
                  className={this.props.mapPanelStatus[constants.VISUALIZE_CHART_PANEL] ? classes['IsOpen'] : ''}>
-                <ChartIcon color={white} style={customSvgStyle} />
+                <ChartIcon style={customSvgStyle} />
               </a>
             </li>
             <li id="cy-menu-layer-switcher-toggle">
               <a href="#" onClick={this._toggleLayerSwitcherPanel} title="Toggle Layer Switcher"
                  className={this.props.mapPanelStatus[constants.VISUALIZE_LAYER_SWITCHER_PANEL] ? classes['IsOpen'] : ''}>
-                <LayersIcon color={white} style={customSvgStyle} />
+                <LayersIcon style={customSvgStyle} />
               </a>
             </li>
             <li id="cy-menu-temporal-slider-toggle">
               <a href="#" onClick={this._toggleTimeSliderPanel} title="Toggle Temporal Slider"
                  className={this.props.mapPanelStatus[constants.VISUALIZE_TIME_SLIDER_PANEL] ? classes['IsOpen'] : ''}>
-                <AccessTimeIcon color={white} style={customSvgStyle} />
+                <AccessTimeIcon style={customSvgStyle} />
               </a>
             </li>
             <li id="cy-menu-map-controls-toggle">

@@ -1,26 +1,27 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { NotificationManager } from 'react-notifications';
-import {Stepper, Step, StepLabel, StepContent} from 'material-ui/Stepper';
+import {Stepper, Step, StepLabel, StepContent} from'@material-ui/core/Stepper';
 import WpsProviderSelector from './../../components/WpsProviderSelector';
 import WpsProcessSelector from './../../components/WpsProcessSelector';
 import WpsProcessDetails from './../../components/WpsProcessDetails';
 import WpsProcessForm from './../../components/WpsProcessForm';
-import RaisedButton from 'material-ui/RaisedButton';
-import BackIcon from 'material-ui/svg-icons/navigation/arrow-back';
+import Button from'@material-ui/core/Button';
+import BackIcon from '@material-ui/icons/ArrowBack';
 import myHttp from '../../util/http';
 
 const FORM_PROCESS_ID = 'form-individual-process';
 
 export default class WorkflowWizardStepper extends React.Component {
   static propTypes = {
-    goToSection: React.PropTypes.func.isRequired,
-    jobAPIActions: React.PropTypes.object.isRequired,
-    project: React.PropTypes.object.isRequired,
-    selectedShapefile: React.PropTypes.object.isRequired,
-    currentDisplayedDataset: React.PropTypes.object.isRequired,
-    selectedRegions: React.PropTypes.array.isRequired,
-    workflow: React.PropTypes.object.isRequired,
-    workflowActions: React.PropTypes.object.isRequired
+    goToSection: PropTypes.func.isRequired,
+    jobAPIActions: PropTypes.object.isRequired,
+    project: PropTypes.object.isRequired,
+    selectedShapefile: PropTypes.object.isRequired,
+    currentDisplayedDataset: PropTypes.object.isRequired,
+    selectedRegions: PropTypes.array.isRequired,
+    workflow: PropTypes.object.isRequired,
+    workflowActions: PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -102,7 +103,7 @@ export default class WorkflowWizardStepper extends React.Component {
             <span style={innerStyleStepLabel}>{(this.props.workflow.selectedProcess && this.props.workflow.stepIndex >= 2)? this.props.workflow.selectedProcess.title: ''}</span>
           </StepLabel>
           <StepContent>
-            <RaisedButton
+            <Button variant="contained"
               id="cy-step-back-btn"
               label="Back"
               onClick={this.onProcessSelectionBackButtonClicked}
@@ -118,7 +119,7 @@ export default class WorkflowWizardStepper extends React.Component {
           <StepLabel style={styleStepLabel}>Input Parameters</StepLabel>
           <StepContent>
             <div>
-              <RaisedButton
+              <Button variant="contained"
                 id="cy-step-back-btn"
                 label="Back"
                 onClick={this.props.workflowActions.getLastStep}

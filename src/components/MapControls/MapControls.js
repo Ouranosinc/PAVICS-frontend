@@ -1,21 +1,22 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import * as classes from './MapControls.scss';
 import * as constants from './../../constants';
-import Paper from 'material-ui/Paper';
-import Divider from 'material-ui/Divider';
-import { RadioButtonGroup, RadioButton } from 'material-ui/RadioButton';
-import AppBar from 'material-ui/AppBar';
-import IconButton from 'material-ui/IconButton';
-import MapControlsIcon from 'material-ui/svg-icons/maps/my-location';
-import MinimizeIcon from 'material-ui/svg-icons/content/remove';
-import RaisedButton from 'material-ui/RaisedButton';
-import FullScreenIcon from 'material-ui/svg-icons/navigation/fullscreen';
-import ExitFullScreenIcon from 'material-ui/svg-icons/navigation/fullscreen-exit';
+import Paper from'@material-ui/core/Paper';
+import Divider from'@material-ui/core/Divider';
+import { RadioGroup, Radio } from'@material-ui/core/Radio';
+import AppBar from'@material-ui/core/AppBar';
+import IconButton from'@material-ui/core/IconButton';
+import MapControlsIcon from '@material-ui/icons/MyLocation';
+import MinimizeIcon from '@material-ui/icons/Remove';
+import Button from'@material-ui/core/Button';
+import FullScreenIcon from '@material-ui/icons/Fullscreen';
+import ExitFullScreenIcon from '@material-ui/icons/FullscreenExit';
 
 export default class MapControls extends React.Component {
   static propTypes = {
-    onToggleMapPanel: React.PropTypes.func.isRequired,
-    selectMapManipulationMode: React.PropTypes.func.isRequired
+    onToggleMapPanel: PropTypes.func.isRequired,
+    selectMapManipulationMode: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -60,17 +61,17 @@ export default class MapControls extends React.Component {
           iconElementRight={<IconButton className="cy-minimize-btn" onTouchTap={(event) => this._onHideMapControlsPanel()}><MinimizeIcon /></IconButton>} />
         <div className="container">
           <h4>Mouse Click Mode</h4>
-          <RadioButtonGroup
+          <RadioGroup
             style={{marginTop: '10px'}}
             onChange={this.props.selectMapManipulationMode}
             name="map-manipulation-mode"
             defaultSelected={constants.VISUALIZE_MODE_VISUALIZE}>
-            <RadioButton id="cy-grid-point-values-btn" value={constants.VISUALIZE_MODE_VISUALIZE} label="Grid Point Values" />
-            <RadioButton id="cy-region-selection-btn" value={constants.VISUALIZE_MODE_JOB_MANAGEMENT} label="Region Selection" />
-          </RadioButtonGroup>
+            <Radio id="cy-grid-point-values-btn" value={constants.VISUALIZE_MODE_VISUALIZE} label="Grid Point Values" />
+            <Radio id="cy-region-selection-btn" value={constants.VISUALIZE_MODE_JOB_MANAGEMENT} label="Region Selection" />
+          </RadioGroup>
           <Divider />
           <h4>Toggle Full Screen Mode</h4>
-          <RaisedButton
+          <Button variant="contained"
             label="Full screen"
             style={{marginBottom: '10px'}}
             primary={true}

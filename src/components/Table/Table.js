@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import PropTypes from 'prop-types';
 import classes from './Table.scss'
 class Table extends React.Component {
   render() {

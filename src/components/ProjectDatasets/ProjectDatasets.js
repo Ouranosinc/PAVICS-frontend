@@ -1,31 +1,29 @@
-import React from 'react'
+import React from 'react';
+import PropTypes from 'prop-types';
 import classes from './ProjectDatasets.scss';
 import * as constants from '../../constants';
 import Pagination from './../../components/Pagination';
-import {List, ListItem} from 'material-ui/List';
-import {grey400, darkBlack} from 'material-ui/styles/colors';
-import Subheader from 'material-ui/Subheader';
-import Paper from 'material-ui/Paper';
-import IconMenu from 'material-ui/IconMenu';
-import MenuItem from 'material-ui/MenuItem';
-import IconButton from 'material-ui/IconButton';
-import Download from 'material-ui/svg-icons/file/file-download';
-import Visualize from 'material-ui/svg-icons/image/remove-red-eye';
-import Remove from 'material-ui/svg-icons/action/delete';
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-import Folder from 'material-ui/svg-icons/file/folder';
-import FolderSpecial from 'material-ui/svg-icons/notification/folder-special';
-import File from 'material-ui/svg-icons/editor/insert-drive-file';
-import ShareIcon from 'material-ui/svg-icons/social/person-add';
-import ExpandableIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-down';
+import {List, ListItem, ListItemIcon, ListSubheader } from'@material-ui/core/List';
+// import Collapse  from'@material-ui/core/Collapse ';
+import Paper from'@material-ui/core/Paper';
+// import IconMenu from'@material-ui/core/IconMenu';
+import MenuItem from'@material-ui/core/MenuItem';
+import IconButton from'@material-ui/core/IconButton';
+import Download from '@material-ui/icons/FileDownload';
+import Visualize from '@material-ui/icons/RemoveRedEye';
+import Remove from '@material-ui/icons/Delete';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Folder from '@material-ui/icons/Folder';
+import FolderSpecial from '@material-ui/icons/FolderSpecial';
+import File from '@material-ui/icons/InsertDriveFile';
 import ConfirmDialog from './../../components/ConfirmDialog';
 
 export class ProjectDatasets extends React.Component {
   static propTypes = {
-    project: React.PropTypes.object.isRequired,
-    projectActions: React.PropTypes.object.isRequired,
-    datasetAPI: React.PropTypes.object.isRequired,
-    datasetAPIActions: React.PropTypes.object.isRequired
+    project: PropTypes.object.isRequired,
+    projectActions: PropTypes.object.isRequired,
+    datasetAPI: PropTypes.object.isRequired,
+    datasetAPIActions: PropTypes.object.isRequired
   };
 
   constructor(props) {
@@ -185,7 +183,7 @@ export class ProjectDatasets extends React.Component {
       <div id="cy-project-datasets" className={classes['ProjectDatasets']}>
         <Paper style={{marginTop: 20}}>
           <List>
-            <Subheader>Current project dataset(s)</Subheader>
+            <ListSubheader>Current project dataset(s)</ListSubheader>
             {datasetsPaginated.map((dataset, i) => {
               let folderIcon = <Folder />;
               if (this.props.currentVisualizedDatasets.find(x => x.dataset_id === dataset.dataset_id)) {
@@ -204,7 +202,7 @@ export class ProjectDatasets extends React.Component {
                     primaryText={dataset.aggregate_title}
                     secondaryText={
                       <p>
-                        <span className="cy-dataset-multiple-file-title" style={{color: darkBlack}}>{dataset.fileserver_url.length + ' Files'}</span><br />
+                        <span className="cy-dataset-multiple-file-title">{dataset.fileserver_url.length + ' Files'}</span><br />
                         <strong>Keywords: </strong>{dataset.keywords.join(', ')}
                       </p>
                     }
@@ -213,18 +211,17 @@ export class ProjectDatasets extends React.Component {
                     initiallyOpen={false}
                     primaryTogglesNestedList={true}
                     autoGenerateNestedIndicator={false}
-                    rightIconButton={
+                    /*rightIconButton={
                       <IconMenu iconButtonElement={
                         <IconButton
                           className="cy-actions-btn"
                           touch={true}
                           tooltip="Actions"
                           tooltipPosition="bottom-left">
-                          <MoreVertIcon color={grey400} />
+                          <MoreVertIcon />
                         </IconButton>}>
                         <MenuItem id="cy-download-all-item" primaryText="Download All" onTouchTap={(event) => this.onDownloadAllClicked(dataset)} leftIcon={<Download />} />
                         <MenuItem id="cy-remove-all-item" primaryText="Remove" onTouchTap={() => this._onOpenConfirmRemoveDatasetDialog(dataset)} leftIcon={<Remove />} />
-                        {/*<MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + dataset.title[0])} leftIcon={<ShareIcon />} />*/}
                         <MenuItem id="cy-visualize-all-agg-item"primaryText="Visualize All (Aggregated)"
                                   disabled={disabledDatasetVisualize}
                                   onTouchTap={(event) => {
@@ -238,7 +235,7 @@ export class ProjectDatasets extends React.Component {
                                   }}
                                   leftIcon={<Visualize />} />
                       </IconMenu>
-                    }
+                    }*/
                     nestedItems={
                       dataset.wms_url.map((wmsUrl, j) => {
                         let nestedIcon = <File />;
@@ -254,7 +251,7 @@ export class ProjectDatasets extends React.Component {
                             key={j}
                             primaryText={dataset.title[j]}
                             leftIcon={nestedIcon}
-                            rightIconButton={
+                            /*rightIconButton={
                               <IconMenu
                                 menuStyle={{marginRight: '100px'}}
                                 iconButtonElement={
@@ -267,12 +264,11 @@ export class ProjectDatasets extends React.Component {
                                   </IconButton>}>
                                 <MenuItem id="cy-download-item" primaryText="Download" onTouchTap={(event) => window.open(dataset.fileserver_url[j], '_blank')} leftIcon={<Download />} />
                                 <MenuItem id="cy-remove-item" primaryText="Remove file" onTouchTap={() => {this._onOpenConfirmRemoveFileDialog(dataset, j)}} leftIcon={<Remove />} />
-                                {/*<MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + dataset.title[j])} leftIcon={<ShareIcon />} />*/}
                                 <MenuItem id="cy-visualize-item" primaryText="Visualize" disabled={disabledNestedVisualize} onTouchTap={(event) => {
                                   if (!disabledNestedVisualize) this._onVisualizeDataset(event, dataset, true, j);
                                 }} leftIcon={<Visualize />} />
                               </IconMenu>
-                            }
+                            }*/
                           />
                         );
                       })
@@ -294,7 +290,7 @@ export class ProjectDatasets extends React.Component {
                     primaryText={dataset.aggregate_title}
                     secondaryText={
                       <p>
-                        <span className="cy-dataset-single-file-title" style={{color: darkBlack}}>{dataset.title[0]}</span><br />
+                        <span className="cy-dataset-single-file-title">{dataset.title[0]}</span><br />
                         <strong>Keywords: </strong>{dataset.keywords.join(', ')}
                       </p>
                     }
@@ -303,7 +299,7 @@ export class ProjectDatasets extends React.Component {
                     initiallyOpen={false}
                     primaryTogglesNestedList={true}
                     autoGenerateNestedIndicator={false}
-                    rightIconButton={
+                    /*rightIconButton={
                       <IconMenu iconButtonElement={
                         <IconButton
                           className="cy-actions-btn"
@@ -314,12 +310,11 @@ export class ProjectDatasets extends React.Component {
                         </IconButton>}>
                         <MenuItem id="cy-download-item"primaryText="Download" onTouchTap={(event) => window.open(dataset.fileserver_url[0], '_blank')} leftIcon={<Download />} />
                         <MenuItem id="cy-remove-item" primaryText="Remove" onTouchTap={() => {this._onOpenConfirmRemoveDatasetDialog(dataset)}} leftIcon={<Remove />} />
-                        {/*<MenuItem primaryText="Share (TODO)" onTouchTap={(event) => alert('share ' + dataset.title[0])} leftIcon={<ShareIcon />} />*/}
                         <MenuItem id="cy-visualize-item" primaryText="Visualize" disabled={disabledVisualize} onTouchTap={(event) => {
                           if (!disabledVisualize) this._onVisualizeDataset(event, dataset, true, 0)
                         }} leftIcon={<Visualize />} />
                       </IconMenu>
-                    }
+                    }*/
                   />
                 );
               }

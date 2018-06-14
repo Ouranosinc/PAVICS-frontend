@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { NotificationManager } from 'react-notifications';
 import ScientificWorkflowList from '../../components/ScientificWorkflowList';
 import ScientificWorkflowForm from '../../components/ScientificWorkflowForm';
-import RaisedButton from 'material-ui/RaisedButton';
-import BackIcon from 'material-ui/svg-icons/navigation/arrow-back';
-import { Step, Stepper, StepLabel, StepContent } from 'material-ui/Stepper';
-import CircularProgress from 'material-ui/CircularProgress';
-import Paper from 'material-ui/Paper';
+import Button from'@material-ui/core/Button';
+import BackIcon from '@material-ui/icons/ArrowBack';
+import { Step, Stepper, StepLabel, StepContent } from'@material-ui/core/Stepper';
+import CircularProgress from'@material-ui/core/CircularProgress';
+import Paper from'@material-ui/core/Paper';
 import WpsProcessForm from '../WpsProcessForm';
 import myHttp from '../../util/http';
 import {InputDefinition} from "../WpsProcessFormInput/InputDefinition";
@@ -20,19 +21,19 @@ const styles = {
 const FORM_WORKFLOW_ID = 'form-workflow-process';
 export default class ScientificWorkflowStepper extends Component {
   static propTypes = {
-    showDialog: React.PropTypes.func.isRequired,
-    goToSection: React.PropTypes.func.isRequired,
-    jobAPIActions: React.PropTypes.object.isRequired,
-    project: React.PropTypes.object.isRequired,
-    selectedShapefile: React.PropTypes.object.isRequired,
-    currentDisplayedDataset: React.PropTypes.object.isRequired,
-    selectedRegions: React.PropTypes.array.isRequired,
-    selectedProcess: React.PropTypes.object.isRequired,
-    selectedProvider: React.PropTypes.string.isRequired,
-    workflow: React.PropTypes.object.isRequired,
-    workflowActions: React.PropTypes.object.isRequired,
-    workflowAPI: React.PropTypes.object.isRequired,
-    workflowAPIActions: React.PropTypes.object.isRequired
+    showDialog: PropTypes.func.isRequired,
+    goToSection: PropTypes.func.isRequired,
+    jobAPIActions: PropTypes.object.isRequired,
+    project: PropTypes.object.isRequired,
+    selectedShapefile: PropTypes.object.isRequired,
+    currentDisplayedDataset: PropTypes.object.isRequired,
+    selectedRegions: PropTypes.array.isRequired,
+    selectedProcess: PropTypes.object.isRequired,
+    selectedProvider: PropTypes.string.isRequired,
+    workflow: PropTypes.object.isRequired,
+    workflowActions: PropTypes.object.isRequired,
+    workflowAPI: PropTypes.object.isRequired,
+    workflowAPIActions: PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -275,7 +276,7 @@ export default class ScientificWorkflowStepper extends Component {
             this.state.isParsing
               ? (
                 <StepContent>
-                  <RaisedButton
+                  <Button variant="contained"
                     id="cy-step-back-btn"
                     label="Back"
                     onClick={this.handlePrev}
@@ -288,7 +289,7 @@ export default class ScientificWorkflowStepper extends Component {
               )
               : (
                 <StepContent>
-                  <RaisedButton
+                  <Button variant="contained"
                     id="cy-step-back-btn"
                     label="Back"
                     onClick={this.handlePrev}

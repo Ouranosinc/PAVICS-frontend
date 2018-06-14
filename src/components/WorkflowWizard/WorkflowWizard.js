@@ -1,25 +1,26 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import ScientificWorkflowStepper from '../../components/ScientificWorkflowStepper';
 import WorkflowWizardStepper from '../../components/WorkflowWizard';
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
-import { Tabs, Tab } from 'material-ui/Tabs';
+import Dialog from'@material-ui/core/Dialog';
+import Button from'@material-ui/core/Button';
+import { Tabs, Tab } from'@material-ui/core/Tabs';
 
 const WORKFLOW_TAB_VALUE = "WORKFLOW_TAB_VALUE";
 const PROCESS_TAB_VALUE = "PROCESS_TAB_VALUE";
 
 export default class WorkflowWizard extends React.Component {
   static propTypes = {
-    goToSection: React.PropTypes.func.isRequired,
-    jobAPIActions: React.PropTypes.object.isRequired,
-    selectedShapefile: React.PropTypes.object.isRequired,
-    currentDisplayedDataset: React.PropTypes.object.isRequired,
-    selectedRegions: React.PropTypes.array.isRequired,
-    project: React.PropTypes.object.isRequired,
-    workflow: React.PropTypes.object.isRequired,
-    workflowAPI: React.PropTypes.object.isRequired,
-    workflowActions: React.PropTypes.object.isRequired,
-    workflowAPIActions: React.PropTypes.object.isRequired
+    goToSection: PropTypes.func.isRequired,
+    jobAPIActions: PropTypes.object.isRequired,
+    selectedShapefile: PropTypes.object.isRequired,
+    currentDisplayedDataset: PropTypes.object.isRequired,
+    selectedRegions: PropTypes.array.isRequired,
+    project: PropTypes.object.isRequired,
+    workflow: PropTypes.object.isRequired,
+    workflowAPI: PropTypes.object.isRequired,
+    workflowActions: PropTypes.object.isRequired,
+    workflowAPIActions: PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -67,7 +68,7 @@ export default class WorkflowWizard extends React.Component {
 
   showDialog (title, content, actions) {
     const defaultDialogActions = [
-      <FlatButton
+      <Button variant="contained"
         label="OK"
         primary={true}
         keyboardFocused={true}

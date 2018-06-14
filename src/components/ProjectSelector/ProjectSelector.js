@@ -1,8 +1,9 @@
-import React from 'react'
+import React from 'react';
+import PropTypes from 'prop-types';
 import classes from './ProjectSelector.scss';
-import MenuItem from 'material-ui/MenuItem';
-import Paper from 'material-ui/Paper';
-import SelectField from 'material-ui/SelectField';
+import MenuItem from'@material-ui/core/MenuItem';
+import Paper from'@material-ui/core/Paper';
+import Select from'@material-ui/core/Select';
 import { NotificationManager } from 'react-notifications';
 
 export class ProjectSelector extends React.Component {
@@ -33,7 +34,7 @@ export class ProjectSelector extends React.Component {
       <div className={classes['ProjectSelector']}>
         <Paper style={{marginTop: 20}}>
           <div className="container">
-            <SelectField
+            <Select
               id="cy-project-selector"
               fullWidth={true}
               floatingLabelText="Current project"
@@ -44,7 +45,7 @@ export class ProjectSelector extends React.Component {
                   return <MenuItem data-cy-item-project-id={project.id} key={i} value={project.id} primaryText={project.name} />;
                 })
               }
-            </SelectField>
+            </Select>
           </div>
         </Paper>
       </div>

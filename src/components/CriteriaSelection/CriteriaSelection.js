@@ -1,17 +1,18 @@
 import React from 'react';
-import Checkbox from 'material-ui/Checkbox';
-import Chip from 'material-ui/Chip';
-import {List, ListItem} from 'material-ui/List';
-import AddFilter from 'material-ui/svg-icons/image/add-to-photos';
+import PropTypes from 'prop-types';
+import Checkbox from'@material-ui/core/Checkbox';
+import Chip from'@material-ui/core/Chip';
+import {List, ListItem} from'@material-ui/core/List';
+import AddFilter from '@material-ui/icons/AddToPhotos';
 import { Col } from 'react-bootstrap';
 
 class CriteriaSelection extends React.Component {
   static propTypes = {
-    criteriaName: React.PropTypes.string.isRequired,
-    variables: React.PropTypes.object.isRequired,
-    research: React.PropTypes.object.isRequired,
-    researchActions: React.PropTypes.object.isRequired,
-    fetchDatasets: React.PropTypes.func.isRequired
+    criteriaName: PropTypes.string.isRequired,
+    variables: PropTypes.object.isRequired,
+    research: PropTypes.object.isRequired,
+    researchActions: PropTypes.object.isRequired,
+    fetchDatasets: PropTypes.func.isRequired
   };
 
   state = {

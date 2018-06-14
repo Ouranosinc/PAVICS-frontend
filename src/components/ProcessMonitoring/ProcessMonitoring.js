@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import moment from 'moment';
 import { NotificationManager } from 'react-notifications';
 import * as constants from '../../constants';
@@ -8,30 +9,29 @@ import StatusElement from './StatusElement';
 import LoadingScreen from './../LoadingScreen';
 import ProcessListItem from './ProcessListItem';
 import PersistResultDialog from './PersistResultDialog';
-import Dialog from 'material-ui/Dialog';
-import {List, ListItem} from 'material-ui/List';
-import Subheader from 'material-ui/Subheader';
-import Paper from 'material-ui/Paper';
-import IconMenu from 'material-ui/IconMenu';
-import MenuItem from 'material-ui/MenuItem';
-import {grey400, darkBlack} from 'material-ui/styles/colors';
-import IconButton from 'material-ui/IconButton';
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-import RaisedButton from 'material-ui/RaisedButton';
-import RefreshIcon from 'material-ui/svg-icons/navigation/refresh';
-import FileIcon from 'material-ui/svg-icons/editor/insert-drive-file';
-import LogIcon from 'material-ui/svg-icons/action/receipt';
-import ExpandableIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-down';
-import VisualizeIcon from 'material-ui/svg-icons/image/remove-red-eye';
+import Dialog from'@material-ui/core/Dialog';
+import {List, ListItem} from'@material-ui/core/List';
+import ListSubheader from'@material-ui/core/ListSubheader';
+import Paper from'@material-ui/core/Paper';
+// import IconMenu from'@material-ui/core/IconMenu';
+import MenuItem from'@material-ui/core/MenuItem';
+import IconButton from'@material-ui/core/IconButton';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Button from'@material-ui/core/Button';
+import RefreshIcon from '@material-ui/icons/Refresh';
+import FileIcon from '@material-ui/icons/InsertDriveFile';
+import LogIcon from '@material-ui/icons/Receipt';
+import ExpandableIcon from '@material-ui/icons/KeyboardArrowDown';
+import VisualizeIcon from '@material-ui/icons/RemoveRedEye';
 
 class ProcessMonitoring extends React.Component {
   static propTypes = {
-    addDatasetsToVisualize: React.PropTypes.func.isRequired,
-    selectCurrentDisplayedDataset: React.PropTypes.func.isRequired,
-    monitor: React.PropTypes.object.isRequired,
-    monitorActions: React.PropTypes.object.isRequired,
-    project: React.PropTypes.object.isRequired,
-    sessionManagement: React.PropTypes.object.isRequired
+    addDatasetsToVisualize: PropTypes.func.isRequired,
+    selectCurrentDisplayedDataset: PropTypes.func.isRequired,
+    monitor: PropTypes.object.isRequired,
+    monitorActions: PropTypes.object.isRequired,
+    project: PropTypes.object.isRequired,
+    sessionManagement: PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -163,7 +163,7 @@ class ProcessMonitoring extends React.Component {
         // let paginated = this.props.monitor.jobs.items.slice(start, start + this.state.numberPerPage);
         mainComponent =
           <List>
-            <Subheader>Launched Jobs</Subheader>
+            <ListSubheader>Launched Jobs</ListSubheader>
             {this.props.monitor.jobs.items.map((x, i) => {
 
               if(x.status === null ||
@@ -258,19 +258,19 @@ class ProcessMonitoring extends React.Component {
                     key={i}
                     primaryText={(x.name && x.name.length)? x.name: `${x.title}: ${x.abstract}`}
                     secondaryText={
-                      <span style={{color: darkBlack}}>
+                      <span>
                         <span>Launched on <strong>{moment(x.created).format(constants.PAVICS_DATE_FORMAT)}</strong> using provider <strong>{x.service}</strong>.</span><br/>
                         <StatusElement job={x} />, <strong>Duration: </strong>{x.duration}
                       </span>
                     }
                     secondaryTextLines={2}
-                    rightIconButton={
+                    /*rightIconButton={
                       <IconMenu iconButtonElement={
                         <IconButton
                           className="cy-actions-btn"
                           touch={true}
                           tooltipPosition="bottom-left">
-                          <MoreVertIcon color={grey400}/>
+                          <MoreVertIcon />
                         </IconButton>
                       }>
                         <MenuItem
@@ -280,7 +280,7 @@ class ProcessMonitoring extends React.Component {
                           leftIcon={<FileIcon />}/>
                         {logMenu}
                       </IconMenu>
-                    }
+                    }*/
                     initiallyOpen={false}
                     primaryTogglesNestedList={true}
                     autoGenerateNestedIndicator={true}
@@ -335,7 +335,7 @@ class ProcessMonitoring extends React.Component {
                             initiallyOpen={false}
                             primaryTogglesNestedList={true}
                             leftIcon={<ExpandableIcon />}
-                            rightIcon={
+                            /*rightIcon={
                               <IconMenu iconButtonElement={
                                 <IconButton
                                   className="cy-actions-btn"
@@ -357,7 +357,7 @@ class ProcessMonitoring extends React.Component {
                                   onTouchTap={(event) => this._onVisualiseDatasets(visualizableOutputs, false)}
                                   leftIcon={<VisualizeIcon />}/>
                               </IconMenu>
-                            }
+                            }*/
                             nestedItems={
                               parrallelTasks.map((task, k) => {
                                 task.title = taskName;
@@ -462,7 +462,7 @@ class ProcessMonitoring extends React.Component {
       } else {
         mainComponent =
             <List>
-              <Subheader>No results found.</Subheader>
+              <ListSubheader>No results found.</ListSubheader>
             </List>;
       }
     }
@@ -475,7 +475,7 @@ class ProcessMonitoring extends React.Component {
             {mainComponent}
             {pagination}
           </Paper>
-          <RaisedButton
+          <Button variant="contained"
             onClick={(event) => this._onRefreshResults()}
             label="Refresh"
             icon={<RefreshIcon />}
@@ -486,7 +486,7 @@ class ProcessMonitoring extends React.Component {
             open={this.state.logDialogOpened}
             onRequestClose={this._closeLogDialog}
             actions={
-              <RaisedButton
+              <Button variant="contained"
                 label="Close"
                 primary={false}
                 keyboardFocused={true}

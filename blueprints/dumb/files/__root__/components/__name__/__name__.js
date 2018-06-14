@@ -1,7 +1,6 @@
-import React from 'react'
+import React from 'react';
+import PropTypes from 'prop-types';
 import classes from './<%= pascalEntityName %>.scss'
-
-var me;
 
 export class <%= pascalEntityName %> extends React.Component {
   static propTypes = {
@@ -10,7 +9,6 @@ export class <%= pascalEntityName %> extends React.Component {
 
   constructor(props) {
     super(props);
-    me = this;
   }
 
 

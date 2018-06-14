@@ -1,7 +1,9 @@
-import React from 'react'
+import React from 'react';
+import PropTypes from 'prop-types';
+
 class SearchInput extends React.Component {
   static propTypes = {
-    onChangeCb: React.PropTypes.func.isRequired,
+    onChangeCb: PropTypes.func.isRequired,
   };
   render() {
     return (

@@ -1,10 +1,12 @@
-import React from 'react'
+import React from 'react';
+import PropTypes from 'prop-types';
+
 import TableRow from './TableRow'
 import style from './Table.scss'
 class TableBody extends React.Component {
   static propTypes = {
-    rows: React.PropTypes.array.isRequired,
-    selectedIndex: React.PropTypes.number.isRequired,
+    rows: PropTypes.array.isRequired,
+    selectedIndex: PropTypes.number.isRequired,
   }
 
   render () {

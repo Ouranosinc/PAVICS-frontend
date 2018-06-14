@@ -1,11 +1,12 @@
 import React from 'react';
-import {List, ListItem} from 'material-ui/List';
-import Paper from 'material-ui/Paper';
-import ProviderIcon from 'material-ui/svg-icons/action/perm-data-setting';
+import PropTypes from 'prop-types';
+import {List, ListItem} from'@material-ui/core/List';
+import Paper from'@material-ui/core/Paper';
+import ProviderIcon from '@material-ui/icons/PermDataSetting';
 export default class WpsProviderSelector extends React.Component {
   static propTypes = {
-    workflow: React.PropTypes.object.isRequired,
-    workflowActions: React.PropTypes.object.isRequired
+    workflow: PropTypes.object.isRequired,
+    workflowActions: PropTypes.object.isRequired
   }
 
   makeChangeProviderCallback (identifier) {

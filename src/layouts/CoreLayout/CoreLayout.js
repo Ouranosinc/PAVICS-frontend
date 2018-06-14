@@ -1,10 +1,11 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import classes from './CoreLayout.scss';
 import '../../styles/core.scss';
 
 class CoreLayout extends React.Component {
   static propTypes = {
-    children: React.PropTypes.element.isRequired
+    children: PropTypes.element.isRequired
   };
   render () {
     return (

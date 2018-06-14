@@ -1,31 +1,30 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import moment from 'moment';
 import * as constants from '../../constants';
 import StatusElement from './StatusElement';
-import {ListItem} from 'material-ui/List';
-import IconMenu from 'material-ui/IconMenu';
-import MenuItem from 'material-ui/MenuItem';
-import {grey400, darkBlack} from 'material-ui/styles/colors';
-import IconButton from 'material-ui/IconButton';
-import PublishIcon from 'material-ui/svg-icons/social/public';
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-import VisualizeIcon from 'material-ui/svg-icons/image/remove-red-eye';
-import FileIcon from 'material-ui/svg-icons/editor/insert-drive-file';
-import LogIcon from 'material-ui/svg-icons/action/receipt';
-import DownloadIcon from 'material-ui/svg-icons/file/file-download';
-import PersistIcon from 'material-ui/svg-icons/content/save';
-import ExpandableIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-down';
-import NotExpandableIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-right';
-import NoActionIcon from 'material-ui/svg-icons/av/not-interested';
+import {ListItem} from'@material-ui/core/List';
+// import IconMenu from'@material-ui/core/IconMenu';
+import MenuItem from'@material-ui/core/MenuItem';
+import IconButton from'@material-ui/core/IconButton';
+import PublishIcon from '@material-ui/icons/Public';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import VisualizeIcon from '@material-ui/icons/RemoveRedEye';
+import FileIcon from '@material-ui/icons/InsertDriveFile';
+import LogIcon from '@material-ui/icons/Receipt';
+import DownloadIcon from '@material-ui/icons/FileDownload';
+import PersistIcon from '@material-ui/icons/Save';
+import ExpandableIcon from '@material-ui/icons/KeyboardArrowDown';
+import NotExpandableIcon from '@material-ui/icons/KeyboardArrowRight';
 
 export class ProcessListItem extends React.Component {
   static propTypes = {
-    indentationLevel:  React.PropTypes.number,
-    isWorkflowTask:  React.PropTypes.bool,
-    job: React.PropTypes.object.isRequired,
-    onShowLogDialog: React.PropTypes.func.isRequired,
-    onShowPersistDialog: React.PropTypes.func.isRequired,
-    onVisualiseDatasets: React.PropTypes.func.isRequired,
+    indentationLevel:  PropTypes.number,
+    isWorkflowTask:  PropTypes.bool,
+    job: PropTypes.object.isRequired,
+    onShowLogDialog: PropTypes.func.isRequired,
+    onShowPersistDialog: PropTypes.func.isRequired,
+    onVisualiseDatasets: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -72,12 +71,13 @@ export class ProcessListItem extends React.Component {
       });
     }
     return (
-      <IconMenu iconButtonElement={
+      <span />
+      /*<IconMenu iconButtonElement={
           <IconButton
             className="cy-actions-btn"
             touch={true}
             tooltipPosition="bottom-left">
-            <MoreVertIcon color={grey400}/>
+            <MoreVertIcon />
           </IconButton>
         }>
         <MenuItem
@@ -98,12 +98,13 @@ export class ProcessListItem extends React.Component {
           disabled={!visualizableTaskOutputs.length}
           onTouchTap={(event) => this.props.onVisualiseDatasets(visualizableTaskOutputs, false)}
           leftIcon={<VisualizeIcon />}/>
-      </IconMenu>
+      </IconMenu>*/
     );
   }
 
   buildBasicIconMenuActions(output) {
-    return <IconMenu iconButtonElement={
+    return <span />
+     /*<IconMenu iconButtonElement={
       <IconButton
         className="cy-actions-btn"
         touch={true}
@@ -134,7 +135,7 @@ export class ProcessListItem extends React.Component {
         disabled={!this._isVisualizeAvailable(output)}
         onTouchTap={(event) => {if(this._isVisualizeAvailable(output)) this.props.onVisualiseDatasets([output.reference]); }}
         leftIcon={<VisualizeIcon />}/>
-    </IconMenu>
+    </IconMenu>*/
   }
 
   _isPersistAvailable(output){
@@ -146,13 +147,13 @@ export class ProcessListItem extends React.Component {
 
   render () {
     let secondaryText =
-      <span style={{color: darkBlack}}>
+      <span>
         <span>Launched on <strong>{moment(this.props.job.created).format(constants.PAVICS_DATE_FORMAT)}</strong> using provider <strong>{this.props.job.service}</strong>.</span><br/>
         <StatusElement job={this.props.job} />, <strong>Duration: </strong>{this.props.job.duration}
       </span>;
     if (this.props.isWorkflowTask) {
       secondaryText =
-        <span style={{color: darkBlack}}>
+        <span>
           <StatusElement job={this.props.job} />
         </span>;
     }
@@ -195,7 +196,7 @@ export class ProcessListItem extends React.Component {
         leftIcon={<LogIcon />}/>;
       if(this.props.job.status === constants.JOB_ACCEPTED_STATUS){
         secondaryText =
-          <span style={{color: darkBlack}}>
+          <span>
             <span>Will be launched soon using provider <strong>{this.props.job.service}</strong>.</span><br/>
             <StatusElement job={this.props.job} />
           </span>;

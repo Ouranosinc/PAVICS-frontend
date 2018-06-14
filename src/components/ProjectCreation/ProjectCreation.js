@@ -1,18 +1,19 @@
-import React from 'react'
+import React from 'react';
+import PropTypes from 'prop-types';
 import classes from './ProjectCreation.scss';
 import * as constants from '../../constants';
-import Paper from 'material-ui/Paper';
-import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
+import Paper from'@material-ui/core/Paper';
+import Button from'@material-ui/core/Button';
+import TextField from'@material-ui/core/TextField';
 import { NotificationManager } from 'react-notifications';
 
 export class ProjectCreation extends React.Component {
   static propTypes = {
-    sessionManagement: React.PropTypes.object.isRequired,
-    project: React.PropTypes.object.isRequired,
-    projectActions: React.PropTypes.object.isRequired,
-    projectAPI: React.PropTypes.object.isRequired,
-    projectAPIActions: React.PropTypes.object.isRequired
+    sessionManagement: PropTypes.object.isRequired,
+    project: PropTypes.object.isRequired,
+    projectActions: PropTypes.object.isRequired,
+    projectAPI: PropTypes.object.isRequired,
+    projectAPIActions: PropTypes.object.isRequired
   };
 
   constructor(props) {
@@ -84,7 +85,7 @@ export class ProjectCreation extends React.Component {
           </div>
         </Paper>
 
-        <RaisedButton
+        <Button variant="contained"
           id="cy-create-project-btn"
           onClick={this._onCreateProject}
           label="Create new project"

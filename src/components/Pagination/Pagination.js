@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import {IconButton, MenuItem, SelectField} from 'material-ui';
-import ChevronLeft from 'material-ui/svg-icons/navigation/chevron-left';
-import ChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
+import PropTypes from 'prop-types';
+import {IconButton, MenuItem, Select} from '@material-ui/core';
+import ChevronLeft from '@material-ui/icons/ChevronLeft';
+import ChevronRight from '@material-ui/icons/ChevronRight';
 
 const styles = {
   pagination: {
@@ -45,16 +46,16 @@ class Pagination extends Component {
     initialPerPageOptionIndex: 0
   };
   static propTypes = {
-    onChange: React.PropTypes.func,
-    total: React.PropTypes.number.isRequired,
-    perPageOptions: React.PropTypes.array,
-    texts: React.PropTypes.shape({
-      page: React.PropTypes.string.isRequired,
-      perPageOptions: React.PropTypes.string.isRequired,
-      showing: React.PropTypes.string.isRequired
+    onChange: PropTypes.func,
+    total: PropTypes.number.isRequired,
+    perPageOptions: PropTypes.array,
+    texts: PropTypes.shape({
+      page: PropTypes.string.isRequired,
+      perPageOptions: PropTypes.string.isRequired,
+      showing: PropTypes.string.isRequired
     }),
-    toFrom: React.PropTypes.any,
-    initialPerPageOptionIndex: React.PropTypes.number
+    toFrom: PropTypes.any,
+    initialPerPageOptionIndex: PropTypes.number
   };
 
   constructor (props, context) {
@@ -131,7 +132,7 @@ class Pagination extends Component {
       <div style={styles.pagination} id="cy-pagination" data-cy-page-count={count} data-cy-from={from} data-cy-to={to} data-cy-total={total}>
         <div style={Object.assign({}, styles.elements, styles.pageSelect)}>
           <div style={styles.label}>{`${texts.page} `}</div>
-          <SelectField
+          <Select
             onChange={(e, idx, page) => this.handleChangePage(page)}
             disabled={!total}
             value={currentPageIndex}
@@ -145,11 +146,11 @@ class Pagination extends Component {
                   key={`page-${page}`} />
               ))
             }
-          </SelectField>
+          </Select>
         </div>
         <div style={styles.elements}>
           <div style={styles.label}>{`${texts.perPageOptions} `}</div>
-          <SelectField
+          <Select
             onChange={(e, idx, selectedOption) => this.handleChangePerPage(selectedOption)}
             disabled={!total}
             value={selectedPerPageOptionIndex}
@@ -160,7 +161,7 @@ class Pagination extends Component {
                 return <MenuItem key={i} value={i} primaryText={v} />;
               })
             }
-          </SelectField>
+          </Select>
         </div>
         <div style={styles.elements}>
           <div style={styles.label} id="cy-pagination-showing">{`${showing}`}</div>

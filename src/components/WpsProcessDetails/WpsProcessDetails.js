@@ -1,8 +1,9 @@
 import React from 'react';
-import {Card, CardHeader, CardText} from 'material-ui/Card';
+import PropTypes from 'prop-types';
+import {Card, CardHeader, CardContent} from'@material-ui/core/Card';
 export default class WpsProcessDetails extends React.Component {
   static propTypes = {
-    workflow: React.PropTypes.object.isRequired
+    workflow: PropTypes.object.isRequired
   };
   render () {
     const marginated = {
@@ -11,9 +12,9 @@ export default class WpsProcessDetails extends React.Component {
     return (
       <Card style={marginated}>
         <CardHeader title={this.props.workflow.selectedProcess.title} />
-        <CardText>
+        <CardContent>
           {this.props.workflow.selectedProcess.description}
-        </CardText>
+        </CardContent>
       </Card>
     );
   }

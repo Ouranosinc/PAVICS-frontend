@@ -1,15 +1,16 @@
 import React from 'react';
-import {Card, CardHeader, CardActions, CardText} from 'material-ui/Card';
-import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
-import Paper from 'material-ui/Paper';
+import PropTypes from 'prop-types';
+import {Card, CardHeader, CardActions, CardContent} from'@material-ui/core/Card';
+import Button from'@material-ui/core/Button';
+import TextField from'@material-ui/core/TextField';
+import Paper from'@material-ui/core/Paper';
 
 export default class WpsProcessSelector extends React.Component {
   static propTypes = {
-    onSearchKeywordChanged: React.PropTypes.func.isRequired,
-    searchKeyword: React.PropTypes.string.isRequired,
-    workflow: React.PropTypes.object.isRequired,
-    workflowActions: React.PropTypes.object.isRequired
+    onSearchKeywordChanged: PropTypes.func.isRequired,
+    searchKeyword: PropTypes.string.isRequired,
+    workflow: PropTypes.object.isRequired,
+    workflowActions: PropTypes.object.isRequired
   };
 
   constructor(props) {
@@ -57,9 +58,9 @@ export default class WpsProcessSelector extends React.Component {
                 <Card key={i}>
                   <CardHeader
                     title={process.title} />
-                  <CardText>{process.description}</CardText>
+                  <CardContent>{process.description}</CardContent>
                   <CardActions>
-                    <RaisedButton
+                    <Button variant="contained"
                       primary={true}
                       label="Select Process"
                       onClick={this.makeChooseProcessCallback(process)} />

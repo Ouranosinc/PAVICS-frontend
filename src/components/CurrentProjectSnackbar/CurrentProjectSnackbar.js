@@ -1,12 +1,13 @@
-import React from 'react'
+import React from 'react';
+import PropTypes from 'prop-types';
 import classes from './CurrentProjectSnackbar.scss';
 import * as constants from './../../constants';
-import Snackbar from 'material-ui/Snackbar';
+import Snackbar from'@material-ui/core/Snackbar';
 
 export class CurrentProjectSnackbar extends React.Component {
   static propTypes = {
-    goToSection: React.PropTypes.func.isRequired,
-    project: React.PropTypes.object.isRequired
+    goToSection: PropTypes.func.isRequired,
+    project: PropTypes.object.isRequired
   };
 
   constructor(props) {

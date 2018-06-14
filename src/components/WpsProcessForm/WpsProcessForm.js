@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import DeformWrapper from '../DeformWrapper/DeformWrapper';
 import * as constants from './../../constants';
 import {InputDefinition} from '../WpsProcessFormInput/InputDefinition';
@@ -39,14 +40,14 @@ const makeUniqueIdentifier = input => {
 
 export default class WpsProcessForm extends React.Component {
   static propTypes = {
-    executeProcess: React.PropTypes.func.isRequired,
-    formId: React.PropTypes.string.isRequired,
-    goToSection: React.PropTypes.func.isRequired,
-    selectedShapefile: React.PropTypes.object.isRequired,
-    currentDisplayedDataset: React.PropTypes.object.isRequired,
-    selectedRegions: React.PropTypes.array.isRequired,
-    workflow: React.PropTypes.object.isRequired,
-    workflowActions: React.PropTypes.object.isRequired
+    executeProcess: PropTypes.func.isRequired,
+    formId: PropTypes.string.isRequired,
+    goToSection: PropTypes.func.isRequired,
+    selectedShapefile: PropTypes.object.isRequired,
+    currentDisplayedDataset: PropTypes.object.isRequired,
+    selectedRegions: PropTypes.array.isRequired,
+    workflow: PropTypes.object.isRequired,
+    workflowActions: PropTypes.object.isRequired
   };
 
   /*

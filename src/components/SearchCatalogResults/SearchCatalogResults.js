@@ -1,25 +1,25 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import moment from 'moment';
 import { NotificationManager } from 'react-notifications';
 import * as constants from '../../constants';
 import Loader from './../../components/Loader';
 import Pagination from './../../components/Pagination';
 import {Alert} from 'react-bootstrap';
-import {List, ListItem} from 'material-ui/List';
-import Checkbox from 'material-ui/Checkbox';
-import Subheader from 'material-ui/Subheader';
-import Paper from 'material-ui/Paper';
-import {grey400, darkBlack} from 'material-ui/styles/colors';
-import IconButton from 'material-ui/IconButton';
-import InfoIcon from 'material-ui/svg-icons/action/info';
-import RaisedButton from 'material-ui/RaisedButton';
-import AddIcon from 'material-ui/svg-icons/content/add-box';
+import {List, ListItem} from'@material-ui/core/List';
+import Checkbox from'@material-ui/core/Checkbox';
+import ListSubheader from'@material-ui/core/ListSubheader';
+import Paper from'@material-ui/core/Paper';
+import IconButton from'@material-ui/core/IconButton';
+import InfoIcon from '@material-ui/icons/Info';
+import Button from'@material-ui/core/Button';
+import AddIcon from '@material-ui/icons/AddBox';
 
 export class SearchCatalogResults extends React.Component {
   static propTypes = {
-    clickTogglePanel: React.PropTypes.func.isRequired,
-    projectAPIActions: React.PropTypes.object.isRequired,
-    research: React.PropTypes.object.isRequired
+    clickTogglePanel: PropTypes.func.isRequired,
+    projectAPIActions: PropTypes.object.isRequired,
+    research: PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -114,7 +114,7 @@ export class SearchCatalogResults extends React.Component {
           <div id="cy-search-results">
             <Paper style={{ marginTop: 20 }}>
               <List>
-                <Subheader id="cy-search-results-count" inset={true}>Found <strong>{this.state.filesCount}</strong> total files in <strong>{this.props.research.pavicsDatasets.items.length}</strong> results</Subheader>
+                <ListSubheader id="cy-search-results-count" inset={true}>Found <strong>{this.state.filesCount}</strong> total files in <strong>{this.props.research.pavicsDatasets.items.length}</strong> results</ListSubheader>
                 {paginated.map((x, i) =>
                   <ListItem
                     className="cy-dataset-result-item"
@@ -123,7 +123,7 @@ export class SearchCatalogResults extends React.Component {
                     primaryText={`${x.aggregate_title} (${x.fileserver_url.length} file${(x.fileserver_url.length > 1)? 's': ''})` }
                     secondaryText={
                       <p>
-                        <span style={{color: darkBlack}}><strong>Variable: </strong> {x.variable_long_name}</span><br />
+                        <span><strong>Variable: </strong> {x.variable_long_name}</span><br />
                         <strong>Keywords: </strong>{x.keywords.join(', ')}
                       </p>
                     }
@@ -145,7 +145,7 @@ export class SearchCatalogResults extends React.Component {
                           <strong>Content type: </strong>{x.content_type}<br />
                         </div>}
                         tooltipPosition="bottom-left">
-                        <InfoIcon color={grey400} />
+                        <InfoIcon />
                       </IconButton>
                     }
                   />
@@ -157,7 +157,7 @@ export class SearchCatalogResults extends React.Component {
                 perPageOptions={constants.PER_PAGE_OPTIONS}
                 onChange={this._onPageChanged} />
             </Paper>
-            <RaisedButton
+            <Button variant="contained"
               id="cy-add-datasets-btn"
               disabled={!this.state.checkedDatasets.length}
               onClick={this._onAddCheckedDatasetsToProject}
@@ -170,14 +170,14 @@ export class SearchCatalogResults extends React.Component {
           mainComponent =
             <Paper style={{ marginTop: 20 }}>
               <List>
-                <Subheader id="cy-search-no-results-sh">No results found.</Subheader>
+                <ListSubheader id="cy-search-no-results-sh">No results found.</ListSubheader>
               </List>
             </Paper>;
         } else {
           mainComponent =
             <Paper style={{ marginTop: 20 }}>
               <List>
-                <Subheader id="cy-search-no-facets-sh">Select at least one facet to launch dataset's search</Subheader>
+                <ListSubheader id="cy-search-no-facets-sh">Select at least one facet to launch dataset's search</ListSubheader>
               </List>
             </Paper>;
         }

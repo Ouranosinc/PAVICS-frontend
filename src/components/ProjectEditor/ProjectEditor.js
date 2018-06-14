@@ -1,17 +1,18 @@
-import React from 'react'
+import React from 'react';
+import PropTypes from 'prop-types';
 import classes from './ProjectEditor.scss';
 import ConfirmDialog from './../../components/ConfirmDialog';
-import Paper from 'material-ui/Paper';
-import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
-import Checkbox from 'material-ui/Checkbox';
+import Paper from'@material-ui/core/Paper';
+import Button from'@material-ui/core/Button';
+import TextField from'@material-ui/core/TextField';
+import Checkbox from'@material-ui/core/Checkbox';
 
 export class ProjectEditor extends React.Component {
   static propTypes = {
-    project: React.PropTypes.object.isRequired,
-    projectActions: React.PropTypes.object.isRequired,
-    projectAPI: React.PropTypes.object.isRequired,
-    projectAPIActions: React.PropTypes.object.isRequired
+    project: PropTypes.object.isRequired,
+    projectActions: PropTypes.object.isRequired,
+    projectAPI: PropTypes.object.isRequired,
+    projectAPIActions: PropTypes.object.isRequired
   };
 
   constructor(props) {
@@ -123,13 +124,13 @@ export class ProjectEditor extends React.Component {
           </div>
         </Paper>
 
-        <RaisedButton
+        <Button variant="contained"
           id="cy-save-project-btn"
           onClick={() => this._onSaveProject()}
           label="Save project properties"
           disabled={!this.state.projectName || !this.state.projectName.length}
           style={{marginTop: 20}} />
-        <RaisedButton
+        <Button variant="contained"
           id="cy-delete-project-btn"
           onClick={() => this._onDeleteProject()}
           label="Delete project"

@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { NotificationManager } from 'react-notifications';
-import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
-import Paper from 'material-ui/Paper';
-import Done from 'material-ui/svg-icons/action/done';
+import TextField from'@material-ui/core/TextField';
+import Button from'@material-ui/core/Button';
+import Paper from'@material-ui/core/Paper';
+import Done from '@material-ui/icons/Done';
 import WorkflowSchema from './WorkflowSchema';
 var Ajv = require('ajv');
 
@@ -18,8 +19,8 @@ const styles = {
 
 export default class ScientificWorkflowForm extends Component {
   static propTypes = {
-    project: React.PropTypes.object.isRequired,
-    workflowAPIActions: React.PropTypes.object.isRequired
+    project: PropTypes.object.isRequired,
+    workflowAPIActions: PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -98,7 +99,7 @@ export default class ScientificWorkflowForm extends Component {
             fullWidth={true}
             hintText="Enter a valid JSON workflow"/>
         </Paper>
-        <RaisedButton
+        <Button variant="contained"
           id="cy-create-workflow-btn"
           onClick={this.onSaveWorkflow}
           style={styles.button}

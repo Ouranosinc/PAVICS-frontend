@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import ol from 'openlayers';
 import OLComponent from './ol-component';
 
@@ -39,11 +40,11 @@ export default class View extends OLComponent {
 }
 
 View.propTypes = {
-	center: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
-	resolution: React.PropTypes.number.isRequired,
-	onNavigation: React.PropTypes.func
+	center: PropTypes.arrayOf(PropTypes.number).isRequired,
+	resolution: PropTypes.number.isRequired,
+	onNavigation: PropTypes.func
 }
 
 View.contextTypes = {
-  map: React.PropTypes.instanceOf(ol.Map)
+  map: PropTypes.instanceOf(ol.Map)
 }

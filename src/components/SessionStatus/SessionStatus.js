@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
-import SelectField from 'material-ui/SelectField';
-import {List, ListItem } from 'material-ui/List';
-import Subheader from 'material-ui/Subheader';
-import MenuItem from 'material-ui/MenuItem';
-import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
-import GroupIcon from 'material-ui/svg-icons/social/group';
+import PropTypes from 'prop-types';
+import Select from'@material-ui/core/Select';
+import {List, ListItem } from'@material-ui/core/List';
+import ListSubheader from'@material-ui/core/ListSubheader';
+import MenuItem from'@material-ui/core/MenuItem';
+import TextField from'@material-ui/core/TextField';
+import Button from'@material-ui/core/Button';
+import GroupIcon from '@material-ui/icons/Group';
 
 export const PROVIDER_ZIGGURAT = 'PROVIDER_ZIGGURAT';
 export const PROVIDER_ESGF = 'PROVIDER_ESGF';
@@ -32,9 +33,9 @@ const PROVIDERS = [
 export default class SessionStatus extends Component {
 
   static propTypes = {
-    sessionStatus: React.PropTypes.object.isRequired,
-    makeZigguratLoginRequest: React.PropTypes.func.isRequired,
-    logout: React.PropTypes.func.isRequired
+    sessionStatus: PropTypes.object.isRequired,
+    makeZigguratLoginRequest: PropTypes.func.isRequired,
+    logout: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -69,7 +70,7 @@ export default class SessionStatus extends Component {
           hintText="Email"
           floatingLabelText="Email"/>
         <List fullWidth={true}>
-          <Subheader style={{'paddingLeft': '0'}}>Access groups</Subheader>
+          <ListSubheader style={{'paddingLeft': '0'}}>Access groups</ListSubheader>
           {this.props.sessionStatus.user.groups.map((group, i) =>
             <ListItem
               key={i}
@@ -77,7 +78,7 @@ export default class SessionStatus extends Component {
               primaryText={group} />
           )}
         </List>
-        <RaisedButton style={{marginTop: '10px'}} id="cy-logout-btn" onTouchTap={this.logout} label="Logout" primary />
+        <Button variant="contained" style={{marginTop: '10px'}} id="cy-logout-btn" onTouchTap={this.logout} label="Logout" primary />
       </div>
     );
   }
@@ -94,13 +95,13 @@ export default class SessionStatus extends Component {
   makeLoginForm () {
     return (
       <div>
-        <SelectField
+        <Select
           id="cy-login-provider-sf"
           floatingLabelText="Login Authority"
           value={this.state.provider}
           onChange={this.handleProviderChange}>
           { PROVIDERS.map(provider => <MenuItem value={provider.provider_name} primaryText={provider.display_text} /> ) }
-        </SelectField>
+        </Select>
         <br />
         <TextField
           id="cy-login-user-tf"
@@ -113,7 +114,7 @@ export default class SessionStatus extends Component {
           onChange={this.handlePasswordChange}
           hintText="Password"
           type="password" /><br />
-        <RaisedButton id="cy-login-btn"  onTouchTap={this.submit} label="Login" primary />
+        <Button variant="contained" id="cy-login-btn"  onTouchTap={this.submit} label="Login" primary />
       </div>
     );
   }

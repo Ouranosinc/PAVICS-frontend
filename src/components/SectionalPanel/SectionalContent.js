@@ -1,14 +1,15 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import classes from './SectionalPanel.scss';
-import AppBar from 'material-ui/AppBar';
-import IconButton from 'material-ui/IconButton';
-import InfoIcon from 'material-ui/svg-icons/action/info';
+import AppBar from'@material-ui/core/AppBar';
+import IconButton from'@material-ui/core/IconButton';
+import InfoIcon from '@material-ui/icons/Info';
 
 class SectionalContent extends React.Component {
   static propTypes = {
-    currentContent: React.PropTypes.object,
-    showContent: React.PropTypes.bool.isRequired,
-    title: React.PropTypes.string.isRequired,
+    currentContent: PropTypes.object,
+    showContent: PropTypes.bool.isRequired,
+    title: PropTypes.string.isRequired,
   };
 
   render () {

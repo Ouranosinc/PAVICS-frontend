@@ -1,30 +1,26 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Row, Col } from 'react-bootstrap';
-import Dialog from 'material-ui/Dialog';
-import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
-import Checkbox from 'material-ui/Checkbox';
-import Card from 'material-ui/Card';
-import CardActions from 'material-ui/Card/CardActions';
-import CardHeader from 'material-ui/Card/CardHeader';
-import CardMedia from 'material-ui/Card/CardMedia';
-import CardTitle from 'material-ui/Card/CardTitle';
-import FlatButton from 'material-ui/FlatButton';
-import CardText from 'material-ui/Card/CardText';
-import Toggle from 'material-ui/Toggle';
-import Subheader from 'material-ui/Subheader';
-import { List, ListItem } from 'material-ui/List';
-import IconButton from 'material-ui/IconButton';
-import RemoveIcon from 'material-ui/svg-icons/content/remove-circle'
+import Dialog from'@material-ui/core/Dialog';
+import Button from'@material-ui/core/Button';
+import TextField from'@material-ui/core/TextField';
+import Checkbox from'@material-ui/core/Checkbox';
+import Card from'@material-ui/core/Card';
+import CardContent from'@material-ui/core/CardContent';
+import Switch from'@material-ui/core/Switch';
+import ListSubheader from'@material-ui/core/ListSubheader';
+import { List, ListItem } from'@material-ui/core/List';
+import IconButton from'@material-ui/core/IconButton';
+import RemoveIcon from '@material-ui/icons/RemoveCircle'
 
 export class PersistResultDialog extends React.Component {
   static propTypes = {
-    output: React.PropTypes.object.isRequired,
-    isOpen:  React.PropTypes.bool.isRequired,
-    onPersistConfirmed: React.PropTypes.func.isRequired,
-    closePersistDialog: React.PropTypes.func.isRequired,
-    monitorActions: React.PropTypes.object.isRequired,
-    username: React.PropTypes.string.isRequired
+    output: PropTypes.object.isRequired,
+    isOpen:  PropTypes.bool.isRequired,
+    onPersistConfirmed: PropTypes.func.isRequired,
+    closePersistDialog: PropTypes.func.isRequired,
+    monitorActions: PropTypes.object.isRequired,
+    username: PropTypes.string.isRequired
   };
   constructor (props) {
     super(props);
@@ -121,14 +117,14 @@ export class PersistResultDialog extends React.Component {
         onRequestClose={this.props.closePersistDialog}
         actions={
           [
-            <RaisedButton
+            <Button variant="contained"
               id="cy-persist-dialog-launch-btn"
               label="Launch Persist"
               primary={true}
               keyboardFocused={true}
               onTouchTap={(event) => this.onPersistOutputClicked()}
               style={{marginRight: '10px' }} />,
-            <RaisedButton
+            <Button variant="contained"
               id="cy-persist-dialog-close-btn"
               label="Close"
               primary={false}
@@ -138,7 +134,7 @@ export class PersistResultDialog extends React.Component {
         }
         autoScrollBodyContent={true}>
         <Card expanded={this.state.expanded} onExpandChange={this.handleExpandChange}>
-          <CardText>
+          <CardContent>
             <TextField
               id="cy-resource-link-tf"
               hintText="Resource"
@@ -153,17 +149,17 @@ export class PersistResultDialog extends React.Component {
               labelStyle={{textAlign: "left"}}
               checked={this.state.overwrite}
               onCheck={this.handleOverwriteChange}/>
-          </CardText>
-          <CardText>
-            <Toggle
+          </CardContent>
+          <CardContent>
+            <Switch
               id="cy-advanced-toggle"
-              toggled={this.state.expanded}
-              onToggle={this.handleToggle}
+              checked={this.state.expanded}
+              onChanged={this.handleToggle}
               labelPosition="right"
               label="Advanced configuration"
             />
-          </CardText>
-          <CardText expandable={true}>
+          </CardContent>
+          <CardContent expandable={true}>
             <TextField
               id="cy-workspace-path-tf"
               hintText="Location"
@@ -189,7 +185,7 @@ export class PersistResultDialog extends React.Component {
                   value={this.state.value} />
               </Col>
               <Col sm={4} md={4} lg={4}>
-                <RaisedButton
+                <Button variant="contained"
                   style={{marginTop: '25px'}}
                   label="Add"
                   primary={false}
@@ -199,7 +195,7 @@ export class PersistResultDialog extends React.Component {
             </Row>
             <Row>
               <List>
-                <Subheader>Default facets</Subheader>
+                <ListSubheader>Default facets</ListSubheader>
                 {
                   this.state.facets.map((facet, index) => {
                     return (
@@ -217,7 +213,7 @@ export class PersistResultDialog extends React.Component {
                 }
               </List>
             </Row>
-          </CardText>
+          </CardContent>
         </Card>
       </Dialog>;
    }
