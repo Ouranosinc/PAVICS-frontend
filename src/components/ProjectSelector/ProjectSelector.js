@@ -4,6 +4,7 @@ import classes from './ProjectSelector.scss';
 import MenuItem from'@material-ui/core/MenuItem';
 import Paper from'@material-ui/core/Paper';
 import Select from'@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
 import { NotificationManager } from 'react-notifications';
 
 export class ProjectSelector extends React.Component {
@@ -33,20 +34,26 @@ export class ProjectSelector extends React.Component {
     return (
       <div className={classes['ProjectSelector']}>
         <Paper style={{marginTop: 20}}>
-          <div className="container">
+          <form className="container">
+            <InputLabel htmlFor="current-project">Current project</InputLabel>
             <Select
               id="cy-project-selector"
-              fullWidth={true}
-              label="Current project"
+              inputProps={{
+                name: 'current-project',
+                id: 'current-project',
+              }}
+              fullWidth
               value={this.props.project.currentProject.id}
-              onChange={(event, index, value) => this._onSetCurrentProject(value)}>
+              onChange={(event) => this._onSetCurrentProject(event.target.value)}>
               {
-                this.props.projectAPI.items.map((project, i) => {
-                  return <MenuItem data-cy-item-project-id={project.id} key={i} value={project.id} primaryText={project.name} />;
-                })
+                this.props.projectAPI.items.map((project, i) =>
+                  <MenuItem data-cy-item-project-id={project.id} key={i} value={project.id}>
+                    {project.name}
+                  </MenuItem>
+                )
               }
             </Select>
-          </div>
+          </form>
         </Paper>
       </div>
     )

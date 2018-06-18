@@ -5,6 +5,7 @@ import Dialog from'@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Typography from '@material-ui/core/Typography';
 
 export class ConfirmDialog extends React.Component {
   static propTypes = {
@@ -28,7 +29,9 @@ export class ConfirmDialog extends React.Component {
           Confirmation
         </DialogTitle>
         <DialogContent>
-          {this.props.dialogContent}
+          <Typography>
+            {this.props.dialogContent}
+          </Typography>
         </DialogContent>
         <DialogActions>
           <Button variant="contained"

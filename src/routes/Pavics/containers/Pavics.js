@@ -25,11 +25,18 @@ const theme = createMuiTheme({
   typography: {
     fontSize: '18'
   },
+  selectField: {
+    marginBottom: '5px',
+    marginTop: '5px'
+  },
   textField: {
     marginBottom: '5px',
     marginTop: '5px'
   },
-  /*palette: {
+  button: {
+    marginTop: '10px'
+  }/*,
+  palette: {
     primary: {
       main: '#ff4400',
     },
@@ -39,9 +46,6 @@ const theme = createMuiTheme({
       contrastText: '#ffcc00',
     }
   },*/
-  button: {
-    marginTop: '10px'
-  }
 });
 
 class Pavics extends React.Component {

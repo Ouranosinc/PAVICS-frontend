@@ -5,11 +5,14 @@ import ConfirmDialog from './../../components/ConfirmDialog';
 import Paper from'@material-ui/core/Paper';
 import Button from'@material-ui/core/Button';
 import TextField from'@material-ui/core/TextField';
-import {Radio, RadioGroup} from'@material-ui/core/Radio';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
 import Select from'@material-ui/core/Select';
 import MenuItem from'@material-ui/core/MenuItem';
 import Checkbox from'@material-ui/core/Checkbox';
 import ListSubheader from'@material-ui/core/ListSubheader';
+import Typography from '@material-ui/core/Typography';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 export class ProjectShare extends React.Component {
   static propTypes = {
@@ -99,73 +102,77 @@ export class ProjectShare extends React.Component {
     return (
       <div className={classes['ProjectShare']}>
         <Paper style={{marginTop: 20}}>
-          <div className="container">
-            <h4>Share to</h4>
+          <form className="container">
+            <Typography variant='display1' gutterBottom>
+              Share project to
+            </Typography>
             <RadioGroup
               name="type"
-              defaultSelected={this.state.type}
+              value={this.state.type}
               style={{marginTop: '15px'}}
               onChange={(event, value) => {this.onUpdateStateKey('type', value)}}>
-              <Radio
-                id="cy-share-type-user-rb"
-                value="user"
-                label="User"
-              />
-              <Radio
-                id="cy-share-type-group-rb"
-                value="group"
-                label="Group users"
-              />
+              <FormControlLabel value="user" control={<Radio color="secondary" />} label="User" />
+              <FormControlLabel value="group" control={<Radio color="secondary" />} label="Group users" />
             </RadioGroup>
             {
               (this.state.type === 'user')?
               <TextField
                 id="cy-project-share-user-tf"
                 value={this.state.user}
-                fullWidth={true}
-                onChange={(event, value) => this.onUpdateStateKey('user', value)}
-                helperText="Username"
+                fullWidth
+                onChange={(event) => this.onUpdateStateKey('user', event.target.value)}
                 label="Define username" />:
               <Select
                 id="cy-group-selector"
                 fullWidth
                 value={this.state.group}
-                onChange={(event, key, value) => this.onUpdateStateKey('group', value)}
-                helperText="Group name"
+                onChange={(event) => this.onUpdateStateKey('group', event.target.value)}
                 label="Select a user group">
                 {this.props.sessionManagement.sessionStatus.user.groups.map((group, i) => {
                   return (
                     <MenuItem
                       data-cy-item-group={group}
                       key={i}
-                      value={group}
-                      primaryText={group} />
+                      value={group}>
+                      {group}
+                    </MenuItem>
                   );
                 })}
               </Select>
             }
-            <h4>Project permissions to be shared</h4>
-            <Checkbox
-              id="cy-read-permission-cb"
+            <Typography style={{marginTop: '15px'}} variant='title' gutterBottom>
+              Project permissions to be shared:
+            </Typography>
+            <FormControlLabel
+              style={{width: '100%'}}
               label="READ"
-              disabled
-              checked={this.state.readPermission}
-              onCheck={() => this.onTogglePermission('readPermission')}/>
-            <Checkbox
-              id="cy-write-permission-cb"
+              control={
+                <Checkbox
+                  id="cy-read-permission-cb"
+                  disabled
+                  checked={this.state.readPermission}
+                  onChange={() => this.onTogglePermission('readPermission')}/>
+              } />
+            <FormControlLabel
+              style={{width: '100%'}}
               label="WRITE"
-              checked={this.state.writePermission}
-              onCheck={() => this.onTogglePermission('writePermission')}/>
-          </div>
+              control={<Checkbox
+                id="cy-write-permission-cb"
+                checked={this.state.writePermission}
+                onChange={() => this.onTogglePermission('writePermission')}/>
+              } />
+
+            <Button
+              variant="raised"
+              id="cy-share-project-btn"
+              onClick={() => this.onShareProject()}
+              color="secondary"
+              disabled={(this.state.type === 'user' && !this.state.user.length) || (this.state.type === 'group' && !this.state.group.length)}>
+              Share project
+            </Button>
+          </form>
         </Paper>
 
-        <Button variant="contained"
-          id="cy-share-project-btn"
-          onClick={() => this.onShareProject()}
-          label="Share project"
-          secondary={true}
-          disabled={(this.state.type === 'user' && !this.state.user.length) || (this.state.type === 'group' && !this.state.group.length)}
-          style={{marginTop: 20}} />
         <ConfirmDialog
           isOpen={this.state.confirmShareDialogOpened}
           affectedResource={this.props.project.currentProject}
