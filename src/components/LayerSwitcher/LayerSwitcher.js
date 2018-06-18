@@ -316,16 +316,19 @@ export default class LayerSwitcher extends React.Component {
               textColor="primary"
               onChange={(event, value) => this.setState({ tabValue: value })}>
               <Tab
+                style={{minWidth: '130px'}}
                 id="cy-layerswitcher-datasets-tab"
                 icon={<Satellite />}
                 label="Datasets">
               </Tab>
               <Tab
+                style={{minWidth: '130px'}}
                 id="cy-layerswitcher-regions-tab"
                 icon={<LocalLibrary />}
                 label="Regions">
               </Tab>
               <Tab
+                style={{minWidth: '130px'}}
                 id="cy-layerswitcher-basemaps-tab"
                 icon={<Map />}
                 label="Base Maps">

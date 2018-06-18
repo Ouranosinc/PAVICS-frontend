@@ -339,14 +339,14 @@ class OLComponent extends React.Component {
   handleMapClick (event) {
     console.log('handling map click:', event);
     switch (this.props.mapManipulationMode) {
-      case constants.VISUALIZE_MODE_JOB_MANAGEMENT:
+      case constants.VISUALIZE_MODE_REGION_SELECTION:
         if (this.props.selectedShapefile.title) {
           console.log('selected shapefile:', this.props.selectedShapefile);
           return this.handleSelectRegionClick(event);
         }
         console.log('choose a shapefile first');
         return;
-      case constants.VISUALIZE_MODE_VISUALIZE:
+      case constants.VISUALIZE_MODE_GRID_VALUES:
         if (this.props.currentDisplayedDataset['dataset_id']) {
           console.log('selected dataset:', this.props.currentDisplayedDataset);
           return this.getScalarValue(event);

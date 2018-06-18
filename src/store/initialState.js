@@ -6,7 +6,7 @@ const initialState = {
   },
   visualize: {
     variablePreferences: {},
-    mapManipulationMode: constants.VISUALIZE_MODE_VISUALIZE,
+    mapManipulationMode: constants.VISUALIZE_MODE_GRID_VALUES,
     selectedColorPalette: '',
     selectedShapefile: {},
     selectedBasemap: '',

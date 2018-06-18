@@ -15,9 +15,11 @@ import FullScreenIcon from '@material-ui/icons/Fullscreen';
 import ExitFullScreenIcon from '@material-ui/icons/FullscreenExit';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 export default class MapControls extends React.Component {
   static propTypes = {
+    mapManipulationMode: PropTypes.string.isRequired,
     onToggleMapPanel: PropTypes.func.isRequired,
     selectMapManipulationMode: PropTypes.func.isRequired
   };
@@ -29,6 +31,7 @@ export default class MapControls extends React.Component {
     };
     this._onHideMapControlsPanel = this._onHideMapControlsPanel.bind(this);
     this._onSelectedFullScreenMode = this._onSelectedFullScreenMode.bind(this);
+    this._onSelectMapManipulationMode = this._onSelectMapManipulationMode.bind(this);
   }
 
   _onHideMapControlsPanel () {
@@ -55,6 +58,10 @@ export default class MapControls extends React.Component {
     });
   }
 
+  _onSelectMapManipulationMode(event, value) {
+    this.props.selectMapManipulationMode(value);
+  }
+
   render () {
     return (
       <Paper className={classes['MapControls']}>
@@ -71,20 +78,33 @@ export default class MapControls extends React.Component {
           <h4>Mouse Click Mode</h4>
           <RadioGroup
             style={{marginTop: '10px'}}
-            onChange={this.props.selectMapManipulationMode}
+            onChange={this._onSelectMapManipulationMode}
             name="map-manipulation-mode"
-            defaultSelected={constants.VISUALIZE_MODE_VISUALIZE}>
-            <Radio id="cy-grid-point-values-btn" value={constants.VISUALIZE_MODE_VISUALIZE} label="Grid Point Values" />
-            <Radio id="cy-region-selection-btn" value={constants.VISUALIZE_MODE_JOB_MANAGEMENT} label="Region Selection" />
+            value={this.props.mapManipulationMode}>
+            <FormControlLabel
+              id="cy-grid-point-values-btn"
+              label="Grid Point Values"
+              value={constants.VISUALIZE_MODE_GRID_VALUES}
+              control={
+                <Radio color="primary" />
+              } />
+            <FormControlLabel
+              id="cy-region-selection-btn"
+              value={constants.VISUALIZE_MODE_REGION_SELECTION}
+              label="Region Selection"
+              control={
+                <Radio color="primary" />
+              }/>
           </RadioGroup>
           <Divider />
           <h4>Toggle Full Screen Mode</h4>
           <Button variant="contained"
-            label="Full screen"
             style={{marginBottom: '10px'}}
-            primary={true}
-            icon={(!this.state.isFullScreen)? <FullScreenIcon /> :<ExitFullScreenIcon />}
-            onClick={this._onSelectedFullScreenMode} />
+            color="primary"
+            onClick={this._onSelectedFullScreenMode}>
+            Full screen
+            {(!this.state.isFullScreen)? <FullScreenIcon /> :<ExitFullScreenIcon />}
+          </Button>
         </div>
       </Paper>
     );

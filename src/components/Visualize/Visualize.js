@@ -271,9 +271,6 @@ class Visualize extends React.Component {
   }
 
   render () {
-    let selectModeCallback = (event, value) => {
-      this.props.selectMapManipulationMode(value);
-    };
     return (
       <div>
         <div className={classes['Visualize']}>
@@ -367,8 +364,9 @@ class Visualize extends React.Component {
               this.state.mapPanelStatus[constants.VISUALIZE_MAP_CONTROLS_PANEL]
                 ? <div className={classes['panel']} style={{clear: 'left'}}>
                   <MapControls
+                    mapManipulationMode={this.props.mapManipulationMode}
                     onToggleMapPanel={this._onToggleMapPanel}
-                    selectMapManipulationMode={selectModeCallback} />
+                    selectMapManipulationMode={this.props.selectMapManipulationMode} />
                 </div> : null
             }
           </div>
