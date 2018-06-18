@@ -122,14 +122,14 @@ export class PersistResultDialog extends React.Component {
               label="Launch Persist"
               primary={true}
               keyboardFocused={true}
-              onTouchTap={(event) => this.onPersistOutputClicked()}
+              onClick={(event) => this.onPersistOutputClicked()}
               style={{marginRight: '10px' }} />,
             <Button variant="contained"
               id="cy-persist-dialog-close-btn"
               label="Close"
               primary={false}
               keyboardFocused={false}
-              onTouchTap={this.props.closePersistDialog} />
+              onClick={this.props.closePersistDialog} />
           ]
         }
         autoScrollBodyContent={true}>
@@ -190,7 +190,7 @@ export class PersistResultDialog extends React.Component {
                   label="Add"
                   primary={false}
                   keyboardFocused={true}
-                  onTouchTap={this.onAddedFacet} />
+                  onClick={this.onAddedFacet} />
               </Col>
             </Row>
             <Row>
@@ -204,7 +204,7 @@ export class PersistResultDialog extends React.Component {
                         primaryText={facet.key + '-' + facet.value}
                         rightIconButton={
                           <IconButton>
-                            <RemoveIcon onTouchTap={(event) => this.onRemovedFacet(index)} />
+                            <RemoveIcon onClick={(event) => this.onRemovedFacet(index)} />
                           </IconButton>
                         }
                       />

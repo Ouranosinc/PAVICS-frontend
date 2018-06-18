@@ -167,12 +167,12 @@ class Pagination extends Component {
           <div style={styles.label} id="cy-pagination-showing">{`${showing}`}</div>
           <IconButton
             disabled={currentPageIndex === 1 || !total}
-            onTouchTap={e => this.handleChangePage(currentPageIndex - 1, e)}>
+            onClick={e => this.handleChangePage(currentPageIndex - 1, e)}>
             <ChevronLeft />
           </IconButton>
           <IconButton
             disabled={currentPageIndex === count || !total}
-            onTouchTap={e => this.handleChangePage(currentPageIndex + 1, e)}>
+            onClick={e => this.handleChangePage(currentPageIndex + 1, e)}>
             <ChevronRight />
           </IconButton>
         </div>

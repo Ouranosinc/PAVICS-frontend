@@ -88,7 +88,7 @@ export class PieMenu extends React.Component {
             <li id="cy-menu-map-controls-toggle">
               <a href="#" onClick={this._toggleMapControlsPanel} title="Toggle Map Controls"
                  className={this.props.mapPanelStatus[constants.VISUALIZE_MAP_CONTROLS_PANEL] ? classes['IsOpen'] : ''}>
-                <MapControlsIcon color={white} style={customSvgStyle} />
+                <MapControlsIcon style={customSvgStyle} />
               </a>
             </li>
           </ul>

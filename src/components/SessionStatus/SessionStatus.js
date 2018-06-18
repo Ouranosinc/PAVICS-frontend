@@ -78,7 +78,7 @@ export default class SessionStatus extends Component {
               primaryText={group} />
           )}
         </List>
-        <Button variant="contained" style={{marginTop: '10px'}} id="cy-logout-btn" onTouchTap={this.logout} label="Logout" primary />
+        <Button variant="contained" style={{marginTop: '10px'}} id="cy-logout-btn" onClick={this.logout} label="Logout" primary />
       </div>
     );
   }
@@ -114,7 +114,7 @@ export default class SessionStatus extends Component {
           onChange={this.handlePasswordChange}
           hintText="Password"
           type="password" /><br />
-        <Button variant="contained" id="cy-login-btn"  onTouchTap={this.submit} label="Login" primary />
+        <Button variant="contained" id="cy-login-btn"  onClick={this.submit} label="Login" primary />
       </div>
     );
   }

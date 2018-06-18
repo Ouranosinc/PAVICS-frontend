@@ -72,7 +72,7 @@ export default class WorkflowWizard extends React.Component {
         label="OK"
         primary={true}
         keyboardFocused={true}
-        onTouchTap={this.closeDialog}
+        onClick={this.closeDialog}
       />
     ];
     this.setState({

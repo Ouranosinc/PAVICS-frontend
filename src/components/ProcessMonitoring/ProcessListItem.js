@@ -56,7 +56,7 @@ export class ProcessListItem extends React.Component {
     let logMenuItem = <MenuItem
       id="cy-logs-item"
       primaryText="Show Logs"
-      onTouchTap={(event) => this.props.onShowLogDialog(this.props.job.log)}
+      onClick={(event) => this.props.onShowLogDialog(this.props.job.log)}
       leftIcon={<LogIcon />}/>;
     // TODO logMenuItem depends on status
     if (this.props.isWorkflowTask){
@@ -83,20 +83,20 @@ export class ProcessListItem extends React.Component {
         <MenuItem
           id="cy-status-item"
           primaryText="Browse XML Status File"
-          onTouchTap={(event) => window.open(this.props.job.status_location, '_blank')}
+          onClick={(event) => window.open(this.props.job.status_location, '_blank')}
           leftIcon={<FileIcon />}/>
         {logMenuItem}
         <MenuItem
           id="cy-visualize-all-agg-item"
           primaryText="Visualize All (Aggregated)"
           disabled={!visualizableTaskOutputs.length}
-          onTouchTap={(event) => this.props.onVisualiseDatasets(visualizableTaskOutputs, true)}
+          onClick={(event) => this.props.onVisualiseDatasets(visualizableTaskOutputs, true)}
           leftIcon={<VisualizeIcon />}/>
         <MenuItem
           id="cy-visualize-all-split-item"
           primaryText="Visualize All (Splitted)"
           disabled={!visualizableTaskOutputs.length}
-          onTouchTap={(event) => this.props.onVisualiseDatasets(visualizableTaskOutputs, false)}
+          onClick={(event) => this.props.onVisualiseDatasets(visualizableTaskOutputs, false)}
           leftIcon={<VisualizeIcon />}/>
       </IconMenu>*/
     );
@@ -115,25 +115,25 @@ export class ProcessListItem extends React.Component {
         id="cy-download-item"
         primaryText="Download"
         disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS || (output.reference === undefined || !output.reference.length)}
-        onTouchTap={(event) => { if (this.props.job.status === constants.JOB_SUCCESS_STATUS && output.reference.length) window.open(output.reference, '_blank'); }}
+        onClick={(event) => { if (this.props.job.status === constants.JOB_SUCCESS_STATUS && output.reference.length) window.open(output.reference, '_blank'); }}
         leftIcon={<DownloadIcon />}/>
       <MenuItem
         id="cy-publish-item"
         primaryText="Publish (TODO)"
         disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS}
-        onTouchTap={(event) => { if (this.props.job.status === constants.JOB_SUCCESS_STATUS) alert('TODO: Call Publish WPS'); }}
+        onClick={(event) => { if (this.props.job.status === constants.JOB_SUCCESS_STATUS) alert('TODO: Call Publish WPS'); }}
         leftIcon={<PublishIcon />}/>
       <MenuItem
         id="cy-persist-item"
         primaryText="Persist"
         disabled={!this._isPersistAvailable(output)}
-        onTouchTap={(event) => { if(this._isPersistAvailable(output)) this.props.onShowPersistDialog(output); }}
+        onClick={(event) => { if(this._isPersistAvailable(output)) this.props.onShowPersistDialog(output); }}
         leftIcon={<PersistIcon  />}/>
       <MenuItem
         id="cy-visualize-item"
         primaryText="Visualize"
         disabled={!this._isVisualizeAvailable(output)}
-        onTouchTap={(event) => {if(this._isVisualizeAvailable(output)) this.props.onVisualiseDatasets([output.reference]); }}
+        onClick={(event) => {if(this._isVisualizeAvailable(output)) this.props.onVisualiseDatasets([output.reference]); }}
         leftIcon={<VisualizeIcon />}/>
     </IconMenu>*/
   }
@@ -192,7 +192,7 @@ export class ProcessListItem extends React.Component {
       let logMenuItem = <MenuItem
         id="cy-logs-item"
         primaryText="Show Logs"
-        onTouchTap={(event) => this.props.onShowLogDialog(this.props.job.log)}
+        onClick={(event) => this.props.onShowLogDialog(this.props.job.log)}
         leftIcon={<LogIcon />}/>;
       if(this.props.job.status === constants.JOB_ACCEPTED_STATUS){
         secondaryText =

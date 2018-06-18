@@ -47,7 +47,7 @@ export class CurrentProjectSnackbar extends React.Component {
          action="change"
          autoHideDuration={5000}
          onRequestClose={(reason) => this._handleRequestClose()}
-         onActionTouchTap={(event) => this._handleGoToExperimentManagement()}>
+         onTouchTapAction={(event) => this._handleGoToExperimentManagement()}>
          </Snackbar>*/}
       </div>
     )

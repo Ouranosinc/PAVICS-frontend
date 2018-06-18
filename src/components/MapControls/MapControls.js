@@ -4,7 +4,8 @@ import * as classes from './MapControls.scss';
 import * as constants from './../../constants';
 import Paper from'@material-ui/core/Paper';
 import Divider from'@material-ui/core/Divider';
-import { RadioGroup, Radio } from'@material-ui/core/Radio';
+import Radio from'@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
 import AppBar from'@material-ui/core/AppBar';
 import IconButton from'@material-ui/core/IconButton';
 import MapControlsIcon from '@material-ui/icons/MyLocation';
@@ -12,6 +13,8 @@ import MinimizeIcon from '@material-ui/icons/Remove';
 import Button from'@material-ui/core/Button';
 import FullScreenIcon from '@material-ui/icons/Fullscreen';
 import ExitFullScreenIcon from '@material-ui/icons/FullscreenExit';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
 
 export default class MapControls extends React.Component {
   static propTypes = {
@@ -55,10 +58,15 @@ export default class MapControls extends React.Component {
   render () {
     return (
       <Paper className={classes['MapControls']}>
-        <AppBar
-          title="Map Controls"
-          iconElementLeft={<IconButton><MapControlsIcon /></IconButton>}
-          iconElementRight={<IconButton className="cy-minimize-btn" onTouchTap={(event) => this._onHideMapControlsPanel()}><MinimizeIcon /></IconButton>} />
+        <AppBar position="static" color="primary">
+          <Toolbar>
+            <IconButton disableRipple color="inherit"><MapControlsIcon /></IconButton>
+            <Typography variant="title" color="inherit" style={{flex: 1}}>
+              Map Controls
+            </Typography>
+            <IconButton color="inherit" className="cy-minimize-btn" onClick={(event) => this._onHideMapControlsPanel()}><MinimizeIcon /></IconButton>
+          </Toolbar>
+        </AppBar>
         <div className="container">
           <h4>Mouse Click Mode</h4>
           <RadioGroup
@@ -76,7 +84,7 @@ export default class MapControls extends React.Component {
             style={{marginBottom: '10px'}}
             primary={true}
             icon={(!this.state.isFullScreen)? <FullScreenIcon /> :<ExitFullScreenIcon />}
-            onTouchTap={this._onSelectedFullScreenMode} />
+            onClick={this._onSelectedFullScreenMode} />
         </div>
       </Paper>
     );

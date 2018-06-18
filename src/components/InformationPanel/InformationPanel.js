@@ -10,6 +10,8 @@ import AppBar from'@material-ui/core/AppBar';
 import IconButton from'@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Description';
 import MinimizeIcon from '@material-ui/icons/Remove';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
 
 export default class InformationPanel extends React.Component {
   static propTypes = {
@@ -79,10 +81,15 @@ export default class InformationPanel extends React.Component {
     };
     return (
       <Paper className={classes['InformationPanel']}>
-        <AppBar
-          title="Point Informations"
-          iconElementLeft={<IconButton><InfoIcon /></IconButton>}
-          iconElementRight={<IconButton className="cy-minimize-btn" onTouchTap={(event) => this._onHideInformationPanel()} ><MinimizeIcon/></IconButton>} />
+        <AppBar position="static" color="default">
+          <Toolbar>
+            <IconButton disabled><InfoIcon /></IconButton>
+            <Typography variant="title" color="inherit" style={{flex: 1}}>
+              Point Informations
+            </Typography>
+            <IconButton className="cy-minimize-btn" onClick={(event) => this._onHideInformationPanel()} ><MinimizeIcon/></IconButton>
+          </Toolbar>
+        </AppBar>
         <div className={classes['Content']}>
           {content}
         </div>

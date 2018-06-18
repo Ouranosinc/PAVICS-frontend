@@ -220,17 +220,17 @@ export class ProjectDatasets extends React.Component {
                           tooltipPosition="bottom-left">
                           <MoreVertIcon />
                         </IconButton>}>
-                        <MenuItem id="cy-download-all-item" primaryText="Download All" onTouchTap={(event) => this.onDownloadAllClicked(dataset)} leftIcon={<Download />} />
-                        <MenuItem id="cy-remove-all-item" primaryText="Remove" onTouchTap={() => this._onOpenConfirmRemoveDatasetDialog(dataset)} leftIcon={<Remove />} />
+                        <MenuItem id="cy-download-all-item" primaryText="Download All" onClick={(event) => this.onDownloadAllClicked(dataset)} leftIcon={<Download />} />
+                        <MenuItem id="cy-remove-all-item" primaryText="Remove" onClick={() => this._onOpenConfirmRemoveDatasetDialog(dataset)} leftIcon={<Remove />} />
                         <MenuItem id="cy-visualize-all-agg-item"primaryText="Visualize All (Aggregated)"
                                   disabled={disabledDatasetVisualize}
-                                  onTouchTap={(event) => {
+                                  onClick={(event) => {
                                     if (!disabledDatasetVisualize) this._onVisualizeDataset(event, dataset, true);
                                   }}
                                   leftIcon={<Visualize />} />
                         <MenuItem  id="cy-visualize-all-split-item" primaryText="Visualize All (Splitted)"
                                   disabled={disabledDatasetVisualize}
-                                  onTouchTap={(event) => {
+                                  onClick={(event) => {
                                     if (!disabledDatasetVisualize) this._onVisualizeDataset(event, dataset, false);
                                   }}
                                   leftIcon={<Visualize />} />
@@ -262,9 +262,9 @@ export class ProjectDatasets extends React.Component {
                                     tooltipPosition="bottom-left">
                                     <MoreVertIcon color={grey400} />
                                   </IconButton>}>
-                                <MenuItem id="cy-download-item" primaryText="Download" onTouchTap={(event) => window.open(dataset.fileserver_url[j], '_blank')} leftIcon={<Download />} />
-                                <MenuItem id="cy-remove-item" primaryText="Remove file" onTouchTap={() => {this._onOpenConfirmRemoveFileDialog(dataset, j)}} leftIcon={<Remove />} />
-                                <MenuItem id="cy-visualize-item" primaryText="Visualize" disabled={disabledNestedVisualize} onTouchTap={(event) => {
+                                <MenuItem id="cy-download-item" primaryText="Download" onClick={(event) => window.open(dataset.fileserver_url[j], '_blank')} leftIcon={<Download />} />
+                                <MenuItem id="cy-remove-item" primaryText="Remove file" onClick={() => {this._onOpenConfirmRemoveFileDialog(dataset, j)}} leftIcon={<Remove />} />
+                                <MenuItem id="cy-visualize-item" primaryText="Visualize" disabled={disabledNestedVisualize} onClick={(event) => {
                                   if (!disabledNestedVisualize) this._onVisualizeDataset(event, dataset, true, j);
                                 }} leftIcon={<Visualize />} />
                               </IconMenu>
@@ -308,9 +308,9 @@ export class ProjectDatasets extends React.Component {
                           tooltipPosition="bottom-left">
                           <MoreVertIcon color={grey400} />
                         </IconButton>}>
-                        <MenuItem id="cy-download-item"primaryText="Download" onTouchTap={(event) => window.open(dataset.fileserver_url[0], '_blank')} leftIcon={<Download />} />
-                        <MenuItem id="cy-remove-item" primaryText="Remove" onTouchTap={() => {this._onOpenConfirmRemoveDatasetDialog(dataset)}} leftIcon={<Remove />} />
-                        <MenuItem id="cy-visualize-item" primaryText="Visualize" disabled={disabledVisualize} onTouchTap={(event) => {
+                        <MenuItem id="cy-download-item"primaryText="Download" onClick={(event) => window.open(dataset.fileserver_url[0], '_blank')} leftIcon={<Download />} />
+                        <MenuItem id="cy-remove-item" primaryText="Remove" onClick={() => {this._onOpenConfirmRemoveDatasetDialog(dataset)}} leftIcon={<Remove />} />
+                        <MenuItem id="cy-visualize-item" primaryText="Visualize" disabled={disabledVisualize} onClick={(event) => {
                           if (!disabledVisualize) this._onVisualizeDataset(event, dataset, true, 0)
                         }} leftIcon={<Visualize />} />
                       </IconMenu>

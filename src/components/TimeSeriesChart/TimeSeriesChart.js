@@ -118,10 +118,15 @@ class TimeSeriesChart extends React.Component {
     return (
       // !this.props.currentScalarValue.data || !this.props.currentScalarValue.data._dimensions ? classes['Empty'] : classes['Chart']
       <Paper className={classes['TimeSeriesChart']}>
-        <AppBar
-          title="Time Series Chart"
-          iconElementLeft={<IconButton><TimelineIcon /></IconButton>}
-          iconElementRight={<IconButton className="cy-minimize-btn" onTouchTap={(event) => this._onHideChartPanel()}><MinimizeIcon /></IconButton>} />
+        <AppBar position="static" color="default">
+          <Toolbar>
+            <IconButton disabled><TimelineIcon /></IconButton>
+            <Typography variant="title" color="inherit" style={{flex: 1}}>
+              Time Series Chart
+            </Typography>
+            <IconButton className="cy-minimize-btn" onClick={(event) => this._onHideChartPanel()}><MinimizeIcon /></IconButton>
+          </Toolbar>
+        </AppBar>
         <div className={classes['Chart']}>
           {content}
           <div className={((this.props.plotlyData.isFetching || this.props.currentScalarValue.isFetching) &&

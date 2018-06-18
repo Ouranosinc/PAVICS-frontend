@@ -22,6 +22,8 @@ import BackwardIcon from '@material-ui/icons/SkipPrevious';
 import FastForwardIcon from '@material-ui/icons/FastForward';
 import FastBackwardIcon from '@material-ui/icons/FastRewind';
 import MinimizeIcon from '@material-ui/icons/Remove';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
 
 /* Constants */
 const DIVIDER = 100000;
@@ -429,10 +431,15 @@ export class TimeSlider extends React.Component {
     marksMonths[new Date(this.state.currentYear, 12, 1).valueOf() / DIVIDER] = 'Dec';
     return (
       <Paper className={classes['TimeSlider']}>
-        <AppBar
-          title="Temporal Slider"
-          iconElementLeft={<IconButton><AccessTimeIcon /></IconButton>}
-          iconElementRight={<IconButton className="cy-minimize-btn" onTouchTap={(event) => this._onHideTimeSliderPanel()}><MinimizeIcon /></IconButton>} />
+        <AppBar position="static" color="primary">
+          <Toolbar>
+            <IconButton disableRipple color="inherit"><AccessTimeIcon /></IconButton>
+            <Typography variant="title" color="inherit" style={{flex: 1}}>
+              Temporal Slider
+            </Typography>
+            <IconButton color="inherit"className="cy-minimize-btn" onClick={(event) => this._onHideTimeSliderPanel()}><MinimizeIcon /></IconButton>
+          </Toolbar>
+        </AppBar>
         <div className="container" id="cy-timeslider" data-cy-enabled={!this.state.disabled}>
           <Row>
             <Col md={4} lg={4}>

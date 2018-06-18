@@ -188,7 +188,7 @@ class ProcessMonitoring extends React.Component {
                   let logMenu = <MenuItem
                     id="cy-logs-item"
                     primaryText="Show Logs"
-                    onTouchTap={(event) => this._onShowLogDialog(x.log)}
+                    onClick={(event) => this._onShowLogDialog(x.log)}
                     leftIcon={<LogIcon />}/>;
 
                   tasks = x.tasks;
@@ -249,7 +249,7 @@ class ProcessMonitoring extends React.Component {
                     logMenu = <MenuItem
                       id="cy-logs-item"
                       primaryText="Browse Log File"
-                      onTouchTap={(event) => window.open(LogFileURL, '_blank')}
+                      onClick={(event) => window.open(LogFileURL, '_blank')}
                       leftIcon={<FileIcon />}/>
                   }
 
@@ -276,7 +276,7 @@ class ProcessMonitoring extends React.Component {
                         <MenuItem
                           id="cy-status-item"
                           primaryText="Browse XML Status File"
-                          onTouchTap={(event) => window.open(x.status_location, '_blank')}
+                          onClick={(event) => window.open(x.status_location, '_blank')}
                           leftIcon={<FileIcon />}/>
                         {logMenu}
                       </IconMenu>
@@ -348,13 +348,13 @@ class ProcessMonitoring extends React.Component {
                                   id="cy-visualize-all-agg-item"
                                   primaryText="Visualize All (Aggregated)"
                                   disabled={!visualizableOutputs.length}
-                                  onTouchTap={(event) => this._onVisualiseDatasets(visualizableOutputs, true)}
+                                  onClick={(event) => this._onVisualiseDatasets(visualizableOutputs, true)}
                                   leftIcon={<VisualizeIcon />}/>
                                 <MenuItem
                                   id="cy-visualize-all-split-item"
                                   primaryText="Visualize All (Splitted)"
                                   disabled={!visualizableOutputs.length}
-                                  onTouchTap={(event) => this._onVisualiseDatasets(visualizableOutputs, false)}
+                                  onClick={(event) => this._onVisualiseDatasets(visualizableOutputs, false)}
                                   leftIcon={<VisualizeIcon />}/>
                               </IconMenu>
                             }*/
@@ -490,7 +490,7 @@ class ProcessMonitoring extends React.Component {
                 label="Close"
                 primary={false}
                 keyboardFocused={true}
-                onTouchTap={this._closeLogDialog} />
+                onClick={this._closeLogDialog} />
             }
             autoScrollBodyContent={true}>
             {

@@ -2,13 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import * as pavicsActions from './../modules/Pavics';
 import { actions as projectActions } from '../../../redux/modules/Project';
 import { actions as projectAPIActions } from '../../../redux/modules/ProjectAPI';
 import { actions as researchActions } from '../../../redux/modules/Research';
 import { actions as sessionActions } from '../../../redux/modules/SessionManagement';
-
 import cookie from 'react-cookies';
 import * as constants from './../../../constants';
 import {
@@ -21,6 +20,8 @@ import {
 import { SectionalPanel } from './../../../components/SectionalPanel';
 require('react-notifications/lib/notifications.css');
 import { NotificationContainer, NotificationManager } from 'react-notifications';
+
+const theme = createMuiTheme();
 
 class Pavics extends React.Component {
   static propTypes = {
@@ -196,7 +197,7 @@ class Pavics extends React.Component {
 
   render () {
     return (
-      <MuiThemeProvider>
+      <MuiThemeProvider theme={theme}>
         <div>
           <VisualizeContainer {...this.props} />
           <SectionalPanel

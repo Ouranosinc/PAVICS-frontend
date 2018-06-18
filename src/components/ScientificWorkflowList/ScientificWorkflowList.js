@@ -141,9 +141,9 @@ export default class ScientificWorkflowList extends Component {
                               tooltipPosition="bottom-left">
                               <MoreVertIcon />
                             </IconButton>}>
-                            <MenuItem id="cy-configure-run-item" leftIcon={<Build />} onTouchTap={() => this._onRunWorkflowClicked(workflow)}>Configure & Run</MenuItem>
-                            <MenuItem id="cy-edit-item" leftIcon={<Create />} onTouchTap={() => this._onEditWorkflowClicked(workflow)}>Edit</MenuItem>
-                            <MenuItem id="cy-delete-item" leftIcon={<Remove />} onTouchTap={() => {this._onOpenConfirmWorkflowDeletionDialog(workflow)}}>Delete</MenuItem>
+                            <MenuItem id="cy-configure-run-item" leftIcon={<Build />} onClick={() => this._onRunWorkflowClicked(workflow)}>Configure & Run</MenuItem>
+                            <MenuItem id="cy-edit-item" leftIcon={<Create />} onClick={() => this._onEditWorkflowClicked(workflow)}>Edit</MenuItem>
+                            <MenuItem id="cy-delete-item" leftIcon={<Remove />} onClick={() => {this._onOpenConfirmWorkflowDeletionDialog(workflow)}}>Delete</MenuItem>
                             </IconMenu>
                         }*//>
                       </div>
@@ -177,7 +177,7 @@ export default class ScientificWorkflowList extends Component {
                   id="cy-confirm-cancel-btn"
                   label="Cancel"
                   keyboardFocused={false}
-                  onTouchTap={this._onCloseEditionDialog}
+                  onClick={this._onCloseEditionDialog}
                 />,
                 <Button variant="contained"
                   id="cy-confirm-save-btn"
@@ -185,7 +185,7 @@ export default class ScientificWorkflowList extends Component {
                   primary={true}
                   style={{marginLeft: '10px'}}
                   keyboardFocused={true}
-                  onTouchTap={() => {this._onEditWorkflowSaved()}}
+                  onClick={() => {this._onEditWorkflowSaved()}}
                 />
               ]}>
               <ScientificWorkflowTextInput
