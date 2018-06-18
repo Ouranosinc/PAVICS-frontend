@@ -81,7 +81,7 @@ export default class ScientificWorkflowTextInput extends Component {
         multiLine={true}
         rowsMax={15}
         fullWidth={true}
-        hintText="Enter a valid JSON workflow"/>
+        helperText="Enter a valid JSON workflow"/>
     );
   }
 }

@@ -336,17 +336,17 @@ export default class LayerSwitcher extends React.Component {
             </Tabs>
           </AppBar>
           {this.state.tabValue === 0 &&
-          <Paper zDepth={2} style={{height: '100%'}}>
+          <Paper elevation={2} style={{height: '100%'}}>
             {this.makeDatasetsList()}
           </Paper>
           }
           {this.state.tabValue === 1 &&
-          <Paper zDepth={2} style={{height: '100%'}}>
+          <Paper elevation={2} style={{height: '100%'}}>
             {this.makeShapefileList()}
           </Paper>
           }
           {this.state.tabValue === 2 &&
-          <Paper zDepth={2} style={{height: '100%'}}>
+          <Paper elevation={2} style={{height: '100%'}}>
             {this.makeBaseMapsList()}
           </Paper>
           }

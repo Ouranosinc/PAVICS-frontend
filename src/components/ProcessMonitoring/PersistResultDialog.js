@@ -137,11 +137,11 @@ export class PersistResultDialog extends React.Component {
           <CardContent>
             <TextField
               id="cy-resource-link-tf"
-              hintText="Resource"
+              helperText="Resource"
               fullWidth={true}
               disabled={true}
               value={this.props.output.reference}
-              floatingLabelText="Resource to persist" />
+              label="Resource to persist" />
             <Checkbox
               id="cy-overwrite-destination-cb"
               label="Overwrite destination"
@@ -162,26 +162,26 @@ export class PersistResultDialog extends React.Component {
           <CardContent expandable={true}>
             <TextField
               id="cy-workspace-path-tf"
-              hintText="Location"
+              helperText="Location"
               fullWidth={true}
               value={this.state.location}
               onChange={this.handleLocationChange}
-              floatingLabelText="Location" />
+              label="Location" />
             <Row>
               <Col sm={4} md={4} lg={4}>
                 <TextField
-                  hintText="Key"
+                  helperText="Key"
                   fullWidth={true}
                   onChange={this.handleKeyChange}
-                  floatingLabelText="Key"
+                  label="Key"
                   value={this.state.key} />
               </Col>
               <Col sm={4} md={4} lg={4}>
                 <TextField
-                  hintText="Value"
+                  helperText="Value"
                   fullWidth={true}
                   onChange={this.handleValueChange}
-                  floatingLabelText="Value"
+                  label="Value"
                   value={this.state.value} />
               </Col>
               <Col sm={4} md={4} lg={4}>

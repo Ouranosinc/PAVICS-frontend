@@ -153,7 +153,7 @@ export class SearchCatalog extends React.Component {
                         id="cy-load-criterias-sf"
                         style={{width: '95%'}}
                         fullWidth={true}
-                        floatingLabelText="Load criteria(s)"
+                        label="Load criteria(s)"
                         value={this.state.selectedSavedCriteria}
                         onChange={(event, index, value) => this._onLoadSavedCriteria(value)}>
                         {
@@ -167,7 +167,7 @@ export class SearchCatalog extends React.Component {
                      <Select
                      style={{width: '95%'}}
                      value={this.state.type}
-                     floatingLabelText="Type"
+                     label="Type"
                      onChange={(event, index, value) => this._onChangeSearchType(value)}>
                      <MenuItem value="Aggregate" primaryText="Dataset" />
                      <MenuItem value="FileAsAggregate" primaryText="File" />
@@ -177,7 +177,7 @@ export class SearchCatalog extends React.Component {
                       <Select
                         id="cy-add-criteria-sf"
                         style={{width: '95%'}}
-                        floatingLabelText="Add additional criteria"
+                        label="Add additional criteria"
                         value={this.state.selectedKey}
                         onChange={(event, index, value) => this._onAddCriteriaKey(value)}>
                         {
@@ -206,10 +206,10 @@ export class SearchCatalog extends React.Component {
                   <Col>
                     <TextField
                       id="cy-criterias-name-tf"
-                      hintText="Define a name"
+                      helperText="Define a name"
                       fullWidth={true}
                       onChange={(event, value) => this._onSetSearchCriteriasName(value)}
-                      floatingLabelText="Search Criteria(s) Name"/>
+                      label="Search Criteria(s) Name"/>
                   </Col>
                 </div>
               </Paper>)

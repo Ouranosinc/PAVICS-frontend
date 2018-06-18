@@ -96,21 +96,21 @@ export class ProjectEditor extends React.Component {
             <TextField
               id="cy-project-name-tf"
               data-cy-project-id={this.props.project.currentProject.id}
-              hintText="Define a name"
+              helperText="Define a name"
               value={this.state.projectName}
               fullWidth={true}
               onChange={(event, value) => this._onSetProjectName(value)}
-              floatingLabelText="Project name" />
+              label="Project name" />
             <TextField
               id="cy-project-description-tf"
-              hintText="Write a project description"
+              helperText="Write a project description"
               value={this.state.projectDescription}
               fullWidth={true}
               multiLine={true}
               rows={1}
               rowsMax={7}
               onChange={(event, value) => this._onSetProjectDescription(value)}
-              floatingLabelText="Project description" />
+              label="Project description" />
             <h4>Project permissions</h4>
             {
               this.props.project.currentProject.permissions.map((permission, i) =>

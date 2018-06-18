@@ -124,15 +124,15 @@ export class ProjectShare extends React.Component {
                 value={this.state.user}
                 fullWidth={true}
                 onChange={(event, value) => this.onUpdateStateKey('user', value)}
-                hintText="Username"
-                floatingLabelText="Define username" />:
+                helperText="Username"
+                label="Define username" />:
               <Select
                 id="cy-group-selector"
                 fullWidth
                 value={this.state.group}
                 onChange={(event, key, value) => this.onUpdateStateKey('group', value)}
-                hintText="Group name"
-                floatingLabelText="Select a user group">
+                helperText="Group name"
+                label="Select a user group">
                 {this.props.sessionManagement.sessionStatus.user.groups.map((group, i) => {
                   return (
                     <MenuItem

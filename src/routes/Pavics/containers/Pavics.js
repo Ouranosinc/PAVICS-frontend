@@ -21,7 +21,28 @@ import { SectionalPanel } from './../../../components/SectionalPanel';
 require('react-notifications/lib/notifications.css');
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 
-const theme = createMuiTheme();
+const theme = createMuiTheme({
+  typography: {
+    fontSize: '18'
+  },
+  textField: {
+    marginBottom: '5px',
+    marginTop: '5px'
+  },
+  /*palette: {
+    primary: {
+      main: '#ff4400',
+    },
+    secondary: {
+      light: '#0066ff',
+      main: '#0044ff',
+      contrastText: '#ffcc00',
+    }
+  },*/
+  button: {
+    marginTop: '10px'
+  }
+});
 
 class Pavics extends React.Component {
   static propTypes = {

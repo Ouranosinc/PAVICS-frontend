@@ -17,7 +17,7 @@ export default class WpsProviderSelector extends React.Component {
 
   render () {
     return (
-      <Paper zDepth={2}>
+      <Paper elevation={2}>
         <List>
           {
             this.props.workflow.providers.items.map((provider, i) => {

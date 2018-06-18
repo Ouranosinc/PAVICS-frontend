@@ -97,7 +97,7 @@ export default class ScientificWorkflowForm extends Component {
             multiLine={true}
             rowsMax={15}
             fullWidth={true}
-            hintText="Enter a valid JSON workflow"/>
+            helperText="Enter a valid JSON workflow"/>
         </Paper>
         <Button variant="contained"
           id="cy-create-workflow-btn"

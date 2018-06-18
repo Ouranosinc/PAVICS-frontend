@@ -37,7 +37,7 @@ export class ProjectSelector extends React.Component {
             <Select
               id="cy-project-selector"
               fullWidth={true}
-              floatingLabelText="Current project"
+              label="Current project"
               value={this.props.project.currentProject.id}
               onChange={(event, index, value) => this._onSetCurrentProject(value)}>
               {

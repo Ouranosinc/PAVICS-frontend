@@ -69,19 +69,19 @@ export class ProjectCreation extends React.Component {
           <div className="container">
             <TextField
               id="cy-project-name-tf"
-              hintText="Define a project name"
+              helperText="Define a project name"
               fullWidth={true}
               onChange={(event, value) => this._onSetNewProjectName(value)}
-              floatingLabelText="Project name" />
+              label="Project name" />
             <TextField
               id="cy-project-description-tf"
-              hintText="Write a project description"
+              helperText="Write a project description"
               fullWidth={true}
               multiLine={true}
               rows={1}
               rowsMax={7}
               onChange={(event, value) => this._onSetNewProjectDescription(value)}
-              floatingLabelText="Project description" />
+              label="Project description" />
           </div>
         </Paper>
 

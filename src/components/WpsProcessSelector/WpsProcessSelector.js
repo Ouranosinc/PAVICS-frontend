@@ -45,10 +45,10 @@ export default class WpsProcessSelector extends React.Component {
             <TextField
               id="cy-filter-by-keyword"
               value={this.props.searchKeyword}
-              hintText="Filter list by keyword"
+              helperText="Filter list by keyword"
               fullWidth={true}
               onChange={(event, value) => this.props.onSearchKeywordChanged(value)}
-              floatingLabelText="Filter by" />
+              label="Filter by" />
           </div>
         </Paper>
         <div style={gridStyle}>

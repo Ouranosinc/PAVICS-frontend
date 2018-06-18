@@ -112,14 +112,14 @@ class WpsProcessFormInput extends Component {
                 value={this.state.dateTimeValues.date}
                 onChange={this.handleDateChange}
                 style={{ width: '100%' }}
-                hintText={`${this.props.inputDefinition.description} - date`}
+                helperText={`${this.props.inputDefinition.description} - date`}
                 container="inline" />
             </div>
             <div className="col-sm-6">
               <TimePicker
                 autoOk
                 value={this.state.dateTimeValues.time}
-                hintText={`${this.props.inputDefinition.description} - time`}
+                helperText={`${this.props.inputDefinition.description} - time`}
                 onChange={this.handleTimeChange}
                 textFieldStyle={{ width: '100%' }}
                 format="24hr" />
@@ -141,8 +141,8 @@ class WpsProcessFormInput extends Component {
             className="cy-workflow-input-select-field"
             value={this.props.value}
             onChange={this.handleSelectChange}
-            hintText={this.props.inputDefinition.description}
-            floatingLabelText={this.props.inputDefinition.title}>
+            helperText={this.props.inputDefinition.description}
+            label={this.props.inputDefinition.title}>
             {this.props.inputDefinition.allowedValues.map((value, i) => {
               return (
                 <MenuItem
@@ -170,8 +170,8 @@ class WpsProcessFormInput extends Component {
             fullWidth
             value={this.props.value[i]}
             onChange={this.createHandleTextFieldArrayChangeCallback(i)}
-            hintText={this.props.inputDefinition.description}
-            floatingLabelText={this.props.inputDefinition.title} />
+            helperText={this.props.inputDefinition.description}
+            label={this.props.inputDefinition.title} />
         );
       });
     }
@@ -181,8 +181,8 @@ class WpsProcessFormInput extends Component {
         fullWidth
         value={this.props.value}
         onChange={this.handleTextFieldChange}
-        hintText={this.props.inputDefinition.description}
-        floatingLabelText={this.props.inputDefinition.title} />
+        helperText={this.props.inputDefinition.description}
+        label={this.props.inputDefinition.title} />
     );
   }
 
