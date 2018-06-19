@@ -22,19 +22,20 @@ require('react-notifications/lib/notifications.css');
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 
 const theme = createMuiTheme({
+  overrides: {
+    MuiFormControl: {
+      root: {
+        margin: '5px 0'
+      }
+    },
+    MuiButton: {
+      root: {
+        margin: '15px 0 0 0'
+      }
+    }
+  },
   typography: {
     fontSize: '18'
-  },
-  selectField: {
-    marginBottom: '5px',
-    marginTop: '5px'
-  },
-  textField: {
-    marginBottom: '5px',
-    marginTop: '5px'
-  },
-  button: {
-    marginTop: '10px'
   }/*,
   palette: {
     primary: {

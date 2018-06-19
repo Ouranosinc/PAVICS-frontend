@@ -56,24 +56,24 @@ export class ProjectManagement extends React.Component {
          </Tabs>
        </AppBar>
        {
-         /*this.state.activeTab === CURRENT_PROJECT_TAB_VALUE &&
+         this.state.activeTab === CURRENT_PROJECT_TAB_VALUE &&
          <div style={{margin: 20}}>
            <ProjectSelector {...this.props}/>
            {
-             (this.props.project.currentProject.id) ?
-               <div>
-                 <ProjectEditor {...this.props}/>
-                 <ProjectDatasets {...this.props} />
-                 <ProjectSearchCriterias {...this.props} />
-               </div> : null
+             /*this.props.project.currentProject.id &&
+             <div>
+               <ProjectEditor {...this.props}/>
+               <ProjectDatasets {...this.props} />
+               <ProjectSearchCriterias {...this.props} />
+             </div>*/
            }
-         </div>*/
+         </div>
        }
        {
-         /*his.state.activeTab === CREATE_PROJECT_TAB_VALUE &&
+         this.state.activeTab === CREATE_PROJECT_TAB_VALUE &&
          <div style={{ margin: 20 }}>
            <ProjectCreation  {...this.props}/>
-         </div>*/
+         </div>
        }
        {
          this.state.activeTab === SHARE_PROJECT_TAB_VALUE &&

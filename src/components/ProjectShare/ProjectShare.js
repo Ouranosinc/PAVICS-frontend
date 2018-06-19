@@ -163,7 +163,7 @@ export class ProjectShare extends React.Component {
               } />
 
             <Button
-              variant="raised"
+              variant="contained"
               id="cy-share-project-btn"
               onClick={() => this.onShareProject()}
               color="secondary"

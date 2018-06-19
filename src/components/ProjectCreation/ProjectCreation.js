@@ -69,28 +69,27 @@ export class ProjectCreation extends React.Component {
           <div className="container">
             <TextField
               id="cy-project-name-tf"
-              helperText="Define a project name"
+              placeholder="Define a project name"
               fullWidth={true}
-              onChange={(event, value) => this._onSetNewProjectName(value)}
+              onChange={(event) => this._onSetNewProjectName(event.target.value)}
               label="Project name" />
             <TextField
               id="cy-project-description-tf"
-              helperText="Write a project description"
+              placeholder="Write a project description"
               fullWidth={true}
               multiLine={true}
               rows={1}
               rowsMax={7}
-              onChange={(event, value) => this._onSetNewProjectDescription(value)}
+              onChange={(event) => this._onSetNewProjectDescription(event.target.value)}
               label="Project description" />
+            <Button variant="contained"
+                    id="cy-create-project-btn"
+                    onClick={this._onCreateProject}
+                    disabled={!this.state.projectName || !this.state.projectName.length}>
+              Create new project
+            </Button>
           </div>
         </Paper>
-
-        <Button variant="contained"
-          id="cy-create-project-btn"
-          onClick={this._onCreateProject}
-          label="Create new project"
-          disabled={!this.state.projectName || !this.state.projectName.length}
-          style={{marginTop: 20}} />
       </div>
     )
   }
