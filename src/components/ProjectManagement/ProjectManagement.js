@@ -60,12 +60,12 @@ export class ProjectManagement extends React.Component {
          <div style={{margin: 20}}>
            <ProjectSelector {...this.props}/>
            {
-             /*this.props.project.currentProject.id &&
+             this.props.project.currentProject.id &&
              <div>
                <ProjectEditor {...this.props}/>
                <ProjectDatasets {...this.props} />
-               <ProjectSearchCriterias {...this.props} />
-             </div>*/
+               {/*<ProjectSearchCriterias {...this.props} />*/}
+             </div>
            }
          </div>
        }

@@ -37,17 +37,19 @@ export class ConfirmDialog extends React.Component {
           <Button variant="contained"
                   id="cy-confirm-cancel-btn"
                   label="Cancel"
+                  color="secondary"
                   keyboardFocused={false}
-                  onClick={() => this.props.onCloseDialog()}/>
+                  onClick={() => this.props.onCloseDialog()}>
+            Cancel
+          </Button>
           <Button variant="contained"
                   id="cy-confirm-ok-btn"
-                  label="OK"
-                  primary={true}
+                  color="primary"
                   style={{marginLeft: '10px'}}
                   keyboardFocused={true}
-                  onClick={() => {
-                    this.props.onDialogConfirmed(this.props.affectedResource);
-                  }}/>
+                  onClick={() => this.props.onDialogConfirmed(this.props.affectedResource)}>
+            OK
+          </Button>
         </DialogActions>
     </Dialog>
     );

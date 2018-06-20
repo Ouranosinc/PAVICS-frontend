@@ -70,14 +70,13 @@ export class ProjectCreation extends React.Component {
             <TextField
               id="cy-project-name-tf"
               placeholder="Define a project name"
-              fullWidth={true}
+              fullWidth
               onChange={(event) => this._onSetNewProjectName(event.target.value)}
               label="Project name" />
             <TextField
               id="cy-project-description-tf"
               placeholder="Write a project description"
-              fullWidth={true}
-              multiLine={true}
+              fullWidth
               rows={1}
               rowsMax={7}
               onChange={(event) => this._onSetNewProjectDescription(event.target.value)}

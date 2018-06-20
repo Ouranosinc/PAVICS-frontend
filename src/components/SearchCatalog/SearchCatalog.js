@@ -9,11 +9,13 @@ import MenuItem from'@material-ui/core/MenuItem';
 import Paper from'@material-ui/core/Paper';
 import { Row, Col } from 'react-bootstrap';
 import ListSubheader from'@material-ui/core/ListSubheader';
-import {List} from'@material-ui/core/List';
+import List from'@material-ui/core/List';
 import Button from'@material-ui/core/Button';
 import TextField from'@material-ui/core/TextField';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import SaveIcon from '@material-ui/icons/Save';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
 
 export class SearchCatalog extends React.Component {
   static propTypes = {
@@ -74,7 +76,8 @@ export class SearchCatalog extends React.Component {
     this.props.researchActions.fetchPavicsDatasetsAndFacets(value);
   }
 
-  _onLoadSavedCriteria (id) {
+  _onLoadSavedCriteria (event) {
+    const id = event.target.value;
     let searchCriteria = this.props.researchAPI.items.find(x => x.id === id);
     this.setState({
       selectedSavedCriteria: id
@@ -85,7 +88,8 @@ export class SearchCatalog extends React.Component {
     });
   }
 
-  _onAddCriteriaKey (value) {
+  _onAddCriteriaKey (event) {
+    const value = event.target.value;
     let arr = JSON.parse(JSON.stringify(this.state.criteriaKeys));
     arr.push(value);
     this.setState({
@@ -149,45 +153,48 @@ export class SearchCatalog extends React.Component {
                 <div className="container" id="cy-search-facets">
                   <Row>
                     <Col sm={12} md={6} lg={6}>
-                      <Select
-                        id="cy-load-criterias-sf"
-                        style={{width: '95%'}}
-                        fullWidth={true}
-                        label="Load criteria(s)"
-                        value={this.state.selectedSavedCriteria}
-                        onChange={(event, index, value) => this._onLoadSavedCriteria(value)}>
-                        {
-                          this.props.researchAPI.items.map((search, i) => {
-                            return <MenuItem key={i} value={search.id} primaryText={search.name}/>;
-                          })
-                        }
-                      </Select>
+                      <FormControl style={{width: '95%'}}>
+                        <InputLabel htmlFor="saved-criteria">Load criteria(s)</InputLabel>
+                        <Select
+                          id="cy-load-criterias-sf"
+                          value={this.state.selectedSavedCriteria}
+                          inputProps={{
+                            name: 'saved-criteria',
+                            id: 'saved-criteria',
+                          }}>
+                          onChange={this._onLoadSavedCriteria}>
+                          {
+                            (this.props.researchAPI.items.length) ?
+                            this.props.researchAPI.items.map((search, i) =>
+                              <MenuItem key={i} value={search.id}>
+                                {search.name}
+                              </MenuItem>
+                            ): null
+                          }
+                        </Select>
+                      </FormControl>
                     </Col>
-                    {/*<Col sm={12} md={4} lg={4}>
-                     <Select
-                     style={{width: '95%'}}
-                     value={this.state.type}
-                     label="Type"
-                     onChange={(event, index, value) => this._onChangeSearchType(value)}>
-                     <MenuItem value="Aggregate" primaryText="Dataset" />
-                     <MenuItem value="FileAsAggregate" primaryText="File" />
-                     </Select>
-                     </Col>*/}
                     <Col sm={12} md={6} lg={6}>
-                      <Select
-                        id="cy-add-criteria-sf"
-                        style={{width: '95%'}}
-                        label="Add additional criteria"
-                        value={this.state.selectedKey}
-                        onChange={(event, index, value) => this._onAddCriteriaKey(value)}>
-                        {
-                          this.props.research.facets.map((x, i) => {
-                            return (this.state.criteriaKeys.includes(x.key))
-                              ? null
-                              : <MenuItem id={`cy-add-criteria-${x.key}`}key={i} value={x.key} primaryText={x.key}/>;
-                          })
-                        }
-                      </Select>
+                      <FormControl style={{width: '95%'}}>
+                        <InputLabel htmlFor="add-criteria">Add additional criteria</InputLabel>
+                        <Select
+                          id="cy-add-criteria-sf"
+                          value={this.state.selectedKey}
+                          onChange={this._onAddCriteriaKey}
+                          inputProps={{
+                            name: 'add-criteria',
+                            id: 'add-criteria',
+                          }}>
+                          {
+                            this.props.research.facets.map((x, i) =>
+                              !this.state.criteriaKeys.includes(x.key) &&
+                               <MenuItem id={`cy-add-criteria-${x.key}`} key={i} value={x.key}>
+                                {x.key}
+                              </MenuItem>
+                            )
+                          }
+                        </Select>
+                      </FormControl>
                     </Col>
                   </Row>
                   <Row style={{marginBottom: 15}}>
@@ -228,11 +235,11 @@ export class SearchCatalog extends React.Component {
             icon={<RefreshIcon />}
             disabled={!this.props.research.selectedFacets.length}
             style={{marginTop: 20, marginLeft: 20}}/>
-          <SearchCatalogResults
+          {/*<SearchCatalogResults
             clickTogglePanel={this.props.clickTogglePanel}
             research={this.props.research}
             project={this.props.project}
-            projectAPIActions={this.props.projectAPIActions}/>
+            projectAPIActions={this.props.projectAPIActions}/>*/}
         </div>
       </div>
     );

@@ -6,6 +6,7 @@ import Paper from'@material-ui/core/Paper';
 import Button from'@material-ui/core/Button';
 import TextField from'@material-ui/core/TextField';
 import Checkbox from'@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 export class ProjectEditor extends React.Component {
   static propTypes = {
@@ -96,47 +97,53 @@ export class ProjectEditor extends React.Component {
             <TextField
               id="cy-project-name-tf"
               data-cy-project-id={this.props.project.currentProject.id}
-              helperText="Define a name"
+              placeholder="Define a name"
               value={this.state.projectName}
-              fullWidth={true}
-              onChange={(event, value) => this._onSetProjectName(value)}
+              fullWidth
+              onChange={(event) => this._onSetProjectName(event.target.value)}
               label="Project name" />
             <TextField
               id="cy-project-description-tf"
-              helperText="Write a project description"
+              placeholder="Write a project description"
               value={this.state.projectDescription}
-              fullWidth={true}
+              fullWidth
               multiLine={true}
               rows={1}
               rowsMax={7}
-              onChange={(event, value) => this._onSetProjectDescription(value)}
+              onChange={(event) => this._onSetProjectDescription(event.target.value)}
               label="Project description" />
             <h4>Project permissions</h4>
             {
               this.props.project.currentProject.permissions.map((permission, i) =>
-                <Checkbox
-                  className="cy-project-permission-cb"
-                  disabled
+                <FormControlLabel
+                  style={{width: '100%'}}
                   label={permission.toUpperCase()}
-                  checked={true} />
+                  control={
+                    <Checkbox
+                      className="cy-project-permission-cb"
+                      disabled
+                      checked={true} />
+                  }>
+                </FormControlLabel>
               )
             }
+            <Button variant="contained"
+                    id="cy-save-project-btn"
+                    color="primary"
+                    onClick={() => this._onSaveProject()}
+                    disabled={!this.state.projectName || !this.state.projectName.length}>
+              Save project properties
+            </Button>
+            <Button variant="contained"
+                    id="cy-delete-project-btn"
+                    onClick={() => this._onDeleteProject()}
+                    color="secondary"
+                    disabled={!this.state.projectName || !this.state.projectName.length}
+                    style={{marginLeft: '20px'}}>
+              Delete project
+            </Button>
           </div>
         </Paper>
-
-        <Button variant="contained"
-          id="cy-save-project-btn"
-          onClick={() => this._onSaveProject()}
-          label="Save project properties"
-          disabled={!this.state.projectName || !this.state.projectName.length}
-          style={{marginTop: 20}} />
-        <Button variant="contained"
-          id="cy-delete-project-btn"
-          onClick={() => this._onDeleteProject()}
-          label="Delete project"
-          secondary={true}
-          disabled={!this.state.projectName || !this.state.projectName.length}
-          style={{marginTop: 20, marginLeft: '20px'}} />
         <ConfirmDialog
           isOpen={this.state.confirmDeleteDialogOpened}
           affectedResource={this.props.project.currentProject}
