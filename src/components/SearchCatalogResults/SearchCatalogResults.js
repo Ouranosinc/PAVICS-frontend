@@ -5,15 +5,20 @@ import { NotificationManager } from 'react-notifications';
 import * as constants from '../../constants';
 import Loader from './../../components/Loader';
 import Pagination from './../../components/Pagination';
-import {Alert} from 'react-bootstrap';
-import {List, ListItem} from'@material-ui/core/List';
-import Checkbox from'@material-ui/core/Checkbox';
+import List from'@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from'@material-ui/core/ListSubheader';
+import Checkbox from'@material-ui/core/Checkbox';
 import Paper from'@material-ui/core/Paper';
 import IconButton from'@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Info';
 import Button from'@material-ui/core/Button';
-import AddIcon from '@material-ui/icons/AddBox';
+import AddIcon from '@material-ui/icons/Add';
+import DatasetListedDetails from './../DatasetListedDetails'
+import Modal from '@material-ui/core/Modal';
 
 export class SearchCatalogResults extends React.Component {
   static propTypes = {
@@ -25,14 +30,16 @@ export class SearchCatalogResults extends React.Component {
   constructor (props) {
     super(props);
     this._onAddCheckedDatasetsToProject = this._onAddCheckedDatasetsToProject.bind(this);
-    this._onCheckedDataset = this._onCheckedDataset.bind(this);
+    this._onToggleCheckDataset = this._onToggleCheckDataset.bind(this);
     this._onPageChanged = this._onPageChanged.bind(this);
     this.state = {
       checkedDatasets: [],
       filesCount: 0,
       confirm: false,
       pageNumber: 1,
-      numberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX]
+      numberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX],
+      infoOpened: false,
+      infoDataset: {}
     };
   }
 
@@ -46,6 +53,9 @@ export class SearchCatalogResults extends React.Component {
         filesCount: filesCount
       });
     }
+    if(nextProps.research.selectedFacets && nextProps.research.selectedFacets  !== this.props.research.selectedFacets) {
+      this.setState({checkedDatasets: []});
+    }
   }
 
   _onPageChanged (pageNumber, numberPerPage) {
@@ -55,24 +65,21 @@ export class SearchCatalogResults extends React.Component {
     });
   }
 
-  _onCheckedDataset (event) {
-    let dataset = this.props.research.pavicsDatasets.items.find(x => x.dataset_id === event.target.value);
-    let index = this.state.checkedDatasets.findIndex(x => x.dataset_id === event.target.value);
+  _onToggleCheckDataset (value) {
+    let dataset = this.props.research.pavicsDatasets.items.find(x => x.dataset_id === value);
+    let index = this.state.checkedDatasets.findIndex(x => x.dataset_id === value);
     let oldDatasets = this.state.checkedDatasets;
     if (dataset) {
-      if (event.target.checked) {
-        if (index === -1) {
-          this.setState({
-            checkedDatasets: oldDatasets.concat([dataset])
-          });
-        }
-      } else {
-        if (index > -1) {
-          oldDatasets.splice(index, 1);
-          this.setState({
-            checkedDatasets: oldDatasets
-          });
-        }
+      if (index === -1) {
+        this.setState({
+          checkedDatasets: oldDatasets.concat([dataset])
+        });
+      }
+      if (index > -1) {
+        oldDatasets.splice(index, 1);
+        this.setState({
+          checkedDatasets: oldDatasets
+        });
       }
     }
   }
@@ -97,6 +104,19 @@ export class SearchCatalogResults extends React.Component {
     });
   }
 
+  onInfoButtonClicked = (dataset) => {
+    this.setState({
+      infoOpened: true,
+      infoDataset: dataset});
+  };
+
+  onInfoPopoverClosed = () => {
+    this.setState({
+      infoOpened: false,
+      infoDataset: {}
+    });
+  };
+
   render () {
     // console.log("render SearchCatalogResults");
     let mainComponent;
@@ -117,53 +137,58 @@ export class SearchCatalogResults extends React.Component {
                 <ListSubheader id="cy-search-results-count" inset={true}>Found <strong>{this.state.filesCount}</strong> total files in <strong>{this.props.research.pavicsDatasets.items.length}</strong> results</ListSubheader>
                 {paginated.map((x, i) =>
                   <ListItem
+                    button
+                    onClick={(event) => this._onToggleCheckDataset(x.dataset_id)}
                     className="cy-dataset-result-item"
                     key={i}
-                    leftCheckbox={<Checkbox value={x.dataset_id} onCheck={this._onCheckedDataset} />}
-                    primaryText={`${x.aggregate_title} (${x.fileserver_url.length} file${(x.fileserver_url.length > 1)? 's': ''})` }
-                    secondaryText={
-                      <p>
-                        <span><strong>Variable: </strong> {x.variable_long_name}</span><br />
-                        <strong>Keywords: </strong>{x.keywords.join(', ')}
-                      </p>
-                    }
-                    secondaryTextLines={2}
-                    rightIconButton={
+                    secondaryTextLines={2}>
+                    <ListItemIcon>
+                      <Checkbox checked={this.state.checkedDatasets.findIndex(d => d.dataset_id === x.dataset_id) > -1} />
+                    </ListItemIcon>
+                    <ListItemText
+                      inset
+                      primary={`${x.aggregate_title} (${x.fileserver_url.length} file${(x.fileserver_url.length > 1)? 's': ''})` }
+                      secondary={
+                        <p>
+                          <span><strong>Variable: </strong> {x.variable_long_name}</span><br />
+                          <strong>Keywords: </strong>{x.keywords.join(', ')}
+                        </p>
+                      }/>
+                    <ListItemSecondaryAction>
                       <IconButton
-                        touch={true}
-                        tooltip={<div>
-                          <strong>Dataset: </strong>{x.dataset_id}<br />
-                          <strong>Subject: </strong>{x.subject}<br />
-                          <strong>Category: </strong>{x.category}<br />
-                          <strong>Experiment: </strong>{x.experiment}<br />
-                          <strong>Variable: </strong>{x.variable}<br />
-                          <strong>Project: </strong>{x.project}<br />
-                          <strong>Institute: </strong>{x.institute}<br />
-                          <strong>Model: </strong>{x.model}<br />
-                          <strong>Units: </strong>{x.units}<br />
-                          <strong>Frequency: </strong>{x.frequency}<br />
-                          <strong>Content type: </strong>{x.content_type}<br />
-                        </div>}
-                        tooltipPosition="bottom-left">
+                        buttonRef={node => {
+                          this.anchorEl = node;
+                        }}
+                        onClick={(event) => this.onInfoButtonClicked(x)}>
                         <InfoIcon />
                       </IconButton>
-                    }
-                  />
+                    </ListItemSecondaryAction>
+                  </ListItem>
                 )}
               </List>
+              <Modal
+                aria-labelledby="simple-modal-title"
+                aria-describedby="simple-modal-description"
+                open={this.state.infoOpened}
+                onClose={this.onInfoPopoverClosed}
+              >
+                <DatasetListedDetails dataset={this.state.infoDataset} />
+              </Modal>
               <Pagination
                 total={this.props.research.pavicsDatasets.items.length}
                 initialPerPageOptionIndex={constants.PER_PAGE_INITIAL_INDEX}
                 perPageOptions={constants.PER_PAGE_OPTIONS}
                 onChange={this._onPageChanged} />
+              <div className="container">
+                <Button variant="contained"
+                        color="primary"
+                        id="cy-add-datasets-btn"
+                        disabled={!this.state.checkedDatasets.length}
+                        onClick={this._onAddCheckedDatasetsToProject}>
+                  <AddIcon /> Add selection(s)
+                </Button>
+              </div>
             </Paper>
-            <Button variant="contained"
-              id="cy-add-datasets-btn"
-              disabled={!this.state.checkedDatasets.length}
-              onClick={this._onAddCheckedDatasetsToProject}
-              icon={<AddIcon />}
-              label="Add selection(s)"
-              style={{marginTop: '20px'}} />
           </div>;
       } else {
         if (this.props.research.pavicsDatasets.receivedAt) {

@@ -28,6 +28,11 @@ const theme = createMuiTheme({
         margin: '5px 0'
       }
     },
+    MuiSvgIcon: {
+      root: {
+        marginRight: '2px'
+      }
+    },
     MuiButton: {
       root: {
         margin: '15px 0 0 0'

@@ -49,12 +49,6 @@ export class SearchCatalog extends React.Component {
 
   constructor (props) {
     super(props);
-    this._onAddCriteriaKey = this._onAddCriteriaKey.bind(this);
-    this._onLoadSavedCriteria = this._onLoadSavedCriteria.bind(this);
-    this._ResetCriterias = this._ResetCriterias.bind(this);
-    this._SaveCriterias = this._SaveCriterias.bind(this);
-    this._onChangeSearchType = this._onChangeSearchType.bind(this);
-    this._onSetSearchCriteriasName = this._onSetSearchCriteriasName.bind(this);
     if(!this.props.sessionManagement.sessionStatus.user.authenticated) {
       NotificationManager.warning(`You need to be authenticated to use search datasets features.`, 'Warning', 10000);
     }
@@ -69,15 +63,14 @@ export class SearchCatalog extends React.Component {
     }
   }
 
-  _onChangeSearchType (value) {
+  onChangeSearchType = (value) => {
     this.setState({
       type: value
     });
     this.props.researchActions.fetchPavicsDatasetsAndFacets(value);
-  }
+  };
 
-  _onLoadSavedCriteria (event) {
-    const id = event.target.value;
+  onLoadSavedCriteria = (id) => {
     let searchCriteria = this.props.researchAPI.items.find(x => x.id === id);
     this.setState({
       selectedSavedCriteria: id
@@ -86,9 +79,9 @@ export class SearchCatalog extends React.Component {
     searchCriteria.facets.forEach((facet) => {
       this.props.researchActions.addFacetKeyValuePair(facet.key, facet.value);
     });
-  }
+  };
 
-  _onAddCriteriaKey (event) {
+  onAddCriteriaKey = (event) => {
     const value = event.target.value;
     let arr = JSON.parse(JSON.stringify(this.state.criteriaKeys));
     arr.push(value);
@@ -96,15 +89,15 @@ export class SearchCatalog extends React.Component {
       criteriaKeys: arr,
       searchCriteriasName: ''
     });
-  }
+  };
 
-  _onSetSearchCriteriasName (value) {
+  onSetSearchCriteriasName = (event) => {
     this.setState({
-      searchCriteriasName: value
+      searchCriteriasName: event.target.value
     });
-  }
+  };
 
-  _ResetCriterias () {
+  onResetCriterias = () => {
     this.setState({
       type: 'Aggregate',
       criteriaKeys: [
@@ -120,7 +113,7 @@ export class SearchCatalog extends React.Component {
     this.props.researchActions.fetchPavicsDatasetsAndFacets();
   }
 
-  _SaveCriterias () {
+  onSaveCriterias = () => {
     if (this.state.searchCriteriasName.length && this.props.research.selectedFacets.length) {
       if (this.props.researchAPI.items.find( x => x.name === this.state.searchCriteriasName)) {
         NotificationManager.warning(`Search criteria(s) already exists with the same name. Please specify another name.`, 'Warning', 10000);
@@ -158,18 +151,17 @@ export class SearchCatalog extends React.Component {
                         <Select
                           id="cy-load-criterias-sf"
                           value={this.state.selectedSavedCriteria}
+                          onChange={(event) => this.onLoadSavedCriteria(search.id)}
                           inputProps={{
                             name: 'saved-criteria',
                             id: 'saved-criteria',
                           }}>
-                          onChange={this._onLoadSavedCriteria}>
                           {
-                            (this.props.researchAPI.items.length) ?
                             this.props.researchAPI.items.map((search, i) =>
                               <MenuItem key={i} value={search.id}>
                                 {search.name}
                               </MenuItem>
-                            ): null
+                            )
                           }
                         </Select>
                       </FormControl>
@@ -180,7 +172,7 @@ export class SearchCatalog extends React.Component {
                         <Select
                           id="cy-add-criteria-sf"
                           value={this.state.selectedKey}
-                          onChange={this._onAddCriteriaKey}
+                          onChange={this.onAddCriteriaKey}
                           inputProps={{
                             name: 'add-criteria',
                             id: 'add-criteria',
@@ -215,31 +207,34 @@ export class SearchCatalog extends React.Component {
                       id="cy-criterias-name-tf"
                       helperText="Define a name"
                       fullWidth={true}
-                      onChange={(event, value) => this._onSetSearchCriteriasName(value)}
+                      onChange={this.onSetSearchCriteriasName}
                       label="Search Criteria(s) Name"/>
                   </Col>
+
+                  <Button variant="contained"
+                          id="cy-save-criterias-btn"
+                          onClick={this.onSaveCriterias}
+                          color="primary"
+                          disabled={!this.props.research.selectedFacets.length}
+                          style={{marginTop: 20}}>
+                    <SaveIcon />Save search criteria(s)
+                  </Button>
+                  <Button variant="contained"
+                          id="cy-reset-criterias-btn"
+                          onClick={this.onResetCriterias}
+                          color="secondary"
+                          disabled={!this.props.research.selectedFacets.length}
+                          style={{marginTop: 20, marginLeft: 20}}>
+                    <RefreshIcon />Reset
+                  </Button>
                 </div>
               </Paper>)
           }
-          <Button variant="contained"
-            id="cy-save-criterias-btn"
-            onClick={this._SaveCriterias}
-            label="Save search criteria(s)"
-            icon={<SaveIcon />}
-            disabled={!this.props.research.selectedFacets.length}
-            style={{marginTop: 20}}/>
-          <Button variant="contained"
-            id="cy-reset-criterias-btn"
-            onClick={this._ResetCriterias}
-            label="Reset"
-            icon={<RefreshIcon />}
-            disabled={!this.props.research.selectedFacets.length}
-            style={{marginTop: 20, marginLeft: 20}}/>
-          {/*<SearchCatalogResults
+          <SearchCatalogResults
             clickTogglePanel={this.props.clickTogglePanel}
             research={this.props.research}
             project={this.props.project}
-            projectAPIActions={this.props.projectAPIActions}/>*/}
+            projectAPIActions={this.props.projectAPIActions}/>
         </div>
       </div>
     );

@@ -10,7 +10,7 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import Select from'@material-ui/core/Select';
 import MenuItem from'@material-ui/core/MenuItem';
 import Checkbox from'@material-ui/core/Checkbox';
-import ListSubheader from'@material-ui/core/ListSubheader';
+import ShareIcon from'@material-ui/icons/Share';
 import Typography from '@material-ui/core/Typography';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 
@@ -168,7 +168,7 @@ export class ProjectShare extends React.Component {
               onClick={() => this.onShareProject()}
               color="secondary"
               disabled={(this.state.type === 'user' && !this.state.user.length) || (this.state.type === 'group' && !this.state.group.length)}>
-              Share project
+              <ShareIcon />Share project
             </Button>
           </form>
         </Paper>

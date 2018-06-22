@@ -64,11 +64,9 @@ class Pagination extends Component {
       selectedPerPageOptionIndex: this.props.initialPerPageOptionIndex,
       currentPageIndex: 1
     };
-    this.handleChangePerPage = this.handleChangePerPage.bind(this);
-    this.handleChangePage = this.handleChangePage.bind(this);
   }
 
-  handleChangePage (page) {
+  handleChangePage = (page) => {
     let maxPage = Math.ceil(this.props.total / this.props.perPageOptions[this.state.selectedPerPageOptionIndex]);
     if (page >= 1 && page <= maxPage) {
       this.setState({
@@ -78,7 +76,7 @@ class Pagination extends Component {
     }
   }
 
-  handleChangePerPage (perPage) {
+  handleChangePerPage = (perPage) => {
     let maxPage = Math.ceil(this.props.total / this.props.perPageOptions[perPage]);
     let newPageIndex = this.state.currentPageIndex;
     if (newPageIndex > maxPage) {
@@ -133,17 +131,16 @@ class Pagination extends Component {
         <div style={Object.assign({}, styles.elements, styles.pageSelect)}>
           <div style={styles.label}>{`${texts.page} `}</div>
           <Select
-            onChange={(e, idx, page) => this.handleChangePage(page)}
+            onChange={(event) => this.handleChangePage(event.target.value)}
             disabled={!total}
             value={currentPageIndex}
             style={styles.select}
             underlineStyle={styles.underline}>
             {
               pages.map(page => (
-                <MenuItem
-                  primaryText={page}
-                  value={page}
-                  key={`page-${page}`} />
+                <MenuItem value={page} key={`page-${page}`}>
+                  {page}
+                </MenuItem>
               ))
             }
           </Select>
@@ -151,14 +148,14 @@ class Pagination extends Component {
         <div style={styles.elements}>
           <div style={styles.label}>{`${texts.perPageOptions} `}</div>
           <Select
-            onChange={(e, idx, selectedOption) => this.handleChangePerPage(selectedOption)}
+            onChange={(event) => this.handleChangePerPage(event.target.value)}
             disabled={!total}
             value={selectedPerPageOptionIndex}
             style={styles.select}
             underlineStyle={styles.underline}>
             {
               perPageOptions.map((v, i)=>{
-                return <MenuItem key={i} value={i} primaryText={v} />;
+                return <MenuItem key={i} value={i}>{v}</MenuItem>;
               })
             }
           </Select>

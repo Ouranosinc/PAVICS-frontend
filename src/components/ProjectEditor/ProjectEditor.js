@@ -7,6 +7,8 @@ import Button from'@material-ui/core/Button';
 import TextField from'@material-ui/core/TextField';
 import Checkbox from'@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import DeleteIcon from '@material-ui/icons/Delete';
+import SaveIcon from '@material-ui/icons/Save';
 
 export class ProjectEditor extends React.Component {
   static propTypes = {
@@ -132,7 +134,7 @@ export class ProjectEditor extends React.Component {
                     color="primary"
                     onClick={() => this._onSaveProject()}
                     disabled={!this.state.projectName || !this.state.projectName.length}>
-              Save project properties
+              <SaveIcon />Save project properties
             </Button>
             <Button variant="contained"
                     id="cy-delete-project-btn"
@@ -140,7 +142,7 @@ export class ProjectEditor extends React.Component {
                     color="secondary"
                     disabled={!this.state.projectName || !this.state.projectName.length}
                     style={{marginLeft: '20px'}}>
-              Delete project
+              <DeleteIcon />Delete project
             </Button>
           </div>
         </Paper>

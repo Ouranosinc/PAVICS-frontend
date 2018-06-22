@@ -5,6 +5,7 @@ import * as constants from '../../constants';
 import Paper from'@material-ui/core/Paper';
 import Button from'@material-ui/core/Button';
 import TextField from'@material-ui/core/TextField';
+import CreateIcon from '@material-ui/icons/PlaylistAdd';
 import { NotificationManager } from 'react-notifications';
 
 export class ProjectCreation extends React.Component {
@@ -85,7 +86,7 @@ export class ProjectCreation extends React.Component {
                     id="cy-create-project-btn"
                     onClick={this._onCreateProject}
                     disabled={!this.state.projectName || !this.state.projectName.length}>
-              Create new project
+              <CreateIcon />Create new project
             </Button>
           </div>
         </Paper>

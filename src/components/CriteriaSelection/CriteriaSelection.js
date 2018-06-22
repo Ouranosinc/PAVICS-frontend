@@ -13,7 +13,7 @@ import { Col } from 'react-bootstrap';
 
 const styles = theme => ({
   icon: {
-    color: theme.palette.secondary.light
+    color: theme.palette.secondary.main
   },
 });
 
