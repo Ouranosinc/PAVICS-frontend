@@ -176,7 +176,6 @@ export default class ScientificWorkflowList extends Component {
                 <Button variant="contained"
                   id="cy-confirm-cancel-btn"
                   label="Cancel"
-                  keyboardFocused={false}
                   onClick={this._onCloseEditionDialog}
                 />,
                 <Button variant="contained"
@@ -184,7 +183,6 @@ export default class ScientificWorkflowList extends Component {
                   label="Save"
                   primary={true}
                   style={{marginLeft: '10px'}}
-                  keyboardFocused={true}
                   onClick={() => {this._onEditWorkflowSaved()}}
                 />
               ]}>

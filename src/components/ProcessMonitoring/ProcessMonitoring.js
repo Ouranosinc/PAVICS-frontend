@@ -489,7 +489,6 @@ class ProcessMonitoring extends React.Component {
               <Button variant="contained"
                 label="Close"
                 primary={false}
-                keyboardFocused={true}
                 onClick={this._closeLogDialog} />
             }
             autoScrollBodyContent={true}>

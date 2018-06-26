@@ -1,10 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classes from './<%= pascalEntityName %>.scss'
+import { withStyles } from '@material-ui/core/styles';
+
+const styles = theme => ({
+  <%= pascalEntityName %>: {
+
+  }
+});
+
 
 export class <%= pascalEntityName %> extends React.Component {
   static propTypes = {
-
+    classes: PropTypes.object.isRequired,
   }
 
   constructor(props) {
@@ -14,11 +21,11 @@ export class <%= pascalEntityName %> extends React.Component {
 
   render () {
     return (
-      <div className={classes['<%= pascalEntityName %>']}>
+      <div className={this.props.classes['<%= pascalEntityName %>']}>
         <h1><%= pascalEntityName %></h1>
       </div>
     )
   }
 }
 
-export default <%= pascalEntityName %>
+export default withStyles(styles)(<%= pascalEntityName %>);

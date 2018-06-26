@@ -17,14 +17,16 @@ import IconButton from'@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Info';
 import Button from'@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
-import DatasetListedDetails from './../DatasetListedDetails'
-import Modal from '@material-ui/core/Modal';
+import DatasetMenuActions from './../DatasetMenuActions';
 
 export class SearchCatalogResults extends React.Component {
   static propTypes = {
     clickTogglePanel: PropTypes.func.isRequired,
+    project: PropTypes.object.isRequired,
     projectAPIActions: PropTypes.object.isRequired,
-    research: PropTypes.object.isRequired
+    research: PropTypes.object.isRequired,
+    datasetAPI: PropTypes.object.isRequired,
+    datasetAPIActions: PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -110,7 +112,7 @@ export class SearchCatalogResults extends React.Component {
       infoDataset: dataset});
   };
 
-  onInfoPopoverClosed = () => {
+  onInfoModalClosed = () => {
     this.setState({
       infoOpened: false,
       infoDataset: {}
@@ -149,31 +151,22 @@ export class SearchCatalogResults extends React.Component {
                       inset
                       primary={`${x.aggregate_title} (${x.fileserver_url.length} file${(x.fileserver_url.length > 1)? 's': ''})` }
                       secondary={
-                        <p>
+                        <div>
                           <span><strong>Variable: </strong> {x.variable_long_name}</span><br />
                           <strong>Keywords: </strong>{x.keywords.join(', ')}
-                        </p>
+                        </div>
                       }/>
-                    <ListItemSecondaryAction>
-                      <IconButton
-                        buttonRef={node => {
-                          this.anchorEl = node;
-                        }}
-                        onClick={(event) => this.onInfoButtonClicked(x)}>
-                        <InfoIcon />
-                      </IconButton>
-                    </ListItemSecondaryAction>
+                    <DatasetMenuActions
+                      addDatasetsToVisualize={this.props.addDatasetsToVisualize}
+                      selectCurrentDisplayedDataset={this.props.selectCurrentDisplayedDataset}
+                      isRemoveFromProjectEnabled={false}
+                      dataset={x}
+                      disabledVisualize={false}
+                      datasetAPIActions={this.props.datasetAPIActions}
+                      project={this.props.project}/>
                   </ListItem>
                 )}
               </List>
-              <Modal
-                aria-labelledby="simple-modal-title"
-                aria-describedby="simple-modal-description"
-                open={this.state.infoOpened}
-                onClose={this.onInfoPopoverClosed}
-              >
-                <DatasetListedDetails dataset={this.state.infoDataset} />
-              </Modal>
               <Pagination
                 total={this.props.research.pavicsDatasets.items.length}
                 initialPerPageOptionIndex={constants.PER_PAGE_INITIAL_INDEX}

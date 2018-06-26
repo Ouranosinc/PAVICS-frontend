@@ -1,27 +1,41 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classes from './ProjectDatasets.scss';
+import {withStyles} from '@material-ui/core/styles';
 import * as constants from '../../constants';
 import Pagination from './../../components/Pagination';
 import List from'@material-ui/core/List';
 import ListItem from'@material-ui/core/ListItem';
 import ListItemIcon from'@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from'@material-ui/core/ListSubheader';
 import Collapse from '@material-ui/core/Collapse';
 import Paper from'@material-ui/core/Paper';
-import MenuItem from'@material-ui/core/MenuItem';
-import IconButton from'@material-ui/core/IconButton';
-import Download from '@material-ui/icons/FileDownload';
-import Visualize from '@material-ui/icons/RemoveRedEye';
-import Remove from '@material-ui/icons/Delete';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Folder from '@material-ui/icons/Folder';
-import FolderSpecial from '@material-ui/icons/FolderSpecial';
 import File from '@material-ui/icons/InsertDriveFile';
-import ConfirmDialog from './../../components/ConfirmDialog';
+import DatasetMenuActions from './../DatasetMenuActions';
+
+const styles = theme => ({
+  ProjectDatasets: {
+    width: '100%',
+  },
+  nested: {
+    paddingLeft: theme.spacing.unit * 4,
+  },
+  listItem: {
+    minWidth: '100%'
+  }
+});
+
 
 export class ProjectDatasets extends React.Component {
+  state = {
+    nestedOpenedDatasets: {},
+    datasetsPageNumber: 1,
+    datasetsNumberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX]
+  };
+
   static propTypes = {
+    classes: PropTypes.object.isRequired,
     project: PropTypes.object.isRequired,
     projectActions: PropTypes.object.isRequired,
     datasetAPI: PropTypes.object.isRequired,
@@ -30,27 +44,9 @@ export class ProjectDatasets extends React.Component {
 
   constructor(props) {
     super(props);
-    this._onVisualizeDataset = this._onVisualizeDataset.bind(this);
-    this._onDatasetsPageChanged = this._onDatasetsPageChanged.bind(this);
-    this._onOpenConfirmRemoveDatasetDialog = this._onOpenConfirmRemoveDatasetDialog.bind(this);
-    this._onConfirmedDatasetRemove = this._onConfirmedDatasetRemove.bind(this);
-    this._onCloseDialogDatasetRemove = this._onCloseDialogDatasetRemove.bind(this);
-    this._onOpenConfirmRemoveFileDialog = this._onOpenConfirmRemoveFileDialog.bind(this);
-    this._onConfirmedFileRemove = this._onConfirmedFileRemove.bind(this);
-    this._onCloseDialogFileRemove = this._onCloseDialogFileRemove.bind(this);
-    this.state = {
-      datasetsPageNumber: 1,
-      datasetsNumberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX],
-      isConfirmDatasetRemoveDialogOpened: false,
-      confirmDatasetRemoveDialogContent: '',
-      confirmDatasetRemoveDialogResource: null,
-      isConfirmFileRemoveDialogOpened: false,
-      confirmFileRemoveDialogContent: '',
-      confirmFileRemoveDialogResource: null
-    };
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (nextProps.project.currentProject && nextProps.project.currentProject !== this.props.project.currentProject) {
       this.props.datasetAPIActions.fetchDatasets({projectId: nextProps.project.currentProject.id});
     }
@@ -62,262 +58,120 @@ export class ProjectDatasets extends React.Component {
     }
   }
 
-  _onDatasetsPageChanged (pageNumber, numberPerPage) {
+  onDatasetsPageChanged(pageNumber, numberPerPage) {
     this.setState({
       datasetsPageNumber: pageNumber,
       datasetsNumberPerPage: numberPerPage
     });
   }
 
-  setFileAsAggregateArrayFields(dataset, index) {
-    dataset['datetime_min'] = [dataset.datetime_min[index]];
-    dataset['datetime_max'] = [dataset.datetime_max[index]];
-    dataset['abstract'] = [dataset.abstract[index]];
-    dataset['wms_url'] = [dataset.wms_url[index]];
-    dataset['opendap_url'] = [dataset.opendap_url[index]];
-    dataset['fileserver_url'] = [dataset.fileserver_url[index]];
-    dataset['catalog_url'] = [dataset.catalog_url[index]];
-    dataset['resourcename'] = [dataset.resourcename[index]];
-    dataset['title'] = [dataset.title[index]];
-    dataset['url'] = [dataset.url[index]];
-    dataset['last_modified'] = [dataset.last_modified[index]];
-    return dataset;
-  }
-
-  _onVisualizeDataset (event, dataset, aggregate = false, index = -1) {
-    if(aggregate) {
-      let copy = JSON.parse(JSON.stringify(dataset));
-      if(index > -1) {
-        copy = this.setFileAsAggregateArrayFields(copy, index);
-      }
-      this.props.addDatasetsToVisualize([copy]);
-      this.props.selectCurrentDisplayedDataset({
-        ...copy,
-        currentFileIndex: 0,
-        opacity: 0.8
-      });
-    }else{
-      // Split every file in independants datasets
-      let splittedDatasets = [];
-      dataset.wms_url.forEach((wmsUrl, index) => {
-        let copy = JSON.parse(JSON.stringify(dataset));
-        splittedDatasets.push(this.setFileAsAggregateArrayFields(copy, index));
-      });
-      this.props.addDatasetsToVisualize(splittedDatasets);
-      this.props.selectCurrentDisplayedDataset({
-        ...splittedDatasets[0],
-        currentFileIndex: 0,
-        opacity: 0.8
-      });
-    }
-  }
-
-  _onOpenConfirmRemoveFileDialog (dataset, index) {
-    let cpy = JSON.parse(JSON.stringify(dataset));
-    cpy.datetime_min.splice(index , 1);
-    cpy.datetime_max.splice(index , 1);
-    cpy.abstract.splice(index , 1);
-    cpy.wms_url.splice(index , 1);
-    cpy.opendap_url.splice(index , 1);
-    cpy.fileserver_url.splice(index , 1);
-    cpy.catalog_url.splice(index , 1);
-    cpy.resourcename.splice(index , 1);
-    cpy.title.splice(index , 1);
-    cpy.url.splice(index , 1);
-    cpy.last_modified.splice(index , 1);
+  onDatasetListItemToggled = (dataset) => {
+    let nestedOpenedDatasets = this.state.nestedOpenedDatasets;
+    nestedOpenedDatasets[dataset.dataset_id] = !(this.state.nestedOpenedDatasets[dataset.dataset_id] && this.state.nestedOpenedDatasets[dataset.dataset_id] === true);
     this.setState({
-      isConfirmFileRemoveDialogOpened: true,
-      confirmFileRemoveDialogContent: `Do you really want to remove the file '${dataset.title[index]}' from the dataset?`,
-      confirmFileRemoveDialogResource: cpy
+      nestedOpenedDatasets: nestedOpenedDatasets
     });
-  }
+  };
 
-  _onConfirmedFileRemove(dataset) {
-    if (this.props.project.currentProject.id) {
-      dataset.projectId = this.props.project.currentProject.id;
-      this.props.datasetAPIActions.updateDataset(dataset);
-      this._onCloseDialogFileRemove();
-    }
-  }
-
-  _onCloseDialogFileRemove() {
-    this.setState({
-      isConfirmFileRemoveDialogOpened: false,
-      confirmFileRemoveDialogContent: '',
-      confirmFileRemoveDialogResource: null
-    });
-  }
-
-
-  _onOpenConfirmRemoveDatasetDialog (dataset) {
-    this.setState({
-      isConfirmDatasetRemoveDialogOpened: true,
-      confirmDatasetRemoveDialogContent: `Do you really want to remove the dataset '${dataset.aggregate_title}' from the current project?`,
-      confirmDatasetRemoveDialogResource: dataset
-    });
-  }
-
-  _onConfirmedDatasetRemove(dataset) {
-    if (this.props.project.currentProject.id) {
-      this.props.datasetAPIActions.deleteDataset({ projectId: this.props.project.currentProject.id, id: dataset.id });
-      this._onCloseDialogDatasetRemove();
-    }
-  }
-
-  _onCloseDialogDatasetRemove() {
-    this.setState({
-      isConfirmDatasetRemoveDialogOpened: false,
-      confirmDatasetRemoveDialogContent: '',
-      confirmDatasetRemoveDialogResource: null
-    });
-  }
-
-  onDownloadAllClicked(dataset) {
-    dataset.fileserver_url.forEach((url) => {
-      window.open(url, '_blank');
-    });
-  }
-
-  render () {
+  render() {
+    const {classes} = this.props;
     let datasetsStart = (this.state.datasetsPageNumber - 1) * this.state.datasetsNumberPerPage;
     let datasetsPaginated = this.props.datasetAPI.items.slice(datasetsStart, datasetsStart + this.state.datasetsNumberPerPage);
     return (
       <div id="cy-project-datasets" className={classes['ProjectDatasets']}>
         <Paper style={{marginTop: 20}}>
-          <List>
+          <List component="div">
             <ListSubheader>Current project dataset(s)</ListSubheader>
             {datasetsPaginated.map((dataset, i) => {
-              let folderIcon = <Folder />;
-              if (this.props.currentVisualizedDatasets.find(x => x.dataset_id === dataset.dataset_id)) {
-                folderIcon = <FolderSpecial />;
-              }
-              let disabledDatasetVisualize = false;
-              // let found = this.props.currentVisualizedDatasets.find(x => x.dataset_id === dataset.dataset_id);
-              // if (found && found.wms_url.length === dataset.wms_url.length) {
-              //   disabledDatasetVisualize = true;
-              // }
-              if(dataset.type === "Aggregate") {
+              if (dataset.type === "Aggregate") {
                 return (
-                  <ListItem
-                    className="cy-project-dataset-item cy-project-dataset-level-0"
-                    key={i}
-                    primaryText={dataset.aggregate_title}
-                    secondaryText={
-                      <p>
-                        <span className="cy-dataset-multiple-file-title">{dataset.fileserver_url.length + ' Files'}</span><br />
-                        <strong>Keywords: </strong>{dataset.keywords.join(', ')}
-                      </p>
-                    }
-                    secondaryTextLines={2}
-                    leftIcon={folderIcon}
-                    initiallyOpen={false}
-                    primaryTogglesNestedList={true}
-                    autoGenerateNestedIndicator={false}
-                    /*rightIconButton={
-                      <IconMenu iconButtonElement={
-                        <IconButton
-                          className="cy-actions-btn"
-                          touch={true}
-                          tooltip="Actions"
-                          tooltipPosition="bottom-left">
-                          <MoreVertIcon />
-                        </IconButton>}>
-                        <MenuItem id="cy-download-all-item" primaryText="Download All" onClick={(event) => this.onDownloadAllClicked(dataset)} leftIcon={<Download />} />
-                        <MenuItem id="cy-remove-all-item" primaryText="Remove" onClick={() => this._onOpenConfirmRemoveDatasetDialog(dataset)} leftIcon={<Remove />} />
-                        <MenuItem id="cy-visualize-all-agg-item"primaryText="Visualize All (Aggregated)"
-                                  disabled={disabledDatasetVisualize}
-                                  onClick={(event) => {
-                                    if (!disabledDatasetVisualize) this._onVisualizeDataset(event, dataset, true);
-                                  }}
-                                  leftIcon={<Visualize />} />
-                        <MenuItem  id="cy-visualize-all-split-item" primaryText="Visualize All (Splitted)"
-                                  disabled={disabledDatasetVisualize}
-                                  onClick={(event) => {
-                                    if (!disabledDatasetVisualize) this._onVisualizeDataset(event, dataset, false);
-                                  }}
-                                  leftIcon={<Visualize />} />
-                      </IconMenu>
-                    }*/
-                    nestedItems={
-                      dataset.wms_url.map((wmsUrl, j) => {
-                        let nestedIcon = <File />;
-                        let disabledNestedVisualize = false;
-                        let founds = this.props.currentVisualizedDatasets.filter(x => x.wms_url.indexOf(wmsUrl) > -1);
-                        if (founds && founds.length) {
-                          nestedIcon = <Visualize />;
+                  <div>
+                    <ListItem
+                      button onClick={(event) => this.onDatasetListItemToggled(dataset)}
+                      className={classes.listItem + "cy-project-dataset-item cy-project-dataset-level-0"}
+                      key={i}>
+                      <ListItemIcon>
+                        <Folder />
+                      </ListItemIcon>
+                      <ListItemText
+                        inset
+                        primary={dataset.aggregate_title}
+                        secondary={
+                          <div>
+                          <span
+                            className="cy-dataset-multiple-file-title">{dataset.fileserver_url.length + ' Files'}</span><br />
+                            <strong>Keywords: </strong>{dataset.keywords.join(', ')}
+                          </div>
+                        }/>
+                      <DatasetMenuActions {...this.props}
+                                          dataset={dataset}
+                                          isRemoveFromProjectEnabled={true}
+                                          disabledVisualize={false}/>
+                    </ListItem>
+                    <Collapse in={this.state.nestedOpenedDatasets[dataset.dataset_id]} timeout="auto" unmountOnExit>
+                      <List component="div" disablePadding>
+                        {
+                          dataset.wms_url.map((wmsUrl, j) => {
+                            return (
+                              <ListItem
+                                className={classes.nested + " cy-project-dataset-item cy-project-dataset-level-1"}
+                                style={{width: '98%'}}
+                                key={j}>
+                                <ListItemIcon>
+                                  <File />
+                                </ListItemIcon>
+                                <ListItemText
+                                  className={classes.MuiListItemText}
+                                  inset
+                                  primary={dataset.title[j]}/>
+                                <DatasetMenuActions {...this.props}
+                                                    fileIndex={j}
+                                                    isFile={true}
+                                                    isRemoveFromProjectEnabled={true}
+                                                    dataset={dataset}
+                                                    disabledVisualize={false}/>
+                              </ListItem>
+                            );
+                          })
                         }
-                        return (
-                          <ListItem
-                            className="cy-project-dataset-item cy-project-dataset-level-1"
-                            style={{width: '98%'}}
-                            key={j}
-                            primaryText={dataset.title[j]}
-                            leftIcon={nestedIcon}
-                            /*rightIconButton={
-                              <IconMenu
-                                menuStyle={{marginRight: '100px'}}
-                                iconButtonElement={
-                                  <IconButton
-                                    className="cy-actions-btn"
-                                    touch={true}
-                                    tooltip="Actions"
-                                    tooltipPosition="bottom-left">
-                                    <MoreVertIcon color={grey400} />
-                                  </IconButton>}>
-                                <MenuItem id="cy-download-item" primaryText="Download" onClick={(event) => window.open(dataset.fileserver_url[j], '_blank')} leftIcon={<Download />} />
-                                <MenuItem id="cy-remove-item" primaryText="Remove file" onClick={() => {this._onOpenConfirmRemoveFileDialog(dataset, j)}} leftIcon={<Remove />} />
-                                <MenuItem id="cy-visualize-item" primaryText="Visualize" disabled={disabledNestedVisualize} onClick={(event) => {
-                                  if (!disabledNestedVisualize) this._onVisualizeDataset(event, dataset, true, j);
-                                }} leftIcon={<Visualize />} />
-                              </IconMenu>
-                            }*/
-                          />
-                        );
-                      })
-                    }
-                  />
+                      </List>
+                    </Collapse>
+                  </div>
                 );
-              }else {
+              } else {
                 // FileAsAggregate
                 let disabledVisualize = false;
-                let fileIcon = <File />;
                 if (this.props.currentVisualizedDatasets.find(x => x.dataset_id === dataset.dataset_id)) {
-                  fileIcon = <Visualize />;
                   disabledVisualize = true;
                 }
-                return(
-                  <ListItem
-                    className="cy-project-dataset-item cy-project-dataset-level-0"
-                    key={i}
-                    primaryText={dataset.aggregate_title}
-                    secondaryText={
-                      <p>
-                        <span className="cy-dataset-single-file-title">{dataset.title[0]}</span><br />
-                        <strong>Keywords: </strong>{dataset.keywords.join(', ')}
-                      </p>
-                    }
-                    secondaryTextLines={2}
-                    leftIcon={fileIcon}
-                    initiallyOpen={false}
-                    primaryTogglesNestedList={true}
-                    autoGenerateNestedIndicator={false}
-                    /*rightIconButton={
-                      <IconMenu iconButtonElement={
-                        <IconButton
-                          className="cy-actions-btn"
-                          touch={true}
-                          tooltip="Actions"
-                          tooltipPosition="bottom-left">
-                          <MoreVertIcon color={grey400} />
-                        </IconButton>}>
-                        <MenuItem id="cy-download-item"primaryText="Download" onClick={(event) => window.open(dataset.fileserver_url[0], '_blank')} leftIcon={<Download />} />
-                        <MenuItem id="cy-remove-item" primaryText="Remove" onClick={() => {this._onOpenConfirmRemoveDatasetDialog(dataset)}} leftIcon={<Remove />} />
-                        <MenuItem id="cy-visualize-item" primaryText="Visualize" disabled={disabledVisualize} onClick={(event) => {
-                          if (!disabledVisualize) this._onVisualizeDataset(event, dataset, true, 0)
-                        }} leftIcon={<Visualize />} />
-                      </IconMenu>
-                    }*/
-                  />
+                return (
+                  <div>
+                    <ListItem
+                      className="cy-project-dataset-item cy-project-dataset-level-0"
+                      key={i}>
+                      <ListItemIcon>
+                        <File />
+                      </ListItemIcon>
+                      <ListItemText
+                        className={classes.MuiListItemText}
+                        inset
+                        primary={dataset.aggregate_title}
+                        secondary={
+                          <div>
+                            <span className="cy-dataset-single-file-title">{dataset.title[0]}</span><br />
+                            <strong>Keywords: </strong>{dataset.keywords.join(', ')}
+                          </div>
+                        }/>
+                      <DatasetMenuActions
+                        addDatasetsToVisualize={this.props.addDatasetsToVisualize}
+                        selectCurrentDisplayedDataset={this.props.selectCurrentDisplayedDataset}
+                        isRemoveFromProjectEnabled={true}
+                        dataset={dataset}
+                        disabledVisualize={disabledVisualize}
+                        datasetAPIActions={this.props.datasetAPIActions}
+                        project={this.props.project}/>
+                    </ListItem>
+                  </div>
                 );
               }
 
@@ -327,25 +181,11 @@ export class ProjectDatasets extends React.Component {
             total={this.props.datasetAPI.items.length}
             initialPerPageOptionIndex={constants.PER_PAGE_INITIAL_INDEX}
             perPageOptions={constants.PER_PAGE_OPTIONS}
-            onChange={this._onDatasetsPageChanged} />
+            onChange={(pageNumber, numberPerPage) => this.onDatasetsPageChanged(pageNumber, numberPerPage)}/>
         </Paper>
-        <ConfirmDialog
-          isOpen={this.state.isConfirmDatasetRemoveDialogOpened}
-          affectedResource={this.state.confirmDatasetRemoveDialogResource}
-          onDialogConfirmed={this._onConfirmedDatasetRemove}
-          onCloseDialog={this._onCloseDialogDatasetRemove}
-          dialogContent={this.state.confirmDatasetRemoveDialogContent}>
-        </ConfirmDialog>
-        <ConfirmDialog
-          isOpen={this.state.isConfirmFileRemoveDialogOpened}
-          affectedResource={this.state.confirmFileRemoveDialogResource}
-          onDialogConfirmed={this._onConfirmedFileRemove}
-          onCloseDialog={this._onCloseDialogFileRemove}
-          dialogContent={this.state.confirmFileRemoveDialogContent}>
-        </ConfirmDialog>
       </div>
     )
   }
 }
 
-export default ProjectDatasets
+export default withStyles(styles)(ProjectDatasets);

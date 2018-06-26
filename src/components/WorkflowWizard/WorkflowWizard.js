@@ -71,7 +71,6 @@ export default class WorkflowWizard extends React.Component {
       <Button variant="contained"
         label="OK"
         primary={true}
-        keyboardFocused={true}
         onClick={this.closeDialog}
       />
     ];

@@ -6,6 +6,8 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Tab from'@material-ui/core/Tab';
@@ -80,10 +82,10 @@ export default class LayerSwitcher extends React.Component {
     this.props.onToggleMapPanel(constants.VISUALIZE_LAYER_SWITCHER_PANEL);
   }
 
-  setSelectedShapefile (event, value) {
+  setSelectedShapefile = (event, value) => {
     this.props.resetSelectedRegions();
     this.props.selectShapefile(this.props.publicShapeFiles.find(f => f.title === value));
-  }
+  };
 
   setSelectedBaseMap (event, value) {
     this.props.selectBasemap(value);
@@ -147,7 +149,7 @@ export default class LayerSwitcher extends React.Component {
                 name="selectedShapeFile"
                 value={this.props.selectedShapefile.title}
                 onChange={this.setSelectedShapefile}>
-                <FormControlLabel value={shapeFile.title} control={<Radio color="primary" />} label={shapeFile.title} />
+                <FormControlLabel value={shapeFile.title} control={<Radio color="secondary" />} label={shapeFile.title} />
               </RadioGroup>
             </ListItem>
           )
@@ -171,7 +173,7 @@ export default class LayerSwitcher extends React.Component {
                 name="selectedBaseMap"
                 value={this.props.selectedBasemap}
                 onChange={this.setSelectedBaseMap}>
-                <FormControlLabel value={map} control={<Radio color="primary" />} label={map} />
+                <FormControlLabel value={map} control={<Radio color="secondary" />} label={map} />
               </RadioGroup>
             </ListItem>
           )
@@ -212,20 +214,22 @@ export default class LayerSwitcher extends React.Component {
             return (
               <ListItem
                 key={i}
-                className="cy-layerswitcher-dataset-item"
-                primaryText={dataset['aggregate_title']}
-                secondaryText={<span>{secondaryText}</span>}
-                secondaryTextLines={1}
-                leftCheckbox={
+                className="cy-layerswitcher-dataset-item">
                   <RadioGroup
                     name="currentDisplayedDataset"
-                    valueSelected={this.props.currentDisplayedDataset.uniqueLayerSwitcherId}
+                    value={this.props.currentDisplayedDataset.uniqueLayerSwitcherId}
                     onChange={this.setCurrentDisplayedDataset}>
-                    <Radio
-                      data-cy-selected={this.props.currentDisplayedDataset.uniqueLayerSwitcherId === dataset.uniqueLayerSwitcherId}
-                      value={dataset.uniqueLayerSwitcherId} />
+                    <FormControlLabel
+                      value={dataset.uniqueLayerSwitcherId}
+                      label={<ListItemText inset
+                                         primary={dataset['aggregate_title']}
+                                         secondary={<span>{secondaryText}</span>} />}
+                      control={
+                      <Radio
+                        color="secondary"
+                        data-cy-selected={this.props.currentDisplayedDataset.uniqueLayerSwitcherId === dataset.uniqueLayerSwitcherId}/>} />
                   </RadioGroup>
-                } />
+              </ListItem>
             );
           })
         }

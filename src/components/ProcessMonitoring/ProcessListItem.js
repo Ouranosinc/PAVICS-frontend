@@ -177,7 +177,7 @@ export class ProcessListItem extends React.Component {
               key={k}
               style={{marginLeft: ((this.props.indentationLevel + 1) * 18) + "px"}}
               primaryText={(output.name && output.name.length)? output.name: `${output.title}: ${output.abstract}`}
-              secondaryText={<p>File: {this.extractFileId(output.reference)} <br/>Type: <strong>{output.mimeType}</strong></p>}
+              secondaryText={<div>File: {this.extractFileId(output.reference)} <br/>Type: <strong>{output.mimeType}</strong></div>}
               secondaryTextLines={2}
               leftIcon={<FileIcon />}
               rightIconButton={

@@ -121,14 +121,12 @@ export class PersistResultDialog extends React.Component {
               id="cy-persist-dialog-launch-btn"
               label="Launch Persist"
               primary={true}
-              keyboardFocused={true}
               onClick={(event) => this.onPersistOutputClicked()}
               style={{marginRight: '10px' }} />,
             <Button variant="contained"
               id="cy-persist-dialog-close-btn"
               label="Close"
               primary={false}
-              keyboardFocused={false}
               onClick={this.props.closePersistDialog} />
           ]
         }
@@ -189,7 +187,6 @@ export class PersistResultDialog extends React.Component {
                   style={{marginTop: '25px'}}
                   label="Add"
                   primary={false}
-                  keyboardFocused={true}
                   onClick={this.onAddedFacet} />
               </Col>
             </Row>

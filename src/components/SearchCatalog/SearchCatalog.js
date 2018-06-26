@@ -23,6 +23,8 @@ export class SearchCatalog extends React.Component {
     clickTogglePanel: PropTypes.func.isRequired,
     addSearchCriteriasToProject: PropTypes.func.isRequired,
     addDatasetsToProject: PropTypes.func.isRequired,
+    datasetAPI: PropTypes.object.isRequired,
+    datasetAPIActions: PropTypes.object.isRequired,
     project: PropTypes.object.isRequired,
     projectActions: PropTypes.object.isRequired,
     projectAPI: PropTypes.object.isRequired,
@@ -231,6 +233,8 @@ export class SearchCatalog extends React.Component {
               </Paper>)
           }
           <SearchCatalogResults
+            addDatasetsToVisualize={this.props.addDatasetsToVisualize}
+            selectCurrentDisplayedDataset={this.props.selectCurrentDisplayedDataset}
             clickTogglePanel={this.props.clickTogglePanel}
             research={this.props.research}
             project={this.props.project}

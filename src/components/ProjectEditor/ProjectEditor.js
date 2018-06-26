@@ -9,6 +9,7 @@ import Checkbox from'@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
+import Typography from '@material-ui/core/Typography';
 
 export class ProjectEditor extends React.Component {
   static propTypes = {
@@ -114,21 +115,22 @@ export class ProjectEditor extends React.Component {
               rowsMax={7}
               onChange={(event) => this._onSetProjectDescription(event.target.value)}
               label="Project description" />
-            <h4>Project permissions</h4>
-            {
-              this.props.project.currentProject.permissions.map((permission, i) =>
-                <FormControlLabel
-                  style={{width: '100%'}}
-                  label={permission.toUpperCase()}
-                  control={
-                    <Checkbox
-                      className="cy-project-permission-cb"
-                      disabled
-                      checked={true} />
-                  }>
-                </FormControlLabel>
-              )
-            }
+            <Typography variant="subheading">Project permissions: </Typography>
+            <div style={{width: '100%'}}>
+              {
+                this.props.project.currentProject.permissions.map((permission, i) =>
+                  <FormControlLabel
+                    label={permission.toUpperCase()}
+                    control={
+                      <Checkbox
+                        className="cy-project-permission-cb"
+                        disabled
+                        checked={true} />
+                    }>
+                  </FormControlLabel>
+                )
+              }
+            </div>
             <Button variant="contained"
                     id="cy-save-project-btn"
                     color="primary"

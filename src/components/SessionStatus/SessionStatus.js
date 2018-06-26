@@ -94,7 +94,7 @@ export default withStyles(styles)(
             label="Email"/>
           <List fullWidth>
             <ListSubheader style={{'paddingLeft': '0'}}>
-              <Typography variant="title" gutterBottom>Access groups</Typography>
+              <Typography variant="subheading" gutterBottom>Access groups: </Typography>
             </ListSubheader>
             {this.props.sessionStatus.user.groups.map((group, i) =>
               <ListItem button key={i}>

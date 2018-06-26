@@ -94,7 +94,7 @@ export class ProjectSearchCriterias extends React.Component {
                   key={index}
                   primaryText={research.name}
                   secondaryText={
-                    <p>
+                    <div>
                       <span>{research.results.length} results on {moment(research.createdOn).format(constants.PAVICS_DATE_FORMAT)}</span><br />
                       <strong>Facets: </strong>
                       <span>
@@ -104,7 +104,7 @@ export class ProjectSearchCriterias extends React.Component {
                           })
                         }
                       </span>
-                    </p>
+                    </div>
                   }
                   secondaryTextLines={2}
                   leftIcon={<AddedCriterias />}

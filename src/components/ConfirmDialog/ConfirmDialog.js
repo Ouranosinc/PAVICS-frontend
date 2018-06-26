@@ -38,7 +38,6 @@ export class ConfirmDialog extends React.Component {
                   id="cy-confirm-cancel-btn"
                   label="Cancel"
                   color="secondary"
-                  keyboardFocused={false}
                   onClick={() => this.props.onCloseDialog()}>
             Cancel
           </Button>
@@ -46,7 +45,6 @@ export class ConfirmDialog extends React.Component {
                   id="cy-confirm-ok-btn"
                   color="primary"
                   style={{marginLeft: '10px'}}
-                  keyboardFocused={true}
                   onClick={() => this.props.onDialogConfirmed(this.props.affectedResource)}>
             OK
           </Button>
