@@ -103,7 +103,7 @@ export class ProjectShare extends React.Component {
       <div className={classes['ProjectShare']}>
         <Paper style={{marginTop: 20}}>
           <form className="container">
-            <Typography variant='display1' gutterBottom>
+            <Typography variant='title' gutterBottom>
               Share project to
             </Typography>
             <RadioGroup
