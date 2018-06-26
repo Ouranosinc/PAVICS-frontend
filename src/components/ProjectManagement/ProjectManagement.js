@@ -64,7 +64,8 @@ export class ProjectManagement extends React.Component {
              <div>
                <ProjectEditor {...this.props}/>
                <ProjectDatasets {...this.props} />
-               {/*<ProjectSearchCriterias {...this.props} />*/}
+               <ProjectSearchCriterias {...this.props} />
+
              </div>
            }
          </div>

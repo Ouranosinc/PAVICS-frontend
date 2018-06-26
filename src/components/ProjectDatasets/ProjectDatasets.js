@@ -81,7 +81,7 @@ export class ProjectDatasets extends React.Component {
       <div id="cy-project-datasets" className={classes['ProjectDatasets']}>
         <Paper style={{marginTop: 20}}>
           <List component="div">
-            <ListSubheader>Current project dataset(s)</ListSubheader>
+            <ListSubheader>Project dataset(s)</ListSubheader>
             {datasetsPaginated.map((dataset, i) => {
               if (dataset.type === "Aggregate") {
                 return (
