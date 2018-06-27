@@ -78,12 +78,13 @@ export class ProjectCreation extends React.Component {
               id="cy-project-description-tf"
               placeholder="Write a project description"
               fullWidth
-              rows={1}
-              rowsMax={7}
+              rows="1"
+              rowsMax="4"
               onChange={(event) => this._onSetNewProjectDescription(event.target.value)}
               label="Project description" />
             <Button variant="contained"
                     id="cy-create-project-btn"
+                    color="primary"
                     onClick={this._onCreateProject}
                     disabled={!this.state.projectName || !this.state.projectName.length}>
               <CreateIcon />Create new project

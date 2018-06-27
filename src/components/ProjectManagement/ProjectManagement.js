@@ -16,6 +16,10 @@ const CREATE_PROJECT_TAB_VALUE = "CREATE_PROJECT_TAB_VALUE";
 const SHARE_PROJECT_TAB_VALUE = "SHARE_PROJECT_TAB_VALUE";
 
 export class ProjectManagement extends React.Component {
+  state = {
+    activeTab: CURRENT_PROJECT_TAB_VALUE
+  };
+
   static propTypes = {
     project: PropTypes.object.isRequired,
     projectActions: PropTypes.object.isRequired,
@@ -31,11 +35,9 @@ export class ProjectManagement extends React.Component {
     goToSection: PropTypes.func.isRequired,
     sessionManagement: PropTypes.object.isRequired,
   };
+
   constructor (props) {
     super(props);
-    this.state = {
-      activeTab: CURRENT_PROJECT_TAB_VALUE
-    };
   }
 
   render () {

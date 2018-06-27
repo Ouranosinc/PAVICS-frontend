@@ -110,9 +110,9 @@ export class ProjectEditor extends React.Component {
               placeholder="Write a project description"
               value={this.state.projectDescription}
               fullWidth
-              multiLine={true}
-              rows={1}
-              rowsMax={7}
+              multiline
+              rows="1"
+              rowsMax="4"
               onChange={(event) => this._onSetProjectDescription(event.target.value)}
               label="Project description" />
             <Typography variant="subheading">Project permissions: </Typography>

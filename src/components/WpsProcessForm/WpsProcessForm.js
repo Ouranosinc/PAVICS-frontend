@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import DeformWrapper from '../DeformWrapper/DeformWrapper';
 import * as constants from './../../constants';
-import {InputDefinition} from '../WpsProcessFormInput/InputDefinition';
-import {WpsProcessFormInput} from '../WpsProcessFormInput/WpsProcessFormInput';
+import { WpsProcessFormInput } from '../WpsProcessFormInput';
+import DeformWrapper from '../DeformWrapper';
 
 /*
 Wps Process Form

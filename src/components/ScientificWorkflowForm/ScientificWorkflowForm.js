@@ -8,15 +8,6 @@ import Done from '@material-ui/icons/Done';
 import WorkflowSchema from './WorkflowSchema';
 var Ajv = require('ajv');
 
-const styles = {
-  textarea: {
-    padding: '20px'
-  },
-  button: {
-    marginTop: '20px'
-  }
-};
-
 export default class ScientificWorkflowForm extends Component {
   static propTypes = {
     project: PropTypes.object.isRequired,
@@ -89,22 +80,26 @@ export default class ScientificWorkflowForm extends Component {
   render () {
     return (
       <div id="cy-create-workflow">
-        <Paper style={styles.textarea}>
-          <TextField
-            id="cy-create-workflow-json-content-tf"
-            value={this.state.json}
-            onChange={this.onWorkflowChanged}
-            multiLine={true}
-            rowsMax={15}
-            fullWidth={true}
-            helperText="Enter a valid JSON workflow"/>
+        <Paper>
+          <div className="container">
+            <TextField
+              id="cy-create-workflow-json-content-tf"
+              value={this.state.json}
+              onChange={this.onWorkflowChanged}
+              multiline
+              rows="1"
+              rowsMax="15"
+              fullWidth
+              helperText="Enter a valid JSON workflow"/>
+          </div>
         </Paper>
-        <Button variant="contained"
+        <Button
+          variant="contained"
+          color="primary"
           id="cy-create-workflow-btn"
-          onClick={this.onSaveWorkflow}
-          style={styles.button}
-          label="Create workflow"
-          icon={<Done />}/>
+          onClick={this.onSaveWorkflow}>
+          <Done />Create workflow
+        </Button>
       </div>
     );
   }

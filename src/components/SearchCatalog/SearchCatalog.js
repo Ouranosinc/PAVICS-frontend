@@ -208,7 +208,7 @@ export class SearchCatalog extends React.Component {
                     <TextField
                       id="cy-criterias-name-tf"
                       helperText="Define a name"
-                      fullWidth={true}
+                      fullWidth
                       onChange={this.onSetSearchCriteriasName}
                       label="Search Criteria(s) Name"/>
                   </Col>

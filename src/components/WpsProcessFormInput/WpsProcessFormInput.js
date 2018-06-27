@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Checkbox from'@material-ui/core/Checkbox';
 import TextField from'@material-ui/core/TextField';
@@ -6,10 +6,19 @@ import TextField from'@material-ui/core/TextField';
 // import TimePicker from'@material-ui/core/TimePicker';
 import Select from'@material-ui/core/Select';
 import MenuItem from'@material-ui/core/MenuItem';
+import FormControl from'@material-ui/core/FormControl';
+import FormControlLabel from'@material-ui/core/FormControlLabel';
+import FormHelperText from'@material-ui/core/FormHelperText';
 
 const {BOOLEAN, INPUT_DATETIME} = require('../../constants');
 
 class WpsProcessFormInput extends Component {
+  state = {
+    dateTimeValues: {
+      date: null,
+      time: null
+    }
+  };
 
   // value not marked as required because it can (somewhat) validly be undefined
   static propTypes = {
@@ -22,12 +31,6 @@ class WpsProcessFormInput extends Component {
 
   constructor (props) {
     super(props);
-    this.state = {
-      dateTimeValues: {
-        date: null,
-        time: null
-      }
-    };
   }
 
   createDateTime = () => {
@@ -37,6 +40,7 @@ class WpsProcessFormInput extends Component {
     const timeString = time.toISOString().split('T')[1];
     this.props.handleChange(`${dateString}T${timeString}`, this.props.uniqueIdentifier);
   };
+
   handleDateChange = (event, date) => {
     this.setState({
       dateTimeValues: {
@@ -45,6 +49,7 @@ class WpsProcessFormInput extends Component {
       }
     }, () => { this.createDateTime(); });
   };
+
   handleTimeChange = (event, time) => {
     this.setState({
       dateTimeValues: {
@@ -54,26 +59,24 @@ class WpsProcessFormInput extends Component {
     }, () => { this.createDateTime(); });
   };
 
-  handleCheckboxChange = (event, value) => {
+  handleCheckboxChange = (event) => {
     this.props.handleChange(event.target.checked, this.props.uniqueIdentifier);
   };
 
-  createHandleTextFieldArrayChangeCallback = (index) => {
-    return (event, value) => {
-      this.handleTextFieldArrayChange(event.target.value, index);
-    };
+  createHandleTextFieldArrayChangeCallback = (event, index) => {
+    this.handleTextFieldArrayChange(event.target.value, index);
   };
 
   handleTextFieldArrayChange = (value, index) => {
     this.props.handleArrayChange(value, this.props.uniqueIdentifier, index);
   };
 
-  handleTextFieldChange = (event, value) => {
+  handleTextFieldChange = (event) => {
     this.props.handleChange(event.target.value, this.props.uniqueIdentifier);
   };
 
-  handleSelectChange = (event, key, payload) => {
-    this.props.handleChange(payload, this.props.uniqueIdentifier);
+  handleSelectChange = (event) => {
+    this.props.handleChange(event.target.value, this.props.uniqueIdentifier);
   };
 
   createMarkup () {
@@ -89,17 +92,21 @@ class WpsProcessFormInput extends Component {
         }
       }
       return (
-        <div>
-          <Checkbox
-            name={this.props.inputDefinition.name}
+        <FormControl >
+          <FormControlLabel
             label={this.props.inputDefinition.title}
-            labelPosition="right"
-            labelStyle={{ textAlign: 'left' }}
-            checked={value}
-            onCheck={this.handleCheckboxChange}
-            value={value} />
-          <small>{this.props.inputDefinition.description}</small>
-        </div>
+            control={
+              <Checkbox
+                name={this.props.inputDefinition.name}
+                checked={value}
+                onChange={this.handleCheckboxChange}
+                value={value} />
+            }>
+          </FormControlLabel>
+          <FormHelperText style={{marginTop: '-12px'}}>
+            {this.props.inputDefinition.description}
+          </FormHelperText>
+        </FormControl >
       );
     }
     if (this.props.inputDefinition.dataType === INPUT_DATETIME) {
@@ -139,7 +146,7 @@ class WpsProcessFormInput extends Component {
             multiple
             fullWidth
             className="cy-workflow-input-select-field"
-            value={this.props.value}
+            value={(this.props.value)? this.props.value: []}
             onChange={this.handleSelectChange}
             helperText={this.props.inputDefinition.description}
             label={this.props.inputDefinition.title}>
@@ -147,8 +154,9 @@ class WpsProcessFormInput extends Component {
               return (
                 <MenuItem
                   key={i}
-                  value={value}
-                  primaryText={value} />
+                  value={value}>
+                  {value}
+                </MenuItem>
               );
             })}
           </Select>
@@ -169,7 +177,7 @@ class WpsProcessFormInput extends Component {
             name={this.props.inputDefinition.name}
             fullWidth
             value={this.props.value[i]}
-            onChange={this.createHandleTextFieldArrayChangeCallback(i)}
+            onChange={(event) => this.createHandleTextFieldArrayChangeCallback(event, i)}
             helperText={this.props.inputDefinition.description}
             label={this.props.inputDefinition.title} />
         );
@@ -197,4 +205,4 @@ class WpsProcessFormInput extends Component {
   }
 }
 
-export {WpsProcessFormInput};
+export default WpsProcessFormInput;

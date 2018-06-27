@@ -447,7 +447,7 @@ export class TimeSlider extends React.Component {
                 disabled={this.state.disabled}
                 value={this.state.currentDate}
                 helperText="Format 9999-99-99"
-                fullWidth={true}
+                fullWidth
                 onChange={(event, value) => this._onChangedCurrentDate(value)}
                 label="Current Date" />
             </Col>
@@ -455,7 +455,7 @@ export class TimeSlider extends React.Component {
               <Select
                 disabled={this.state.disabled}
                 value={this.state.currentTime}
-                fullWidth={true}
+                fullWidth
                 label="Time"
                 onChange={(event, index, value) => this._onSelectedTime(value)}>
                  {
@@ -470,7 +470,7 @@ export class TimeSlider extends React.Component {
                 disabled={true}
                 value={this.props.currentDateTime.substring(0, 10) + ' ' + this.props.currentDateTime.substring(11, 19)}
                 helperText="Format 9999-99-99 00:00:00"
-                fullWidth={true}
+                fullWidth
                 label="Current Datetime" />
             </Col>
           </Row>
@@ -532,14 +532,14 @@ export class TimeSlider extends React.Component {
                 value={this.state.stepLength}
                 onChange={(event, value) => this._onChangedStepLength(value)}
                 helperText="Number"
-                fullWidth={true}
+                fullWidth
                 label="Timestep Length" />
             </Col>
             <Col md={4} lg={4}>
               <Select
                 disabled={this.state.disabled}
                 value={this.state.stepGranularity}
-                fullWidth={true}
+                fullWidth
                 label="Timestep Granularity Level"
                 onChange={(event, index, value) => this._onChangedStepGranularity(value)}>
                 <MenuItem value={MINUTE_VALUE} primaryText="Minute(s)" />
@@ -553,7 +553,7 @@ export class TimeSlider extends React.Component {
               <Select
                 disabled={this.state.disabled}
                 value={this.state.stepSpeed}
-                fullWidth={true}
+                fullWidth
                 label="Play Speed Level"
                 onChange={(event, index, value) => this._onChangedStepSpeed(value)}>
                 <MenuItem value={10000} primaryText="Very Slow (10 seconds)" />

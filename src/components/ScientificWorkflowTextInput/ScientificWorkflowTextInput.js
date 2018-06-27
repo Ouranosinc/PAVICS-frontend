@@ -8,9 +8,6 @@ var Ajv = require('ajv');
 const styles = {
   textarea: {
     padding: '20px'
-  },
-  button: {
-    marginTop: '20px'
   }
 };
 
@@ -78,9 +75,10 @@ export default class ScientificWorkflowTextInput extends Component {
         id="cy-confirm-edit-workflow-tf"
         value={this.state.json}
         onChange={this._onWorkflowChanged}
-        multiLine={true}
-        rowsMax={15}
-        fullWidth={true}
+        multiline
+        rows="5"
+        rowsMax="15"
+        fullWidth
         helperText="Enter a valid JSON workflow"/>
     );
   }

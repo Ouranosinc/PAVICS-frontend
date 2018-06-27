@@ -8,6 +8,9 @@ import Pagination from './../../components/Pagination';
 import List from'@material-ui/core/List';
 import ListItem from'@material-ui/core/ListItem';
 import ListSubheader from'@material-ui/core/ListSubheader';
+import ListItemIcon from'@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Paper from'@material-ui/core/Paper';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from'@material-ui/core/MenuItem';
@@ -17,9 +20,6 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import AddedCriterias from '@material-ui/icons/AddToPhotos';
 import Relaunch from '@material-ui/icons/YoutubeSearchedFor';
 import Restore from '@material-ui/icons/RestorePage';
-import ListItemIcon from'@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
 const styles = theme => ({
   ProjectSearchCriterias: {
@@ -28,11 +28,6 @@ const styles = theme => ({
 });
 
 export class ProjectSearchCriterias extends React.Component {
-  state = {
-    anchor: null,
-    criteriasPageNumber: 1,
-    criteriasNumberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX]
-  };
 
   static propTypes = {
 
@@ -40,6 +35,11 @@ export class ProjectSearchCriterias extends React.Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      anchor: null,
+      criteriasPageNumber: 1,
+      criteriasNumberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX]
+    };
   }
 
   componentWillReceiveProps (nextProps) {
@@ -108,7 +108,6 @@ export class ProjectSearchCriterias extends React.Component {
             <ListSubheader>Project search criteria(s)</ListSubheader>
             {criteriasPaginated.map((research, index) => {
               return (
-
                 <ListItem
                   className="cy-project-search-criterias-item"
                   key={index}>
@@ -134,51 +133,51 @@ export class ProjectSearchCriterias extends React.Component {
                   <ListItemSecondaryAction className={classes.root}>
                     <IconButton
                       aria-label="More"
-                      aria-owns={anchor ? 'dataset-menu-actions' : null}
+                      aria-owns={anchor ? 'criterias-menu-actions' : null}
                       aria-haspopup="true"
-                      onClick={this.onMenuClicked}>
+                      onClick={() => this.onMenuClicked}>
                       <MoreVertIcon />
                     </IconButton>
-                    <Menu
-                      id="file-menu-actions"
-                      anchorEl={anchor}
-                      open={Boolean(anchor)}
-                      onClose={this.onMenuClosed}
-                      PaperProps={{
-                        style: {
-                          width: 200
-                        },
-                      }}>
-                      <MenuItem
-                        id="cy-restore-item"
-                        onClick={(event) => this.onRestoreSearchCriteria(research)}>
-                        <ListItemIcon>
-                          <Restore />
-                        </ListItemIcon>
-                        <ListItemText inset primary="Restore results" />
-                      </MenuItem>
-                      <MenuItem
-                        id="cy-relaunch-item"
-                        onClick={(event) => this.onRelaunchSearch(research)}>
-                        <ListItemIcon>
-                          <Relaunch />
-                        </ListItemIcon>
-                        <ListItemText inset primary="Relaunch search" />
-                      </MenuItem>
-                      <MenuItem
-                        id="cy-remove-item"
-                        onClick={(event) => this.onRemoveSearchCriteria(research)}>
-                        <ListItemIcon>
-                          <Remove />
-                        </ListItemIcon>
-                        <ListItemText inset primary="Remove" />
-                      </MenuItem>
-                    </Menu>
                   </ListItemSecondaryAction>
                 </ListItem>
               );
             })}
           </List>
+          <Menu
+            id="criterias-menu-actions"
+            anchorEl={anchor}
+            open={Boolean(anchor)}
+            onClose={this.onMenuClosed}
+            PaperProps={{
+              style: {
+                width: 200
+              },
+            }}>
+            <MenuItem
+              id="cy-restore-item"
+              onClick={(event) => this.onRestoreSearchCriteria()}>
+              <ListItemIcon>
+                <Restore />
+              </ListItemIcon>
+              <ListItemText inset primary="Restore results" />
+            </MenuItem>
+            <MenuItem
+              id="cy-relaunch-item"
+              onClick={(event) => this.onRelaunchSearch()}>
+              <ListItemIcon>
+                <Relaunch />
+              </ListItemIcon>
+              <ListItemText inset primary="Relaunch search" />
+            </MenuItem>
+            <MenuItem
+              id="cy-remove-item"
+              onClick={(event) => this.onRemoveSearchCriteria()}>
+              <ListItemIcon>
+                <Remove />
+              </ListItemIcon>
+              <ListItemText inset primary="Remove" />
+            </MenuItem>
+          </Menu>
           <Pagination
             total={this.props.researchAPI.items.length}
             initialPerPageOptionIndex={constants.PER_PAGE_INITIAL_INDEX}

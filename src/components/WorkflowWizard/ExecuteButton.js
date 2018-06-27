@@ -10,11 +10,13 @@ class ExecuteButton extends React.Component {
 
   render () {
     return (
-      <Button variant="contained"
+      <Button
+        color="primary"
+        variant="contained"
         id="cy-execute-process-btn"
-        onClick={this.props.executeProcess}
-        icon={<ExecuteIcon />}
-        label="Execute process" />
+        onClick={this.props.executeProcess}>
+        <ExecuteIcon />Execute process
+      </Button>
     );
   }
 }

@@ -1,16 +1,23 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { withStyles } from "@material-ui/core/styles";
 import { Form } from 'react-bootstrap';
 import { ExecuteButton } from '../WorkflowWizard';
-import {Card, CardHeader, CardContent} from'@material-ui/core/Card';
-const gridStyle = {
-  'height': '450px',
-  'overflowY': 'auto',
-  'margin': '10px 0',
-  'overflowX': 'hidden'
+import Typography from'@material-ui/core/Typography';
+import Paper from'@material-ui/core/Paper';
+
+const styles = {
+  grid: {
+    'max-height': '450px',
+    'overflowY': 'auto',
+    'margin': '10px 0',
+    'overflowX': 'hidden'
+  }
 };
-export default class DeformWrapper extends Component {
+
+class DeformWrapper extends Component {
   static propTypes = {
+    classes: PropTypes.object.isRequired,
     formId: PropTypes.string.isRequired,
     execute: PropTypes.func.isRequired
   };
@@ -23,18 +30,22 @@ export default class DeformWrapper extends Component {
       // this id="FORM_ID" is used when submitting the form.
       // don't change or remove it, or make sure you update it in the execute function as well
       <Form id={this.props.formId} horizontal>
-        <Card style={gridStyle}>
-          <CardHeader title="Required inputs" />
-          <CardContent>
+        <Paper elevation={2} className={this.props.classes.grid}>
+          <div className="container">
+            <Typography variant="headline">
+              Required inputs
+            </Typography>
             <input type="hidden" name="_charset_" value="UTF-8"/>
             <input type="hidden" name="__formid__" value="deform"/>
             <input type="hidden" name="_async_check" value="true"/>
             {this.props.children}
-          </CardContent>
-        </Card>
+          </div>
+        </Paper>
         <ExecuteButton executeProcess={this.props.execute}/>
         <input type="hidden" name="submit" value="submit"/>
       </Form>
     );
   }
 }
+
+export default withStyles(styles)(DeformWrapper)

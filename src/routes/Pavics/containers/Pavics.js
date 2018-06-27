@@ -37,7 +37,28 @@ const theme = createMuiTheme({
       root: {
         margin: '15px 0 0 0'
       }
-    }
+    },
+    MuiStepper: {
+      root: {
+        backgroundColor: 'transparent'
+      }
+    },
+    /*MuiTypography: {
+      root: {
+        color: 'inherit'
+      }
+    },
+    MuiStepLabel: {
+      root: {
+        color: 'white'
+      },
+      label: {
+        color: 'white'
+      },
+      active: {
+        color: 'white'
+      }
+    }*/
   },
   typography: {
     fontSize: '18'

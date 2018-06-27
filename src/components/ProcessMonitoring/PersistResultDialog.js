@@ -136,7 +136,7 @@ export class PersistResultDialog extends React.Component {
             <TextField
               id="cy-resource-link-tf"
               helperText="Resource"
-              fullWidth={true}
+              fullWidth
               disabled={true}
               value={this.props.output.reference}
               label="Resource to persist" />
@@ -161,7 +161,7 @@ export class PersistResultDialog extends React.Component {
             <TextField
               id="cy-workspace-path-tf"
               helperText="Location"
-              fullWidth={true}
+              fullWidth
               value={this.state.location}
               onChange={this.handleLocationChange}
               label="Location" />
@@ -169,7 +169,7 @@ export class PersistResultDialog extends React.Component {
               <Col sm={4} md={4} lg={4}>
                 <TextField
                   helperText="Key"
-                  fullWidth={true}
+                  fullWidth
                   onChange={this.handleKeyChange}
                   label="Key"
                   value={this.state.key} />
@@ -177,7 +177,7 @@ export class PersistResultDialog extends React.Component {
               <Col sm={4} md={4} lg={4}>
                 <TextField
                   helperText="Value"
-                  fullWidth={true}
+                  fullWidth
                   onChange={this.handleValueChange}
                   label="Value"
                   value={this.state.value} />
