@@ -38,7 +38,9 @@ export class ConfirmDialog extends React.Component {
                   id="cy-confirm-cancel-btn"
                   label="Cancel"
                   color="secondary"
-                  onClick={() => this.props.onCloseDialog()}>
+                  onClick={
+                    () => this.props.onCloseDialog()
+                  }>
             Cancel
           </Button>
           <Button variant="contained"

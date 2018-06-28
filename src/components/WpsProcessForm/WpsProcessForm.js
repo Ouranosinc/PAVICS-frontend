@@ -66,7 +66,7 @@ export default class WpsProcessForm extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
-  componentDidMount () {
+  componentWillMount () {
     this.buildFormData(this.props);
     this.verifyMeaningfulValues(this.props);
   }

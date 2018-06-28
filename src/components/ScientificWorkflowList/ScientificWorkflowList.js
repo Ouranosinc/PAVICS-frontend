@@ -46,13 +46,6 @@ export default class ScientificWorkflowList extends Component {
     super(props);
     this.workflowTextInput = null;
     this.editedCompleteWorkflow = null;
-    this._onPageChanged = this._onPageChanged.bind(this);
-    this.onOpenConfirmWorkflowDeletionDialog = this.onOpenConfirmWorkflowDeletionDialog.bind(this);
-    this._onConfirmedWorkflowDeletion = this._onConfirmedWorkflowDeletion.bind(this);
-    this.onRunWorkflowClicked = this.onRunWorkflowClicked.bind(this);
-    this.onEditWorkflowClicked = this.onEditWorkflowClicked.bind(this);
-    this._onCloseEditionDialog = this._onCloseEditionDialog.bind(this);
-    this._onEditWorkflowSaved = this._onEditWorkflowSaved.bind(this);
     this.state = {
       anchor: null,
       currentWorkflow: null,
@@ -66,43 +59,50 @@ export default class ScientificWorkflowList extends Component {
     };
   }
 
-  onOpenConfirmWorkflowDeletionDialog () {
+  onOpenConfirmWorkflowDeletionDialog = () => {
     this.setState({
       isConfirmDeleteDialogOpened: true,
       confirmDeleteDialogContent: `Do you really want to delete the workflow '${this.state.currentWorkflow.json.name}'?`,
       confirmDeleteDialogResource: this.state.currentWorkflow
     });
-  }
+    this.onMenuClosed();
+  };
 
-  onRunWorkflowClicked () {
+  onRunWorkflowClicked = () => {
     // Deep clone workflow object so modifications (provider names, url, inputs) won't affect it's state if reloaded from the list
     this.props.goToConfigureAndRunStep(JSON.parse(JSON.stringify(this.state.currentWorkflow)));
-  }
+  };
 
-  onEditWorkflowClicked () {
+  onEditWorkflowClicked = () => {
     this.editedCompleteWorkflow = this.state.currentWorkflow;
     this.setState({
       isEditionDialogOpened: true,
       editedWorkflow: JSON.stringify(this.state.currentWorkflow.json, null, "\t")
     });
-  }
+  };
 
-  _onConfirmedWorkflowDeletion (workflow) {
+  onCloseConfirmDeleteDialog = () => {
+    this.setState({
+      isConfirmDeleteDialogOpened: false
+    });
+  };
+
+  onConfirmedWorkflowDeletion = (workflow) => {
     if(this.props.project.currentProject.id) {
       this.props.workflowAPIActions.deleteWorkflow({projectId: this.props.project.currentProject.id, id: workflow.id});
       this.setState({isConfirmDeleteDialogOpened: false});
     }
-  }
+  };
 
 
-  _onPageChanged (pageNumber, numberPerPage) {
+  onPageChanged = (pageNumber, numberPerPage) => {
     this.setState({
       pageNumber: pageNumber,
       numberPerPage: numberPerPage
     });
-  }
+  };
 
-  _onEditWorkflowSaved () {
+  onEditWorkflowSaved = () => {
     let parsed = this.workflowTextInput.tryParseJson();
     if(parsed && this.workflowTextInput.validateAdvancedWorkflowSchema(parsed)) {
       this.props.workflowAPIActions.updateWorkflow({
@@ -111,16 +111,16 @@ export default class ScientificWorkflowList extends Component {
         projectId: this.props.project.currentProject.id,
         json: parsed
       });
-      this._onCloseEditionDialog();
+      this.onCloseEditionDialog();
     }
-  }
+  };
 
-  _onCloseEditionDialog() {
+  onCloseEditionDialog = () => {
     this.setState({
       isEditionDialogOpened: false,
       editedWorkflow: null
     });
-  }
+  };
 
   onMenuClosed = event => {
     this.setState({
@@ -215,17 +215,17 @@ export default class ScientificWorkflowList extends Component {
               total={this.props.workflowAPI.items.length}
               initialPerPageOptionIndex={WORKFLOW_PER_PAGE_INITIAL_INDEX}
               perPageOptions={constants.PER_PAGE_OPTIONS}
-              onChange={this._onPageChanged}/>
+              onChange={this.onPageChanged}/>
             <ConfirmDialog
               isOpen={this.state.isConfirmDeleteDialogOpened}
               affectedResource={this.state.confirmDeleteDialogResource}
-              onDialogConfirmed={this._onConfirmedWorkflowDeletion}
-              onCloseDialog={this._onCloseEditionDialog}
+              onDialogConfirmed={this.onConfirmedWorkflowDeletion}
+              onCloseDialog={this.onCloseConfirmDeleteDialog}
               dialogContent={this.state.confirmDeleteDialogContent}>
             </ConfirmDialog>
             <Dialog
               open={this.state.isEditionDialogOpened}
-              onClose={this._onCloseEditionDialog}>
+              onClose={this.onCloseEditionDialog}>
               <DialogTitle>
                 Edit Workflow
               </DialogTitle>
@@ -238,14 +238,14 @@ export default class ScientificWorkflowList extends Component {
                 <Button variant="contained"
                         id="cy-confirm-cancel-btn"
                         color="secondary"
-                        onClick={this._onCloseEditionDialog}>
+                        onClick={this.onCloseEditionDialog}>
                   Cancel
                 </Button>,
                 <Button variant="contained"
                         id="cy-confirm-save-btn"
                         color="primary"
                         style={{marginLeft: '10px'}}
-                        onClick={() => {this._onEditWorkflowSaved()}}>
+                        onClick={() => {this.onEditWorkflowSaved()}}>
                   <SaveIcon />Save
                 </Button>
               </DialogActions>
