@@ -142,7 +142,7 @@ export default class ScientificWorkflowList extends Component {
     const { anchor } = this.state;
     if (this.props.workflowAPI.isFetching) {
       return (
-        <div><Paper><CircularProgress /></Paper></div>
+        <Paper><CircularProgress /></Paper>
       );
     } else if (this.props.workflowAPI.items.length > 0) {
       let start = (this.state.pageNumber - 1) * this.state.numberPerPage;
@@ -255,9 +255,7 @@ export default class ScientificWorkflowList extends Component {
       );
     } else {
       return (
-        <div>
-          <Paper id="cy-no-workflow-found" style={style.noWorkflows}>No workflows yet</Paper>
-        </div>
+        <Paper id="cy-no-workflow-found" style={style.noWorkflows}>No workflows yet</Paper>
       );
     }
   }

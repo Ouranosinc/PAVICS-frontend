@@ -3,8 +3,12 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import * as constants from '../../constants';
 import StatusElement from './StatusElement';
-import {ListItem} from'@material-ui/core/List';
-// import IconMenu from'@material-ui/core/IconMenu';
+import ListSubheader from'@material-ui/core/ListSubheader';
+import ListItem from'@material-ui/core/ListItem';
+import ListItemIcon from'@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import Menu from '@material-ui/core/Menu';
 import MenuItem from'@material-ui/core/MenuItem';
 import IconButton from'@material-ui/core/IconButton';
 import PublishIcon from '@material-ui/icons/Public';
@@ -16,6 +20,7 @@ import DownloadIcon from '@material-ui/icons/FileDownload';
 import PersistIcon from '@material-ui/icons/Save';
 import ExpandableIcon from '@material-ui/icons/KeyboardArrowDown';
 import NotExpandableIcon from '@material-ui/icons/KeyboardArrowRight';
+import CollapseNestedList from '../CollapseNestedList';
 
 export class ProcessListItem extends React.Component {
   static propTypes = {
@@ -34,6 +39,9 @@ export class ProcessListItem extends React.Component {
 
   constructor (props) {
     super(props);
+    this.state = {
+      anchor: null
+    }
   }
 
   extractFileId (reference = '') {
@@ -52,13 +60,26 @@ export class ProcessListItem extends React.Component {
     return fileId;
   }
 
-  buildMinimalIconMenuActions() {
+  onMenuClosed = event => {
+    this.setState({ anchor: null });
+    if(event) event.stopPropagation();
+  };
+
+  onMenuClicked = event => {
+    this.setState({ anchor: event.currentTarget });
+    event.stopPropagation();
+  };
+
+  buildMinimalSecondaryActions() {
+    const { anchor } = this.state;
     let logMenuItem = <MenuItem
       id="cy-logs-item"
-      primaryText="Show Logs"
-      onClick={(event) => this.props.onShowLogDialog(this.props.job.log)}
-      leftIcon={<LogIcon />}/>;
-    // TODO logMenuItem depends on status
+      onClick={(event) => this.props.onShowLogDialog(this.props.job.log)}>
+      <ListItemIcon>
+        <LogIcon />
+      </ListItemIcon>
+      <ListItemText inset primary="Show Logs" />
+      </MenuItem>;
     if (this.props.isWorkflowTask){
       logMenuItem = null;
     }
@@ -71,71 +92,121 @@ export class ProcessListItem extends React.Component {
       });
     }
     return (
-      <span />
-      /*<IconMenu iconButtonElement={
+        <ListItemSecondaryAction >
           <IconButton
             className="cy-actions-btn"
-            touch={true}
-            tooltipPosition="bottom-left">
+            aria-label="More"
+            aria-owns={anchor ? 'criterias-menu-actions' : null}
+            aria-haspopup="true"
+            onClick={() => this.onMenuClicked}>
             <MoreVertIcon />
           </IconButton>
-        }>
-        <MenuItem
-          id="cy-status-item"
-          primaryText="Browse XML Status File"
-          onClick={(event) => window.open(this.props.job.status_location, '_blank')}
-          leftIcon={<FileIcon />}/>
-        {logMenuItem}
-        <MenuItem
-          id="cy-visualize-all-agg-item"
-          primaryText="Visualize All (Aggregated)"
-          disabled={!visualizableTaskOutputs.length}
-          onClick={(event) => this.props.onVisualiseDatasets(visualizableTaskOutputs, true)}
-          leftIcon={<VisualizeIcon />}/>
-        <MenuItem
-          id="cy-visualize-all-split-item"
-          primaryText="Visualize All (Splitted)"
-          disabled={!visualizableTaskOutputs.length}
-          onClick={(event) => this.props.onVisualiseDatasets(visualizableTaskOutputs, false)}
-          leftIcon={<VisualizeIcon />}/>
-      </IconMenu>*/
+          <Menu
+            id="criterias-menu-actions"
+            anchorEl={anchor}
+            open={Boolean(anchor)}
+            onClose={this.onMenuClosed}
+            PaperProps={{
+              style: {
+                width: 200
+              },
+            }}>
+            <MenuItem
+              id="cy-status-item"
+              onClick={(event) => window.open(this.props.job.status_location, '_blank')}>
+              <ListItemIcon>
+                <FileIcon />
+              </ListItemIcon>
+              <ListItemText inset primary="Browse XML Status File" />
+            </MenuItem>
+            {logMenuItem}
+            <MenuItem
+              id="cy-visualize-all-agg-item"
+              primaryText="Visualize All (Aggregated)"
+              disabled={!visualizableTaskOutputs.length}
+              onClick={(event) => this.props.onVisualiseDatasets(visualizableTaskOutputs, true)}>
+              <ListItemIcon>
+                <VisualizeIcon />
+              </ListItemIcon>
+              <ListItemText inset
+                            primary="Visualize All"
+                            secondary="Aggregated" />
+            </MenuItem>
+            <MenuItem
+              id="cy-visualize-all-split-item"
+              disabled={!visualizableTaskOutputs.length}
+              onClick={(event) => this.props.onVisualiseDatasets(visualizableTaskOutputs, false)}>
+              <ListItemIcon>
+                <VisualizeIcon />
+              </ListItemIcon>
+              <ListItemText inset
+                            primary="Visualize All"
+                            secondary="Splitted" />
+            </MenuItem>
+          </Menu>
+        </ListItemSecondaryAction>
     );
   }
 
-  buildBasicIconMenuActions(output) {
-    return <span />
-     /*<IconMenu iconButtonElement={
+  buildBasicSecondaryActions(output) {
+    const { anchor } = this.state;
+    return <ListItemSecondaryAction >
       <IconButton
         className="cy-actions-btn"
-        touch={true}
-        tooltipPosition="bottom-left">
-        <MoreVertIcon color={grey400}/>
-      </IconButton>}>
-      <MenuItem
-        id="cy-download-item"
-        primaryText="Download"
-        disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS || (output.reference === undefined || !output.reference.length)}
-        onClick={(event) => { if (this.props.job.status === constants.JOB_SUCCESS_STATUS && output.reference.length) window.open(output.reference, '_blank'); }}
-        leftIcon={<DownloadIcon />}/>
-      <MenuItem
-        id="cy-publish-item"
-        primaryText="Publish (TODO)"
-        disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS}
-        onClick={(event) => { if (this.props.job.status === constants.JOB_SUCCESS_STATUS) alert('TODO: Call Publish WPS'); }}
-        leftIcon={<PublishIcon />}/>
-      <MenuItem
-        id="cy-persist-item"
-        primaryText="Persist"
-        disabled={!this._isPersistAvailable(output)}
-        onClick={(event) => { if(this._isPersistAvailable(output)) this.props.onShowPersistDialog(output); }}
-        leftIcon={<PersistIcon  />}/>
-      <MenuItem
-        id="cy-visualize-item"
-        primaryText="Visualize"
-        disabled={!this._isVisualizeAvailable(output)}
-        onClick={(event) => {if(this._isVisualizeAvailable(output)) this.props.onVisualiseDatasets([output.reference]); }}
-        leftIcon={<VisualizeIcon />}/>
-    </IconMenu>*/
+        aria-label="More"
+        aria-owns={anchor ? 'criterias-menu-actions' : null}
+        aria-haspopup="true"
+        onClick={() => this.onMenuClicked}>
+        <MoreVertIcon />
+      </IconButton>
+      <Menu
+        id="criterias-menu-actions"
+        anchorEl={anchor}
+        open={Boolean(anchor)}
+        onClose={this.onMenuClosed}
+        PaperProps={{
+          style: {
+            width: 200
+          },
+        }}>
+        <MenuItem
+          id="cy-download-item"
+          disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS || (output.reference === undefined || !output.reference.length)}
+          onClick={(event) => { if (this.props.job.status === constants.JOB_SUCCESS_STATUS && output.reference.length) window.open(output.reference, '_blank'); }}>
+          <ListItemIcon>
+            <DownloadIcon />
+          </ListItemIcon>
+          <ListItemText inset primary="Download" />
+        </MenuItem>
+        <MenuItem
+          id="cy-publish-item"
+          disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS}
+          onClick={(event) => { if (this.props.job.status === constants.JOB_SUCCESS_STATUS) alert('TODO: Call Publish WPS'); }}>
+          <ListItemIcon>
+            <PublishIcon />
+          </ListItemIcon>
+          <ListItemText inset primary="Publish (TODO)" />
+        </MenuItem>
+        <MenuItem
+          id="cy-persist-item"
+          disabled={!this._isPersistAvailable(output)}
+          onClick={(event) => { if(this._isPersistAvailable(output)) this.props.onShowPersistDialog(output); }}>
+          <ListItemIcon>
+            <PersistIcon />
+          </ListItemIcon>
+          <ListItemText inset primary="Persist" />
+        </MenuItem>
+        <MenuItem
+          id="cy-visualize-item"
+          disabled={!this._isVisualizeAvailable(output)}
+          onClick={(event) => {if(this._isVisualizeAvailable(output)) this.props.onVisualiseDatasets([output.reference]); }}>
+          <ListItemIcon>
+            <VisualizeIcon />
+          </ListItemIcon>
+          <ListItemText inset primary="Visualize" />
+        </MenuItem>
+      </Menu>
+    </ListItemSecondaryAction>
   }
 
   _isPersistAvailable(output){
@@ -158,35 +229,38 @@ export class ProcessListItem extends React.Component {
         </span>;
     }
     if(this.props.job.status === constants.JOB_SUCCESS_STATUS){
-      return <ListItem
-        className={`cy-monitoring-list-item cy-monitoring-level-${this.props.indentationLevel}`}
-        style={{marginLeft: (this.props.indentationLevel * 18) + "px"}}
-        primaryText={(this.props.job.name && this.props.job.name.length)? this.props.job.name: `${this.props.job.title}: ${this.props.job.abstract}`}
-        secondaryText={secondaryText}
-        secondaryTextLines={2}
-        rightIconButton={
-          this.buildMinimalIconMenuActions()
-        }
-        initiallyOpen={false}
-        primaryTogglesNestedList={true}
-        leftIcon={<ExpandableIcon />}
-        nestedItems={
-          this.props.job.outputs.map((output, k) => {
-            return <ListItem
-              className={`cy-monitoring-list-item cy-monitoring-level-${this.props.indentationLevel + 1}`}
-              key={k}
-              style={{marginLeft: ((this.props.indentationLevel + 1) * 18) + "px"}}
-              primaryText={(output.name && output.name.length)? output.name: `${output.title}: ${output.abstract}`}
-              secondaryText={<div>File: {this.extractFileId(output.reference)} <br/>Type: <strong>{output.mimeType}</strong></div>}
-              secondaryTextLines={2}
-              leftIcon={<FileIcon />}
-              rightIconButton={
-                this.buildBasicIconMenuActions(output)
-              }
-            />;
-          })
-        }
-      />;
+      return (
+        <CollapseNestedList
+          rootListItemClass={`cy-monitoring-list-item cy-monitoring-level-${this.props.indentationLevel}`}
+          rootListItemStyle={{marginLeft: (this.props.indentationLevel * 18) + "px"}}
+          rootListItemContent={
+          <React.Fragment>
+            <ListItemIcon>
+              <ExpandableIcon />
+            </ListItemIcon>
+            <ListItemText inset
+                          primary={(this.props.job.name && this.props.job.name.length)? this.props.job.name: `${this.props.job.title}: ${this.props.job.abstract}`}
+                          secondary={secondaryText} />
+          </React.Fragment>}>
+            {this.buildMinimalSecondaryActions()}
+          {
+            this.props.job.outputs.map((output, k) => {
+              return <ListItem
+                className={`cy-monitoring-list-item cy-monitoring-level-${this.props.indentationLevel + 1}`}
+                key={k}
+                style={{marginLeft: ((this.props.indentationLevel + 1) * 18) + "px"}}>
+                <ListItemIcon>
+                  <FileIcon />
+                </ListItemIcon>
+                <ListItemText inset
+                              primary={(output.name && output.name.length) ? output.name : `${output.title}: ${output.abstract}`}
+                              secondary={<div>File: {this.extractFileId(output.reference)} <br/>Type:<strong>{output.mimeType}</strong></div>} />
+                {this.buildBasicSecondaryActions(output)}
+              </ListItem>
+            })
+          }
+        </CollapseNestedList>
+      );
     }else{
       // Not a success has typically no outputs and only a log file to be shown
       let logMenuItem = <MenuItem
@@ -205,15 +279,15 @@ export class ProcessListItem extends React.Component {
 
       return <ListItem
         className={`cy-monitoring-list-item cy-monitoring-level-${this.props.indentationLevel}`}
-        style={{marginLeft: (this.props.indentationLevel * 18) + "px"}}
-        primaryText={(this.props.job.name && this.props.job.name.length)? this.props.job.name: `${this.props.job.title}: ${this.props.job.abstract}`}
-        secondaryText={secondaryText}
-        secondaryTextLines={2}
-        rightIcon={this.buildMinimalIconMenuActions()}
-        initiallyOpen={false}
-        primaryTogglesNestedList={true}
-        leftIcon={<NotExpandableIcon />}
-      />;
+        style={{marginLeft: (this.props.indentationLevel * 18) + "px"}}>
+          <ListItemIcon>
+            <NotExpandableIcon />
+          </ListItemIcon>
+          <ListItemText inset
+                        primary={(this.props.job.name && this.props.job.name.length)? this.props.job.name: `${this.props.job.title}: ${this.props.job.abstract}`}
+                        secondary={secondaryText} />
+          {this.buildMinimalSecondaryActions()}
+        </ListItem>
     }
   }
 }
