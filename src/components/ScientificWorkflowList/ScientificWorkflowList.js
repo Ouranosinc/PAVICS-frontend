@@ -94,7 +94,6 @@ export default class ScientificWorkflowList extends Component {
     }
   };
 
-
   onPageChanged = (pageNumber, numberPerPage) => {
     this.setState({
       pageNumber: pageNumber,

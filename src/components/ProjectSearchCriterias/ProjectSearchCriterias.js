@@ -12,11 +12,9 @@ import ListItemIcon from'@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Paper from'@material-ui/core/Paper';
-import Menu from '@material-ui/core/Menu';
 import MenuItem from'@material-ui/core/MenuItem';
-import IconButton from'@material-ui/core/IconButton';
 import Remove from '@material-ui/icons/Delete';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import CustomIconMenu from '../CustomIconMenu';
 import AddedCriterias from '@material-ui/icons/AddToPhotos';
 import Relaunch from '@material-ui/icons/YoutubeSearchedFor';
 import Restore from '@material-ui/icons/RestorePage';
@@ -36,7 +34,6 @@ export class ProjectSearchCriterias extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      anchor: null,
       criteriasPageNumber: 1,
       criteriasNumberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX]
     };
@@ -86,18 +83,7 @@ export class ProjectSearchCriterias extends React.Component {
     }
   }
 
-  onMenuClosed = event => {
-    this.setState({ anchor: null });
-    if(event) event.stopPropagation();
-  };
-
-  onMenuClicked = event => {
-    this.setState({ anchor: event.currentTarget });
-    event.stopPropagation();
-  };
-
   render () {
-    const { anchor } = this.state;
     const { classes } = this.props;
     let criteriasStart = (this.state.criteriasPageNumber - 1) * this.state.criteriasNumberPerPage;
     let criteriasPaginated = this.props.researchAPI.items.slice(criteriasStart, criteriasStart + this.state.criteriasNumberPerPage);
@@ -131,53 +117,40 @@ export class ProjectSearchCriterias extends React.Component {
                     </div>
                     } />
                   <ListItemSecondaryAction className={classes.root}>
-                    <IconButton
-                      aria-label="More"
-                      aria-owns={anchor ? 'criterias-menu-actions' : null}
-                      aria-haspopup="true"
-                      onClick={() => this.onMenuClicked}>
-                      <MoreVertIcon />
-                    </IconButton>
+                    <CustomIconMenu
+                      iconButtonClass="cy-actions-btn"
+                      menuId="criterias-menu-actions"
+                      menuItems={[
+                        <MenuItem
+                          id="cy-restore-item"
+                          onClick={(event) => this.onRestoreSearchCriteria()}>
+                          <ListItemIcon>
+                            <Restore />
+                          </ListItemIcon>
+                          <ListItemText inset primary="Restore results"/>
+                        </MenuItem>,
+                        <MenuItem
+                          id="cy-relaunch-item"
+                          onClick={(event) => this.onRelaunchSearch()}>
+                          <ListItemIcon>
+                            <Relaunch />
+                          </ListItemIcon>
+                          <ListItemText inset primary="Relaunch search"/>
+                        </MenuItem>,
+                        <MenuItem
+                          id="cy-remove-item"
+                          onClick={(event) => this.onRemoveSearchCriteria()}>
+                          <ListItemIcon>
+                            <Remove />
+                          </ListItemIcon>
+                          <ListItemText inset primary="Remove"/>
+                        </MenuItem>
+                      ]} />
                   </ListItemSecondaryAction>
                 </ListItem>
               );
             })}
           </List>
-          <Menu
-            id="criterias-menu-actions"
-            anchorEl={anchor}
-            open={Boolean(anchor)}
-            onClose={this.onMenuClosed}
-            PaperProps={{
-              style: {
-                width: 200
-              },
-            }}>
-            <MenuItem
-              id="cy-restore-item"
-              onClick={(event) => this.onRestoreSearchCriteria()}>
-              <ListItemIcon>
-                <Restore />
-              </ListItemIcon>
-              <ListItemText inset primary="Restore results" />
-            </MenuItem>
-            <MenuItem
-              id="cy-relaunch-item"
-              onClick={(event) => this.onRelaunchSearch()}>
-              <ListItemIcon>
-                <Relaunch />
-              </ListItemIcon>
-              <ListItemText inset primary="Relaunch search" />
-            </MenuItem>
-            <MenuItem
-              id="cy-remove-item"
-              onClick={(event) => this.onRemoveSearchCriteria()}>
-              <ListItemIcon>
-                <Remove />
-              </ListItemIcon>
-              <ListItemText inset primary="Remove" />
-            </MenuItem>
-          </Menu>
           <Pagination
             total={this.props.researchAPI.items.length}
             initialPerPageOptionIndex={constants.PER_PAGE_INITIAL_INDEX}
