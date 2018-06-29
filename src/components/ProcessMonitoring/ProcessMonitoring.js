@@ -11,23 +11,19 @@ import ProcessListItem from './ProcessListItem';
 import PersistResultDialog from './PersistResultDialog';
 import Dialog from'@material-ui/core/Dialog';
 import List from'@material-ui/core/List';
-import ListItem from'@material-ui/core/ListItem';
 import ListSubheader from'@material-ui/core/ListSubheader';
 import ListItemIcon from'@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Paper from'@material-ui/core/Paper';
-import Menu from '@material-ui/core/Menu';
 import MenuItem from'@material-ui/core/MenuItem';
-import IconButton from'@material-ui/core/IconButton';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Button from'@material-ui/core/Button';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import FileIcon from '@material-ui/icons/InsertDriveFile';
 import LogIcon from '@material-ui/icons/Receipt';
-import ExpandableIcon from '@material-ui/icons/KeyboardArrowDown';
 import VisualizeIcon from '@material-ui/icons/RemoveRedEye';
 import CollapseNestedList from '../CollapseNestedList';
+import CustomIconMenu from '../CustomIconMenu';
 
 class ProcessMonitoring extends React.Component {
   static propTypes = {
@@ -198,17 +194,7 @@ class ProcessMonitoring extends React.Component {
               }else {
                 if (x.process_id === __PAVICS_RUN_WORKFLOW_IDENTIFIER__) {
                   //Threat FAILED and SUCCESSFULL workflow (both are expandable)
-                  let tasks = [];
-                  let logMenu = <MenuItem
-                    id="cy-logs-item"
-                    onClick={(event) => this._onShowLogDialog(x.log)}>
-                    <ListItemIcon>
-                      <LogIcon />
-                    </ListItemIcon>
-                    <ListItemText inset primary="Show Logs" />
-                  </MenuItem>
-
-                  tasks = x.tasks;
+                  let tasks = x.tasks;
 
                   // If an output is a json array of netcdf urls, we must generate new output for every listed url
                   tasks.forEach(task => {
@@ -261,6 +247,7 @@ class ProcessMonitoring extends React.Component {
                     });
                   });
 
+                  let logMenu = null;
                   if(x.status === constants.JOB_SUCCESS_STATUS) {
                     let LogFileURL = x["response_to_json"]['wps:ExecuteResponse']['wps:ProcessOutputs'][0]['wps:Output'][1]['wps:Reference'][0]['$']['xlink:href'];
                     logMenu = <MenuItem
@@ -271,58 +258,50 @@ class ProcessMonitoring extends React.Component {
                       </ListItemIcon>
                       <ListItemText inset primary="Browse Log File" />
                     </MenuItem>
+                  }else {
+                    logMenu = <MenuItem
+                      id="cy-logs-item"
+                      onClick={(event) => this._onShowLogDialog(x.log)}>
+                      <ListItemIcon>
+                        <LogIcon />
+                      </ListItemIcon>
+                      <ListItemText inset primary="Show Logs" />
+                    </MenuItem>
                   }
 
                   return (
                     <CollapseNestedList
                       key={i}
                       rootListItemClass={`cy-monitoring-list-item cy-monitoring-level-0`}
-                      rootListItemContent={
-                    <React.Fragment>
-                      <ListItemIcon>
-                        <ExpandableIcon />
-                      </ListItemIcon>
-                      <ListItemText
-                        inset
-                        primary={(x.name && x.name.length)? x.name: `${x.title}: ${x.abstract}`}
-                        secondary={
-                          <span>
-                          <span>Launched on <strong>{moment(x.created).format(constants.PAVICS_DATE_FORMAT)}</strong> using provider <strong>{x.service}</strong>.</span><br/>
-                          <StatusElement job={x} />, <strong>Duration: </strong>{x.duration}
-                        </span>
-                        }/>
-                      <ListItemSecondaryAction >
-                        <IconButton
-                          className="cy-actions-btn"
-                          aria-label="More"
-                          aria-owns={anchor ? 'criterias-menu-actions' : null}
-                          aria-haspopup="true"
-                          onClick={() => this.onMenuClicked}>
-                          <MoreVertIcon />
-                        </IconButton>
-                        <Menu
-                          id="criterias-menu-actions"
-                          anchorEl={anchor}
-                          open={Boolean(anchor)}
-                          onClose={this.onMenuClosed}
-                          PaperProps={{
-                            style: {
-                              width: 200
-                            },
-                          }}>
-                          <MenuItem
-                            id="cy-status-item"
-                            onClick={(event) => window.open(x.status_location, '_blank')}>
-                            <ListItemIcon>
-                              <FileIcon />
-                            </ListItemIcon>
-                            <ListItemText inset primary="Browse XML Status File" />
-                          </MenuItem>
-                          {logMenu}
-                        </Menu>
-                      </ListItemSecondaryAction>
-                    </React.Fragment>
-                    }>
+                      rootListItemText={
+                        <ListItemText
+                          inset
+                          primary={(x.name && x.name.length)? x.name: `${x.title}: ${x.abstract}`}
+                          secondary={
+                            <span>
+                              <span>Launched on <strong>{moment(x.created).format(constants.PAVICS_DATE_FORMAT)}</strong> using provider <strong>{x.service}</strong>.</span><br/>
+                              <StatusElement job={x} />, <strong>Duration: </strong>{x.duration}
+                            </span>
+                          }/>
+                      }
+                      rootListItemSecondaryActions={
+                        <ListItemSecondaryAction >
+                          <CustomIconMenu
+                            iconButtonClass="cy-actions-btn"
+                            menuId="ouput-menu-actions"
+                            menuItems={[
+                            <MenuItem
+                              id="cy-status-item"
+                              onClick={(event) => window.open(x.status_location, '_blank')}>
+                              <ListItemIcon>
+                                <FileIcon />
+                              </ListItemIcon>
+                              <ListItemText inset primary="Browse XML Status" />
+                            </MenuItem>,
+                            logMenu
+                            ]} />
+                        </ListItemSecondaryAction>
+                      }>
                       {
                         tasks.map((task, j) => {
                           let taskName = Object.keys(task)[0];
@@ -358,38 +337,22 @@ class ProcessMonitoring extends React.Component {
                                 key={j}
                                 rootListItemStyle={{marginLeft: "18px"}}
                                 rootListItemClass={`cy-monitoring-list-item cy-monitoring-level-parallel`}
-                                rootListItemContent={
-                                  <React.Fragment>
-                                    <ListItemIcon>
-                                      <ExpandableIcon />
-                                    </ListItemIcon>
-                                    <ListItemText inset
-                                                  primary={taskName}
-                                                  secondary={
-                                                    <p>
-                                                      Parallel tasks completed with success: <strong>{completedTasks.length}
-                                                      / {parrallelTasks.length}</strong>
-                                                    </p>
-                                                  }/>
-                                    <ListItemSecondaryAction>
-                                      <IconButton
-                                        className="cy-actions-btn"
-                                        aria-label="More"
-                                        aria-owns={anchor ? 'criterias-menu-actions' : null}
-                                        aria-haspopup="true"
-                                        onClick={() => this.onMenuClicked}>
-                                        <MoreVertIcon />
-                                      </IconButton>
-                                      <Menu
-                                        id="criterias-menu-actions"
-                                        anchorEl={anchor}
-                                        open={Boolean(anchor)}
-                                        onClose={this.onMenuClosed}
-                                        PaperProps={{
-                                          style: {
-                                            width: 200
-                                          },
-                                        }}>
+                                rootListItemText={
+                                  <ListItemText inset
+                                    primary={taskName}
+                                    secondary={
+                                      <p>
+                                        Parallel tasks completed with success: <strong>{completedTasks.length}
+                                        / {parrallelTasks.length}</strong>
+                                      </p>
+                                    }/>
+                                }
+                                rootListItemSecondaryActions={
+                                  <ListItemSecondaryAction>
+                                    <CustomIconMenu
+                                      iconButtonClass="cy-actions-btn"
+                                      menuId="ouput-menu-actions"
+                                      menuItems={[
                                         <MenuItem
                                           id="cy-visualize-all-agg-item"
                                           disabled={!visualizableOutputs.length}
@@ -398,7 +361,7 @@ class ProcessMonitoring extends React.Component {
                                             <VisualizeIcon />
                                           </ListItemIcon>
                                           <ListItemText inset primary="Visualize All" secondary="Aggregated"/>
-                                        </MenuItem>
+                                        </MenuItem>,
                                         <MenuItem
                                           id="cy-visualize-all-split-item"
                                           primaryText="Visualize All (Splitted)"
@@ -409,9 +372,9 @@ class ProcessMonitoring extends React.Component {
                                           </ListItemIcon>
                                           <ListItemText inset primary="Visualize All" secondary="Splitted"/>
                                         </MenuItem>
-                                      </Menu>
-                                    </ListItemSecondaryAction>
-                                  </React.Fragment>
+                                      ]}/>
+
+                                  </ListItemSecondaryAction>
                                 }>
                                 {
                                   parrallelTasks.map((task, k) => {

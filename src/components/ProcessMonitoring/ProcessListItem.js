@@ -3,23 +3,19 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import * as constants from '../../constants';
 import StatusElement from './StatusElement';
-import ListSubheader from'@material-ui/core/ListSubheader';
 import ListItem from'@material-ui/core/ListItem';
 import ListItemIcon from'@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import Menu from '@material-ui/core/Menu';
 import MenuItem from'@material-ui/core/MenuItem';
-import IconButton from'@material-ui/core/IconButton';
 import PublishIcon from '@material-ui/icons/Public';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import VisualizeIcon from '@material-ui/icons/RemoveRedEye';
 import FileIcon from '@material-ui/icons/InsertDriveFile';
 import LogIcon from '@material-ui/icons/Receipt';
 import DownloadIcon from '@material-ui/icons/FileDownload';
 import PersistIcon from '@material-ui/icons/Save';
-import ExpandableIcon from '@material-ui/icons/KeyboardArrowDown';
 import NotExpandableIcon from '@material-ui/icons/KeyboardArrowRight';
+import CustomIconMenu from '../CustomIconMenu';
 import CollapseNestedList from '../CollapseNestedList';
 
 export class ProcessListItem extends React.Component {
@@ -39,9 +35,6 @@ export class ProcessListItem extends React.Component {
 
   constructor (props) {
     super(props);
-    this.state = {
-      anchor: null
-    }
   }
 
   extractFileId (reference = '') {
@@ -60,161 +53,131 @@ export class ProcessListItem extends React.Component {
     return fileId;
   }
 
-  onMenuClosed = event => {
-    this.setState({ anchor: null });
-    if(event) event.stopPropagation();
-  };
-
-  onMenuClicked = event => {
-    this.setState({ anchor: event.currentTarget });
-    event.stopPropagation();
+  onVisualizeOutput = (visualizableReferences, aggregate = false) => {
+    // Should we seriously manage multiple instances of child components
+    // this.customIconMenu.onMenuClosed();
+    this.props.onVisualiseDatasets(visualizableReferences, aggregate)
   };
 
   buildMinimalSecondaryActions() {
-    const { anchor } = this.state;
-    let logMenuItem = <MenuItem
-      id="cy-logs-item"
-      onClick={(event) => this.props.onShowLogDialog(this.props.job.log)}>
-      <ListItemIcon>
-        <LogIcon />
-      </ListItemIcon>
-      <ListItemText inset primary="Show Logs" />
-      </MenuItem>;
-    if (this.props.isWorkflowTask){
-      logMenuItem = null;
-    }
-    let visualizableTaskOutputs = [];
+    let visualizableReferences = [];
     if(this.props.job.outputs) {
-      this.props.job.outputs.forEach(output => {
-        if(output.mimeType === 'application/x-netcdf') {
-          visualizableTaskOutputs.push(output.reference);
-        }
-      });
+      const visualizableOutputs = this.props.job.outputs.filter(o => o.mimeType === 'application/x-netcdf');
+      visualizableReferences = visualizableOutputs.map(o => o.reference);
     }
     return (
-        <ListItemSecondaryAction >
-          <IconButton
-            className="cy-actions-btn"
-            aria-label="More"
-            aria-owns={anchor ? 'criterias-menu-actions' : null}
-            aria-haspopup="true"
-            onClick={() => this.onMenuClicked}>
-            <MoreVertIcon />
-          </IconButton>
-          <Menu
-            id="criterias-menu-actions"
-            anchorEl={anchor}
-            open={Boolean(anchor)}
-            onClose={this.onMenuClosed}
-            PaperProps={{
-              style: {
-                width: 200
-              },
-            }}>
-            <MenuItem
-              id="cy-status-item"
-              onClick={(event) => window.open(this.props.job.status_location, '_blank')}>
-              <ListItemIcon>
-                <FileIcon />
-              </ListItemIcon>
-              <ListItemText inset primary="Browse XML Status File" />
-            </MenuItem>
-            {logMenuItem}
-            <MenuItem
-              id="cy-visualize-all-agg-item"
-              primaryText="Visualize All (Aggregated)"
-              disabled={!visualizableTaskOutputs.length}
-              onClick={(event) => this.props.onVisualiseDatasets(visualizableTaskOutputs, true)}>
-              <ListItemIcon>
-                <VisualizeIcon />
-              </ListItemIcon>
-              <ListItemText inset
-                            primary="Visualize All"
-                            secondary="Aggregated" />
-            </MenuItem>
-            <MenuItem
-              id="cy-visualize-all-split-item"
-              disabled={!visualizableTaskOutputs.length}
-              onClick={(event) => this.props.onVisualiseDatasets(visualizableTaskOutputs, false)}>
-              <ListItemIcon>
-                <VisualizeIcon />
-              </ListItemIcon>
-              <ListItemText inset
-                            primary="Visualize All"
-                            secondary="Splitted" />
-            </MenuItem>
-          </Menu>
+        <ListItemSecondaryAction>
+          <CustomIconMenu
+            onRef={ref => (this.customIconMenu = ref)}
+            iconButtonClass="cy-actions-btn"
+            menuId="ouput-menu-actions"
+            menuItems={[
+              <MenuItem
+                id="cy-status-item"
+                onClick={(event) => window.open(this.props.job.status_location, '_blank')}>
+                <ListItemIcon>
+                  <FileIcon />
+                </ListItemIcon>
+                <ListItemText inset primary="Browse XML Status"/>
+              </MenuItem>,
+              (this.props.isWorkflowTask)? null:
+              <MenuItem
+                id="cy-logs-item"
+                onClick={(event) => this.props.onShowLogDialog(this.props.job.log)}>
+                <ListItemIcon>
+                  <LogIcon />
+                </ListItemIcon>
+                <ListItemText inset primary="Show Logs" />
+              </MenuItem>,
+              <MenuItem
+                id="cy-visualize-all-agg-item"
+                primaryText="Visualize All (Aggregated)"
+                disabled={!visualizableReferences.length}
+                onClick={(event) => this.onVisualizeOutput(visualizableReferences, true)}>
+                <ListItemIcon>
+                  <VisualizeIcon />
+                </ListItemIcon>
+                <ListItemText inset
+                              primary="Visualize All"
+                              secondary="Aggregated"/>
+              </MenuItem>,
+              <MenuItem
+                id="cy-visualize-all-split-item"
+                disabled={!visualizableReferences.length}
+                onClick={(event) => this.onVisualizeOutput(visualizableReferences, false)}>
+                <ListItemIcon>
+                  <VisualizeIcon />
+                </ListItemIcon>
+                <ListItemText inset
+                              primary="Visualize All"
+                              secondary="Splitted"/>
+              </MenuItem>
+            ]}/>
         </ListItemSecondaryAction>
     );
   }
 
   buildBasicSecondaryActions(output) {
-    const { anchor } = this.state;
-    return <ListItemSecondaryAction >
-      <IconButton
-        className="cy-actions-btn"
-        aria-label="More"
-        aria-owns={anchor ? 'criterias-menu-actions' : null}
-        aria-haspopup="true"
-        onClick={() => this.onMenuClicked}>
-        <MoreVertIcon />
-      </IconButton>
-      <Menu
-        id="criterias-menu-actions"
-        anchorEl={anchor}
-        open={Boolean(anchor)}
-        onClose={this.onMenuClosed}
-        PaperProps={{
-          style: {
-            width: 200
-          },
-        }}>
-        <MenuItem
-          id="cy-download-item"
-          disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS || (output.reference === undefined || !output.reference.length)}
-          onClick={(event) => { if (this.props.job.status === constants.JOB_SUCCESS_STATUS && output.reference.length) window.open(output.reference, '_blank'); }}>
-          <ListItemIcon>
-            <DownloadIcon />
-          </ListItemIcon>
-          <ListItemText inset primary="Download" />
-        </MenuItem>
-        <MenuItem
-          id="cy-publish-item"
-          disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS}
-          onClick={(event) => { if (this.props.job.status === constants.JOB_SUCCESS_STATUS) alert('TODO: Call Publish WPS'); }}>
-          <ListItemIcon>
-            <PublishIcon />
-          </ListItemIcon>
-          <ListItemText inset primary="Publish (TODO)" />
-        </MenuItem>
-        <MenuItem
-          id="cy-persist-item"
-          disabled={!this._isPersistAvailable(output)}
-          onClick={(event) => { if(this._isPersistAvailable(output)) this.props.onShowPersistDialog(output); }}>
-          <ListItemIcon>
-            <PersistIcon />
-          </ListItemIcon>
-          <ListItemText inset primary="Persist" />
-        </MenuItem>
-        <MenuItem
-          id="cy-visualize-item"
-          disabled={!this._isVisualizeAvailable(output)}
-          onClick={(event) => {if(this._isVisualizeAvailable(output)) this.props.onVisualiseDatasets([output.reference]); }}>
-          <ListItemIcon>
-            <VisualizeIcon />
-          </ListItemIcon>
-          <ListItemText inset primary="Visualize" />
-        </MenuItem>
-      </Menu>
+    return <ListItemSecondaryAction>
+      <CustomIconMenu
+        iconButtonClass="cy-actions-btn"
+        menuId="output-menu-actions"
+        menuItems={[
+          <MenuItem
+            id="cy-download-item"
+            disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS || (output.reference === undefined || !output.reference.length)}
+            onClick={(event) => {
+              if (this.props.job.status === constants.JOB_SUCCESS_STATUS && output.reference.length) window.open(output.reference, '_blank');
+            }}>
+            <ListItemIcon>
+              <DownloadIcon />
+            </ListItemIcon>
+            <ListItemText inset primary="Download"/>
+          </MenuItem>,
+          <MenuItem
+            id="cy-publish-item"
+            disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS}
+            onClick={(event) => {
+              if (this.props.job.status === constants.JOB_SUCCESS_STATUS) alert('TODO: Call Publish WPS');
+            }}>
+            <ListItemIcon>
+              <PublishIcon />
+            </ListItemIcon>
+            <ListItemText inset primary="Publish (TODO)"/>
+          </MenuItem>,
+          <MenuItem
+            id="cy-persist-item"
+            disabled={!this.isPersistAvailable(output)}
+            onClick={(event) => {
+              if (this.isPersistAvailable(output)) this.props.onShowPersistDialog(output);
+            }}>
+            <ListItemIcon>
+              <PersistIcon />
+            </ListItemIcon>
+            <ListItemText inset primary="Persist"/>
+          </MenuItem>,
+          <MenuItem
+            id="cy-visualize-item"
+            disabled={!this.isVisualizeAvailable(output)}
+            onClick={(event) => {
+              if (this.isVisualizeAvailable(output)) this.onVisualizeOutput([output.reference], false);
+            }}>
+            <ListItemIcon>
+              <VisualizeIcon />
+            </ListItemIcon>
+            <ListItemText inset primary="Visualize"/>
+          </MenuItem>
+        ]} />
     </ListItemSecondaryAction>
   }
 
-  _isPersistAvailable(output){
+  isPersistAvailable = (output) => {
       return (this.props.job.status === constants.JOB_SUCCESS_STATUS && output.mimeType === 'application/x-netcdf');
-  }
-  _isVisualizeAvailable(output) {
+  };
+
+  isVisualizeAvailable = (output) => {
     return (this.props.job.status === constants.JOB_SUCCESS_STATUS && output.mimeType === 'application/x-netcdf');
-  }
+  };
 
   render () {
     let secondaryText =
@@ -233,16 +196,10 @@ export class ProcessListItem extends React.Component {
         <CollapseNestedList
           rootListItemClass={`cy-monitoring-list-item cy-monitoring-level-${this.props.indentationLevel}`}
           rootListItemStyle={{marginLeft: (this.props.indentationLevel * 18) + "px"}}
-          rootListItemContent={
-          <React.Fragment>
-            <ListItemIcon>
-              <ExpandableIcon />
-            </ListItemIcon>
-            <ListItemText inset
-                          primary={(this.props.job.name && this.props.job.name.length)? this.props.job.name: `${this.props.job.title}: ${this.props.job.abstract}`}
-                          secondary={secondaryText} />
-          </React.Fragment>}>
-            {this.buildMinimalSecondaryActions()}
+          rootListItemText={ <ListItemText inset
+                                           primary={(this.props.job.name && this.props.job.name.length)? this.props.job.name: `${this.props.job.title}: ${this.props.job.abstract}`}
+                                           secondary={secondaryText} />}
+          rootListItemSecondaryActions={this.buildMinimalSecondaryActions()}>
           {
             this.props.job.outputs.map((output, k) => {
               return <ListItem
