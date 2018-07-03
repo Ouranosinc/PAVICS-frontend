@@ -103,7 +103,7 @@ class SectionalMenu extends React.Component {
             <SearchIcon />
           </a>
           <a id="cy-project-management" onClick={this.experience} title="Project Management"
-            className={(this.props.section === constants.PLATFORM_SECTION_PROJECT_MANAGEMENFT) ? classes['active'] : ''}>
+            className={(this.props.section === constants.PLATFORM_SECTION_PROJECT_MANAGEMENT) ? classes['active'] : ''}>
             <AssignmentIcon />
           </a>
           <a id="cy-data-processing"onClick={this.workflows} title="Data Processing"

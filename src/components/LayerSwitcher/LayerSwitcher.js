@@ -14,8 +14,7 @@ import Tab from'@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import Select from'@material-ui/core/Select';
 import MenuItem from'@material-ui/core/MenuItem';
-// import Slider from'@material-ui/core/Slider';
-import Slider  from 'rc-slider';
+import Slider from '@material-ui/lab/Slider';
 import Radio from'@material-ui/core/Radio';
 import RadioGroup from'@material-ui/core/RadioGroup';
 import Satellite from '@material-ui/icons/Satellite';
@@ -60,14 +59,6 @@ export default class LayerSwitcher extends React.Component {
 
   constructor (props) {
     super(props);
-    this._onHideLayerSwitcherPanel = this._onHideLayerSwitcherPanel.bind(this);
-    this.setSelectedShapefile = this.setSelectedShapefile.bind(this);
-    this.setSelectedBaseMap = this.setSelectedBaseMap.bind(this);
-    this.setCurrentDisplayedDataset = this.setCurrentDisplayedDataset.bind(this);
-    this.setDatasetLayerOpacity = this.setDatasetLayerOpacity.bind(this);
-    this.setSelectedColorPalette = this.setSelectedColorPalette.bind(this);
-    this.resetDatasetLayer = this.resetDatasetLayer.bind(this);
-    this.resetShapefile = this.resetShapefile.bind(this);
     this.props.selectColorPalette(AVAILABLE_COLOR_PALETTES[0]);
     this.state = {
       tabValue: 0
@@ -78,7 +69,7 @@ export default class LayerSwitcher extends React.Component {
     this.props.fetchShapefiles();
   }
 
-  _onHideLayerSwitcherPanel () {
+  onHideLayerSwitcherPanel = () => {
     this.props.onToggleMapPanel(constants.VISUALIZE_LAYER_SWITCHER_PANEL);
   }
 
@@ -87,11 +78,11 @@ export default class LayerSwitcher extends React.Component {
     this.props.selectShapefile(this.props.publicShapeFiles.find(f => f.title === value));
   };
 
-  setSelectedBaseMap (event, value) {
+  setSelectedBaseMap = (event, value) => {
     this.props.selectBasemap(value);
   }
 
-  setCurrentDisplayedDataset (event, value) {
+  setCurrentDisplayedDataset = (event, value) => {
     let selectedDataset = this.props.currentVisualizedDatasets.find(dataset => dataset.uniqueLayerSwitcherId === value);
     this.props.selectCurrentDisplayedDataset({
       ...selectedDataset,
@@ -100,7 +91,7 @@ export default class LayerSwitcher extends React.Component {
     });
   }
 
-  setDatasetLayerOpacity (event, value) {
+  setDatasetLayerOpacity = (event, value) => {
     this.props.selectCurrentDisplayedDataset({
       ...this.props.currentDisplayedDataset,
       currentFileIndex: 0,
@@ -108,22 +99,22 @@ export default class LayerSwitcher extends React.Component {
     });
   }
 
-  setSelectedColorPalette (event) {
+  setSelectedColorPalette = (event) => {
     this.props.selectColorPalette(event.target.value);
   }
 
-  resetShapefile () {
+  resetShapefile = () => {
     this.props.selectShapefile({});
     this.props.resetSelectedRegions();
   }
 
-  resetDatasetLayer () {
+  resetDatasetLayer = () => {
     this.props.selectCurrentDisplayedDataset({});
   }
 
   /*
-  this routine should iterate through the different workspaces that are available to the user and show them separated by workspace name
-  presently, they're all grouped under "public", which would be replaced by the workspace name
+  this routine should iterate through the different workspaces that are available to the user and show them separated by workspace name.
+  Presently, they're all flat on a single level, but should eventually be grouped by the workspace name
    */
   makeShapefileList () {
     return (
@@ -142,7 +133,7 @@ export default class LayerSwitcher extends React.Component {
           this.props.publicShapeFiles.map( (shapeFile, i) =>
             <ListItem
             className="cy-layerswitcher-shapefile-item"
-            id={`cy-shapefile-name-${shapeFile.title}`}
+            id={`cy-shapefile-name-${shapeFile.title}`}// `
             primaryText={shapeFile.title}
             key={i}>
               <RadioGroup
@@ -207,9 +198,9 @@ export default class LayerSwitcher extends React.Component {
             if (dataset.wms_url.length === 1) {
               const SEARCH_VALUE = '/';
               let index = dataset.wms_url[0].lastIndexOf(SEARCH_VALUE);
-              secondaryText = `${dataset.wms_url[0].substring(index + SEARCH_VALUE.length)}`;
+              secondaryText = `${dataset.wms_url[0].substring(index + SEARCH_VALUE.length)}`;// `
             } else {
-              secondaryText = `${dataset.wms_url.length} aggregated file${(dataset.wms_url.length > 1) ? 's' : ''}`;
+              secondaryText = `${dataset.wms_url.length} aggregated file${(dataset.wms_url.length > 1) ? 's' : ''}`;// `
             }
             return (
               <ListItem
@@ -243,28 +234,16 @@ export default class LayerSwitcher extends React.Component {
     if (isNaN(this.props.currentDisplayedDataset.opacity)) {
       this.setDatasetLayerOpacity(null, 0.8);
     }
-    /*<Slider
-     disabled={!this.props.currentDisplayedDataset.uniqueLayerSwitcherId}
-     min={0}
-     max={100}
-     step={0.05}
-     included={false}
-     range={false}
-     value={this.props.currentDisplayedDataset.opacity}
-     onChange={this.setDatasetLayerOpacity}
-     />*/
     return (
-      <div>
-        <div style={{textAlign: 'center'}}>
-          opacity: {Math.floor(this.props.currentDisplayedDataset.opacity * 100)}%
-        </div>
-        <Slider
-          disabled={!this.props.currentDisplayedDataset.uniqueLayerSwitcherId}
-          sliderStyle={{margin: '0'}}
-          step={0.05}
-          onChange={this.setDatasetLayerOpacity}
-          value={this.props.currentDisplayedDataset.opacity} />
-      </div>
+      <Slider
+         disabled={!this.props.currentDisplayedDataset.uniqueLayerSwitcherId}
+         min={0}
+         max={1}
+         step={0.05}
+         included={false}
+         range={false}
+         value={this.props.currentDisplayedDataset.opacity}
+         onChange={this.setDatasetLayerOpacity}/>
     );
   }
 
@@ -276,7 +255,7 @@ export default class LayerSwitcher extends React.Component {
           style={{
             width: '100%',
             textAlign: 'center',
-            background: `url(${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=${this.props.selectedColorPalette}&COLORBARONLY=true&WIDTH=200&HEIGHT=20&VERTICAL=false) center no-repeat`,
+            background: `url(${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=${this.props.selectedColorPalette}&COLORBARONLY=true&WIDTH=200&HEIGHT=20&VERTICAL=false) center no-repeat`/*`*/,
             padding: '0 0 0 10px'
           }}
           value={this.props.selectedColorPalette}
@@ -289,7 +268,7 @@ export default class LayerSwitcher extends React.Component {
             <MenuItem
               key={i}
               value={palette}
-              style={{width: '120%', background: `url(${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=${palette}&COLORBARONLY=true&WIDTH=200&HEIGHT=20&VERTICAL=false) center no-repeat`, padding: '0 0 0 10px'}}>
+              style={{width: '120%', background: `url(${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=${palette}&COLORBARONLY=true&WIDTH=200&HEIGHT=20&VERTICAL=false) center no-repeat`, padding: '0 0 0 10px'}}/*`*/>
               {palette}
             </MenuItem>
           )}
@@ -308,7 +287,7 @@ export default class LayerSwitcher extends React.Component {
               <Typography variant="title" color="inherit" style={{flex: 1}}>
                 Layer Switcher
               </Typography>
-              <IconButton color="inherit" className="cy-minimize-btn" onClick={this._onHideLayerSwitcherPanel}><MinimizeIcon /></IconButton>
+              <IconButton color="inherit" className="cy-minimize-btn" onClick={this.onHideLayerSwitcherPanel}><MinimizeIcon /></IconButton>
             </Toolbar>
           </AppBar>
           <AppBar position="static" color="default">
