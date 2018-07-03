@@ -6,10 +6,13 @@ import * as constants from './../../constants';
 import Loader from './../../components/Loader';
 import Paper from'@material-ui/core/Paper';
 import AppBar from'@material-ui/core/AppBar';
+import Toolbar from'@material-ui/core/Toolbar';
+import Typography from'@material-ui/core/Typography';
 import IconButton from'@material-ui/core/IconButton';
 import TimelineIcon from '@material-ui/icons/Timeline';
 import MinimizeIcon from '@material-ui/icons/Remove';
-import {Card, CardHeader} from'@material-ui/core/Card';
+import Card from'@material-ui/core/Card';
+import CardHeader from'@material-ui/core/CardHeader';
 import {Alert} from 'react-bootstrap';
 
 const LAYOUT = {
@@ -118,13 +121,13 @@ class TimeSeriesChart extends React.Component {
     return (
       // !this.props.currentScalarValue.data || !this.props.currentScalarValue.data._dimensions ? classes['Empty'] : classes['Chart']
       <Paper className={classes['TimeSeriesChart']}>
-        <AppBar position="static" color="default">
+        <AppBar position="static" color="primary">
           <Toolbar>
-            <IconButton disabled><TimelineIcon /></IconButton>
+            <IconButton disableRipple color="inherit"><TimelineIcon /></IconButton>
             <Typography variant="title" color="inherit" style={{flex: 1}}>
               Time Series Chart
             </Typography>
-            <IconButton className="cy-minimize-btn" onClick={(event) => this._onHideChartPanel()}><MinimizeIcon /></IconButton>
+            <IconButton color="inherit" className="cy-minimize-btn" onClick={this._onHideChartPanel}><MinimizeIcon /></IconButton>
           </Toolbar>
         </AppBar>
         <div className={classes['Chart']}>
