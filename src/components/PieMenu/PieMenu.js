@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
 import * as constants from './../../constants';
 import classes from './PieMenu.scss';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
@@ -13,8 +14,11 @@ const customSvgStyle = {
   'width': '70px',
   'padding': '20px 15px 0 0'
 };
+const styles = theme => ({
 
-export class PieMenu extends React.Component {
+});
+
+class PieMenu extends React.Component {
   static propTypes = {
     mapPanelStatus: PropTypes.object.isRequired,
     onToggleMapPanel: PropTypes.func.isRequired
@@ -97,3 +101,5 @@ export class PieMenu extends React.Component {
     );
   }
 }
+
+export default withStyles(styles)(PieMenu)

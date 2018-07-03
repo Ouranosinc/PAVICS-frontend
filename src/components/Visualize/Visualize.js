@@ -1,14 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classes from './Visualize.scss';
-import OLComponent from '../../components/OLComponent';
-import CurrentProjectSnackbar from '../../components/CurrentProjectSnackbar';
+import OLComponent from '../OLComponent';
+import CurrentProjectSnackbar from '../CurrentProjectSnackbar';
 import {PieMenu} from '../PieMenu/PieMenu';
-import TimeSlider from '../../components/TimeSlider';
-import InformationPanel from '../../components/InformationPanel';
-import LayerSwitcher from '../../components/LayerSwitcher';
-import TimeSeriesChart from './../../components/TimeSeriesChart';
-import MapControls from './../../components/MapControls';
+import SpeedDialMenu from '../SpeedDialMenu'
+import TimeSlider from '../TimeSlider';
+import InformationPanel from '../InformationPanel';
+import LayerSwitcher from '../LayerSwitcher';
+import TimeSeriesChart from './../TimeSeriesChart';
+import MapControls from './../MapControls';
 import * as constants from '../../constants';
 import BigColorPalette from '../BigColorPalette/BigColorPalette';
 
@@ -300,9 +301,11 @@ class Visualize extends React.Component {
             setVariablePreferenceBoundaries={this.props.setVariablePreferenceBoundaries}
             variablePreference={this.props.variablePreferences[this.props.currentDisplayedDataset.variable]}
             selectedColorPalette={this.props.selectedColorPalette} />
-          <PieMenu
+          <SpeedDialMenu mapPanelStatus={this.state.mapPanelStatus}
+                         onToggleMapPanel={this._onToggleMapPanel} />
+          {/*<PieMenu
             mapPanelStatus={this.state.mapPanelStatus}
-            onToggleMapPanel={this._onToggleMapPanel} />
+            onToggleMapPanel={this._onToggleMapPanel} />*/}
           <div className={classes.left}>
             {
               (this.state.mapPanelStatus[constants.VISUALIZE_INFO_PANEL])
