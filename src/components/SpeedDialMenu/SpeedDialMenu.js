@@ -5,7 +5,7 @@ import * as constants from './../../constants';
 import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
-import OpenInBrowserIcon from '@material-ui/icons/OpenInBrowser';
+import VisibilityIcon from '@material-ui/icons/Visibility';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import ChartIcon from '@material-ui/icons/Timeline';
 import LayersIcon from '@material-ui/icons/Layers';
@@ -28,8 +28,7 @@ const styles = theme => {
 
 class SpeedDialMenu extends React.Component {
   state = {
-    open: false,
-    hidden: false,
+    open: false
   };
 
   static propTypes = {
@@ -80,64 +79,55 @@ class SpeedDialMenu extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { hidden, open } = this.state;
+    const { open } = this.state;
 
     return (
       <SpeedDial
         ariaLabel="SpeedDial openIcon example"
         className={classes.speedDial}
-        hidden={hidden}
-        icon={<SpeedDialIcon openIcon={<OpenInBrowserIcon />} />}
+        icon={<SpeedDialIcon openIcon={<VisibilityIcon />} />}
         onBlur={this.handleClose}
         onClick={this.handleClick}
         onClose={this.handleClose}
         onFocus={this.handleOpen}
         onMouseEnter={this.handleOpen}
         onMouseLeave={this.handleClose}
-        open={open}
-      >
+        open={open}>
         <SpeedDialAction
-          classeName={this.props.mapPanelStatus[constants.VISUALIZE_MAP_CONTROLS_PANEL]? this.props.classes.isOpen: this.props.classes.isClose}
-          style={{backgroundColor: 'blue'}}
-          icon={<MapControlsIcon className={this.props.classes.white} />}
+          icon={<MapControlsIcon className={classes.white} />}
           tooltipTitle={constants.VISUALIZE_MAP_CONTROLS_PANEL}
           onClick={(event) => this.toggleMapControlsPanel()}
           ButtonProps={{
             color: this.props.mapPanelStatus[constants.VISUALIZE_MAP_CONTROLS_PANEL]? 'primary': 'secondary'
-          }}
-        />
+          }} />
         <SpeedDialAction
-          icon={<AccessTimeIcon className={this.props.classes.white}/>}
+          icon={<AccessTimeIcon className={classes.white}/>}
           tooltipTitle={constants.VISUALIZE_TIME_SLIDER_PANEL}
           onClick={(event) => this.toggleTimeSliderPanel()}
           ButtonProps={{
             color: this.props.mapPanelStatus[constants.VISUALIZE_TIME_SLIDER_PANEL]? 'primary': 'secondary'
-          }}
-        />
+          }} />
         <SpeedDialAction
-          icon={<LayersIcon className={this.props.classes.white}/>}
+          icon={<LayersIcon className={classes.white}/>}
           tooltipTitle={constants.VISUALIZE_LAYER_SWITCHER_PANEL}
           onClick={(event) => this.toggleLayerSwitcherPanel()}
           ButtonProps={{
             color: this.props.mapPanelStatus[constants.VISUALIZE_LAYER_SWITCHER_PANEL]? 'primary': 'secondary'
-          }}
-        />
+          }} />
         <SpeedDialAction
-          icon={<ChartIcon className={this.props.classes.white}/>}
+          icon={<ChartIcon className={classes.white}/>}
           tooltipTitle={constants.VISUALIZE_CHART_PANEL}
           onClick={(event) => this.toggleChartPanel()}
           ButtonProps={{
             color: this.props.mapPanelStatus[constants.VISUALIZE_CHART_PANEL]? 'primary': 'secondary'
-          }}
-        />
+          }} />
         <SpeedDialAction
-          icon={<InfoIcon className={this.props.classes.white}/>}
+          icon={<InfoIcon className={classes.white}/>}
           tooltipTitle={constants.VISUALIZE_INFO_PANEL}
           onClick={(event) => this.toggleInfoPanel()}
           ButtonProps={{
             color: this.props.mapPanelStatus[constants.VISUALIZE_INFO_PANEL]? 'primary': 'secondary'
-          }}
-        />
+          }} />
       </SpeedDial>
     );
   }
