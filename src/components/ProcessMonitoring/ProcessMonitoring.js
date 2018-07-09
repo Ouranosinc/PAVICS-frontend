@@ -25,9 +25,11 @@ import RefreshIcon from '@material-ui/icons/Refresh';
 import FileIcon from '@material-ui/icons/InsertDriveFile';
 import LogIcon from '@material-ui/icons/Receipt';
 import VisualizeIcon from '@material-ui/icons/RemoveRedEye';
-import CollapseNestedList from '../CollapseNestedList';
-import CustomIconMenu from '../CustomIconMenu';
+import Menu from '@material-ui/core/Menu';
+import IconButton from'@material-ui/core/IconButton';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Typography from '@material-ui/core/Typography';
+import CollapseNestedList from '../CollapseNestedList';
 
 class ProcessMonitoring extends React.Component {
   static propTypes = {
@@ -111,6 +113,7 @@ class ProcessMonitoring extends React.Component {
 
   _onVisualiseDatasets (httpURLArray, aggregate = false) {
     if(httpURLArray.length){
+      this.onMenuClosed();
       this.props.monitorActions.visualizeTemporaryResult(httpURLArray, aggregate);
       this.setState({
         loadingScreen: <LoadingScreen />
@@ -119,6 +122,7 @@ class ProcessMonitoring extends React.Component {
   }
 
   _onShowLogDialog (log) {
+    this.onMenuClosed();
     this.setState({
       logDialogOpened: true,
       logDialogArray: log
@@ -290,20 +294,37 @@ class ProcessMonitoring extends React.Component {
                       }
                       rootListItemSecondaryActions={
                         <ListItemSecondaryAction >
-                          <CustomIconMenu
-                            iconButtonClass="cy-actions-btn"
-                            menuId="ouput-menu-actions"
-                            menuItems={[
+                          <IconButton
+                            className="cy-actions-btn"
+                            aria-label="Actions"
+                            aria-owns={anchor ? "ouput-menu-actions" : null}
+                            aria-haspopup="true"
+                            onClick={this.onMenuClicked}>
+                            <MoreVertIcon />
+                          </IconButton>
+                          <Menu
+                            id="ouput-menu-actions"
+                            anchorEl={anchor}
+                            open={Boolean(anchor)}
+                            onClose={this.onMenuClosed}
+                            PaperProps={{
+                              style: {
+                                width: 200
+                              },
+                            }}>
                             <MenuItem
                               id="cy-status-item"
-                              onClick={(event) => window.open(x.status_location, '_blank')}>
+                              onClick={(event) => {
+                                this.onMenuClosed();
+                                window.open(x.status_location, '_blank');
+                              }}>
                               <ListItemIcon>
                                 <FileIcon />
                               </ListItemIcon>
                               <ListItemText inset primary="Browse XML Status" />
-                            </MenuItem>,
-                            logMenu
-                            ]} />
+                            </MenuItem>
+                            {logMenu}
+                          </Menu>
                         </ListItemSecondaryAction>
                       }>
                       {
@@ -352,31 +373,44 @@ class ProcessMonitoring extends React.Component {
                                 }
                                 rootListItemSecondaryActions={
                                   <ListItemSecondaryAction>
-                                    <CustomIconMenu
-                                      iconButtonClass="cy-actions-btn"
-                                      menuId="ouput-menu-actions"
-                                      menuItems={[
-                                        <MenuItem
-                                          id="cy-visualize-all-agg-item"
-                                          disabled={!visualizableOutputs.length}
-                                          onClick={(event) => this._onVisualiseDatasets(visualizableOutputs, true)}>
-                                          <ListItemIcon>
-                                            <VisualizeIcon />
-                                          </ListItemIcon>
-                                          <ListItemText inset primary="Visualize All" secondary="Aggregated"/>
-                                        </MenuItem>,
-                                        <MenuItem
-                                          id="cy-visualize-all-split-item"
-                                          primaryText="Visualize All (Splitted)"
-                                          disabled={!visualizableOutputs.length}
-                                          onClick={(event) => this._onVisualiseDatasets(visualizableOutputs, false)}>
-                                          <ListItemIcon>
-                                            <VisualizeIcon />
-                                          </ListItemIcon>
-                                          <ListItemText inset primary="Visualize All" secondary="Splitted"/>
-                                        </MenuItem>
-                                      ]}/>
-
+                                    <IconButton
+                                      className="cy-actions-btn"
+                                      aria-label="Actions"
+                                      aria-owns={anchor ? "ouput-menu-actions" : null}
+                                      aria-haspopup="true"
+                                      onClick={this.onMenuClicked}>
+                                      <MoreVertIcon />
+                                    </IconButton>
+                                    <Menu
+                                      id="ouput-menu-actions"
+                                      anchorEl={anchor}
+                                      open={Boolean(anchor)}
+                                      onClose={this.onMenuClosed}
+                                      PaperProps={{
+                                        style: {
+                                          width: 200
+                                        },
+                                      }}>
+                                      <MenuItem
+                                        id="cy-visualize-all-agg-item"
+                                        disabled={!visualizableOutputs.length}
+                                        onClick={(event) => this._onVisualiseDatasets(visualizableOutputs, true)}>
+                                        <ListItemIcon>
+                                          <VisualizeIcon />
+                                        </ListItemIcon>
+                                        <ListItemText inset primary="Visualize All" secondary="Aggregated"/>
+                                      </MenuItem>
+                                      <MenuItem
+                                        id="cy-visualize-all-split-item"
+                                        primaryText="Visualize All (Splitted)"
+                                        disabled={!visualizableOutputs.length}
+                                        onClick={(event) => this._onVisualiseDatasets(visualizableOutputs, false)}>
+                                        <ListItemIcon>
+                                          <VisualizeIcon />
+                                        </ListItemIcon>
+                                        <ListItemText inset primary="Visualize All" secondary="Splitted"/>
+                                      </MenuItem>
+                                    </Menu>
                                   </ListItemSecondaryAction>
                                 }>
                                 {

@@ -73,6 +73,7 @@ export class DatasetMenuActions extends React.Component {
   };
 
   onVisualizeDataset = (event, aggregate = false, index = -1) => {
+    this.onMenuClosed();
     if(aggregate) {
       let copy = JSON.parse(JSON.stringify(this.props.dataset));
       if(index > -1) {
@@ -98,16 +99,15 @@ export class DatasetMenuActions extends React.Component {
         opacity: 0.8
       });
     }
-    this.onMenuClosed();
   };
 
   onOpenConfirmRemoveDatasetDialog = () => {
+    this.onMenuClosed();
     this.setState({
       isConfirmDatasetRemoveDialogOpened: true,
       confirmDatasetRemoveDialogContent: `Do you really want to remove the dataset '${this.props.dataset.aggregate_title}' from the current project?`,
       confirmDatasetRemoveDialogResource: this.props.dataset
     });
-    this.onMenuClosed();
   };
 
   onConfirmedDatasetRemove = () => {
@@ -126,6 +126,7 @@ export class DatasetMenuActions extends React.Component {
   };
 
   onOpenConfirmRemoveFileDialog = () => {
+    this.onMenuClosed();
     let cpy = JSON.parse(JSON.stringify(this.props.dataset));
     cpy.datetime_min.splice(this.props.fileIndex , 1);
     cpy.datetime_max.splice(this.props.fileIndex , 1);
@@ -143,7 +144,6 @@ export class DatasetMenuActions extends React.Component {
       confirmFileRemoveDialogContent: `Do you really want to remove the file '${this.props.dataset.title[this.props.fileIndex]}' from the dataset?`,
       confirmFileRemoveDialogResource: cpy
     });
-    this.onMenuClosed();
   };
 
   onConfirmedFileRemove(dataset) {
@@ -163,6 +163,7 @@ export class DatasetMenuActions extends React.Component {
   }
 
   onShowDetailsClicked = () => {
+    this.onMenuClosed();
     this.setState({
       detailsOpened: true
     })
@@ -175,10 +176,10 @@ export class DatasetMenuActions extends React.Component {
   };
 
   onDownloadAllClicked = () => {
+    this.onMenuClosed();
     this.props.dataset.fileserver_url.forEach((url) => {
       window.open(url, '_blank');
     });
-    this.onMenuClosed();
   };
 
   onMenuClosed = event => {

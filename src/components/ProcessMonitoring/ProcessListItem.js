@@ -67,7 +67,6 @@ export class ProcessListItem extends React.Component {
   };
 
   onVisualizeOutput = (visualizableReferences, aggregate = false) => {
-    // Should we seriously manage multiple instances of child components
     this.customIconMenu.onMenuClosed();
     this.props.onVisualiseDatasets(visualizableReferences, aggregate)
   };
@@ -160,8 +159,8 @@ export class ProcessListItem extends React.Component {
                 job={this.props.job}
                 output={output}
                 extractFileId={this.extractFileId}
-                onShowPersistDialog={this._onShowPersistDialog}
-                onVisualiseDatasets={this._onVisualiseDatasets} />;
+                onShowPersistDialog={this.props.onShowPersistDialog}
+                onVisualizeOutput={this.onVisualizeOutput} />;
             })
           }
         </CollapseNestedList>

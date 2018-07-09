@@ -33,6 +33,7 @@ export class ProjectSearchCriterias extends React.Component {
 
   constructor(props) {
     super(props);
+    this.customIconMenu = {};
     this.state = {
       criteriasPageNumber: 1,
       criteriasNumberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX]
@@ -67,11 +68,13 @@ export class ProjectSearchCriterias extends React.Component {
   };
 
   onRelaunchSearch = research => {
+    this.customIconMenu[research.id].onMenuClosed();
     this.onReloadSearchCriteria(research);
     this.props.researchActions.fetchPavicsDatasetsAndFacets();
   };
 
   onRestoreSearchCriteria = research => {
+    this.customIconMenu[research.id].onMenuClosed();
     this.onReloadSearchCriteria(research);
     this.props.researchActions.restorePavicsDatasets(research);
     NotificationManager.warning(`These are ARCHIVED results from a request made on ${moment(research.createdOn).format(constants.PAVICS_DATE_FORMAT)}`, 'Warning', 10000);
@@ -79,9 +82,10 @@ export class ProjectSearchCriterias extends React.Component {
 
   onRemoveSearchCriteria = research => {
     if (this.props.project.currentProject.id) {
+      this.customIconMenu[research.id].onMenuClosed();
       this.props.researchAPIActions.deleteResearch({projectId: this.props.project.currentProject.id, id: research.id});
     }
-  }
+  };
 
   render () {
     const { classes } = this.props;
@@ -122,6 +126,7 @@ export class ProjectSearchCriterias extends React.Component {
                     } />
                   <ListItemSecondaryAction className={classes.root}>
                     <CustomIconMenu
+                      onRef={ref => (this.customIconMenu[research.id] = ref)}
                       iconButtonClass="cy-actions-btn"
                       menuId="criterias-menu-actions"
                       menuItems={[

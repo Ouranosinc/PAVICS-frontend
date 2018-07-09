@@ -11,7 +11,14 @@ const styles = theme => ({
   }
 });
 
-
+/*
+ CustomIconMenu Component encapsulate anchor element and open/close generic events of such actions menu
+ Pass any number of MenuItem(s) with any kind of handlers as children
+ Should be used in most one-level lists containing IconButton actions menu
+ Do not use in nested list since calling current methods(mostly onMenuClosed()) from parent with onRef strategy will be a nightmare to manage
+ See ProjectSearchCriterias component for a taste
+ FIXME: Ideally onMenuClosed() should be called after any children MenuItem.onClick event
+ */
 export class CustomIconMenu extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,

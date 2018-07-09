@@ -19,7 +19,7 @@ export class ProcessOutputListItem extends React.Component {
     job: PropTypes.object.isRequired,
     output: PropTypes.object.isRequired,
     onShowPersistDialog: PropTypes.func.isRequired,
-    onVisualiseDatasets: PropTypes.func.isRequired,
+    onVisualizeOutput: PropTypes.func.isRequired,
   };
 
   isDownloadAvailable = () => {
@@ -61,7 +61,7 @@ export class ProcessOutputListItem extends React.Component {
 
   onVisualizeClicked = () => {
     if (this.isVisualizeAvailable()) {
-      this.onVisualizeOutput([this.props.output.reference], false);
+      this.props.onVisualizeOutput([this.props.output.reference], false);
       this.customIconMenu.onMenuClosed();
     }
   };
@@ -78,7 +78,7 @@ export class ProcessOutputListItem extends React.Component {
                       primary={(this.props.output.name && this.props.output.name.length) ? this.props.output.name : `${this.props.output.title}: ${this.props.output.abstract}`}
                       secondary={<span>File: {this.props.extractFileId(this.props.output.reference)} <br/>Type:<strong>{this.props.output.mimeType}</strong></span>} />
         <ListItemSecondaryAction
-          className={`cy-monitoring-sec-actions cy-monitoring-level-${this.props.indentationLevel+1}`}>
+          className={`cy-monitoring-sec-actions cy-monitoring-level-${this.props.indentationLevel}`}>
           <CustomIconMenu
             onRef={ref => (this.customIconMenu = ref)}
             iconButtonClass="cy-actions-btn"

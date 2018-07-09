@@ -60,20 +60,22 @@ export default class ScientificWorkflowList extends Component {
   }
 
   onOpenConfirmWorkflowDeletionDialog = () => {
+    this.onMenuClosed();
     this.setState({
       isConfirmDeleteDialogOpened: true,
       confirmDeleteDialogContent: `Do you really want to delete the workflow '${this.state.currentWorkflow.json.name}'?`,
       confirmDeleteDialogResource: this.state.currentWorkflow
     });
-    this.onMenuClosed();
   };
 
   onRunWorkflowClicked = () => {
+    this.onMenuClosed();
     // Deep clone workflow object so modifications (provider names, url, inputs) won't affect it's state if reloaded from the list
     this.props.goToConfigureAndRunStep(JSON.parse(JSON.stringify(this.state.currentWorkflow)));
   };
 
   onEditWorkflowClicked = () => {
+    this.onMenuClosed();
     this.editedCompleteWorkflow = this.state.currentWorkflow;
     this.setState({
       isEditionDialogOpened: true,
