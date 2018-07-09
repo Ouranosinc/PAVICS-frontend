@@ -36,13 +36,11 @@ export class ProjectSelector extends React.Component {
       <div className={classes['ProjectSelector']}>
         <Paper style={{marginTop: 20}}>
           <form className="container">
-            <FormControl fullWidth>
-              <InputLabel htmlFor="current-project">Current project</InputLabel>
+            <FormControl fullWidth id='cy-project-selector'>
+              <InputLabel htmlFor="cy-project-selector">Current project</InputLabel>
               <Select
-                id="cy-project-selector"
                 inputProps={{
-                  name: 'current-project',
-                  id: 'current-project',
+                  name: 'cy-project-selector'
                 }}
                 value={this.props.project.currentProject.id}
                 onChange={(event) => this._onSetCurrentProject(event.target.value)}>

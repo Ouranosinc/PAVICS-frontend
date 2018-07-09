@@ -92,12 +92,16 @@ class SpeedDialMenu extends React.Component {
         onFocus={this.handleOpen}
         onMouseEnter={this.handleOpen}
         onMouseLeave={this.handleClose}
+        ButtonProps={{
+          id: "cy-speed-dial-menu-btn"
+        }}
         open={open}>
         <SpeedDialAction
           icon={<MapControlsIcon className={classes.white} />}
           tooltipTitle={constants.VISUALIZE_MAP_CONTROLS_PANEL}
           onClick={(event) => this.toggleMapControlsPanel()}
           ButtonProps={{
+            id: "cy-menu-map-controls-toggle-btn",
             color: this.props.mapPanelStatus[constants.VISUALIZE_MAP_CONTROLS_PANEL]? 'primary': 'secondary'
           }} />
         <SpeedDialAction
@@ -105,6 +109,7 @@ class SpeedDialMenu extends React.Component {
           tooltipTitle={constants.VISUALIZE_TIME_SLIDER_PANEL}
           onClick={(event) => this.toggleTimeSliderPanel()}
           ButtonProps={{
+            id: "cy-menu-temporal-slider-toggle-btn",
             color: this.props.mapPanelStatus[constants.VISUALIZE_TIME_SLIDER_PANEL]? 'primary': 'secondary'
           }} />
         <SpeedDialAction
@@ -112,6 +117,7 @@ class SpeedDialMenu extends React.Component {
           tooltipTitle={constants.VISUALIZE_LAYER_SWITCHER_PANEL}
           onClick={(event) => this.toggleLayerSwitcherPanel()}
           ButtonProps={{
+            id: "cy-menu-layer-switcher-toggle-btn",
             color: this.props.mapPanelStatus[constants.VISUALIZE_LAYER_SWITCHER_PANEL]? 'primary': 'secondary'
           }} />
         <SpeedDialAction
@@ -119,6 +125,7 @@ class SpeedDialMenu extends React.Component {
           tooltipTitle={constants.VISUALIZE_CHART_PANEL}
           onClick={(event) => this.toggleChartPanel()}
           ButtonProps={{
+            id: "cy-menu-time-series-toggle-btn",
             color: this.props.mapPanelStatus[constants.VISUALIZE_CHART_PANEL]? 'primary': 'secondary'
           }} />
         <SpeedDialAction
@@ -126,6 +133,7 @@ class SpeedDialMenu extends React.Component {
           tooltipTitle={constants.VISUALIZE_INFO_PANEL}
           onClick={(event) => this.toggleInfoPanel()}
           ButtonProps={{
+            id: "cy-menu-point-info-toggle-btn",
             color: this.props.mapPanelStatus[constants.VISUALIZE_INFO_PANEL]? 'primary': 'secondary'
           }} />
       </SpeedDial>

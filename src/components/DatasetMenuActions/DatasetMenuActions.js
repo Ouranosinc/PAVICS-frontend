@@ -275,7 +275,7 @@ export class DatasetMenuActions extends React.Component {
                       primary="Details" />
       </MenuItem>
       <MenuItem
-        id="cy-visualize-all-agg-item"
+        id="cy-visualize-item"
         disabled={this.props.disabledVisualize}
         onClick={(event) => {
           if (!this.props.disabledVisualize) this.onVisualizeDataset(event, true);
@@ -286,7 +286,7 @@ export class DatasetMenuActions extends React.Component {
         <ListItemText inset primary="Visualize" />
       </MenuItem>
       <MenuItem
-        id="cy-download-all-item"
+        id="cy-download-item"
         onClick={(event) => this.onDownloadAllClicked()}>
         <ListItemIcon>
           <Download />
@@ -295,7 +295,7 @@ export class DatasetMenuActions extends React.Component {
       </MenuItem>
       { this.props.isRemoveFromProjectEnabled === true &&
         <MenuItem
-          id="cy-remove-all-item"
+          id="cy-remove-item"
           onClick={() => this.onOpenConfirmRemoveDatasetDialog()}>
           <ListItemIcon>
             <Remove />
@@ -361,6 +361,7 @@ export class DatasetMenuActions extends React.Component {
     return (
       <ListItemSecondaryAction className={classes.root}>
         <IconButton
+          className="cy-actions-btn"
           aria-label="More"
           aria-owns={anchor ? 'dataset-menu-actions' : null}
           aria-haspopup="true"

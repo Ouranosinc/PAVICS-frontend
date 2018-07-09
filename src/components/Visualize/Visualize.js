@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import classes from './Visualize.scss';
 import OLComponent from '../OLComponent';
 import CurrentProjectSnackbar from '../CurrentProjectSnackbar';
-import {PieMenu} from '../PieMenu/PieMenu';
 import SpeedDialMenu from '../SpeedDialMenu'
 import TimeSlider from '../TimeSlider';
 import InformationPanel from '../InformationPanel';
@@ -303,9 +302,6 @@ class Visualize extends React.Component {
             selectedColorPalette={this.props.selectedColorPalette} />
           <SpeedDialMenu mapPanelStatus={this.state.mapPanelStatus}
                          onToggleMapPanel={this._onToggleMapPanel} />
-          {/*<PieMenu
-            mapPanelStatus={this.state.mapPanelStatus}
-            onToggleMapPanel={this._onToggleMapPanel} />*/}
           <div className={classes.left}>
             {
               (this.state.mapPanelStatus[constants.VISUALIZE_INFO_PANEL])

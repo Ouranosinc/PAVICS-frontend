@@ -46,7 +46,7 @@ export class CurrentProjectSnackbar extends React.Component {
          message={ `Current Project: ${this.props.project.currentProject.name}`}
          action="change"
          autoHideDuration={5000}
-         onRequestClose={(reason) => this._handleRequestClose()}
+         onClose={(reason) => this._handleRequestClose()}
          onTouchTapAction={(event) => this._handleGoToExperimentManagement()}>
          </Snackbar>*/}
       </div>

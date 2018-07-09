@@ -78,6 +78,7 @@ export class ProjectCreation extends React.Component {
               id="cy-project-description-tf"
               placeholder="Write a project description"
               fullWidth
+              multiline
               rows="1"
               rowsMax="4"
               onChange={(event) => this._onSetNewProjectDescription(event.target.value)}

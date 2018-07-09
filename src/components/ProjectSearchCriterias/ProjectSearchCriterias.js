@@ -95,14 +95,16 @@ export class ProjectSearchCriterias extends React.Component {
             {criteriasPaginated.map((research, index) => {
               return (
                 <ListItem
-                  className="cy-project-search-criterias-item"
+                  ContainerProps={{
+                    className: "cy-project-search-criterias-item"
+                  }}
                   key={index}>
                   <ListItemIcon>
                     <AddedCriterias />
                   </ListItemIcon>
                   <ListItemText
                     inset
-                    primaryText={research.name}
+                    primary={research.name}
                     secondary={
                         <div>
                       <span>{research.results.length} results on {moment(research.createdOn).format(constants.PAVICS_DATE_FORMAT)}</span><br />
@@ -123,7 +125,7 @@ export class ProjectSearchCriterias extends React.Component {
                       menuItems={[
                         <MenuItem
                           id="cy-restore-item"
-                          onClick={(event) => this.onRestoreSearchCriteria()}>
+                          onClick={(event) => this.onRestoreSearchCriteria(research)}>
                           <ListItemIcon>
                             <Restore />
                           </ListItemIcon>
@@ -131,7 +133,7 @@ export class ProjectSearchCriterias extends React.Component {
                         </MenuItem>,
                         <MenuItem
                           id="cy-relaunch-item"
-                          onClick={(event) => this.onRelaunchSearch()}>
+                          onClick={(event) => this.onRelaunchSearch(research)}>
                           <ListItemIcon>
                             <Relaunch />
                           </ListItemIcon>
@@ -139,7 +141,7 @@ export class ProjectSearchCriterias extends React.Component {
                         </MenuItem>,
                         <MenuItem
                           id="cy-remove-item"
-                          onClick={(event) => this.onRemoveSearchCriteria()}>
+                          onClick={(event) => this.onRemoveSearchCriteria(research)}>
                           <ListItemIcon>
                             <Remove />
                           </ListItemIcon>

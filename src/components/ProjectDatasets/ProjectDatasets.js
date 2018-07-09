@@ -88,7 +88,7 @@ export class ProjectDatasets extends React.Component {
                   <div>
                     <ListItem
                       button onClick={(event) => this.onDatasetListItemToggled(dataset)}
-                      className={classes.listItem + "cy-project-dataset-item cy-project-dataset-level-0"}
+                      className={classes.listItem + " cy-project-dataset-item cy-project-dataset-level-0"}
                       key={i}>
                       <ListItemIcon>
                         <Folder />

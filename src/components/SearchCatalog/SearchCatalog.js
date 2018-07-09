@@ -151,12 +151,13 @@ export class SearchCatalog extends React.Component {
                       <FormControl style={{width: '95%'}}>
                         <InputLabel htmlFor="saved-criteria">Load criteria(s)</InputLabel>
                         <Select
-                          id="cy-load-criterias-sf"
                           value={this.state.selectedSavedCriteria}
                           onChange={(event) => this.onLoadSavedCriteria(search.id)}
                           inputProps={{
-                            name: 'saved-criteria',
                             id: 'saved-criteria',
+                          }}
+                          SelectDisplayProps={{
+                            id: 'cy-load-criterias-select'
                           }}>
                           {
                             this.props.researchAPI.items.map((search, i) =>
@@ -172,12 +173,13 @@ export class SearchCatalog extends React.Component {
                       <FormControl style={{width: '95%'}}>
                         <InputLabel htmlFor="add-criteria">Add additional criteria</InputLabel>
                         <Select
-                          id="cy-add-criteria-sf"
                           value={this.state.selectedKey}
                           onChange={this.onAddCriteriaKey}
                           inputProps={{
-                            name: 'add-criteria',
-                            id: 'add-criteria',
+                            id: 'add-criteria'
+                          }}
+                          SelectDisplayProps={{
+                            id: 'cy-add-criteria-select'
                           }}>
                           {
                             this.props.research.facets.map((x, i) =>

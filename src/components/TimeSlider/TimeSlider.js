@@ -693,7 +693,7 @@ export class TimeSlider extends React.Component {
             </Col>
           </Row>
           <Row>
-            <Col sm={12}>
+            <Col sm={12} style={{paddingRight: '20px', paddingLeft: '20px'}}>
               <Slider
                 disabled={this.state.disabled}
                 tipFormatter={(v) => {
@@ -715,7 +715,7 @@ export class TimeSlider extends React.Component {
             </Col>
           </Row>
           <Row>
-            <Col sm={12}>
+            <Col sm={12} style={{paddingRight: '20px', paddingLeft: '20px'}}>
               <Slider className={classes['SliderYears']}
                 disabled={this.state.disabled}
                 min={this.state.firstYear}

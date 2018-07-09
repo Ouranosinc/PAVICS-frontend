@@ -144,7 +144,7 @@ class WorkflowWizard extends React.Component {
         <Dialog
           open={this.state.dialogOpened}
           title={this.state.dialogTitle}
-          onRequestClose={this.closeDialog}
+          onClose={this.closeDialog}
           actions={this.state.dialogActions}
           modal={true}>
           {this.state.dialogContent}

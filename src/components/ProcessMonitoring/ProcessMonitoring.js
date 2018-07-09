@@ -503,7 +503,7 @@ class ProcessMonitoring extends React.Component {
             title="Log informations"
             modal={false}
             open={this.state.logDialogOpened}
-            onRequestClose={this._closeLogDialog}
+            onClose={this._closeLogDialog}
             actions={
               <Button variant="contained"
                 label="Close"

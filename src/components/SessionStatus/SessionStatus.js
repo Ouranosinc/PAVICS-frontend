@@ -128,7 +128,7 @@ export default withStyles(styles)(
             Login
           </Typography>
           <Select
-            id="cy-login-provider-sf"
+            id="cy-login-provider-select"
             className={classes.selectField}
             label="Login Authority"
             value={this.state.provider}

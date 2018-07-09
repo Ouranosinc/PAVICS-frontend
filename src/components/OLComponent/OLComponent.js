@@ -628,7 +628,7 @@ class OLComponent extends React.Component {
         <Dialog
           title={this.state.dialogTitle}
           modal={false}
-          onRequestClose={this.handleClose}
+          onClose={this.handleClose}
           open={this.state.dialogOpened}>
           <div>{this.state.dialogContent}</div>
         </Dialog>

@@ -98,8 +98,10 @@ export class ProjectEditor extends React.Component {
         <Paper style={{marginTop: 20}}>
           <div className="container">
             <TextField
-              id="cy-project-name-tf"
-              data-cy-project-id={this.props.project.currentProject.id}
+              id='cy-project-name-tf'
+              inputProps={{
+                'data-cy-project-id': this.props.project.currentProject.id
+              }}
               placeholder="Define a name"
               value={this.state.projectName}
               fullWidth
@@ -120,10 +122,10 @@ export class ProjectEditor extends React.Component {
               {
                 this.props.project.currentProject.permissions.map((permission, i) =>
                   <FormControlLabel
+                    className="cy-project-permission"
                     label={permission.toUpperCase()}
                     control={
                       <Checkbox
-                        className="cy-project-permission-cb"
                         disabled
                         checked={true} />
                     }>

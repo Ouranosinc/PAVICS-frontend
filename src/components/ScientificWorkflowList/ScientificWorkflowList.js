@@ -156,7 +156,9 @@ export default class ScientificWorkflowList extends Component {
                   return (
                     <div key={i}>
                       <ListItem
-                        className="cy-workflow-item"
+                        ContainerProps={{
+                          className: "cy-workflow-item"
+                        }}
                         style={{width: '98%'}}
                         key={i}>
                         <ListItemIcon>

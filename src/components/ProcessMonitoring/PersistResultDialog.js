@@ -121,7 +121,7 @@ export class PersistResultDialog extends React.Component {
         title="Persist result"
         modal={false}
         open={this.props.isOpen}
-        onRequestClose={this.props.closePersistDialog}>
+        onClose={this.props.closePersistDialog}>
         <Card style={{width: '600px'}}>
           <CardHeader title="Persist a temporary resource" />
           <CardContent>

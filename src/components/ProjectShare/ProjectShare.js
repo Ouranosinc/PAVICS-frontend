@@ -111,8 +111,8 @@ export class ProjectShare extends React.Component {
               value={this.state.type}
               style={{marginTop: '15px'}}
               onChange={(event, value) => {this.onUpdateStateKey('type', value)}}>
-              <FormControlLabel value="user" control={<Radio color="secondary" />} label="User" />
-              <FormControlLabel value="group" control={<Radio color="secondary" />} label="Group users" />
+              <FormControlLabel value="user" control={<Radio id="cy-share-type-user" color="secondary" />} label="User" />
+              <FormControlLabel value="group" control={<Radio id="cy-share-type-group" color="secondary" />} label="Group users" />
             </RadioGroup>
             {
               (this.state.type === 'user')?
@@ -123,7 +123,9 @@ export class ProjectShare extends React.Component {
                 onChange={(event) => this.onUpdateStateKey('user', event.target.value)}
                 label="Define username" />:
               <Select
-                id="cy-group-selector"
+                SelectDisplayProps={{
+                  id: 'cy-group-select'
+                }}
                 fullWidth
                 value={this.state.group}
                 onChange={(event) => this.onUpdateStateKey('group', event.target.value)}

@@ -80,9 +80,9 @@ export default class WpsProcessForm extends React.Component {
         formData[makeUniqueIdentifier(input)] = input.defaultValue || '';
       }
     });
-    this.state = {
+    this.setState({
       formData: formData
-    };
+    });
   }
 
   /*
