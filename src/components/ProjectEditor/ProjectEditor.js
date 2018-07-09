@@ -4,6 +4,7 @@ import ConfirmDialog from './../../components/ConfirmDialog';
 import Paper from 'material-ui/Paper';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
+import Checkbox from 'material-ui/Checkbox';
 
 export class ProjectEditor extends React.Component {
   static propTypes = {
@@ -61,6 +62,8 @@ export class ProjectEditor extends React.Component {
   _onSaveProject(event, value){
     this.props.projectAPIActions.updateProject({
       id: this.props.project.currentProject.id,
+      owner: this.props.project.currentProject.owner,
+      magpieId: this.props.project.currentProject.magpieId,
       name: this.state.projectName,
       description: this.state.projectDescription,
     });
@@ -107,6 +110,16 @@ export class ProjectEditor extends React.Component {
               rowsMax={7}
               onChange={(event, value) => this._onSetProjectDescription(value)}
               floatingLabelText="Project description" />
+            <h4>Project permissions</h4>
+            {
+              this.props.project.currentProject.permissions.map((permission, i) =>
+                <Checkbox
+                  className="cy-project-permission-cb"
+                  disabled
+                  label={permission.toUpperCase()}
+                  checked={true} />
+              )
+            }
           </div>
         </Paper>
 

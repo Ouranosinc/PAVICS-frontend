@@ -4,9 +4,11 @@ import * as constants from '../../constants';
 import Paper from 'material-ui/Paper';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
+import { NotificationManager } from 'react-notifications';
 
 export class ProjectCreation extends React.Component {
   static propTypes = {
+    sessionManagement: React.PropTypes.object.isRequired,
     project: React.PropTypes.object.isRequired,
     projectActions: React.PropTypes.object.isRequired,
     projectAPI: React.PropTypes.object.isRequired,
@@ -44,16 +46,19 @@ export class ProjectCreation extends React.Component {
     })
   }
   _onCreateProject(event, value){
-    this.props.projectAPIActions.createProject({
+    if(this.props.sessionManagement.sessionStatus.user && this.props.sessionManagement.sessionStatus.user.username.length) {
+      this.props.projectAPIActions.createProject({
         name: this.state.projectName,
         description: this.state.projectDescription,
-        researcherId: 1
-    });
-    this.setState({
-      projectName: '',
-      projectDescription: ''
-    });
-    // ALERT
+        owner: this.props.sessionManagement.sessionStatus.user.username
+      });
+      this.setState({
+        projectName: '',
+        projectDescription: ''
+      });
+    } else {
+      NotificationManager.warning(`You must be logged to create a project.`, 'Warning', 10000);
+    }
   }
 
   render () {

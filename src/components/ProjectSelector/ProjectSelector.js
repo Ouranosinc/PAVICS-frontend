@@ -3,7 +3,6 @@ import classes from './ProjectSelector.scss';
 import MenuItem from 'material-ui/MenuItem';
 import Paper from 'material-ui/Paper';
 import SelectField from 'material-ui/SelectField';
-import TextField from 'material-ui/TextField';
 import { NotificationManager } from 'react-notifications';
 
 export class ProjectSelector extends React.Component {
@@ -17,8 +16,8 @@ export class ProjectSelector extends React.Component {
   }
 
   componentWillMount() {
-    // let filter = JSON.stringify({"where": { "researcherId": 1},"order": "name ASC"});
-    // this.props.projectAPIActions.fetchProjects({filter: filter });
+    // Commented since it will trigger another warning if no project returned
+    // this.props.projectAPIActions.fetchByMagpieAccessProjects();
   }
 
   _onSetCurrentProject(id){

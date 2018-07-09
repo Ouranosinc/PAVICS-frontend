@@ -42,12 +42,15 @@ export default class WorkflowWizard extends React.Component {
   }
 
   componentDidMount () {
-    this.props.workflowAPIActions.fetchWorkflows({ filter:JSON.stringify({ where: {projectId: this.props.project.currentProject.id}})});
+    if(this.props.project.currentProject.id) {
+      this.props.workflowAPIActions.fetchWorkflows({projectId: this.props.project.currentProject.id});
+    }
   }
 
   deleteWorkflowCallback (id) {
-    // this.props.deleteWorkflow(id);
-    this.props.workflowAPIActions.deleteWorkflow({id: id});
+    if(this.props.project.currentProject.id) {
+      this.props.workflowAPIActions.deleteWorkflow({projectId: this.props.project.currentProject.id, id: id});
+    }
   }
 
   openDialog () {

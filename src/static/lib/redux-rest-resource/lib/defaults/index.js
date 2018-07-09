@@ -12,7 +12,7 @@ var defaultActions = {
   create: { method: 'POST', alias: 'save' },
   fetch: { method: 'GET', isArray: true },
   get: { method: 'GET' },
-  update: { method: 'PATCH' },
+  update: { method: 'PUT' },
   delete: { method: 'DELETE' }
 };
 
@@ -21,10 +21,12 @@ var defaultHeaders = {
   'Content-Type': 'application/json'
 };
 
-var defaultTransformResponsePipeline = [function (res) {
-  return res.json().then(function (body) {
+var defaultTransformResponsePipeline = [
+// Now won't crash anymore on "204 - No Content" results
+function (res) {
+  return res.status === 200 ? res.json().then(function (body) {
     return { body: body, code: res.status };
-  });
+  }) : { body: null, code: res.status };
 }];
 
 var defaultState = {

@@ -2,10 +2,12 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import * as actionCreators from './../modules/Pavics';
-import * as workflowActionCreators from './../../../redux/modules/Workflow';
-import { actions as researchActionsCreators } from '../../../redux/modules/ResearchAPI';
-import {actions as sessionActions} from '../../../redux/modules/SessionManagement';
+import * as pavicsActions from './../modules/Pavics';
+import { actions as projectActions } from '../../../redux/modules/Project';
+import { actions as projectAPIActions } from '../../../redux/modules/ProjectAPI';
+import { actions as researchActions } from '../../../redux/modules/Research';
+import { actions as sessionActions } from '../../../redux/modules/SessionManagement';
+
 import cookie from 'react-cookies';
 import * as constants from './../../../constants';
 import {
@@ -30,7 +32,8 @@ class Pavics extends React.Component {
   constructor(props) {
     super(props);
     const authCookie = cookie.load(constants.AUTH_COOKIE);
-    console.log(authCookie);
+    this.shouldSetDefaultProject = false; // Do not autoset until user is logged in
+    // console.log(authCookie);
     if (authCookie) {
       console.log('checking login');
       this.props.checkLogin();
@@ -41,6 +44,79 @@ class Pavics extends React.Component {
 
   componentWillMount () {
     this.startErrorLog();
+  }
+
+  /*
+   Top level container Pavics is in charge of global actions triggers
+   Triggers:
+     - After login: fetch projects and catalog facets
+     - TODO: After logout: reset initialState
+     - After projects fetched: set automatically current project (first returned)
+     - TODO: After project creation: set automatically current project (project created)
+   */
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.sessionManagement.sessionStatus &&
+        this.props.sessionManagement.sessionStatus !== nextProps.sessionManagement.sessionStatus &&
+        nextProps.sessionManagement.sessionStatus.user && nextProps.sessionManagement.sessionStatus.user.username.length) {
+      // After user logged in fetch user projects and catalogs facets
+      this.triggerOnLoginActions();
+    }else if( nextProps.sessionManagement.sessionStatus &&
+      this.props.sessionManagement.sessionStatus !== nextProps.sessionManagement.sessionStatus &&
+      this.props.sessionManagement.sessionStatus.user.authenticated === true &&
+      nextProps.sessionManagement.sessionStatus.user.authenticated === false) {
+      this.triggerOnLogoutActions();
+    }
+
+    // If projects were fetched try to automatically select the first one returned
+    // Note, Do only once per login action
+    if(nextProps.projectAPI && this.props.projectAPI.isFetching === true && nextProps.projectAPI.isFetching === false) {
+      this.triggerOnProjectsFetchedActions(nextProps);
+    }
+
+    // After a project was sucessfully created, select it as current project
+    if(nextProps.projectAPI && this.props.projectAPI.isCreating === true && nextProps.projectAPI.isCreating === false) {
+      this.triggerOnProjectCreatedActions(nextProps);
+    }
+  }
+
+  triggerOnLoginActions() {
+    this.shouldSetDefaultProject = true; // Default project can now be automatically selected
+    this.props.fetchByMagpieAccessProjects();
+    this.props.fetchPavicsDatasetsAndFacets('Aggregate', 0);
+  }
+
+  triggerOnLogoutActions() {
+    this.props.resetVisualizeState();
+    // TODO: Could reset all redux store modules, but following two functions are fine for now
+    this.props.fetchByMagpieAccessProjects();
+    this.props.setCurrentProject({});
+  }
+
+  triggerOnProjectsFetchedActions(props) {
+    if (this.shouldSetDefaultProject) {
+      // Do only once per login action, if it already occurred, ignore all futures project fetches
+      if (props.projectAPI.items.length) {
+        // If there's more than one project returned, select automatically the first one returned
+        const project = props.projectAPI.items[0];
+        this.props.setCurrentProject(project);
+        NotificationManager.info(`Project '${project.name}' has been selected as the default project.`, 'Information', 10000);
+        this.shouldSetDefaultProject = false; // Deactivate default project auto selection until next login action
+      } else {
+        // If user has no access to any project, warn him that he needs to create a new project ASAP
+        NotificationManager.warning(`You do not have access to any project at the moment. 
+        Please create your own new project before going any further.`, 'Information', 10000);
+      }
+    }
+  }
+
+  triggerOnProjectCreatedActions(props) {
+    if (props.projectAPI.items.length) {
+      let project = props.projectAPI.items[props.projectAPI.items.length - 1];
+      // FIXME, project-api should return project containing permissions, always
+      project.permissions = ["read", "write"];
+      this.props.setCurrentProject(project);
+      NotificationManager.info(`Project '${project.name}' has been selected as the current project.`, 'Information', 10000);
+    }
   }
 
   startErrorLog () {
@@ -89,11 +165,7 @@ class Pavics extends React.Component {
         );
       case constants.PLATFORM_SECTION_MONITOR:
         return (
-          <ProcessMonitoringContainer
-            addDatasetsToVisualize={this.props.addDatasetsToVisualize}
-            selectCurrentDisplayedDataset={this.props.selectCurrentDisplayedDataset}
-            workflow={this.props.workflow}
-            workflowActions={this.props.workflowActions} />
+          <ProcessMonitoringContainer {...this.props} />
         );
       case constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT:
         return (
@@ -129,10 +201,11 @@ class Pavics extends React.Component {
           <SectionalPanel
             section={this.props.platform.section}
             goToSection={this.props.goToSection}
-            // chooseStep={this.props.workflowActions.chooseStep}
             showContent={this.makeSection() !== null}
             currentContent={this.makeSection()}
-            currentTitle={this.makeTitle()}/>
+            currentTitle={this.makeTitle()}
+            project={this.props.project}
+            sessionManagement={this.props.sessionManagement} />
           <NotificationContainer />
         </div>
       </MuiThemeProvider>
@@ -140,19 +213,27 @@ class Pavics extends React.Component {
   }
 }
 
-// const mapActionCreators = dispatch => ({
-//   researchActions: bindActionCreators({...researchActionsCreators}, dispatch)
-// });
-
-const mapActionCreators = {
-  ...actionCreators,
-  ...workflowActionCreators,
-  ...sessionActions,
-};
 const mapStateToProps = state => {
   return {
     ...state.pavics.visualize,
     platform: state.pavics.platform,
+    project: state.project,
+    projectAPI: state.projectAPI,
+    sessionManagement: state.sessionManagement
   };
 };
+/*
+ *
+ * Minimal set of functions directly on this.props object needed for top-level actions container
+ * TODO: move pavicsActions into visualize reducer
+ * TODO: then, remove pavicsActions, each container is in charge of setting his reducers himself
+ */
+const mapActionCreators = {
+  ...pavicsActions,
+  checkLogin: sessionActions.checkLogin,
+  fetchPavicsDatasetsAndFacets: researchActions.fetchPavicsDatasetsAndFacets,
+  fetchByMagpieAccessProjects: projectAPIActions.fetchByMagpieAccessProjects,
+  setCurrentProject: projectActions.setCurrentProject
+};
+
 export default connect(mapStateToProps, mapActionCreators)(Pavics);

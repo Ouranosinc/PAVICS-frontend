@@ -3,7 +3,34 @@ import {createResource, mergeReducers} from './../../static/lib/redux-rest-resou
 
 const research = createResource({
   name: 'project',
-  url: `${__PAVICS_PROJECT_API_PATH__}/Projects/:id?filter=:filter`
+  url: `${__PAVICS_PROJECT_API_PATH__}/Projects/:id?filter=:filter`,
+  actions: {
+    fetchByMagpieAccess: {
+      url: `${__PAVICS_PROJECT_API_PATH__}/Projects/projectsByMagpieAccess`,
+      method: 'GET',
+      gerundName: 'fetching',
+      reduce: (state, action) => {
+        let projects = [];
+        let isFetching = true;
+        if(action.code && action.code === 200 && action.body && action.body.projects) {
+          projects = action.body.projects;
+          isFetching = false;
+        }
+        return ({...state, items: projects, isFetching: isFetching});
+      },
+      isArray: true
+    },
+    shareToUser: {
+      url: `${__PAVICS_PROJECT_API_PATH__}/Projects/:id/shareToUser`,
+      method: 'POST',
+      gerundName: 'sharing'
+    },
+    shareToGroup: {
+      url: `${__PAVICS_PROJECT_API_PATH__}/Projects/:id/shareToGroup`,
+      method: 'POST',
+      gerundName: 'sharing'
+    }
+  }
 });
 const projectDatasets = createResource({
   name: 'projectDatasets',

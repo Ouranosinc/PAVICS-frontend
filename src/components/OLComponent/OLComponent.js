@@ -514,6 +514,7 @@ class OLComponent extends React.Component {
           this.props.testWMSGetMapPermission(wmsServerUrl, layerName);
         })
         .catch(err => {
+          console.log(err);
           NotificationManager.error(`Method GetCapabilities failed at being fetched from the NcWMS2 server: ${err}`, 'Error', 10000);
         });
     }

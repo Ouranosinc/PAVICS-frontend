@@ -4,17 +4,18 @@ const defaultActions = {
   create: {method: 'POST', alias: 'save'},
   fetch: {method: 'GET', isArray: true},
   get: {method: 'GET'},
-  update: {method: 'PATCH'},
+  update: {method: 'PUT'},
   delete: {method: 'DELETE'}
 };
 
 const defaultHeaders = {
   Accept: 'application/json',
-  'Content-Type': 'application/json'
+  'Content-Type': 'application/json',
 };
 
 const defaultTransformResponsePipeline = [
-  res => res.json().then(body => ({body, code: res.status}))
+  // Now won't crash anymore on "204 - No Content" results
+  res => (res.status === 200)? res.json().then(body => ({body, code: res.status})): {body: null, code: res.status}
 ];
 
 const defaultState = {

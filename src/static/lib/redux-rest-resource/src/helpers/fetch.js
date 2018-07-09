@@ -73,6 +73,7 @@ export const buildFetchOpts = (context, {method, headers, credentials, query, bo
 };
 
 const fetch = (url, options = {}) => {
+  options.credentials = 'include';
   // Support options.query
   const builtUrl = Object.keys(options.query || []).reduce((wipUrl, queryParam) => {
     const queryParamValue = isString(options.query[queryParam]) ? options.query[queryParam] : JSON.stringify(options.query[queryParam]);

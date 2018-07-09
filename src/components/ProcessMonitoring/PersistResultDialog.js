@@ -147,6 +147,7 @@ export class PersistResultDialog extends React.Component {
               value={this.props.output.reference}
               floatingLabelText="Resource to persist" />
             <Checkbox
+              id="cy-overwrite-destination-cb"
               label="Overwrite destination"
               labelPosition="right"
               labelStyle={{textAlign: "left"}}

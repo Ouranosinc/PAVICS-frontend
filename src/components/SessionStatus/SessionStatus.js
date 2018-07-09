@@ -1,8 +1,11 @@
 import React, {Component} from 'react';
 import SelectField from 'material-ui/SelectField';
+import {List, ListItem } from 'material-ui/List';
+import Subheader from 'material-ui/Subheader';
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
+import GroupIcon from 'material-ui/svg-icons/social/group';
 
 export const PROVIDER_ZIGGURAT = 'PROVIDER_ZIGGURAT';
 export const PROVIDER_ESGF = 'PROVIDER_ESGF';
@@ -36,6 +39,7 @@ export default class SessionStatus extends Component {
 
   constructor (props) {
     super(props);
+    this.logout = this.logout.bind(this);
     this.state = {
       provider: PROVIDER_ZIGGURAT,
       username: '',
@@ -44,11 +48,36 @@ export default class SessionStatus extends Component {
     };
   }
 
+  logout() {
+    this.props.logout();
+  }
+
   makeUserCard () {
     return (
       <div>
-        Hello {this.props.sessionStatus.user.username}!<br />
-        <RaisedButton id="cy-logout-btn" onTouchTap={this.props.logout} label="Logout" primary />
+        <h3>Logged in as "{this.props.sessionStatus.user.username}"</h3>
+        <TextField
+          fullWidth={true}
+          disabled={true}
+          value={this.props.sessionStatus.user.username}
+          hintText="Username"
+          floatingLabelText="Username"/>
+        <TextField
+          disabled={true}
+          fullWidth={true}
+          value={this.props.sessionStatus.user.email}
+          hintText="Email"
+          floatingLabelText="Email"/>
+        <List fullWidth={true}>
+          <Subheader style={{'paddingLeft': '0'}}>Access groups</Subheader>
+          {this.props.sessionStatus.user.groups.map((group, i) =>
+            <ListItem
+              key={i}
+              leftIcon={<GroupIcon />}
+              primaryText={group} />
+          )}
+        </List>
+        <RaisedButton style={{marginTop: '10px'}} id="cy-logout-btn" onTouchTap={this.logout} label="Logout" primary />
       </div>
     );
   }

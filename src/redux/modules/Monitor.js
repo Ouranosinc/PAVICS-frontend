@@ -65,7 +65,6 @@ function requestPersistTemporaryResult () {
       isFetching: true,
       data: {},
       count: 0
-
     }
   };
 }

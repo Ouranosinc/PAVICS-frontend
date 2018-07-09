@@ -31,7 +31,8 @@ const mapStateToProps = (state) => {
     research: state.research,
     researchAPI: state.researchAPI,
     project: state.project,
-    projectAPI: state.projectAPI
+    projectAPI: state.projectAPI,
+    sessionManagement: state.sessionManagement,
   }
 };
 const mapDispatchToProps = (dispatch) => {

@@ -2,31 +2,14 @@ import {createResource, mergeReducers} from './../../static/lib/redux-rest-resou
 
 const workflow = createResource({
   name: 'workflow',
-  url: `${__PAVICS_PROJECT_API_PATH__}/Workflows/:id?filter=:filter`
-});
-const workflowTasks = createResource({
-  name: 'workflowTasks',
-  pluralName: 'workflowTasks',
-  url: `${__PAVICS_PROJECT_API_PATH__}/Workflows/:workflowId/tasks`
-});
-const workflowParallelGroups = createResource({
-  name: 'workflowParallelGroups',
-  pluralName: 'workflowParallelGroups',
-  url: `${__PAVICS_PROJECT_API_PATH__}/Workflows/:workflowId/projects`
+  url: `${__PAVICS_PROJECT_API_PATH__}/Projects/:projectId/workflows/:id?filter=:filter`
 });
 
 const types = {
-  ...workflow.types,
-  ...workflowTasks.types,
-  ...workflowParallelGroups.types
+  ...workflow.types
 };
 const actions = {
-  ...workflow.actions,
-  ...workflowTasks.actions,
-  ...workflowParallelGroups.actions
+  ...workflow.actions
 };
-const reducers = mergeReducers(workflow.reducers, {
-  tasks: workflowTasks.reducers,
-  parallel_groups: workflowParallelGroups.reducers
-});
+const reducers = mergeReducers(workflow.reducers);
 export {types, actions, reducers};

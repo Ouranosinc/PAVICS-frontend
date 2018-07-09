@@ -56,6 +56,7 @@ const createAction = (actionId, {resourceName, resourcePluralName = getPluralNam
     let successShowSomething = false;
     let translatedVerb = '';
     let translatedResourceName = resourceName;
+    console.log(getActionType(actionId));
     switch (getActionType(actionId)){
       case 'CREATE':
         successShowSomething = true;
@@ -73,6 +74,11 @@ const createAction = (actionId, {resourceName, resourcePluralName = getPluralNam
       case 'GET':
         translatedVerb = '';
         successShowSomething = false;
+        break;
+      case 'SHARE_TO_USER':
+      case 'SHARE_TO_GROUP':
+        translatedVerb = 'shared';
+        successShowSomething = true;
         break;
       default:
         break;
@@ -117,7 +123,7 @@ const createAction = (actionId, {resourceName, resourcePluralName = getPluralNam
         if(err.statusCode && err.body.error) {
           NotificationManager.error(`${translatedResourceName} failed at being ${translatedVerb}: Error ${err.statusCode} ${err.body.error.message}`, 'Error', 10000);
         } else if (err.message) {
-          // Code or Parsing error actually, happens on 204 No Content results
+          // Code or Parsing throwing error
           NotificationManager.error(`${translatedResourceName} failed at being ${translatedVerb}: Error ${err.message}`, 'Error', 10000);
         } else {
           NotificationManager.error(`${translatedResourceName} failed at being ${translatedVerb}: Unknown Error`, 'Error', 10000);

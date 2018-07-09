@@ -178,7 +178,7 @@ const HANDLERS = {
         username: action.user,
         authenticated: action.authenticated,
         email: action.email,
-        groupe: action.groups,
+        groups: action.groups,
       },
     }});
   },
