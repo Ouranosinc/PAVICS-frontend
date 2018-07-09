@@ -320,7 +320,6 @@ class ProcessMonitoring extends React.Component {
                               isWorkflowTask={true}
                               key={j}
                               job={taskDetails}
-                              onShowLogDialog={this._onShowLogDialog}
                               onShowPersistDialog={this._onShowPersistDialog}
                               onVisualiseDatasets={this._onVisualiseDatasets}/>;
                           } else {

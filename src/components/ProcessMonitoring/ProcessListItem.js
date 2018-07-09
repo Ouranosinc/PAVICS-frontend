@@ -17,6 +17,7 @@ import PersistIcon from '@material-ui/icons/Save';
 import NotExpandableIcon from '@material-ui/icons/KeyboardArrowRight';
 import CustomIconMenu from '../CustomIconMenu';
 import CollapseNestedList from '../CollapseNestedList';
+import ProcessOutputListItem from './ProcessOutputListItem';
 
 export class ProcessListItem extends React.Component {
   static propTypes = {
@@ -32,6 +33,8 @@ export class ProcessListItem extends React.Component {
     indentationLevel: 0,
     isWorkflowTask: false
   };
+
+  customIconMenu = {};
 
   constructor (props) {
     super(props);
@@ -53,9 +56,19 @@ export class ProcessListItem extends React.Component {
     return fileId;
   }
 
+  onBrowseXMLStatus = () => {
+    this.customIconMenu.onMenuClosed();
+    window.open(this.props.job.status_location, '_blank')
+  };
+
+  onShowLogs = () => {
+    this.customIconMenu.onMenuClosed();
+    this.props.onShowLogDialog(this.props.job.log);
+  };
+
   onVisualizeOutput = (visualizableReferences, aggregate = false) => {
     // Should we seriously manage multiple instances of child components
-    // this.customIconMenu.onMenuClosed();
+    this.customIconMenu.onMenuClosed();
     this.props.onVisualiseDatasets(visualizableReferences, aggregate)
   };
 
@@ -66,7 +79,8 @@ export class ProcessListItem extends React.Component {
       visualizableReferences = visualizableOutputs.map(o => o.reference);
     }
     return (
-        <ListItemSecondaryAction>
+        <ListItemSecondaryAction
+          className={`cy-monitoring-sec-actions cy-monitoring-level-${this.props.indentationLevel}`}>
           <CustomIconMenu
             onRef={ref => (this.customIconMenu = ref)}
             iconButtonClass="cy-actions-btn"
@@ -74,7 +88,7 @@ export class ProcessListItem extends React.Component {
             menuItems={[
               <MenuItem
                 id="cy-status-item"
-                onClick={(event) => window.open(this.props.job.status_location, '_blank')}>
+                onClick={(event) => this.onBrowseXMLStatus()}>
                 <ListItemIcon>
                   <FileIcon />
                 </ListItemIcon>
@@ -83,7 +97,7 @@ export class ProcessListItem extends React.Component {
               (this.props.isWorkflowTask)? null:
               <MenuItem
                 id="cy-logs-item"
-                onClick={(event) => this.props.onShowLogDialog(this.props.job.log)}>
+                onClick={(event) => this.onShowLogs()}>
                 <ListItemIcon>
                   <LogIcon />
                 </ListItemIcon>
@@ -117,68 +131,6 @@ export class ProcessListItem extends React.Component {
     );
   }
 
-  buildBasicSecondaryActions(output) {
-    return <ListItemSecondaryAction>
-      <CustomIconMenu
-        iconButtonClass="cy-actions-btn"
-        menuId="output-menu-actions"
-        menuItems={[
-          <MenuItem
-            id="cy-download-item"
-            disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS || (output.reference === undefined || !output.reference.length)}
-            onClick={(event) => {
-              if (this.props.job.status === constants.JOB_SUCCESS_STATUS && output.reference.length) window.open(output.reference, '_blank');
-            }}>
-            <ListItemIcon>
-              <DownloadIcon />
-            </ListItemIcon>
-            <ListItemText inset primary="Download"/>
-          </MenuItem>,
-          <MenuItem
-            id="cy-publish-item"
-            disabled={this.props.job.status !== constants.JOB_SUCCESS_STATUS}
-            onClick={(event) => {
-              if (this.props.job.status === constants.JOB_SUCCESS_STATUS) alert('TODO: Call Publish WPS');
-            }}>
-            <ListItemIcon>
-              <PublishIcon />
-            </ListItemIcon>
-            <ListItemText inset primary="Publish (TODO)"/>
-          </MenuItem>,
-          <MenuItem
-            id="cy-persist-item"
-            disabled={!this.isPersistAvailable(output)}
-            onClick={(event) => {
-              if (this.isPersistAvailable(output)) this.props.onShowPersistDialog(output);
-            }}>
-            <ListItemIcon>
-              <PersistIcon />
-            </ListItemIcon>
-            <ListItemText inset primary="Persist"/>
-          </MenuItem>,
-          <MenuItem
-            id="cy-visualize-item"
-            disabled={!this.isVisualizeAvailable(output)}
-            onClick={(event) => {
-              if (this.isVisualizeAvailable(output)) this.onVisualizeOutput([output.reference], false);
-            }}>
-            <ListItemIcon>
-              <VisualizeIcon />
-            </ListItemIcon>
-            <ListItemText inset primary="Visualize"/>
-          </MenuItem>
-        ]} />
-    </ListItemSecondaryAction>
-  }
-
-  isPersistAvailable = (output) => {
-      return (this.props.job.status === constants.JOB_SUCCESS_STATUS && output.mimeType === 'application/x-netcdf');
-  };
-
-  isVisualizeAvailable = (output) => {
-    return (this.props.job.status === constants.JOB_SUCCESS_STATUS && output.mimeType === 'application/x-netcdf');
-  };
-
   render () {
     let secondaryText =
       <span>
@@ -202,18 +154,14 @@ export class ProcessListItem extends React.Component {
           rootListItemSecondaryActions={this.buildMinimalSecondaryActions()}>
           {
             this.props.job.outputs.map((output, k) => {
-              return <ListItem
-                className={`cy-monitoring-list-item cy-monitoring-level-${this.props.indentationLevel + 1}`}
+              return <ProcessOutputListItem
                 key={k}
-                style={{marginLeft: ((this.props.indentationLevel + 1) * 18) + "px"}}>
-                <ListItemIcon>
-                  <FileIcon />
-                </ListItemIcon>
-                <ListItemText inset
-                              primary={(output.name && output.name.length) ? output.name : `${output.title}: ${output.abstract}`}
-                              secondary={<span>File: {this.extractFileId(output.reference)} <br/>Type:<strong>{output.mimeType}</strong></span>} />
-                {this.buildBasicSecondaryActions(output)}
-              </ListItem>
+                indentationLevel={this.props.indentationLevel + 1}
+                job={this.props.job}
+                output={output}
+                extractFileId={this.extractFileId}
+                onShowPersistDialog={this._onShowPersistDialog}
+                onVisualiseDatasets={this._onVisualiseDatasets} />;
             })
           }
         </CollapseNestedList>
