@@ -118,8 +118,6 @@ export class PersistResultDialog extends React.Component {
   render () {
       return <Dialog
         id="cy-persist-dialog"
-        title="Persist result"
-        modal={false}
         open={this.props.isOpen}
         onClose={this.props.closePersistDialog}>
         <Card style={{width: '600px'}}>
@@ -138,7 +136,6 @@ export class PersistResultDialog extends React.Component {
                   checked={this.state.overwrite}
                   onChange={this.handleOverwriteChange}/>
               }
-              labelStyle={{textAlign: "left"}}
               label="Overwrite destination"
             />
           </CardContent>

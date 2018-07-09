@@ -25,7 +25,6 @@ export class SearchCatalogResults extends React.Component {
     project: PropTypes.object.isRequired,
     projectAPIActions: PropTypes.object.isRequired,
     research: PropTypes.object.isRequired,
-    datasetAPI: PropTypes.object.isRequired,
     datasetAPIActions: PropTypes.object.isRequired
   };
 
@@ -142,8 +141,7 @@ export class SearchCatalogResults extends React.Component {
                     button
                     onClick={(event) => this._onToggleCheckDataset(x.dataset_id)}
                     className="cy-dataset-result-item"
-                    key={i}
-                    secondaryTextLines={2}>
+                    key={i}>
                     <ListItemIcon>
                       <Checkbox checked={this.state.checkedDatasets.findIndex(d => d.dataset_id === x.dataset_id) > -1} />
                     </ListItemIcon>
@@ -151,10 +149,10 @@ export class SearchCatalogResults extends React.Component {
                       inset
                       primary={`${x.aggregate_title} (${x.fileserver_url.length} file${(x.fileserver_url.length > 1)? 's': ''})` }
                       secondary={
-                        <div>
+                        <span>
                           <span><strong>Variable: </strong> {x.variable_long_name}</span><br />
                           <strong>Keywords: </strong>{x.keywords.join(', ')}
-                        </div>
+                        </span>
                       }/>
                     <DatasetMenuActions
                       addDatasetsToVisualize={this.props.addDatasetsToVisualize}

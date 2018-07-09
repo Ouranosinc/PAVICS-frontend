@@ -274,7 +274,7 @@ class ScientificWorkflowStepper extends Component {
               goToConfigureAndRunStep={this.goToConfigureAndRunStep}
               workflowAPI={this.props.workflowAPI}
               workflowAPIActions={this.props.workflowAPIActions} />
-            <Typography variant="subheader" className={classes.p}>Or create a new workflow</Typography>
+            <Typography variant="subheading" className={classes.p}>Or create a new workflow</Typography>
             <ScientificWorkflowForm
               project={this.props.project}
               workflowAPIActions={this.props.workflowAPIActions} />

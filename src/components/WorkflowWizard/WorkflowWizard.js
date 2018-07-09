@@ -4,10 +4,14 @@ import { withStyles } from '@material-ui/core/styles';
 import ScientificWorkflowStepper from '../../components/ScientificWorkflowStepper';
 import WpsProcessStepper from '../WpsProcessStepper';
 import Dialog from'@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from'@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import Tab from'@material-ui/core/Tab';
-import Tabs from'@material-ui/core/Tabs';
+import Tabs from '@material-ui/core/Tabs';
+import Typography from '@material-ui/core/Typography';
 
 const WORKFLOW_TAB_VALUE = "WORKFLOW_TAB_VALUE";
 const PROCESS_TAB_VALUE = "PROCESS_TAB_VALUE";
@@ -71,19 +75,11 @@ class WorkflowWizard extends React.Component {
     });
   };
 
-  showDialog = (title, content, actions) => {
-    const defaultDialogActions = [
-      <Button variant="contained"
-        label="OK"
-        primary={true}
-        onClick={this.closeDialog}
-      />
-    ];
+  showDialog = (title, content) => {
     this.setState({
       dialogOpened: true,
       dialogTitle: title,
-      dialogContent: content,
-      dialogActions: actions ? actions : defaultDialogActions
+      dialogContent: content
     });
   };
 
@@ -143,11 +139,22 @@ class WorkflowWizard extends React.Component {
         }
         <Dialog
           open={this.state.dialogOpened}
-          title={this.state.dialogTitle}
-          onClose={this.closeDialog}
-          actions={this.state.dialogActions}
-          modal={true}>
-          {this.state.dialogContent}
+          onClose={this.closeDialog}>
+          <DialogTitle>
+            {this.state.dialogTitle}
+          </DialogTitle>
+          <DialogContent>
+            <Typography>
+              {this.state.dialogContent}
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button variant="contained"
+                    color="primary"
+                    onClick={this.closeDialog}>
+              OK
+            </Button>
+          </DialogActions>
         </Dialog>
       </div>
 

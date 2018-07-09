@@ -28,9 +28,6 @@ const styles = {
   select: {
     width: 100,
     textAlign: 'right'
-  },
-  underline: {
-    display: 'none'
   }
 };
 
@@ -134,8 +131,7 @@ class Pagination extends Component {
             onChange={(event) => this.handleChangePage(event.target.value)}
             disabled={!total}
             value={currentPageIndex}
-            style={styles.select}
-            underlineStyle={styles.underline}>
+            style={styles.select}>
             {
               pages.map(page => (
                 <MenuItem value={page} key={`page-${page}`}>
@@ -151,8 +147,7 @@ class Pagination extends Component {
             onChange={(event) => this.handleChangePerPage(event.target.value)}
             disabled={!total}
             value={selectedPerPageOptionIndex}
-            style={styles.select}
-            underlineStyle={styles.underline}>
+            style={styles.select}>
             {
               perPageOptions.map((v, i)=>{
                 return <MenuItem key={i} value={i}>{v}</MenuItem>;

@@ -26,6 +26,7 @@ const styles = theme => ({
 export class DatasetMenuActions extends React.Component {
   state = {
     anchor: null,
+    detailsOpened: false,
     isConfirmDatasetRemoveDialogOpened: false,
     confirmDatasetRemoveDialogContent: '',
     confirmDatasetRemoveDialogResource: null,
@@ -34,17 +35,22 @@ export class DatasetMenuActions extends React.Component {
     confirmFileRemoveDialogResource: null
   };
 
+  static defaultProps = {
+    isFile: false,
+    fileIndex: 0
+  };
+
   static propTypes = {
     classes: PropTypes.object.isRequired,
     dataset: PropTypes.object.isRequired,
-    isFile: PropTypes.bool.isRequired,
+    isFile: PropTypes.bool,
     isRemoveFromProjectEnabled: PropTypes.bool.isRequired,
     fileIndex: PropTypes.number,
     disabledVisualize: PropTypes.bool.isRequired,
     addDatasetsToVisualize: PropTypes.func.isRequired,
     selectCurrentDisplayedDataset: PropTypes.func.isRequired,
     datasetAPIActions: PropTypes.object.isRequired,
-    project: PropTypes.object.isRequired,
+    project: PropTypes.object.isRequired
   };
 
   constructor(props) {

@@ -240,8 +240,6 @@ export default class LayerSwitcher extends React.Component {
          min={0}
          max={1}
          step={0.05}
-         included={false}
-         range={false}
          value={this.props.currentDisplayedDataset.opacity}
          onChange={this.setDatasetLayerOpacity}/>
     );

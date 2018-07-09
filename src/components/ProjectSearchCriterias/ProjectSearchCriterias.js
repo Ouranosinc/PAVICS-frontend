@@ -98,7 +98,7 @@ export class ProjectSearchCriterias extends React.Component {
                   ContainerProps={{
                     className: "cy-project-search-criterias-item"
                   }}
-                  key={index}>
+                  key={`search-criterias-item-${index}`}>
                   <ListItemIcon>
                     <AddedCriterias />
                   </ListItemIcon>
@@ -106,17 +106,19 @@ export class ProjectSearchCriterias extends React.Component {
                     inset
                     primary={research.name}
                     secondary={
-                        <div>
+                    <span>
                       <span>{research.results.length} results on {moment(research.createdOn).format(constants.PAVICS_DATE_FORMAT)}</span><br />
                       <strong>Facets: </strong>
                       <span>
                           {
                             research.facets.map((criteria, i) => {
-                              return <span key={i}>{criteria.key + '=' + criteria.value + ((i + 1 === research.facets.length) ? '' : ', ')}</span>;
+                              return <span  key={`facet-${criteria.key}-${criteria.value}`}>
+                                {criteria.key + '=' + criteria.value + ((i + 1 === research.facets.length) ? '' : ', ')}
+                                </span>;
                             })
                           }
                         </span>
-                    </div>
+                    </span>
                     } />
                   <ListItemSecondaryAction className={classes.root}>
                     <CustomIconMenu

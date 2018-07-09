@@ -89,7 +89,7 @@ export class ProjectDatasets extends React.Component {
                     <ListItem
                       button onClick={(event) => this.onDatasetListItemToggled(dataset)}
                       className={classes.listItem + " cy-project-dataset-item cy-project-dataset-level-0"}
-                      key={i}>
+                      key={`dataset-item-${i}`}>
                       <ListItemIcon>
                         <Folder />
                       </ListItemIcon>
@@ -97,13 +97,16 @@ export class ProjectDatasets extends React.Component {
                         inset
                         primary={dataset.aggregate_title}
                         secondary={
-                          <div>
+                          <span>
                           <span
                             className="cy-dataset-multiple-file-title">{dataset.fileserver_url.length + ' Files'}</span><br />
                             <strong>Keywords: </strong>{dataset.keywords.join(', ')}
-                          </div>
+                          </span>
                         }/>
-                      <DatasetMenuActions {...this.props}
+                      <DatasetMenuActions addDatasetsToVisualize={this.props.addDatasetsToVisualize}
+                                          selectCurrentDisplayedDataset={this.props.selectCurrentDisplayedDataset}
+                                          datasetAPIActions={this.props.datasetAPIActions}
+                                          project={this.props.project}
                                           dataset={dataset}
                                           isRemoveFromProjectEnabled={true}
                                           disabledVisualize={false}/>
@@ -116,7 +119,7 @@ export class ProjectDatasets extends React.Component {
                               <ListItem
                                 className={classes.nested + " cy-project-dataset-item cy-project-dataset-level-1"}
                                 style={{width: '98%'}}
-                                key={j}>
+                                key={`dataset-item-${i}-${j}`}>
                                 <ListItemIcon>
                                   <File />
                                 </ListItemIcon>
@@ -124,12 +127,15 @@ export class ProjectDatasets extends React.Component {
                                   className={classes.MuiListItemText}
                                   inset
                                   primary={dataset.title[j]}/>
-                                <DatasetMenuActions {...this.props}
-                                                    fileIndex={j}
+                                <DatasetMenuActions fileIndex={j}
                                                     isFile={true}
                                                     isRemoveFromProjectEnabled={true}
                                                     dataset={dataset}
-                                                    disabledVisualize={false}/>
+                                                    disabledVisualize={false}
+                                                    addDatasetsToVisualize={this.props.addDatasetsToVisualize}
+                                                    selectCurrentDisplayedDataset={this.props.selectCurrentDisplayedDataset}
+                                                    datasetAPIActions={this.props.datasetAPIActions}
+                                                    project={this.props.project}/>
                               </ListItem>
                             );
                           })
@@ -148,7 +154,7 @@ export class ProjectDatasets extends React.Component {
                   <div>
                     <ListItem
                       className="cy-project-dataset-item cy-project-dataset-level-0"
-                      key={i}>
+                      key={`dataset-item-${i}`}>
                       <ListItemIcon>
                         <File />
                       </ListItemIcon>
@@ -157,10 +163,10 @@ export class ProjectDatasets extends React.Component {
                         inset
                         primary={dataset.aggregate_title}
                         secondary={
-                          <div>
+                          <span>
                             <span className="cy-dataset-single-file-title">{dataset.title[0]}</span><br />
                             <strong>Keywords: </strong>{dataset.keywords.join(', ')}
-                          </div>
+                          </span>
                         }/>
                       <DatasetMenuActions
                         addDatasetsToVisualize={this.props.addDatasetsToVisualize}

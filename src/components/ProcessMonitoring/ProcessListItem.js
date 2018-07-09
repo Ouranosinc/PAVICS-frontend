@@ -211,7 +211,7 @@ export class ProcessListItem extends React.Component {
                 </ListItemIcon>
                 <ListItemText inset
                               primary={(output.name && output.name.length) ? output.name : `${output.title}: ${output.abstract}`}
-                              secondary={<div>File: {this.extractFileId(output.reference)} <br/>Type:<strong>{output.mimeType}</strong></div>} />
+                              secondary={<span>File: {this.extractFileId(output.reference)} <br/>Type:<strong>{output.mimeType}</strong></span>} />
                 {this.buildBasicSecondaryActions(output)}
               </ListItem>
             })

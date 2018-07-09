@@ -68,7 +68,6 @@ export default class WpsProcessForm extends React.Component {
 
   componentWillMount () {
     this.buildFormData(this.props);
-    this.verifyMeaningfulValues(this.props);
   }
 
   buildFormData (props) {
@@ -82,7 +81,7 @@ export default class WpsProcessForm extends React.Component {
     });
     this.setState({
       formData: formData
-    });
+    }, this.verifyMeaningfulValues(props));
   }
 
   /*
@@ -174,8 +173,9 @@ export default class WpsProcessForm extends React.Component {
   componentWillReceiveProps (nextProps) {
     if(nextProps.workflow.selectedProcessInputs && this.props.workflow.selectedProcessInputs !== nextProps.workflow.selectedProcessInputs) {
       this.buildFormData(nextProps)
+    } else {
+      this.verifyMeaningfulValues(nextProps, this.props);
     }
-    this.verifyMeaningfulValues(nextProps, this.props);
   }
 
   handleChange (value, uniqueIdentifier) {

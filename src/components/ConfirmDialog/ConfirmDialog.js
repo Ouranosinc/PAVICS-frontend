@@ -10,7 +10,7 @@ import Typography from '@material-ui/core/Typography';
 export class ConfirmDialog extends React.Component {
   static propTypes = {
     isOpen: PropTypes.bool.isRequired,
-    affectedResource: PropTypes.object.isRequired,
+    affectedResource: PropTypes.object,
     onDialogConfirmed: PropTypes.func.isRequired,
     onCloseDialog: PropTypes.func.isRequired,
     dialogContent: PropTypes.string.isRequired,

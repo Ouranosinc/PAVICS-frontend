@@ -10,6 +10,9 @@ import LoadingScreen from './../LoadingScreen';
 import ProcessListItem from './ProcessListItem';
 import PersistResultDialog from './PersistResultDialog';
 import Dialog from'@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import List from'@material-ui/core/List';
 import ListSubheader from'@material-ui/core/ListSubheader';
 import ListItemIcon from'@material-ui/core/ListItemIcon';
@@ -24,6 +27,7 @@ import LogIcon from '@material-ui/icons/Receipt';
 import VisualizeIcon from '@material-ui/icons/RemoveRedEye';
 import CollapseNestedList from '../CollapseNestedList';
 import CustomIconMenu from '../CustomIconMenu';
+import Typography from '@material-ui/core/Typography';
 
 class ProcessMonitoring extends React.Component {
   static propTypes = {
@@ -499,24 +503,30 @@ class ProcessMonitoring extends React.Component {
             onClick={(event) => this._onRefreshResults()}>
             <RefreshIcon />Refresh
           </Button>
+
           <Dialog
-            title="Log informations"
-            modal={false}
             open={this.state.logDialogOpened}
-            onClose={this._closeLogDialog}
-            actions={
+            onClose={this._closeLogDialog}>
+            <DialogTitle>
+              Log informations
+            </DialogTitle>
+            <DialogContent>
+              <Typography>
+                {
+                  (this.state.logDialogArray.length) ?
+                    this.state.logDialogArray.map((log, i) => {
+                      return <p key={i}>{log}</p>
+                    }) : null
+                }
+              </Typography>
+            </DialogContent>
+            <DialogActions>
               <Button variant="contained"
-                label="Close"
-                primary={false}
-                onClick={this._closeLogDialog} />
-            }
-            autoScrollBodyContent={true}>
-            {
-              (this.state.logDialogArray.length) ?
-              this.state.logDialogArray.map((log, i) => {
-                return <p key={i}>{log}</p>
-              }) : null
-            }
+                      color="secondary"
+                      onClick={this._closeLogDialog}>
+                Close
+                </Button>
+            </DialogActions>
           </Dialog>
           <PersistResultDialog
             output={this.state.persistDialogOutput}

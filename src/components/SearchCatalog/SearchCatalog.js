@@ -238,6 +238,7 @@ export class SearchCatalog extends React.Component {
             addDatasetsToVisualize={this.props.addDatasetsToVisualize}
             selectCurrentDisplayedDataset={this.props.selectCurrentDisplayedDataset}
             clickTogglePanel={this.props.clickTogglePanel}
+            datasetAPIActions={this.props.datasetAPIActions}
             research={this.props.research}
             project={this.props.project}
             projectAPIActions={this.props.projectAPIActions}/>

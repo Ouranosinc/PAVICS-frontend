@@ -2,6 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classes from './OLComponent.scss';
 import Dialog from'@material-ui/core/Dialog';
+import DialogContent from'@material-ui/core/DialogContent';
+import DialogTitle from'@material-ui/core/DialogTitle';
+import Typography from '@material-ui/core/Typography';
 import * as constants from './../../constants';
 import myHttp from '../../util/http';
 import { NotificationManager } from 'react-notifications';
@@ -626,11 +629,16 @@ class OLComponent extends React.Component {
           <div id="popup" className="ol-popup"></div>
         </div>
         <Dialog
-          title={this.state.dialogTitle}
-          modal={false}
           onClose={this.handleClose}
           open={this.state.dialogOpened}>
-          <div>{this.state.dialogContent}</div>
+          <DialogTitle>
+            {this.state.dialogTitle}
+          </DialogTitle>
+          <DialogContent>
+            <Typography>
+              {this.state.dialogContent}
+            </Typography>
+          </DialogContent>
         </Dialog>
       </div>
     );
