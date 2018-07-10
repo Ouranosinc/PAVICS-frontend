@@ -9,20 +9,23 @@ debug('Creating default configuration.');
 // ========================================================
 // Default Configuration
 // ========================================================
-let serverHost = process.env.PAVICS_FRONTEND_IP || localip;
-let serverProto = process.env.PAVICS_FRONTEND_PROTO || 'http';
-let birdhouseHost = process.env.BIRDHOUSE_HOST || 'outarde.crim.ca';
-let ncwmsHost = process.env.NCWMS_HOST || `https://${birdhouseHost}/twitcher/ows/proxy/ncWMS2/wms`;
-let catalogHost = process.env.CATALOG_HOST || `https://${birdhouseHost}/twitcher/ows/proxy/catalog/pywps`;
-let malleefowlHost = process.env.MALLEEFOWL_HOST || `https://${birdhouseHost}/twitcher/ows/proxy/malleefowl/wps`;
-let PAVICS_WORKFLOW_PROVIDER = process.env.PAVICS_WORKFLOW_PROVIDER || 'malleefowl';
-let PAVICS_RUN_WORKFLOW_IDENTIFIER = process.env.PAVICS_RUN_WORKFLOW_IDENTIFIER || 'custom_workflow';
-let PAVICS_VISUALIZE_IDENTIFIER = process.env.PAVICS_VISUALIZE_IDENTIFIER || 'TODO';
-let PAVICS_PERSIST_IDENTIFIER = process.env.PAVICS_PERSIST_IDENTIFIER || 'TODO';
-let PAVICS_PUBLISH_IDENTIFIER = process.env.PAVICS_PUBLISH_IDENTIFIER || 'TODO';
-let PAVICS_DEFAULT_WORKSPACE_FOLDER = process.env.PAVICS_DEFAULT_WORKSPACE_FOLDER || 'workspaces';
-let serverPort = process.env.PORT || 3000;
-let serverExternalPort = process.env.PAVICS_FRONTEND_PORT || serverPort;
+const serverHost = process.env.PAVICS_FRONTEND_IP || localip;
+const serverProto = process.env.PAVICS_FRONTEND_PROTO || 'http';
+const birdhouseHost = process.env.BIRDHOUSE_HOST || 'outarde.crim.ca';
+const ncwmsHost = process.env.NCWMS_HOST || `https://${birdhouseHost}/twitcher/ows/proxy/ncWMS2/wms`;
+const catalogHost = process.env.CATALOG_HOST || `https://${birdhouseHost}/twitcher/ows/proxy/catalog/pywps`;
+const malleefowlHost = process.env.MALLEEFOWL_HOST || `https://${birdhouseHost}/twitcher/ows/proxy/malleefowl/wps`;
+const projectHost = process.env.PAVICS_PROJECT_API_URL || `https://${birdhouseHost}/twitcher/ows/proxy/project-api/api`;
+// projectHostInternal is needed in dev mode since centos vm etc/hosts hasn't its value modified but windows hosts has (pluvier -­> dev IP)
+const projectHostInternal = process.env.PAVICS_PROJECT_API_INTERNAL_URL || projectHost;
+const PAVICS_WORKFLOW_PROVIDER = process.env.PAVICS_WORKFLOW_PROVIDER || 'malleefowl';
+const PAVICS_RUN_WORKFLOW_IDENTIFIER = process.env.PAVICS_RUN_WORKFLOW_IDENTIFIER || 'custom_workflow';
+const PAVICS_VISUALIZE_IDENTIFIER = process.env.PAVICS_VISUALIZE_IDENTIFIER || 'TODO';
+const PAVICS_PERSIST_IDENTIFIER = process.env.PAVICS_PERSIST_IDENTIFIER || 'TODO';
+const PAVICS_PUBLISH_IDENTIFIER = process.env.PAVICS_PUBLISH_IDENTIFIER || 'TODO';
+const PAVICS_DEFAULT_WORKSPACE_FOLDER = process.env.PAVICS_DEFAULT_WORKSPACE_FOLDER || 'workspaces';
+const serverPort = process.env.PORT || 3000;
+const serverExternalPort = process.env.PAVICS_FRONTEND_PORT || serverPort;
 const config = {
   env: process.env.NODE_ENV || 'development',
   // ----------------------------------
@@ -40,9 +43,8 @@ const config = {
   pavics_geoserver_path: `https://${birdhouseHost}/geoserver`,
   pavics_ncwms_path: ncwmsHost,
   pavics_catalog_path: catalogHost,
-  pavics_project_api_path: process.env.PAVICS_PROJECT_API_URL || `https://${birdhouseHost}/project-api/api`,
-  // pavics_project_api_internal_url is needed in dev mode since centos vm etc/hosts hasn't its value modified but windows host has (pluvier -­> dev IP)
-  pavics_project_api_internal_url: process.env.PAVICS_PROJECT_API_INTERNAL_URL || `https://${birdhouseHost}/project-api/api`, // DEV
+  pavics_project_api_path: projectHost,
+  pavics_project_api_internal_url: projectHostInternal, // DEV
   pavics_magpie_host: `https://${birdhouseHost}/magpie`,
   PAVICS_WORKFLOW_PROVIDER: PAVICS_WORKFLOW_PROVIDER,
   PAVICS_RUN_WORKFLOW_IDENTIFIER: PAVICS_RUN_WORKFLOW_IDENTIFIER,
