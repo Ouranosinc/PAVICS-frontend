@@ -1,14 +1,18 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Plotly from 'plotly.js';
 import classes from './TimeSeriesChart.scss';
 import * as constants from './../../constants';
 import Loader from './../../components/Loader';
-import Paper from 'material-ui/Paper';
-import AppBar from 'material-ui/AppBar';
-import IconButton from 'material-ui/IconButton';
-import TimelineIcon from 'material-ui/svg-icons/action/timeline';
-import MinimizeIcon from 'material-ui/svg-icons/content/remove';
-import {Card, CardHeader} from 'material-ui/Card';
+import Paper from'@material-ui/core/Paper';
+import AppBar from'@material-ui/core/AppBar';
+import Toolbar from'@material-ui/core/Toolbar';
+import Typography from'@material-ui/core/Typography';
+import IconButton from'@material-ui/core/IconButton';
+import TimelineIcon from '@material-ui/icons/Timeline';
+import MinimizeIcon from '@material-ui/icons/Remove';
+import Card from'@material-ui/core/Card';
+import CardHeader from'@material-ui/core/CardHeader';
 import {Alert} from 'react-bootstrap';
 
 const LAYOUT = {
@@ -30,11 +34,11 @@ const LAYOUT = {
 
 class TimeSeriesChart extends React.Component {
   static propTypes = {
-    currentScalarValue: React.PropTypes.object.isRequired,
-    currentDisplayedDataset: React.PropTypes.object.isRequired,
-    onToggleMapPanel: React.PropTypes.func.isRequired,
-    plotlyData: React.PropTypes.object.isRequired,
-    fetchPlotlyData: React.PropTypes.func.isRequired
+    currentScalarValue: PropTypes.object.isRequired,
+    currentDisplayedDataset: PropTypes.object.isRequired,
+    onToggleMapPanel: PropTypes.func.isRequired,
+    plotlyData: PropTypes.object.isRequired,
+    fetchPlotlyData: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -117,10 +121,15 @@ class TimeSeriesChart extends React.Component {
     return (
       // !this.props.currentScalarValue.data || !this.props.currentScalarValue.data._dimensions ? classes['Empty'] : classes['Chart']
       <Paper className={classes['TimeSeriesChart']}>
-        <AppBar
-          title="Time Series Chart"
-          iconElementLeft={<IconButton><TimelineIcon /></IconButton>}
-          iconElementRight={<IconButton className="cy-minimize-btn" onTouchTap={(event) => this._onHideChartPanel()}><MinimizeIcon /></IconButton>} />
+        <AppBar position="static" color="primary">
+          <Toolbar>
+            <IconButton disableRipple color="inherit"><TimelineIcon /></IconButton>
+            <Typography variant="title" color="inherit" style={{flex: 1}}>
+              Time Series Chart
+            </Typography>
+            <IconButton color="inherit" className="cy-minimize-btn" onClick={this._onHideChartPanel}><MinimizeIcon /></IconButton>
+          </Toolbar>
+        </AppBar>
         <div className={classes['Chart']}>
           {content}
           <div className={((this.props.plotlyData.isFetching || this.props.currentScalarValue.isFetching) &&

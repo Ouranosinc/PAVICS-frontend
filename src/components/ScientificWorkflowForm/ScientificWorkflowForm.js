@@ -1,25 +1,17 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { NotificationManager } from 'react-notifications';
-import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
-import Paper from 'material-ui/Paper';
-import Done from 'material-ui/svg-icons/action/done';
+import TextField from'@material-ui/core/TextField';
+import Button from'@material-ui/core/Button';
+import Paper from'@material-ui/core/Paper';
+import Done from '@material-ui/icons/Done';
 import WorkflowSchema from './WorkflowSchema';
 var Ajv = require('ajv');
 
-const styles = {
-  textarea: {
-    padding: '20px'
-  },
-  button: {
-    marginTop: '20px'
-  }
-};
-
 export default class ScientificWorkflowForm extends Component {
   static propTypes = {
-    project: React.PropTypes.object.isRequired,
-    workflowAPIActions: React.PropTypes.object.isRequired
+    project: PropTypes.object.isRequired,
+    workflowAPIActions: PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -88,22 +80,26 @@ export default class ScientificWorkflowForm extends Component {
   render () {
     return (
       <div id="cy-create-workflow">
-        <Paper style={styles.textarea}>
-          <TextField
-            id="cy-create-workflow-json-content-tf"
-            value={this.state.json}
-            onChange={this.onWorkflowChanged}
-            multiLine={true}
-            rowsMax={15}
-            fullWidth={true}
-            hintText="Enter a valid JSON workflow"/>
+        <Paper>
+          <div className="container">
+            <TextField
+              id="cy-create-workflow-json-content-tf"
+              value={this.state.json}
+              onChange={this.onWorkflowChanged}
+              multiline
+              rows="1"
+              rowsMax="15"
+              fullWidth
+              helperText="Enter a valid JSON workflow"/>
+          </div>
         </Paper>
-        <RaisedButton
+        <Button
+          variant="contained"
+          color="primary"
           id="cy-create-workflow-btn"
-          onClick={this.onSaveWorkflow}
-          style={styles.button}
-          label="Create workflow"
-          icon={<Done />}/>
+          onClick={this.onSaveWorkflow}>
+          <Done />Create workflow
+        </Button>
       </div>
     );
   }

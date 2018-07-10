@@ -1,24 +1,19 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { NotificationManager } from 'react-notifications';
-import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
-import Paper from 'material-ui/Paper';
-import Done from 'material-ui/svg-icons/action/done';
+import TextField from'@material-ui/core/TextField';
 import WorkflowSchema from './WorkflowSchema';
 var Ajv = require('ajv');
 
 const styles = {
   textarea: {
     padding: '20px'
-  },
-  button: {
-    marginTop: '20px'
   }
 };
 
 export default class ScientificWorkflowTextInput extends Component {
   static propTypes = {
-    workflow: React.PropTypes.string
+    workflow: PropTypes.string
   };
 
   constructor (props) {
@@ -80,10 +75,11 @@ export default class ScientificWorkflowTextInput extends Component {
         id="cy-confirm-edit-workflow-tf"
         value={this.state.json}
         onChange={this._onWorkflowChanged}
-        multiLine={true}
-        rowsMax={15}
-        fullWidth={true}
-        hintText="Enter a valid JSON workflow"/>
+        multiline
+        rows="5"
+        rowsMax="15"
+        fullWidth
+        helperText="Enter a valid JSON workflow"/>
     );
   }
 }

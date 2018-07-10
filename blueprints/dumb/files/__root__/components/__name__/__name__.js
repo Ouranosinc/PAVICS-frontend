@@ -1,26 +1,31 @@
-import React from 'react'
-import classes from './<%= pascalEntityName %>.scss'
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
 
-var me;
+const styles = theme => ({
+  <%= pascalEntityName %>: {
+
+  }
+});
+
 
 export class <%= pascalEntityName %> extends React.Component {
   static propTypes = {
-
+    classes: PropTypes.object.isRequired,
   }
 
   constructor(props) {
     super(props);
-    me = this;
   }
 
 
   render () {
     return (
-      <div className={classes['<%= pascalEntityName %>']}>
+      <div className={this.props.classes['<%= pascalEntityName %>']}>
         <h1><%= pascalEntityName %></h1>
       </div>
     )
   }
 }
 
-export default <%= pascalEntityName %>
+export default withStyles(styles)(<%= pascalEntityName %>);

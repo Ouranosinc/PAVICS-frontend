@@ -5,13 +5,14 @@ import {useRouterHistory} from 'react-router';
 import {syncHistoryWithStore} from 'react-router-redux';
 import createStore from './store/createStore';
 import AppContainer from './containers/AppContainer';
-import injectTapEventPlugin from 'react-tap-event-plugin';
+// import injectTapEventPlugin from 'react-tap-event-plugin';
+// DEPRECATED React 16.4 removes a lot of internals (#121) this plugin depends on and will break the plugin.
 // import { persistStore, getStoredState } from 'redux-persist';
 
 // ========================================================
 // Fix for mobile tap event, waiting for material-ui to phase towards onClick instead of onTap
 // ========================================================
-injectTapEventPlugin();
+// injectTapEventPlugin();
 
 // ========================================================
 // Browser History Setup

@@ -1,6 +1,7 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classes from './Loader.scss';
-import RefreshIndicator from 'material-ui/RefreshIndicator';
+import CircularProgress from'@material-ui/core/CircularProgress';
 
 export class Loader extends Component {
   static propTypes = {
@@ -14,7 +15,7 @@ export class Loader extends Component {
   render () {
     return (
       <div className={classes['Loader']}>
-        <RefreshIndicator
+        <CircularProgress
           size={40}
           left={0}
           top={0}

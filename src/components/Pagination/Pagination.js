@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import {IconButton, MenuItem, SelectField} from 'material-ui';
-import ChevronLeft from 'material-ui/svg-icons/navigation/chevron-left';
-import ChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
+import PropTypes from 'prop-types';
+import {IconButton, MenuItem, Select} from '@material-ui/core';
+import ChevronLeft from '@material-ui/icons/ChevronLeft';
+import ChevronRight from '@material-ui/icons/ChevronRight';
 
 const styles = {
   pagination: {
@@ -27,9 +28,6 @@ const styles = {
   select: {
     width: 100,
     textAlign: 'right'
-  },
-  underline: {
-    display: 'none'
   }
 };
 
@@ -45,16 +43,16 @@ class Pagination extends Component {
     initialPerPageOptionIndex: 0
   };
   static propTypes = {
-    onChange: React.PropTypes.func,
-    total: React.PropTypes.number.isRequired,
-    perPageOptions: React.PropTypes.array,
-    texts: React.PropTypes.shape({
-      page: React.PropTypes.string.isRequired,
-      perPageOptions: React.PropTypes.string.isRequired,
-      showing: React.PropTypes.string.isRequired
+    onChange: PropTypes.func,
+    total: PropTypes.number.isRequired,
+    perPageOptions: PropTypes.array,
+    texts: PropTypes.shape({
+      page: PropTypes.string.isRequired,
+      perPageOptions: PropTypes.string.isRequired,
+      showing: PropTypes.string.isRequired
     }),
-    toFrom: React.PropTypes.any,
-    initialPerPageOptionIndex: React.PropTypes.number
+    toFrom: PropTypes.any,
+    initialPerPageOptionIndex: PropTypes.number
   };
 
   constructor (props, context) {
@@ -63,11 +61,9 @@ class Pagination extends Component {
       selectedPerPageOptionIndex: this.props.initialPerPageOptionIndex,
       currentPageIndex: 1
     };
-    this.handleChangePerPage = this.handleChangePerPage.bind(this);
-    this.handleChangePage = this.handleChangePage.bind(this);
   }
 
-  handleChangePage (page) {
+  handleChangePage = (page) => {
     let maxPage = Math.ceil(this.props.total / this.props.perPageOptions[this.state.selectedPerPageOptionIndex]);
     if (page >= 1 && page <= maxPage) {
       this.setState({
@@ -77,7 +73,7 @@ class Pagination extends Component {
     }
   }
 
-  handleChangePerPage (perPage) {
+  handleChangePerPage = (perPage) => {
     let maxPage = Math.ceil(this.props.total / this.props.perPageOptions[perPage]);
     let newPageIndex = this.state.currentPageIndex;
     if (newPageIndex > maxPage) {
@@ -131,47 +127,44 @@ class Pagination extends Component {
       <div style={styles.pagination} id="cy-pagination" data-cy-page-count={count} data-cy-from={from} data-cy-to={to} data-cy-total={total}>
         <div style={Object.assign({}, styles.elements, styles.pageSelect)}>
           <div style={styles.label}>{`${texts.page} `}</div>
-          <SelectField
-            onChange={(e, idx, page) => this.handleChangePage(page)}
+          <Select
+            onChange={(event) => this.handleChangePage(event.target.value)}
             disabled={!total}
             value={currentPageIndex}
-            style={styles.select}
-            underlineStyle={styles.underline}>
+            style={styles.select}>
             {
               pages.map(page => (
-                <MenuItem
-                  primaryText={page}
-                  value={page}
-                  key={`page-${page}`} />
+                <MenuItem value={page} key={`page-${page}`}>
+                  {page}
+                </MenuItem>
               ))
             }
-          </SelectField>
+          </Select>
         </div>
         <div style={styles.elements}>
           <div style={styles.label}>{`${texts.perPageOptions} `}</div>
-          <SelectField
-            onChange={(e, idx, selectedOption) => this.handleChangePerPage(selectedOption)}
+          <Select
+            onChange={(event) => this.handleChangePerPage(event.target.value)}
             disabled={!total}
             value={selectedPerPageOptionIndex}
-            style={styles.select}
-            underlineStyle={styles.underline}>
+            style={styles.select}>
             {
               perPageOptions.map((v, i)=>{
-                return <MenuItem key={i} value={i} primaryText={v} />;
+                return <MenuItem key={i} value={i}>{v}</MenuItem>;
               })
             }
-          </SelectField>
+          </Select>
         </div>
         <div style={styles.elements}>
           <div style={styles.label} id="cy-pagination-showing">{`${showing}`}</div>
           <IconButton
             disabled={currentPageIndex === 1 || !total}
-            onTouchTap={e => this.handleChangePage(currentPageIndex - 1, e)}>
+            onClick={e => this.handleChangePage(currentPageIndex - 1, e)}>
             <ChevronLeft />
           </IconButton>
           <IconButton
             disabled={currentPageIndex === count || !total}
-            onTouchTap={e => this.handleChangePage(currentPageIndex + 1, e)}>
+            onClick={e => this.handleChangePage(currentPageIndex + 1, e)}>
             <ChevronRight />
           </IconButton>
         </div>

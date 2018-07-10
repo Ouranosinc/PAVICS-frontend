@@ -1,13 +1,13 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import * as pavicsActions from './../modules/Pavics';
 import { actions as projectActions } from '../../../redux/modules/Project';
 import { actions as projectAPIActions } from '../../../redux/modules/ProjectAPI';
 import { actions as researchActions } from '../../../redux/modules/Research';
 import { actions as sessionActions } from '../../../redux/modules/SessionManagement';
-
 import cookie from 'react-cookies';
 import * as constants from './../../../constants';
 import {
@@ -21,12 +21,66 @@ import { SectionalPanel } from './../../../components/SectionalPanel';
 require('react-notifications/lib/notifications.css');
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 
+const theme = createMuiTheme({
+  overrides: {
+    MuiFormControl: {
+      root: {
+        margin: '5px 0'
+      }
+    },
+    MuiSvgIcon: {
+      root: {
+        marginRight: '2px'
+      }
+    },
+    MuiButton: {
+      root: {
+        margin: '15px 0 0 0'
+      }
+    },
+    MuiStepper: {
+      root: {
+        backgroundColor: 'transparent'
+      }
+    },
+    /*MuiTypography: {
+      root: {
+        color: 'inherit'
+      }
+    },
+    MuiStepLabel: {
+      root: {
+        color: 'white'
+      },
+      label: {
+        color: 'white'
+      },
+      active: {
+        color: 'white'
+      }
+    }*/
+  },
+  typography: {
+    fontSize: '18'
+  }/*,
+  palette: {
+    primary: {
+      main: '#ff4400',
+    },
+    secondary: {
+      light: '#0066ff',
+      main: '#0044ff',
+      contrastText: '#ffcc00',
+    }
+  },*/
+});
+
 class Pavics extends React.Component {
   static propTypes = {
-    addDatasetsToVisualize: React.PropTypes.func.isRequired,
-    // chooseStep: React.PropTypes.func.isRequired,
-    goToSection: React.PropTypes.func.isRequired,
-    platform: React.PropTypes.object.isRequired
+    addDatasetsToVisualize: PropTypes.func.isRequired,
+    // chooseStep: PropTypes.func.isRequired,
+    goToSection: PropTypes.func.isRequired,
+    platform: PropTypes.object.isRequired
   };
 
   constructor(props) {
@@ -195,7 +249,7 @@ class Pavics extends React.Component {
 
   render () {
     return (
-      <MuiThemeProvider>
+      <MuiThemeProvider theme={theme}>
         <div>
           <VisualizeContainer {...this.props} />
           <SectionalPanel

@@ -1,15 +1,37 @@
 import React from 'react';
-import {Card, CardHeader, CardActions, CardText} from 'material-ui/Card';
-import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
-import Paper from 'material-ui/Paper';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import Card from'@material-ui/core/Card';
+import CardContent from'@material-ui/core/CardContent';
+import CardHeader from'@material-ui/core/CardHeader';
+import Button from'@material-ui/core/Button';
+import TextField from'@material-ui/core/TextField';
+import Paper from'@material-ui/core/Paper';
 
-export default class WpsProcessSelector extends React.Component {
+const styles = {
+  content: {
+    paddingTop: 0
+  },
+  button: {
+    margin: 0
+  },
+  grid: {
+    'max-height': '450px',
+    'overflowY': 'auto',
+    'margin': '10px 0'
+  },
+  card: {
+    margin: '0 5px 5px 0'
+  }
+};
+
+class WpsProcessSelector extends React.Component {
   static propTypes = {
-    onSearchKeywordChanged: React.PropTypes.func.isRequired,
-    searchKeyword: React.PropTypes.string.isRequired,
-    workflow: React.PropTypes.object.isRequired,
-    workflowActions: React.PropTypes.object.isRequired
+    classes: PropTypes.object.isRequired,
+    onSearchKeywordChanged: PropTypes.func.isRequired,
+    searchKeyword: PropTypes.string.isRequired,
+    workflow: PropTypes.object.isRequired,
+    workflowActions: PropTypes.object.isRequired
   };
 
   constructor(props) {
@@ -24,11 +46,7 @@ export default class WpsProcessSelector extends React.Component {
   }
 
   render () {
-    const gridStyle = {
-      'height': '450px',
-      'overflowY': 'auto',
-      'margin': '10px 0'
-    };
+    const { classes } = this.props;
     let filteredProcesses = this.props.workflow.processes;
     if (this.props.searchKeyword.length) {
       filteredProcesses = this.props.workflow.processes.filter((process) => {
@@ -44,26 +62,28 @@ export default class WpsProcessSelector extends React.Component {
             <TextField
               id="cy-filter-by-keyword"
               value={this.props.searchKeyword}
-              hintText="Filter list by keyword"
-              fullWidth={true}
-              onChange={(event, value) => this.props.onSearchKeywordChanged(value)}
-              floatingLabelText="Filter by" />
+              fullWidth
+              onChange={(event) => this.props.onSearchKeywordChanged(event.target.value)}
+              label="Filter list by keyword" />
           </div>
         </Paper>
-        <div style={gridStyle}>
+        <div className={classes.grid}>
           {
             filteredProcesses.map((process, i) => {
               return (
-                <Card key={i}>
+                <Card className={classes.card} key={i}>
                   <CardHeader
-                    title={process.title} />
-                  <CardText>{process.description}</CardText>
-                  <CardActions>
-                    <RaisedButton
-                      primary={true}
-                      label="Select Process"
-                      onClick={this.makeChooseProcessCallback(process)} />
-                  </CardActions>
+                    title={process.title}
+                    subheader={process.description} />
+                  <CardContent className={classes.content}>
+                    <Button
+                      className={classes.button}
+                      variant="raised"
+                      color="primary"
+                      onClick={this.makeChooseProcessCallback(process)}>
+                      Select Process
+                    </Button>
+                  </CardContent>
                 </Card>
               );
             })
@@ -73,3 +93,5 @@ export default class WpsProcessSelector extends React.Component {
     );
   }
 }
+
+export default withStyles(styles)(WpsProcessSelector)

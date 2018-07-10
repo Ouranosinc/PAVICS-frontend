@@ -1,7 +1,9 @@
-import React from 'react'
+import React from 'react';
+import PropTypes from 'prop-types';
+
 class TableHeader extends React.Component {
   static propTypes = {
-    fields: React.PropTypes.array.isRequired,
+    fields: PropTypes.array.isRequired,
   };
 
   render() {

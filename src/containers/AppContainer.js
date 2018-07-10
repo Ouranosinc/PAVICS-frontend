@@ -1,6 +1,7 @@
-import React, { PropTypes } from 'react'
-import { Router } from 'react-router'
-import { Provider } from 'react-redux'
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Router } from 'react-router';
+import { Provider } from 'react-redux';
 
 class AppContainer extends React.Component {
   static propTypes = {

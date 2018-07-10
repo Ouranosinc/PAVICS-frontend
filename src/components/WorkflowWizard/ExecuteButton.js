@@ -1,19 +1,22 @@
 import React from 'react';
-import RaisedButton from 'material-ui/RaisedButton';
-import ExecuteIcon from 'material-ui/svg-icons/action/done';
+import PropTypes from 'prop-types';
+import Button from'@material-ui/core/Button';
+import ExecuteIcon from '@material-ui/icons/Done';
 
 class ExecuteButton extends React.Component {
   static propTypes = {
-    executeProcess: React.PropTypes.func.isRequired
+    executeProcess: PropTypes.func.isRequired
   };
 
   render () {
     return (
-      <RaisedButton
+      <Button
+        color="primary"
+        variant="contained"
         id="cy-execute-process-btn"
-        onClick={this.props.executeProcess}
-        icon={<ExecuteIcon />}
-        label="Execute process" />
+        onClick={this.props.executeProcess}>
+        <ExecuteIcon />Execute process
+      </Button>
     );
   }
 }

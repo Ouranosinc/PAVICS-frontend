@@ -1,20 +1,30 @@
 import React from 'react';
-import {Card, CardHeader, CardText} from 'material-ui/Card';
-export default class WpsProcessDetails extends React.Component {
+import PropTypes from 'prop-types';
+import { withStyles } from "@material-ui/core/styles";
+import Card from'@material-ui/core/Card';
+import CardHeader from'@material-ui/core/CardHeader';
+
+const styles = {
+  marginated: {
+    'margin': '10px 0'
+  }
+};
+
+class WpsProcessDetails extends React.Component {
   static propTypes = {
-    workflow: React.PropTypes.object.isRequired
+    classes: PropTypes.object.isRequired,
+    workflow: PropTypes.object.isRequired
   };
+
   render () {
-    const marginated = {
-      'margin': '10px 0'
-    };
     return (
-      <Card style={marginated}>
-        <CardHeader title={this.props.workflow.selectedProcess.title} />
-        <CardText>
-          {this.props.workflow.selectedProcess.description}
-        </CardText>
+      <Card className={this.props.classes.marginated}>
+        <CardHeader
+          title={this.props.workflow.selectedProcess.title}
+          subheader={this.props.workflow.selectedProcess.description} />
       </Card>
     );
   }
 }
+
+export default withStyles(styles)(WpsProcessDetails)

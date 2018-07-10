@@ -1,32 +1,36 @@
-import React, {Component} from 'react';
-import Checkbox from 'material-ui/Checkbox';
-import TextField from 'material-ui/TextField';
-import DatePicker from 'material-ui/DatePicker';
-import TimePicker from 'material-ui/TimePicker';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import Checkbox from'@material-ui/core/Checkbox';
+import TextField from'@material-ui/core/TextField';
+// import DatePicker from'@material-ui/core/DatePicker';
+// import TimePicker from'@material-ui/core/TimePicker';
+import Select from'@material-ui/core/Select';
+import MenuItem from'@material-ui/core/MenuItem';
+import FormControl from'@material-ui/core/FormControl';
+import FormControlLabel from'@material-ui/core/FormControlLabel';
+import FormHelperText from'@material-ui/core/FormHelperText';
 
 const {BOOLEAN, INPUT_DATETIME} = require('../../constants');
 
 class WpsProcessFormInput extends Component {
+  state = {
+    dateTimeValues: {
+      date: null,
+      time: null
+    }
+  };
 
   // value not marked as required because it can (somewhat) validly be undefined
   static propTypes = {
-    inputDefinition: React.PropTypes.object.isRequired,
-    uniqueIdentifier: React.PropTypes.string.isRequired,
-    handleChange: React.PropTypes.func.isRequired,
-    handleArrayChange: React.PropTypes.func.isRequired,
-    value: React.PropTypes.any
+    inputDefinition: PropTypes.object.isRequired,
+    uniqueIdentifier: PropTypes.string.isRequired,
+    handleChange: PropTypes.func.isRequired,
+    handleArrayChange: PropTypes.func.isRequired,
+    value: PropTypes.any
   };
 
   constructor (props) {
     super(props);
-    this.state = {
-      dateTimeValues: {
-        date: null,
-        time: null
-      }
-    };
   }
 
   createDateTime = () => {
@@ -36,6 +40,7 @@ class WpsProcessFormInput extends Component {
     const timeString = time.toISOString().split('T')[1];
     this.props.handleChange(`${dateString}T${timeString}`, this.props.uniqueIdentifier);
   };
+
   handleDateChange = (event, date) => {
     this.setState({
       dateTimeValues: {
@@ -44,6 +49,7 @@ class WpsProcessFormInput extends Component {
       }
     }, () => { this.createDateTime(); });
   };
+
   handleTimeChange = (event, time) => {
     this.setState({
       dateTimeValues: {
@@ -53,26 +59,24 @@ class WpsProcessFormInput extends Component {
     }, () => { this.createDateTime(); });
   };
 
-  handleCheckboxChange = (event, value) => {
+  handleCheckboxChange = (event) => {
     this.props.handleChange(event.target.checked, this.props.uniqueIdentifier);
   };
 
-  createHandleTextFieldArrayChangeCallback = (index) => {
-    return (event, value) => {
-      this.handleTextFieldArrayChange(event.target.value, index);
-    };
+  createHandleTextFieldArrayChangeCallback = (event, index) => {
+    this.handleTextFieldArrayChange(event.target.value, index);
   };
 
   handleTextFieldArrayChange = (value, index) => {
     this.props.handleArrayChange(value, this.props.uniqueIdentifier, index);
   };
 
-  handleTextFieldChange = (event, value) => {
+  handleTextFieldChange = (event) => {
     this.props.handleChange(event.target.value, this.props.uniqueIdentifier);
   };
 
-  handleSelectFieldChange = (event, key, payload) => {
-    this.props.handleChange(payload, this.props.uniqueIdentifier);
+  handleSelectChange = (event) => {
+    this.props.handleChange(event.target.value, this.props.uniqueIdentifier);
   };
 
   createMarkup () {
@@ -88,41 +92,45 @@ class WpsProcessFormInput extends Component {
         }
       }
       return (
-        <div>
-          <Checkbox
-            name={this.props.inputDefinition.name}
+        <FormControl >
+          <FormControlLabel
             label={this.props.inputDefinition.title}
-            labelPosition="right"
-            labelStyle={{ textAlign: 'left' }}
-            checked={value}
-            onCheck={this.handleCheckboxChange}
-            value={value} />
-          <small>{this.props.inputDefinition.description}</small>
-        </div>
+            control={
+              <Checkbox
+                name={this.props.inputDefinition.name}
+                checked={value}
+                onChange={this.handleCheckboxChange}
+                value={value} />
+            }>
+          </FormControlLabel>
+          <FormHelperText style={{marginTop: '-12px'}}>
+            {this.props.inputDefinition.description}
+          </FormHelperText>
+        </FormControl >
       );
     }
     if (this.props.inputDefinition.dataType === INPUT_DATETIME) {
       return (
         <div style={{ padding: '15px 0 0' }} className="container">
           <div className="row">
-            <div className="col-sm-6">
+            {/*<div className="col-sm-6">
               <DatePicker
                 autoOk
                 value={this.state.dateTimeValues.date}
                 onChange={this.handleDateChange}
                 style={{ width: '100%' }}
-                hintText={`${this.props.inputDefinition.description} - date`}
+                helperText={`${this.props.inputDefinition.description} - date`}
                 container="inline" />
             </div>
             <div className="col-sm-6">
               <TimePicker
                 autoOk
                 value={this.state.dateTimeValues.time}
-                hintText={`${this.props.inputDefinition.description} - time`}
+                helperText={`${this.props.inputDefinition.description} - time`}
                 onChange={this.handleTimeChange}
                 textFieldStyle={{ width: '100%' }}
                 format="24hr" />
-            </div>
+            </div>*/}
             <input value={this.props.value} name={this.props.inputDefinition.name} title={this.props.inputDefinition.title} type="hidden" />
           </div>
         </div>
@@ -134,23 +142,24 @@ class WpsProcessFormInput extends Component {
     if (this.props.inputDefinition.selectable) {
       return (
         <div>
-          <SelectField
+          <Select
             multiple
             fullWidth
             className="cy-workflow-input-select-field"
-            value={this.props.value}
-            onChange={this.handleSelectFieldChange}
-            hintText={this.props.inputDefinition.description}
-            floatingLabelText={this.props.inputDefinition.title}>
+            value={(this.props.value)? this.props.value: []}
+            onChange={this.handleSelectChange}
+            helperText={this.props.inputDefinition.description}
+            label={this.props.inputDefinition.title}>
             {this.props.inputDefinition.allowedValues.map((value, i) => {
               return (
                 <MenuItem
                   key={i}
-                  value={value}
-                  primaryText={value} />
+                  value={value}>
+                  {value}
+                </MenuItem>
               );
             })}
-          </SelectField>
+          </Select>
           { this.props.value
             ? this.props.value.map(
               (selectedRegion, i) => <input key={i} type="hidden" name={this.props.inputDefinition.name} value={selectedRegion} />
@@ -168,9 +177,9 @@ class WpsProcessFormInput extends Component {
             name={this.props.inputDefinition.name}
             fullWidth
             value={this.props.value[i]}
-            onChange={this.createHandleTextFieldArrayChangeCallback(i)}
-            hintText={this.props.inputDefinition.description}
-            floatingLabelText={this.props.inputDefinition.title} />
+            onChange={(event) => this.createHandleTextFieldArrayChangeCallback(event, i)}
+            helperText={this.props.inputDefinition.description}
+            label={this.props.inputDefinition.title} />
         );
       });
     }
@@ -180,8 +189,8 @@ class WpsProcessFormInput extends Component {
         fullWidth
         value={this.props.value}
         onChange={this.handleTextFieldChange}
-        hintText={this.props.inputDefinition.description}
-        floatingLabelText={this.props.inputDefinition.title} />
+        helperText={this.props.inputDefinition.description}
+        label={this.props.inputDefinition.title} />
     );
   }
 
@@ -196,4 +205,4 @@ class WpsProcessFormInput extends Component {
   }
 }
 
-export {WpsProcessFormInput};
+export default WpsProcessFormInput;

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import ol from 'openlayers';
 import OLComponent from '../ol-component';
 
@@ -13,7 +14,7 @@ export default class Tile extends OLComponent {
       layer: this.layer
     }
   }
-  
+
   componentDidMount() {
     this.context.map.addLayer(this.layer);
   }
@@ -23,9 +24,9 @@ Tile.propTypes = {
 }
 
 Tile.contextTypes = {
-  map: React.PropTypes.instanceOf(ol.Map)
+  map: PropTypes.instanceOf(ol.Map)
 }
 
 Tile.childContextTypes = {
-  layer: React.PropTypes.instanceOf(ol.layer.Tile)
+  layer: PropTypes.instanceOf(ol.layer.Tile)
 }

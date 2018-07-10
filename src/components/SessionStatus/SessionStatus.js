@@ -1,11 +1,18 @@
 import React, {Component} from 'react';
-import SelectField from 'material-ui/SelectField';
-import {List, ListItem } from 'material-ui/List';
-import Subheader from 'material-ui/Subheader';
-import MenuItem from 'material-ui/MenuItem';
-import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
-import GroupIcon from 'material-ui/svg-icons/social/group';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import Select from'@material-ui/core/Select';
+import Avatar from '@material-ui/core/Avatar';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListSubheader from '@material-ui/core/ListSubheader';
+import Typography from'@material-ui/core/Typography';
+import MenuItem from'@material-ui/core/MenuItem';
+import TextField from'@material-ui/core/TextField';
+import Button from'@material-ui/core/Button';
+import Group from '@material-ui/icons/Group';
+import { NotificationManager } from 'react-notifications';
 
 export const PROVIDER_ZIGGURAT = 'PROVIDER_ZIGGURAT';
 export const PROVIDER_ESGF = 'PROVIDER_ESGF';
@@ -29,100 +36,150 @@ const PROVIDERS = [
   */
 ];
 
-export default class SessionStatus extends Component {
+const styles = theme => ({
+  selectField: {
+    marginBottom: '5px',
+    marginTop: '5px'
+  },
+  textField: {
+    marginBottom: '5px',
+    marginTop: '5px'
+  },
+  button: {
+    marginTop: '10px'
+  }
+});
 
-  static propTypes = {
-    sessionStatus: React.PropTypes.object.isRequired,
-    makeZigguratLoginRequest: React.PropTypes.func.isRequired,
-    logout: React.PropTypes.func.isRequired
-  };
+export default withStyles(styles)(
+  class SessionStatus extends Component {
 
-  constructor (props) {
-    super(props);
-    this.logout = this.logout.bind(this);
-    this.state = {
-      provider: PROVIDER_ZIGGURAT,
-      username: '',
-      password: '',
-      ogiginalState: 'empty string'
+    static propTypes = {
+      sessionStatus: PropTypes.object.isRequired,
+      makeZigguratLoginRequest: PropTypes.func.isRequired,
+      logout: PropTypes.func.isRequired
     };
+
+    constructor (props) {
+      super(props);
+      this.logout = this.logout.bind(this);
+      this.state = {
+        provider: PROVIDER_ZIGGURAT,
+        username: '',
+        password: ''
+      };
+    }
+
+    logout() {
+      this.props.logout();
+    }
+
+    makeUserCard () {
+      const { classes } = this.props;
+      return (
+        <div>
+          <Typography variant='display1' gutterBottom>
+            Logged in as "{this.props.sessionStatus.user.username}"
+          </Typography>
+          <TextField
+            disabled
+            fullWidth
+            className={classes.textField}
+            value={this.props.sessionStatus.user.username}
+            label="Username"/>
+          <TextField
+            disabled
+            fullWidth
+            className={classes.textField}
+            value={this.props.sessionStatus.user.email}
+            label="Email"/>
+          <List fullWidth>
+            <ListSubheader style={{'paddingLeft': '0'}}>
+              <Typography variant="subheading" gutterBottom>Access groups: </Typography>
+            </ListSubheader>
+            {this.props.sessionStatus.user.groups.map((group, i) =>
+              <ListItem button key={i}>
+                <Avatar>
+                  <Group />
+                </Avatar>
+                <ListItemText primary={group} />
+              </ListItem>
+            )}
+          </List>
+          <Button variant="contained" style={{marginTop: '10px'}} id="cy-logout-btn" onClick={this.logout} color="primary">
+            Logout
+          </Button>
+        </div>
+      );
+    }
+
+    submit = () => {
+      if (this.state.username.length && this.state.password.length) {
+        this.props.makeZigguratLoginRequest(this.state.username, this.state.password);
+      }else {
+        NotificationManager.warning(`Please provide a username and password before submitting login form.`, 'Warning', 10000);
+      }
+    };
+
+    makeLoginForm () {
+      const { classes } = this.props;
+      return (
+        <form>
+          <Typography variant='display1' gutterBottom>
+            Login
+          </Typography>
+          <Select
+            id="cy-login-provider-select"
+            className={classes.selectField}
+            label="Login Authority"
+            value={this.state.provider}
+            onChange={
+              (event, index) => this.setState({provider: event.target.value})}
+            fullWidth>
+            {
+              PROVIDERS.map(provider =>
+                <MenuItem value={provider.provider_name}>
+                  {provider.display_text}
+                </MenuItem>
+              )
+            }
+          </Select>
+          <TextField
+            id="cy-login-user-tf"
+            className={classes.textField}
+            label="Username"
+            placeholder="Type your username"
+            value={this.state.username}
+            onChange={
+              (event, value) => this.setState({username: event.target.value})}
+            fullWidth />
+          <TextField
+            id="cy-login-password-tf"
+            className={classes.textField}
+            value={this.state.password}
+            onChange={
+              (event) => this.setState({password: event.target.value})}
+            label="Password"
+            placeholder="Type your password"
+            type="password"
+            fullWidth />
+          <Button
+            className={classes.button}
+            variant="contained"
+            id="cy-login-btn"
+            onClick={this.submit}
+            color="primary">
+            Login
+          </Button>
+        </form>
+      );
+    }
+
+    render () {
+      return (
+        <div className="sessionstatus">
+          {this.props.sessionStatus.user.authenticated ? this.makeUserCard() : this.makeLoginForm()}
+        </div>
+      );
+    }
   }
-
-  logout() {
-    this.props.logout();
-  }
-
-  makeUserCard () {
-    return (
-      <div>
-        <h3>Logged in as "{this.props.sessionStatus.user.username}"</h3>
-        <TextField
-          fullWidth={true}
-          disabled={true}
-          value={this.props.sessionStatus.user.username}
-          hintText="Username"
-          floatingLabelText="Username"/>
-        <TextField
-          disabled={true}
-          fullWidth={true}
-          value={this.props.sessionStatus.user.email}
-          hintText="Email"
-          floatingLabelText="Email"/>
-        <List fullWidth={true}>
-          <Subheader style={{'paddingLeft': '0'}}>Access groups</Subheader>
-          {this.props.sessionStatus.user.groups.map((group, i) =>
-            <ListItem
-              key={i}
-              leftIcon={<GroupIcon />}
-              primaryText={group} />
-          )}
-        </List>
-        <RaisedButton style={{marginTop: '10px'}} id="cy-logout-btn" onTouchTap={this.logout} label="Logout" primary />
-      </div>
-    );
-  }
-
-  handleProviderChange = (event, index, value) => this.setState({provider: value});
-  handleUsernameChange = (event, value) => this.setState({username: value});
-  handlePasswordChange = (event, value) => this.setState({password: value});
-
-  submit = () => {
-    console.log('submitting login %o', this.state);
-    this.props.makeZigguratLoginRequest(this.state.username, this.state.password);
-  };
-
-  makeLoginForm () {
-    return (
-      <div>
-        <SelectField
-          id="cy-login-provider-sf"
-          floatingLabelText="Login Authority"
-          value={this.state.provider}
-          onChange={this.handleProviderChange}>
-          { PROVIDERS.map(provider => <MenuItem value={provider.provider_name} primaryText={provider.display_text} /> ) }
-        </SelectField>
-        <br />
-        <TextField
-          id="cy-login-user-tf"
-          value={this.state.username}
-          onChange={this.handleUsernameChange} hintText="Username" />
-        <br />
-        <TextField
-          id="cy-login-password-tf"
-          value={this.state.password}
-          onChange={this.handlePasswordChange}
-          hintText="Password"
-          type="password" /><br />
-        <RaisedButton id="cy-login-btn"  onTouchTap={this.submit} label="Login" primary />
-      </div>
-    );
-  }
-
-  render () {
-    return (
-      <div className="sessionstatus">
-        {this.props.sessionStatus.user.authenticated ? this.makeUserCard() : this.makeLoginForm()}
-      </div>
-    );
-  }
-}
+)

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import moment from 'moment';
 import { NotificationManager } from 'react-notifications';
 import * as constants from '../../constants';
@@ -8,36 +9,43 @@ import StatusElement from './StatusElement';
 import LoadingScreen from './../LoadingScreen';
 import ProcessListItem from './ProcessListItem';
 import PersistResultDialog from './PersistResultDialog';
-import Dialog from 'material-ui/Dialog';
-import {List, ListItem} from 'material-ui/List';
-import Subheader from 'material-ui/Subheader';
-import Paper from 'material-ui/Paper';
-import IconMenu from 'material-ui/IconMenu';
-import MenuItem from 'material-ui/MenuItem';
-import {grey400, darkBlack} from 'material-ui/styles/colors';
-import IconButton from 'material-ui/IconButton';
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-import RaisedButton from 'material-ui/RaisedButton';
-import RefreshIcon from 'material-ui/svg-icons/navigation/refresh';
-import FileIcon from 'material-ui/svg-icons/editor/insert-drive-file';
-import LogIcon from 'material-ui/svg-icons/action/receipt';
-import ExpandableIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-down';
-import VisualizeIcon from 'material-ui/svg-icons/image/remove-red-eye';
+import Dialog from'@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import List from'@material-ui/core/List';
+import ListSubheader from'@material-ui/core/ListSubheader';
+import ListItemIcon from'@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import Paper from'@material-ui/core/Paper';
+import MenuItem from'@material-ui/core/MenuItem';
+import Button from'@material-ui/core/Button';
+import RefreshIcon from '@material-ui/icons/Refresh';
+import FileIcon from '@material-ui/icons/InsertDriveFile';
+import LogIcon from '@material-ui/icons/Receipt';
+import VisualizeIcon from '@material-ui/icons/RemoveRedEye';
+import Menu from '@material-ui/core/Menu';
+import IconButton from'@material-ui/core/IconButton';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Typography from '@material-ui/core/Typography';
+import CollapseNestedList from '../CollapseNestedList';
 
 class ProcessMonitoring extends React.Component {
   static propTypes = {
-    addDatasetsToVisualize: React.PropTypes.func.isRequired,
-    selectCurrentDisplayedDataset: React.PropTypes.func.isRequired,
-    monitor: React.PropTypes.object.isRequired,
-    monitorActions: React.PropTypes.object.isRequired,
-    project: React.PropTypes.object.isRequired,
-    sessionManagement: React.PropTypes.object.isRequired
+    addDatasetsToVisualize: PropTypes.func.isRequired,
+    selectCurrentDisplayedDataset: PropTypes.func.isRequired,
+    monitor: PropTypes.object.isRequired,
+    monitorActions: PropTypes.object.isRequired,
+    project: PropTypes.object.isRequired,
+    sessionManagement: PropTypes.object.isRequired
   };
 
   constructor (props) {
     super(props);
     this.loop = null;
     this.state = {
+      anchor: null,
       logDialogArray: [],
       logDialogOpened: false,
       persistDialogOutput: {},
@@ -105,6 +113,7 @@ class ProcessMonitoring extends React.Component {
 
   _onVisualiseDatasets (httpURLArray, aggregate = false) {
     if(httpURLArray.length){
+      this.onMenuClosed();
       this.props.monitorActions.visualizeTemporaryResult(httpURLArray, aggregate);
       this.setState({
         loadingScreen: <LoadingScreen />
@@ -113,6 +122,7 @@ class ProcessMonitoring extends React.Component {
   }
 
   _onShowLogDialog (log) {
+    this.onMenuClosed();
     this.setState({
       logDialogOpened: true,
       logDialogArray: log
@@ -144,7 +154,18 @@ class ProcessMonitoring extends React.Component {
     });
   }
 
+  onMenuClosed = event => {
+    this.setState({ anchor: null });
+    if(event) event.stopPropagation();
+  };
+
+  onMenuClicked = event => {
+    this.setState({ anchor: event.currentTarget });
+    event.stopPropagation();
+  };
+
   render () {
+    const { anchor } = this.state;
     let mainComponent;
     // Ensure pagination component doesn't get destroyed or we lost pageIndex and perPageIndex values that are in the component
     let pagination =
@@ -158,12 +179,9 @@ class ProcessMonitoring extends React.Component {
         <Loader name="wps jobs" />;
     } else {
       if (this.props.monitor.jobs.items.length && this.props.monitor.jobs.count) {
-        // Backend Phoenix pagination now
-        // let start = (this.state.pageNumber - 1) * this.state.numberPerPage;
-        // let paginated = this.props.monitor.jobs.items.slice(start, start + this.state.numberPerPage);
         mainComponent =
           <List>
-            <Subheader>Launched Jobs</Subheader>
+            <ListSubheader>Launched Jobs</ListSubheader>
             {this.props.monitor.jobs.items.map((x, i) => {
 
               if(x.status === null ||
@@ -184,14 +202,7 @@ class ProcessMonitoring extends React.Component {
               }else {
                 if (x.process_id === __PAVICS_RUN_WORKFLOW_IDENTIFIER__) {
                   //Threat FAILED and SUCCESSFULL workflow (both are expandable)
-                  let tasks = [];
-                  let logMenu = <MenuItem
-                    id="cy-logs-item"
-                    primaryText="Show Logs"
-                    onTouchTap={(event) => this._onShowLogDialog(x.log)}
-                    leftIcon={<LogIcon />}/>;
-
-                  tasks = x.tasks;
+                  let tasks = x.tasks;
 
                   // If an output is a json array of netcdf urls, we must generate new output for every listed url
                   tasks.forEach(task => {
@@ -244,141 +255,185 @@ class ProcessMonitoring extends React.Component {
                     });
                   });
 
+                  let logMenu = null;
                   if(x.status === constants.JOB_SUCCESS_STATUS) {
                     let LogFileURL = x["response_to_json"]['wps:ExecuteResponse']['wps:ProcessOutputs'][0]['wps:Output'][1]['wps:Reference'][0]['$']['xlink:href'];
                     logMenu = <MenuItem
                       id="cy-logs-item"
-                      primaryText="Browse Log File"
-                      onTouchTap={(event) => window.open(LogFileURL, '_blank')}
-                      leftIcon={<FileIcon />}/>
+                      onClick={(event) => window.open(LogFileURL, '_blank')}>
+                      <ListItemIcon>
+                        <FileIcon />
+                      </ListItemIcon>
+                      <ListItemText inset primary="Browse Log File" />
+                    </MenuItem>
+                  }else {
+                    logMenu = <MenuItem
+                      id="cy-logs-item"
+                      onClick={(event) => this._onShowLogDialog(x.log)}>
+                      <ListItemIcon>
+                        <LogIcon />
+                      </ListItemIcon>
+                      <ListItemText inset primary="Show Logs" />
+                    </MenuItem>
                   }
 
-                  return <ListItem
-                    className={`cy-monitoring-list-item cy-monitoring-level-0`}
-                    key={i}
-                    primaryText={(x.name && x.name.length)? x.name: `${x.title}: ${x.abstract}`}
-                    secondaryText={
-                      <span style={{color: darkBlack}}>
-                        <span>Launched on <strong>{moment(x.created).format(constants.PAVICS_DATE_FORMAT)}</strong> using provider <strong>{x.service}</strong>.</span><br/>
-                        <StatusElement job={x} />, <strong>Duration: </strong>{x.duration}
-                      </span>
-                    }
-                    secondaryTextLines={2}
-                    rightIconButton={
-                      <IconMenu iconButtonElement={
-                        <IconButton
-                          className="cy-actions-btn"
-                          touch={true}
-                          tooltipPosition="bottom-left">
-                          <MoreVertIcon color={grey400}/>
-                        </IconButton>
-                      }>
-                        <MenuItem
-                          id="cy-status-item"
-                          primaryText="Browse XML Status File"
-                          onTouchTap={(event) => window.open(x.status_location, '_blank')}
-                          leftIcon={<FileIcon />}/>
-                        {logMenu}
-                      </IconMenu>
-                    }
-                    initiallyOpen={false}
-                    primaryTogglesNestedList={true}
-                    autoGenerateNestedIndicator={true}
-                    leftIcon={<ExpandableIcon />}
-                    onNestedListToggle={ (event) => {
-
+                  return (
+                    <CollapseNestedList
+                      key={i}
+                      rootListItemClass={`cy-monitoring-list-item cy-monitoring-level-0`}
+                      rootListItemText={
+                        <ListItemText
+                          inset
+                          primary={(x.name && x.name.length)? x.name: `${x.title}: ${x.abstract}`}
+                          secondary={
+                            <span>
+                              <span>Launched on <strong>{moment(x.created).format(constants.PAVICS_DATE_FORMAT)}</strong> using provider <strong>{x.service}</strong>.</span><br/>
+                              <StatusElement job={x} />, <strong>Duration: </strong>{x.duration}
+                            </span>
+                          }/>
                       }
-                    }
-                    nestedItems={
-                      tasks.map((task, j) => {
-                        let taskName = Object.keys(task)[0];
-                        let parrallelTasks = task[taskName];
-                        if(parrallelTasks.length <= 1){
-                          let taskDetails = parrallelTasks[0];
-                          taskDetails.title = taskName;
-                          taskDetails.abstract = "";
-                          taskDetails.progress = 100;
-                          return (
-                            <ProcessListItem
+                      rootListItemSecondaryActions={
+                        <ListItemSecondaryAction >
+                          <IconButton
+                            className="cy-actions-btn"
+                            aria-label="Actions"
+                            aria-owns={anchor ? "ouput-menu-actions" : null}
+                            aria-haspopup="true"
+                            onClick={this.onMenuClicked}>
+                            <MoreVertIcon />
+                          </IconButton>
+                          <Menu
+                            id="ouput-menu-actions"
+                            anchorEl={anchor}
+                            open={Boolean(anchor)}
+                            onClose={this.onMenuClosed}
+                            PaperProps={{
+                              style: {
+                                width: 200
+                              },
+                            }}>
+                            <MenuItem
+                              id="cy-status-item"
+                              onClick={(event) => {
+                                this.onMenuClosed();
+                                window.open(x.status_location, '_blank');
+                              }}>
+                              <ListItemIcon>
+                                <FileIcon />
+                              </ListItemIcon>
+                              <ListItemText inset primary="Browse XML Status" />
+                            </MenuItem>
+                            {logMenu}
+                          </Menu>
+                        </ListItemSecondaryAction>
+                      }>
+                      {
+                        tasks.map((task, j) => {
+                          let taskName = Object.keys(task)[0];
+                          let parrallelTasks = task[taskName];
+                          if (parrallelTasks.length <= 1) {
+                            let taskDetails = parrallelTasks[0];
+                            taskDetails.title = taskName;
+                            taskDetails.abstract = "";
+                            taskDetails.progress = 100;
+                            return <ProcessListItem
                               indentationLevel={1}
                               isWorkflowTask={true}
                               key={j}
                               job={taskDetails}
-                              onShowLogDialog={this._onShowLogDialog}
                               onShowPersistDialog={this._onShowPersistDialog}
-                              onVisualiseDatasets={this._onVisualiseDatasets} />
-                          );
-                        }else{
-                          let completedTasks = parrallelTasks.filter(x => x.status === constants.JOB_SUCCESS_STATUS);
-                          let visualizableOutputs = [];
-                          parrallelTasks.forEach((task)=> {
-                            if(task.outputs) {
-                              task.outputs.forEach((output) => {
-                                if(output.mimeType === 'application/x-netcdf') {
-                                  visualizableOutputs.push(output.reference);
+                              onVisualiseDatasets={this._onVisualiseDatasets}/>;
+                          } else {
+                            let completedTasks = parrallelTasks.filter(x => x.status === constants.JOB_SUCCESS_STATUS);
+                            let visualizableOutputs = [];
+                            parrallelTasks.forEach((task)=> {
+                              if (task.outputs) {
+                                task.outputs.forEach((output) => {
+                                  if (output.mimeType === 'application/x-netcdf') {
+                                    visualizableOutputs.push(output.reference);
+                                  }
+                                });
+                              }
+                            });
+                            // TODO Visualize all for subtasks
+                            return (
+                              <CollapseNestedList
+                                key={j}
+                                rootListItemStyle={{marginLeft: "18px"}}
+                                rootListItemClass={`cy-monitoring-list-item cy-monitoring-level-parallel`}
+                                rootListItemText={
+                                  <ListItemText inset
+                                    primary={taskName}
+                                    secondary={
+                                      <p>
+                                        Parallel tasks completed with success: <strong>{completedTasks.length}
+                                        / {parrallelTasks.length}</strong>
+                                      </p>
+                                    }/>
                                 }
-                              });
-                            }
-                          });
-                          // TODO Visualize all for subtasks
-                          return  (
-                          <ListItem
-                            className={`cy-monitoring-list-item cy-monitoring-level-parallel`}
-                            key={j}
-                            primaryText={taskName}
-                            secondaryText={
-                              <p>
-                                Parallel tasks completed with success: <strong>{completedTasks.length} / {parrallelTasks.length}</strong>
-                              </p>
-                            }
-                            secondaryTextLines={2}
-                            initiallyOpen={false}
-                            primaryTogglesNestedList={true}
-                            leftIcon={<ExpandableIcon />}
-                            rightIcon={
-                              <IconMenu iconButtonElement={
-                                <IconButton
-                                  className="cy-actions-btn"
-                                  touch={true}
-                                  tooltipPosition="bottom-left">
-                                  <MoreVertIcon color={grey400}/>
-                                </IconButton>
-                              }>
-                                <MenuItem
-                                  id="cy-visualize-all-agg-item"
-                                  primaryText="Visualize All (Aggregated)"
-                                  disabled={!visualizableOutputs.length}
-                                  onTouchTap={(event) => this._onVisualiseDatasets(visualizableOutputs, true)}
-                                  leftIcon={<VisualizeIcon />}/>
-                                <MenuItem
-                                  id="cy-visualize-all-split-item"
-                                  primaryText="Visualize All (Splitted)"
-                                  disabled={!visualizableOutputs.length}
-                                  onTouchTap={(event) => this._onVisualiseDatasets(visualizableOutputs, false)}
-                                  leftIcon={<VisualizeIcon />}/>
-                              </IconMenu>
-                            }
-                            nestedItems={
-                              parrallelTasks.map((task, k) => {
-                                task.title = taskName;
-                                task.abstract = task.data_id;
-                                return <ProcessListItem
-                                  indentationLevel={2}
-                                  isWorkflowTask={true}
-                                  key={k}
-                                  job={task}
-                                  onShowLogDialog={this._onShowLogDialog}
-                                  onShowPersistDialog={this._onShowPersistDialog}
-                                  onVisualiseDatasets={this._onVisualiseDatasets} />
-                              })
-                            }
-                            />
-                          );
-                        }
-
-                      })
-                    }
-                  />;
+                                rootListItemSecondaryActions={
+                                  <ListItemSecondaryAction>
+                                    <IconButton
+                                      className="cy-actions-btn"
+                                      aria-label="Actions"
+                                      aria-owns={anchor ? "ouput-menu-actions" : null}
+                                      aria-haspopup="true"
+                                      onClick={this.onMenuClicked}>
+                                      <MoreVertIcon />
+                                    </IconButton>
+                                    <Menu
+                                      id="ouput-menu-actions"
+                                      anchorEl={anchor}
+                                      open={Boolean(anchor)}
+                                      onClose={this.onMenuClosed}
+                                      PaperProps={{
+                                        style: {
+                                          width: 200
+                                        },
+                                      }}>
+                                      <MenuItem
+                                        id="cy-visualize-all-agg-item"
+                                        disabled={!visualizableOutputs.length}
+                                        onClick={(event) => this._onVisualiseDatasets(visualizableOutputs, true)}>
+                                        <ListItemIcon>
+                                          <VisualizeIcon />
+                                        </ListItemIcon>
+                                        <ListItemText inset primary="Visualize All" secondary="Aggregated"/>
+                                      </MenuItem>
+                                      <MenuItem
+                                        id="cy-visualize-all-split-item"
+                                        primaryText="Visualize All (Splitted)"
+                                        disabled={!visualizableOutputs.length}
+                                        onClick={(event) => this._onVisualiseDatasets(visualizableOutputs, false)}>
+                                        <ListItemIcon>
+                                          <VisualizeIcon />
+                                        </ListItemIcon>
+                                        <ListItemText inset primary="Visualize All" secondary="Splitted"/>
+                                      </MenuItem>
+                                    </Menu>
+                                  </ListItemSecondaryAction>
+                                }>
+                                {
+                                  parrallelTasks.map((task, k) => {
+                                    task.title = taskName;
+                                    task.abstract = task.data_id;
+                                    return <ProcessListItem
+                                      indentationLevel={2}
+                                      isWorkflowTask={true}
+                                      key={k}
+                                      job={task}
+                                      onShowLogDialog={this._onShowLogDialog}
+                                      onShowPersistDialog={this._onShowPersistDialog}
+                                      onVisualiseDatasets={this._onVisualiseDatasets}/>;
+                                  })
+                                }
+                              </CollapseNestedList>
+                            );
+                          }
+                        })
+                      }
+                    </CollapseNestedList>
+                  );
                 } else {
                   //Threat  SUCCESSFULL process
                   let job = {
@@ -462,7 +517,7 @@ class ProcessMonitoring extends React.Component {
       } else {
         mainComponent =
             <List>
-              <Subheader>No results found.</Subheader>
+              <ListSubheader>No results found.</ListSubheader>
             </List>;
       }
     }
@@ -475,30 +530,36 @@ class ProcessMonitoring extends React.Component {
             {mainComponent}
             {pagination}
           </Paper>
-          <RaisedButton
-            onClick={(event) => this._onRefreshResults()}
-            label="Refresh"
-            icon={<RefreshIcon />}
-            style={{marginTop: 20}} />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={(event) => this._onRefreshResults()}>
+            <RefreshIcon />Refresh
+          </Button>
+
           <Dialog
-            title="Log informations"
-            modal={false}
             open={this.state.logDialogOpened}
-            onRequestClose={this._closeLogDialog}
-            actions={
-              <RaisedButton
-                label="Close"
-                primary={false}
-                keyboardFocused={true}
-                onTouchTap={this._closeLogDialog} />
-            }
-            autoScrollBodyContent={true}>
-            {
-              (this.state.logDialogArray.length) ?
-              this.state.logDialogArray.map((log, i) => {
-                return <p key={i}>{log}</p>
-              }) : null
-            }
+            onClose={this._closeLogDialog}>
+            <DialogTitle>
+              Log informations
+            </DialogTitle>
+            <DialogContent>
+              <Typography>
+                {
+                  (this.state.logDialogArray.length) ?
+                    this.state.logDialogArray.map((log, i) => {
+                      return <p key={i}>{log}</p>
+                    }) : null
+                }
+              </Typography>
+            </DialogContent>
+            <DialogActions>
+              <Button variant="contained"
+                      color="secondary"
+                      onClick={this._closeLogDialog}>
+                Close
+                </Button>
+            </DialogActions>
           </Dialog>
           <PersistResultDialog
             output={this.state.persistDialogOutput}

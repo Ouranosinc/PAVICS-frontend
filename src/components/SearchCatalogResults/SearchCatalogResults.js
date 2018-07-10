@@ -1,38 +1,46 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import moment from 'moment';
 import { NotificationManager } from 'react-notifications';
 import * as constants from '../../constants';
 import Loader from './../../components/Loader';
 import Pagination from './../../components/Pagination';
-import {Alert} from 'react-bootstrap';
-import {List, ListItem} from 'material-ui/List';
-import Checkbox from 'material-ui/Checkbox';
-import Subheader from 'material-ui/Subheader';
-import Paper from 'material-ui/Paper';
-import {grey400, darkBlack} from 'material-ui/styles/colors';
-import IconButton from 'material-ui/IconButton';
-import InfoIcon from 'material-ui/svg-icons/action/info';
-import RaisedButton from 'material-ui/RaisedButton';
-import AddIcon from 'material-ui/svg-icons/content/add-box';
+import List from'@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListSubheader from'@material-ui/core/ListSubheader';
+import Checkbox from'@material-ui/core/Checkbox';
+import Paper from'@material-ui/core/Paper';
+import IconButton from'@material-ui/core/IconButton';
+import InfoIcon from '@material-ui/icons/Info';
+import Button from'@material-ui/core/Button';
+import AddIcon from '@material-ui/icons/Add';
+import DatasetMenuActions from './../DatasetMenuActions';
 
 export class SearchCatalogResults extends React.Component {
   static propTypes = {
-    clickTogglePanel: React.PropTypes.func.isRequired,
-    projectAPIActions: React.PropTypes.object.isRequired,
-    research: React.PropTypes.object.isRequired
+    clickTogglePanel: PropTypes.func.isRequired,
+    project: PropTypes.object.isRequired,
+    projectAPIActions: PropTypes.object.isRequired,
+    research: PropTypes.object.isRequired,
+    datasetAPIActions: PropTypes.object.isRequired
   };
 
   constructor (props) {
     super(props);
     this._onAddCheckedDatasetsToProject = this._onAddCheckedDatasetsToProject.bind(this);
-    this._onCheckedDataset = this._onCheckedDataset.bind(this);
+    this._onToggleCheckDataset = this._onToggleCheckDataset.bind(this);
     this._onPageChanged = this._onPageChanged.bind(this);
     this.state = {
       checkedDatasets: [],
       filesCount: 0,
       confirm: false,
       pageNumber: 1,
-      numberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX]
+      numberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX],
+      infoOpened: false,
+      infoDataset: {}
     };
   }
 
@@ -46,6 +54,9 @@ export class SearchCatalogResults extends React.Component {
         filesCount: filesCount
       });
     }
+    if(nextProps.research.selectedFacets && nextProps.research.selectedFacets  !== this.props.research.selectedFacets) {
+      this.setState({checkedDatasets: []});
+    }
   }
 
   _onPageChanged (pageNumber, numberPerPage) {
@@ -55,24 +66,21 @@ export class SearchCatalogResults extends React.Component {
     });
   }
 
-  _onCheckedDataset (event) {
-    let dataset = this.props.research.pavicsDatasets.items.find(x => x.dataset_id === event.target.value);
-    let index = this.state.checkedDatasets.findIndex(x => x.dataset_id === event.target.value);
+  _onToggleCheckDataset (value) {
+    let dataset = this.props.research.pavicsDatasets.items.find(x => x.dataset_id === value);
+    let index = this.state.checkedDatasets.findIndex(x => x.dataset_id === value);
     let oldDatasets = this.state.checkedDatasets;
     if (dataset) {
-      if (event.target.checked) {
-        if (index === -1) {
-          this.setState({
-            checkedDatasets: oldDatasets.concat([dataset])
-          });
-        }
-      } else {
-        if (index > -1) {
-          oldDatasets.splice(index, 1);
-          this.setState({
-            checkedDatasets: oldDatasets
-          });
-        }
+      if (index === -1) {
+        this.setState({
+          checkedDatasets: oldDatasets.concat([dataset])
+        });
+      }
+      if (index > -1) {
+        oldDatasets.splice(index, 1);
+        this.setState({
+          checkedDatasets: oldDatasets
+        });
       }
     }
   }
@@ -97,6 +105,19 @@ export class SearchCatalogResults extends React.Component {
     });
   }
 
+  onInfoButtonClicked = (dataset) => {
+    this.setState({
+      infoOpened: true,
+      infoDataset: dataset});
+  };
+
+  onInfoModalClosed = () => {
+    this.setState({
+      infoOpened: false,
+      infoDataset: {}
+    });
+  };
+
   render () {
     // console.log("render SearchCatalogResults");
     let mainComponent;
@@ -114,41 +135,34 @@ export class SearchCatalogResults extends React.Component {
           <div id="cy-search-results">
             <Paper style={{ marginTop: 20 }}>
               <List>
-                <Subheader id="cy-search-results-count" inset={true}>Found <strong>{this.state.filesCount}</strong> total files in <strong>{this.props.research.pavicsDatasets.items.length}</strong> results</Subheader>
+                <ListSubheader id="cy-search-results-count" inset={true}>Found <strong>{this.state.filesCount}</strong> total files in <strong>{this.props.research.pavicsDatasets.items.length}</strong> results</ListSubheader>
                 {paginated.map((x, i) =>
                   <ListItem
+                    button
+                    onClick={(event) => this._onToggleCheckDataset(x.dataset_id)}
                     className="cy-dataset-result-item"
-                    key={i}
-                    leftCheckbox={<Checkbox value={x.dataset_id} onCheck={this._onCheckedDataset} />}
-                    primaryText={`${x.aggregate_title} (${x.fileserver_url.length} file${(x.fileserver_url.length > 1)? 's': ''})` }
-                    secondaryText={
-                      <p>
-                        <span style={{color: darkBlack}}><strong>Variable: </strong> {x.variable_long_name}</span><br />
-                        <strong>Keywords: </strong>{x.keywords.join(', ')}
-                      </p>
-                    }
-                    secondaryTextLines={2}
-                    rightIconButton={
-                      <IconButton
-                        touch={true}
-                        tooltip={<div>
-                          <strong>Dataset: </strong>{x.dataset_id}<br />
-                          <strong>Subject: </strong>{x.subject}<br />
-                          <strong>Category: </strong>{x.category}<br />
-                          <strong>Experiment: </strong>{x.experiment}<br />
-                          <strong>Variable: </strong>{x.variable}<br />
-                          <strong>Project: </strong>{x.project}<br />
-                          <strong>Institute: </strong>{x.institute}<br />
-                          <strong>Model: </strong>{x.model}<br />
-                          <strong>Units: </strong>{x.units}<br />
-                          <strong>Frequency: </strong>{x.frequency}<br />
-                          <strong>Content type: </strong>{x.content_type}<br />
-                        </div>}
-                        tooltipPosition="bottom-left">
-                        <InfoIcon color={grey400} />
-                      </IconButton>
-                    }
-                  />
+                    key={i}>
+                    <ListItemIcon>
+                      <Checkbox checked={this.state.checkedDatasets.findIndex(d => d.dataset_id === x.dataset_id) > -1} />
+                    </ListItemIcon>
+                    <ListItemText
+                      inset
+                      primary={`${x.aggregate_title} (${x.fileserver_url.length} file${(x.fileserver_url.length > 1)? 's': ''})` }
+                      secondary={
+                        <span>
+                          <span><strong>Variable: </strong> {x.variable_long_name}</span><br />
+                          <strong>Keywords: </strong>{x.keywords.join(', ')}
+                        </span>
+                      }/>
+                    <DatasetMenuActions
+                      addDatasetsToVisualize={this.props.addDatasetsToVisualize}
+                      selectCurrentDisplayedDataset={this.props.selectCurrentDisplayedDataset}
+                      isRemoveFromProjectEnabled={false}
+                      dataset={x}
+                      disabledVisualize={false}
+                      datasetAPIActions={this.props.datasetAPIActions}
+                      project={this.props.project}/>
+                  </ListItem>
                 )}
               </List>
               <Pagination
@@ -156,28 +170,30 @@ export class SearchCatalogResults extends React.Component {
                 initialPerPageOptionIndex={constants.PER_PAGE_INITIAL_INDEX}
                 perPageOptions={constants.PER_PAGE_OPTIONS}
                 onChange={this._onPageChanged} />
+              <div className="container">
+                <Button variant="contained"
+                        color="primary"
+                        id="cy-add-datasets-btn"
+                        disabled={!this.state.checkedDatasets.length}
+                        onClick={this._onAddCheckedDatasetsToProject}>
+                  <AddIcon /> Add selection(s)
+                </Button>
+              </div>
             </Paper>
-            <RaisedButton
-              id="cy-add-datasets-btn"
-              disabled={!this.state.checkedDatasets.length}
-              onClick={this._onAddCheckedDatasetsToProject}
-              icon={<AddIcon />}
-              label="Add selection(s)"
-              style={{marginTop: '20px'}} />
           </div>;
       } else {
         if (this.props.research.pavicsDatasets.receivedAt) {
           mainComponent =
             <Paper style={{ marginTop: 20 }}>
               <List>
-                <Subheader id="cy-search-no-results-sh">No results found.</Subheader>
+                <ListSubheader id="cy-search-no-results-sh">No results found.</ListSubheader>
               </List>
             </Paper>;
         } else {
           mainComponent =
             <Paper style={{ marginTop: 20 }}>
               <List>
-                <Subheader id="cy-search-no-facets-sh">Select at least one facet to launch dataset's search</Subheader>
+                <ListSubheader id="cy-search-no-facets-sh">Select at least one facet to launch dataset's search</ListSubheader>
               </List>
             </Paper>;
         }

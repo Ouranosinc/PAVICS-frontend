@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import ol from 'openlayers';
 import OLComponent from '../ol-component';
 
@@ -20,7 +21,7 @@ export default class Vector extends OLComponent {
       map: this.context.map
     }
   }
-  
+
   componentDidMount() {
     this.context.map.addLayer(this.layer);
   }
@@ -30,10 +31,10 @@ Vector.propTypes = {
 }
 
 Vector.contextTypes = {
-  map: React.PropTypes.instanceOf(ol.Map)
+  map: PropTypes.instanceOf(ol.Map)
 }
 
 Vector.childContextTypes = {
-  layer: React.PropTypes.instanceOf(ol.layer.Vector),
-  map: React.PropTypes.instanceOf(ol.Map)
+  layer: PropTypes.instanceOf(ol.layer.Vector),
+  map: PropTypes.instanceOf(ol.Map)
 }

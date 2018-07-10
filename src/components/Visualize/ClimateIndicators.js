@@ -1,13 +1,14 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Panel, {PanelHeader} from './../../components/Panel';
 import Table, {TableHeader, TableBody} from './../../components/Table';
 import * as constants from '../../constants';
 class ClimateIndicators extends React.Component {
   static propTypes = {
-    fetchClimateIndicators: React.PropTypes.func.isRequired,
-    climateIndicators: React.PropTypes.object.isRequired,
-    clickTogglePanel: React.PropTypes.func.isRequired,
-    panelControls: React.PropTypes.object.isRequired
+    fetchClimateIndicators: PropTypes.func.isRequired,
+    climateIndicators: PropTypes.object.isRequired,
+    clickTogglePanel: PropTypes.func.isRequired,
+    panelControls: PropTypes.object.isRequired
   }
 
   constructor (props) {

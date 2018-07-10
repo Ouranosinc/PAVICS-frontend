@@ -1,5 +1,6 @@
-import assert from 'assert'
-import React from 'react'
+import assert from 'assert';
+import React from 'react';
+import PropTypes from 'prop-types';
 import {mount, render, shallow} from 'enzyme'
 
 class Fixture extends React.Component {

@@ -1,8 +1,11 @@
-import React from 'react'
+import React from 'react';
+import PropTypes from 'prop-types';
 import classes from './ProjectSelector.scss';
-import MenuItem from 'material-ui/MenuItem';
-import Paper from 'material-ui/Paper';
-import SelectField from 'material-ui/SelectField';
+import MenuItem from'@material-ui/core/MenuItem';
+import Paper from'@material-ui/core/Paper';
+import Select from'@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
 import { NotificationManager } from 'react-notifications';
 
 export class ProjectSelector extends React.Component {
@@ -32,20 +35,25 @@ export class ProjectSelector extends React.Component {
     return (
       <div className={classes['ProjectSelector']}>
         <Paper style={{marginTop: 20}}>
-          <div className="container">
-            <SelectField
-              id="cy-project-selector"
-              fullWidth={true}
-              floatingLabelText="Current project"
-              value={this.props.project.currentProject.id}
-              onChange={(event, index, value) => this._onSetCurrentProject(value)}>
-              {
-                this.props.projectAPI.items.map((project, i) => {
-                  return <MenuItem data-cy-item-project-id={project.id} key={i} value={project.id} primaryText={project.name} />;
-                })
-              }
-            </SelectField>
-          </div>
+          <form className="container">
+            <FormControl fullWidth id='cy-project-selector'>
+              <InputLabel htmlFor="cy-project-selector">Current project</InputLabel>
+              <Select
+                inputProps={{
+                  name: 'cy-project-selector'
+                }}
+                value={this.props.project.currentProject.id}
+                onChange={(event) => this._onSetCurrentProject(event.target.value)}>
+                {
+                  this.props.projectAPI.items.map((project, i) =>
+                    <MenuItem data-cy-item-project-id={project.id} key={i} value={project.id}>
+                      {project.name}
+                    </MenuItem>
+                  )
+                }
+              </Select>
+            </FormControl>
+          </form>
         </Paper>
       </div>
     )

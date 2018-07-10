@@ -1,57 +1,58 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import classes from './Visualize.scss';
-import OLComponent from '../../components/OLComponent';
-import CurrentProjectSnackbar from '../../components/CurrentProjectSnackbar';
-import {PieMenu} from '../PieMenu/PieMenu';
-import TimeSlider from '../../components/TimeSlider';
-import InformationPanel from '../../components/InformationPanel';
-import LayerSwitcher from '../../components/LayerSwitcher';
-import TimeSeriesChart from './../../components/TimeSeriesChart';
-import MapControls from './../../components/MapControls';
+import OLComponent from '../OLComponent';
+import CurrentProjectSnackbar from '../CurrentProjectSnackbar';
+import SpeedDialMenu from '../SpeedDialMenu'
+import TimeSlider from '../TimeSlider';
+import InformationPanel from '../InformationPanel';
+import LayerSwitcher from '../LayerSwitcher';
+import TimeSeriesChart from './../TimeSeriesChart';
+import MapControls from './../MapControls';
 import * as constants from '../../constants';
 import BigColorPalette from '../BigColorPalette/BigColorPalette';
 
 class Visualize extends React.Component {
   static propTypes = {
-    goToSection: React.PropTypes.func.isRequired,
-    project: React.PropTypes.object.isRequired,
+    goToSection: PropTypes.func.isRequired,
+    project: PropTypes.object.isRequired,
     // TODO: Move following into visualize redux module
-    selectMapManipulationMode: React.PropTypes.func.isRequired,
-    selectedDatasetCapabilities: React.PropTypes.object.isRequired,
-    currentDisplayedDataset: React.PropTypes.object.isRequired,
-    currentScalarValue: React.PropTypes.object.isRequired,
-    currentVisualizedDatasets: React.PropTypes.array.isRequired,
-    fetchShapefiles: React.PropTypes.func.isRequired,
-    selectedShapefile: React.PropTypes.object.isRequired,
-    selectedBasemap: React.PropTypes.string.isRequired,
-    selectCurrentDisplayedDataset: React.PropTypes.func.isRequired,
-    selectShapefile: React.PropTypes.func.isRequired,
-    selectBasemap: React.PropTypes.func.isRequired,
-    // fetchFacets: React.PropTypes.func.isRequired,
-    fetchPlotlyData: React.PropTypes.func.isRequired,
-    panelControls: React.PropTypes.object.isRequired,
-    plotlyData: React.PropTypes.object.isRequired,
-    publicShapeFiles: React.PropTypes.array.isRequired,
-    mapManipulationMode: React.PropTypes.string.isRequired,
-    baseMaps: React.PropTypes.array.isRequired,
-    currentDateTime: React.PropTypes.string.isRequired,
-    fetchScalarValue: React.PropTypes.func.isRequired,
-    fetchWMSLayerDetails: React.PropTypes.func.isRequired,
-    fetchWMSLayerTimesteps: React.PropTypes.func.isRequired,
-    selectedWMSLayerTimesteps: React.PropTypes.object.isRequired,
-    selectedWMSLayerDetails: React.PropTypes.object.isRequired,
-    setCurrentDateTime: React.PropTypes.func.isRequired,
-    setSelectedDatasetCapabilities: React.PropTypes.func.isRequired,
-    selectedRegions: React.PropTypes.array.isRequired,
-    selectedColorPalette: React.PropTypes.string.isRequired,
-    selectColorPalette: React.PropTypes.func.isRequired,
-    selectRegion: React.PropTypes.func.isRequired,
-    unselectRegion: React.PropTypes.func.isRequired,
-    resetSelectedRegions: React.PropTypes.func.isRequired,
-    layer: React.PropTypes.any,
-    setVariablePreferenceBoundaries: React.PropTypes.func.isRequired,
-    variablePreferences: React.PropTypes.object.isRequired,
-    testWMSGetMapPermission: React.PropTypes.func.isRequired
+    selectMapManipulationMode: PropTypes.func.isRequired,
+    selectedDatasetCapabilities: PropTypes.object.isRequired,
+    currentDisplayedDataset: PropTypes.object.isRequired,
+    currentScalarValue: PropTypes.object.isRequired,
+    currentVisualizedDatasets: PropTypes.array.isRequired,
+    fetchShapefiles: PropTypes.func.isRequired,
+    selectedShapefile: PropTypes.object.isRequired,
+    selectedBasemap: PropTypes.string.isRequired,
+    selectCurrentDisplayedDataset: PropTypes.func.isRequired,
+    selectShapefile: PropTypes.func.isRequired,
+    selectBasemap: PropTypes.func.isRequired,
+    // fetchFacets: PropTypes.func.isRequired,
+    fetchPlotlyData: PropTypes.func.isRequired,
+    panelControls: PropTypes.object.isRequired,
+    plotlyData: PropTypes.object.isRequired,
+    publicShapeFiles: PropTypes.array.isRequired,
+    mapManipulationMode: PropTypes.string.isRequired,
+    baseMaps: PropTypes.array.isRequired,
+    currentDateTime: PropTypes.string.isRequired,
+    fetchScalarValue: PropTypes.func.isRequired,
+    fetchWMSLayerDetails: PropTypes.func.isRequired,
+    fetchWMSLayerTimesteps: PropTypes.func.isRequired,
+    selectedWMSLayerTimesteps: PropTypes.object.isRequired,
+    selectedWMSLayerDetails: PropTypes.object.isRequired,
+    setCurrentDateTime: PropTypes.func.isRequired,
+    setSelectedDatasetCapabilities: PropTypes.func.isRequired,
+    selectedRegions: PropTypes.array.isRequired,
+    selectedColorPalette: PropTypes.string.isRequired,
+    selectColorPalette: PropTypes.func.isRequired,
+    selectRegion: PropTypes.func.isRequired,
+    unselectRegion: PropTypes.func.isRequired,
+    resetSelectedRegions: PropTypes.func.isRequired,
+    layer: PropTypes.any,
+    setVariablePreferenceBoundaries: PropTypes.func.isRequired,
+    variablePreferences: PropTypes.object.isRequired,
+    testWMSGetMapPermission: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -270,9 +271,6 @@ class Visualize extends React.Component {
   }
 
   render () {
-    let selectModeCallback = (event, value) => {
-      this.props.selectMapManipulationMode(value);
-    };
     return (
       <div>
         <div className={classes['Visualize']}>
@@ -302,9 +300,8 @@ class Visualize extends React.Component {
             setVariablePreferenceBoundaries={this.props.setVariablePreferenceBoundaries}
             variablePreference={this.props.variablePreferences[this.props.currentDisplayedDataset.variable]}
             selectedColorPalette={this.props.selectedColorPalette} />
-          <PieMenu
-            mapPanelStatus={this.state.mapPanelStatus}
-            onToggleMapPanel={this._onToggleMapPanel} />
+          <SpeedDialMenu mapPanelStatus={this.state.mapPanelStatus}
+                         onToggleMapPanel={this._onToggleMapPanel} />
           <div className={classes.left}>
             {
               (this.state.mapPanelStatus[constants.VISUALIZE_INFO_PANEL])
@@ -366,8 +363,9 @@ class Visualize extends React.Component {
               this.state.mapPanelStatus[constants.VISUALIZE_MAP_CONTROLS_PANEL]
                 ? <div className={classes['panel']} style={{clear: 'left'}}>
                   <MapControls
+                    mapManipulationMode={this.props.mapManipulationMode}
                     onToggleMapPanel={this._onToggleMapPanel}
-                    selectMapManipulationMode={selectModeCallback} />
+                    selectMapManipulationMode={this.props.selectMapManipulationMode} />
                 </div> : null
             }
           </div>

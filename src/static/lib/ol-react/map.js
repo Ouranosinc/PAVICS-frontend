@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {findDOMNode} from 'react-dom';
 import ol from 'openlayers';
 import OLComponent from './ol-component';
@@ -57,14 +58,14 @@ export default class Map extends React.Component {
 }
 
 Map.propTypes = {
-  view: React.PropTypes.element.isRequired,
-  children: React.PropTypes.oneOfType([
-    React.PropTypes.arrayOf(React.PropTypes.element),
-    React.PropTypes.element,
+  view: PropTypes.element.isRequired,
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.element),
+    PropTypes.element,
   ]),
-  actions: React.PropTypes.object.isRequired
+  actions: PropTypes.object.isRequired
 }
 
 Map.childContextTypes = {
-  map: React.PropTypes.instanceOf(ol.Map)
+  map: PropTypes.instanceOf(ol.Map)
 }

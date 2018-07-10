@@ -1,8 +1,8 @@
 import React from 'react';
-import DeformWrapper from '../DeformWrapper/DeformWrapper';
+import PropTypes from 'prop-types';
 import * as constants from './../../constants';
-import {InputDefinition} from '../WpsProcessFormInput/InputDefinition';
-import {WpsProcessFormInput} from '../WpsProcessFormInput/WpsProcessFormInput';
+import { WpsProcessFormInput } from '../WpsProcessFormInput';
+import DeformWrapper from '../DeformWrapper';
 
 /*
 Wps Process Form
@@ -39,14 +39,14 @@ const makeUniqueIdentifier = input => {
 
 export default class WpsProcessForm extends React.Component {
   static propTypes = {
-    executeProcess: React.PropTypes.func.isRequired,
-    formId: React.PropTypes.string.isRequired,
-    goToSection: React.PropTypes.func.isRequired,
-    selectedShapefile: React.PropTypes.object.isRequired,
-    currentDisplayedDataset: React.PropTypes.object.isRequired,
-    selectedRegions: React.PropTypes.array.isRequired,
-    workflow: React.PropTypes.object.isRequired,
-    workflowActions: React.PropTypes.object.isRequired
+    executeProcess: PropTypes.func.isRequired,
+    formId: PropTypes.string.isRequired,
+    goToSection: PropTypes.func.isRequired,
+    selectedShapefile: PropTypes.object.isRequired,
+    currentDisplayedDataset: PropTypes.object.isRequired,
+    selectedRegions: PropTypes.array.isRequired,
+    workflow: PropTypes.object.isRequired,
+    workflowActions: PropTypes.object.isRequired
   };
 
   /*
@@ -66,9 +66,8 @@ export default class WpsProcessForm extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
-  componentDidMount () {
+  componentWillMount () {
     this.buildFormData(this.props);
-    this.verifyMeaningfulValues(this.props);
   }
 
   buildFormData (props) {
@@ -80,9 +79,9 @@ export default class WpsProcessForm extends React.Component {
         formData[makeUniqueIdentifier(input)] = input.defaultValue || '';
       }
     });
-    this.state = {
+    this.setState({
       formData: formData
-    };
+    }, this.verifyMeaningfulValues(props));
   }
 
   /*
@@ -174,8 +173,9 @@ export default class WpsProcessForm extends React.Component {
   componentWillReceiveProps (nextProps) {
     if(nextProps.workflow.selectedProcessInputs && this.props.workflow.selectedProcessInputs !== nextProps.workflow.selectedProcessInputs) {
       this.buildFormData(nextProps)
+    } else {
+      this.verifyMeaningfulValues(nextProps, this.props);
     }
-    this.verifyMeaningfulValues(nextProps, this.props);
   }
 
   handleChange (value, uniqueIdentifier) {

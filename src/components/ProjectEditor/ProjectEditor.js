@@ -1,17 +1,22 @@
-import React from 'react'
+import React from 'react';
+import PropTypes from 'prop-types';
 import classes from './ProjectEditor.scss';
 import ConfirmDialog from './../../components/ConfirmDialog';
-import Paper from 'material-ui/Paper';
-import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
-import Checkbox from 'material-ui/Checkbox';
+import Paper from'@material-ui/core/Paper';
+import Button from'@material-ui/core/Button';
+import TextField from'@material-ui/core/TextField';
+import Checkbox from'@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import DeleteIcon from '@material-ui/icons/Delete';
+import SaveIcon from '@material-ui/icons/Save';
+import Typography from '@material-ui/core/Typography';
 
 export class ProjectEditor extends React.Component {
   static propTypes = {
-    project: React.PropTypes.object.isRequired,
-    projectActions: React.PropTypes.object.isRequired,
-    projectAPI: React.PropTypes.object.isRequired,
-    projectAPIActions: React.PropTypes.object.isRequired
+    project: PropTypes.object.isRequired,
+    projectActions: PropTypes.object.isRequired,
+    projectAPI: PropTypes.object.isRequired,
+    projectAPIActions: PropTypes.object.isRequired
   };
 
   constructor(props) {
@@ -93,49 +98,58 @@ export class ProjectEditor extends React.Component {
         <Paper style={{marginTop: 20}}>
           <div className="container">
             <TextField
-              id="cy-project-name-tf"
-              data-cy-project-id={this.props.project.currentProject.id}
-              hintText="Define a name"
+              id='cy-project-name-tf'
+              inputProps={{
+                'data-cy-project-id': this.props.project.currentProject.id
+              }}
+              placeholder="Define a name"
               value={this.state.projectName}
-              fullWidth={true}
-              onChange={(event, value) => this._onSetProjectName(value)}
-              floatingLabelText="Project name" />
+              fullWidth
+              onChange={(event) => this._onSetProjectName(event.target.value)}
+              label="Project name" />
             <TextField
               id="cy-project-description-tf"
-              hintText="Write a project description"
+              placeholder="Write a project description"
               value={this.state.projectDescription}
-              fullWidth={true}
-              multiLine={true}
-              rows={1}
-              rowsMax={7}
-              onChange={(event, value) => this._onSetProjectDescription(value)}
-              floatingLabelText="Project description" />
-            <h4>Project permissions</h4>
-            {
-              this.props.project.currentProject.permissions.map((permission, i) =>
-                <Checkbox
-                  className="cy-project-permission-cb"
-                  disabled
-                  label={permission.toUpperCase()}
-                  checked={true} />
-              )
-            }
+              fullWidth
+              multiline
+              rows="1"
+              rowsMax="4"
+              onChange={(event) => this._onSetProjectDescription(event.target.value)}
+              label="Project description" />
+            <Typography variant="subheading">Project permissions: </Typography>
+            <div style={{width: '100%'}}>
+              {
+                this.props.project.currentProject.permissions.map((permission, i) =>
+                  <FormControlLabel
+                    className="cy-project-permission"
+                    label={permission.toUpperCase()}
+                    control={
+                      <Checkbox
+                        disabled
+                        checked={true} />
+                    }>
+                  </FormControlLabel>
+                )
+              }
+            </div>
+            <Button variant="contained"
+                    id="cy-save-project-btn"
+                    color="primary"
+                    onClick={() => this._onSaveProject()}
+                    disabled={!this.state.projectName || !this.state.projectName.length}>
+              <SaveIcon />Save project properties
+            </Button>
+            <Button variant="contained"
+                    id="cy-delete-project-btn"
+                    onClick={() => this._onDeleteProject()}
+                    color="secondary"
+                    disabled={!this.state.projectName || !this.state.projectName.length}
+                    style={{marginLeft: '20px'}}>
+              <DeleteIcon />Delete project
+            </Button>
           </div>
         </Paper>
-
-        <RaisedButton
-          id="cy-save-project-btn"
-          onClick={() => this._onSaveProject()}
-          label="Save project properties"
-          disabled={!this.state.projectName || !this.state.projectName.length}
-          style={{marginTop: 20}} />
-        <RaisedButton
-          id="cy-delete-project-btn"
-          onClick={() => this._onDeleteProject()}
-          label="Delete project"
-          secondary={true}
-          disabled={!this.state.projectName || !this.state.projectName.length}
-          style={{marginTop: 20, marginLeft: '20px'}} />
         <ConfirmDialog
           isOpen={this.state.confirmDeleteDialogOpened}
           affectedResource={this.props.project.currentProject}

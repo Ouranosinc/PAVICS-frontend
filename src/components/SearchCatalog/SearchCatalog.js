@@ -1,35 +1,40 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Loader from './../../components/Loader';
 import { NotificationManager } from 'react-notifications';
 import SearchCatalogResults from './../../components/SearchCatalogResults';
 import CriteriaSelection from './../../components/CriteriaSelection';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
-import Paper from 'material-ui/Paper';
+import Select from'@material-ui/core/Select';
+import MenuItem from'@material-ui/core/MenuItem';
+import Paper from'@material-ui/core/Paper';
 import { Row, Col } from 'react-bootstrap';
-import Subheader from 'material-ui/Subheader';
-import {List} from 'material-ui/List';
-import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
-import RefreshIcon from 'material-ui/svg-icons/navigation/refresh';
-import SaveIcon from 'material-ui/svg-icons/content/save';
+import ListSubheader from'@material-ui/core/ListSubheader';
+import List from'@material-ui/core/List';
+import Button from'@material-ui/core/Button';
+import TextField from'@material-ui/core/TextField';
+import RefreshIcon from '@material-ui/icons/Refresh';
+import SaveIcon from '@material-ui/icons/Save';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
 
 export class SearchCatalog extends React.Component {
   static propTypes = {
-    currentProjectSearchCriterias: React.PropTypes.array.isRequired,
-    clickTogglePanel: React.PropTypes.func.isRequired,
-    addSearchCriteriasToProject: React.PropTypes.func.isRequired,
-    addDatasetsToProject: React.PropTypes.func.isRequired,
-    project: React.PropTypes.object.isRequired,
-    projectActions: React.PropTypes.object.isRequired,
-    projectAPI: React.PropTypes.object.isRequired,
-    projectAPIActions: React.PropTypes.object.isRequired,
-    sessionManagement: React.PropTypes.object.isRequired,
-    research: React.PropTypes.object.isRequired,
-    researchActions: React.PropTypes.object.isRequired,
-    researchAPI: React.PropTypes.object.isRequired,
-    researchAPIActions: React.PropTypes.object.isRequired,
-    panelControls: React.PropTypes.object.isRequired
+    currentProjectSearchCriterias: PropTypes.array.isRequired,
+    clickTogglePanel: PropTypes.func.isRequired,
+    addSearchCriteriasToProject: PropTypes.func.isRequired,
+    addDatasetsToProject: PropTypes.func.isRequired,
+    datasetAPI: PropTypes.object.isRequired,
+    datasetAPIActions: PropTypes.object.isRequired,
+    project: PropTypes.object.isRequired,
+    projectActions: PropTypes.object.isRequired,
+    projectAPI: PropTypes.object.isRequired,
+    projectAPIActions: PropTypes.object.isRequired,
+    sessionManagement: PropTypes.object.isRequired,
+    research: PropTypes.object.isRequired,
+    researchActions: PropTypes.object.isRequired,
+    researchAPI: PropTypes.object.isRequired,
+    researchAPIActions: PropTypes.object.isRequired,
+    panelControls: PropTypes.object.isRequired
   };
 
   state = {
@@ -46,12 +51,6 @@ export class SearchCatalog extends React.Component {
 
   constructor (props) {
     super(props);
-    this._onAddCriteriaKey = this._onAddCriteriaKey.bind(this);
-    this._onLoadSavedCriteria = this._onLoadSavedCriteria.bind(this);
-    this._ResetCriterias = this._ResetCriterias.bind(this);
-    this._SaveCriterias = this._SaveCriterias.bind(this);
-    this._onChangeSearchType = this._onChangeSearchType.bind(this);
-    this._onSetSearchCriteriasName = this._onSetSearchCriteriasName.bind(this);
     if(!this.props.sessionManagement.sessionStatus.user.authenticated) {
       NotificationManager.warning(`You need to be authenticated to use search datasets features.`, 'Warning', 10000);
     }
@@ -66,14 +65,14 @@ export class SearchCatalog extends React.Component {
     }
   }
 
-  _onChangeSearchType (value) {
+  onChangeSearchType = (value) => {
     this.setState({
       type: value
     });
     this.props.researchActions.fetchPavicsDatasetsAndFacets(value);
-  }
+  };
 
-  _onLoadSavedCriteria (id) {
+  onLoadSavedCriteria = (id) => {
     let searchCriteria = this.props.researchAPI.items.find(x => x.id === id);
     this.setState({
       selectedSavedCriteria: id
@@ -82,24 +81,25 @@ export class SearchCatalog extends React.Component {
     searchCriteria.facets.forEach((facet) => {
       this.props.researchActions.addFacetKeyValuePair(facet.key, facet.value);
     });
-  }
+  };
 
-  _onAddCriteriaKey (value) {
+  onAddCriteriaKey = (event) => {
+    const value = event.target.value;
     let arr = JSON.parse(JSON.stringify(this.state.criteriaKeys));
     arr.push(value);
     this.setState({
       criteriaKeys: arr,
       searchCriteriasName: ''
     });
-  }
+  };
 
-  _onSetSearchCriteriasName (value) {
+  onSetSearchCriteriasName = (event) => {
     this.setState({
-      searchCriteriasName: value
+      searchCriteriasName: event.target.value
     });
-  }
+  };
 
-  _ResetCriterias () {
+  onResetCriterias = () => {
     this.setState({
       type: 'Aggregate',
       criteriaKeys: [
@@ -115,7 +115,7 @@ export class SearchCatalog extends React.Component {
     this.props.researchActions.fetchPavicsDatasetsAndFacets();
   }
 
-  _SaveCriterias () {
+  onSaveCriterias = () => {
     if (this.state.searchCriteriasName.length && this.props.research.selectedFacets.length) {
       if (this.props.researchAPI.items.find( x => x.name === this.state.searchCriteriasName)) {
         NotificationManager.warning(`Search criteria(s) already exists with the same name. Please specify another name.`, 'Warning', 10000);
@@ -140,7 +140,7 @@ export class SearchCatalog extends React.Component {
             (this.props.research.facets.length === 0) ?
               (<Paper style={{marginTop: 20}}>
                 <List>
-                  <Subheader id="cy-search-no-facets">No facets found.</Subheader>
+                  <ListSubheader id="cy-search-no-facets">No facets found.</ListSubheader>
                 </List>
               </Paper>)
               : (
@@ -148,45 +148,49 @@ export class SearchCatalog extends React.Component {
                 <div className="container" id="cy-search-facets">
                   <Row>
                     <Col sm={12} md={6} lg={6}>
-                      <SelectField
-                        id="cy-load-criterias-sf"
-                        style={{width: '95%'}}
-                        fullWidth={true}
-                        floatingLabelText="Load criteria(s)"
-                        value={this.state.selectedSavedCriteria}
-                        onChange={(event, index, value) => this._onLoadSavedCriteria(value)}>
-                        {
-                          this.props.researchAPI.items.map((search, i) => {
-                            return <MenuItem key={i} value={search.id} primaryText={search.name}/>;
-                          })
-                        }
-                      </SelectField>
+                      <FormControl style={{width: '95%'}}>
+                        <InputLabel htmlFor="saved-criteria">Load criteria(s)</InputLabel>
+                        <Select
+                          value={this.state.selectedSavedCriteria}
+                          onChange={(event) => this.onLoadSavedCriteria(search.id)}
+                          inputProps={{
+                            id: 'saved-criteria',
+                          }}
+                          SelectDisplayProps={{
+                            id: 'cy-load-criterias-select'
+                          }}>
+                          {
+                            this.props.researchAPI.items.map((search, i) =>
+                              <MenuItem key={i} value={search.id}>
+                                {search.name}
+                              </MenuItem>
+                            )
+                          }
+                        </Select>
+                      </FormControl>
                     </Col>
-                    {/*<Col sm={12} md={4} lg={4}>
-                     <SelectField
-                     style={{width: '95%'}}
-                     value={this.state.type}
-                     floatingLabelText="Type"
-                     onChange={(event, index, value) => this._onChangeSearchType(value)}>
-                     <MenuItem value="Aggregate" primaryText="Dataset" />
-                     <MenuItem value="FileAsAggregate" primaryText="File" />
-                     </SelectField>
-                     </Col>*/}
                     <Col sm={12} md={6} lg={6}>
-                      <SelectField
-                        id="cy-add-criteria-sf"
-                        style={{width: '95%'}}
-                        floatingLabelText="Add additional criteria"
-                        value={this.state.selectedKey}
-                        onChange={(event, index, value) => this._onAddCriteriaKey(value)}>
-                        {
-                          this.props.research.facets.map((x, i) => {
-                            return (this.state.criteriaKeys.includes(x.key))
-                              ? null
-                              : <MenuItem id={`cy-add-criteria-${x.key}`}key={i} value={x.key} primaryText={x.key}/>;
-                          })
-                        }
-                      </SelectField>
+                      <FormControl style={{width: '95%'}}>
+                        <InputLabel htmlFor="add-criteria">Add additional criteria</InputLabel>
+                        <Select
+                          value={this.state.selectedKey}
+                          onChange={this.onAddCriteriaKey}
+                          inputProps={{
+                            id: 'add-criteria'
+                          }}
+                          SelectDisplayProps={{
+                            id: 'cy-add-criteria-select'
+                          }}>
+                          {
+                            this.props.research.facets.map((x, i) =>
+                              !this.state.criteriaKeys.includes(x.key) &&
+                               <MenuItem id={`cy-add-criteria-${x.key}`} key={i} value={x.key}>
+                                {x.key}
+                              </MenuItem>
+                            )
+                          }
+                        </Select>
+                      </FormControl>
                     </Col>
                   </Row>
                   <Row style={{marginBottom: 15}}>
@@ -205,30 +209,36 @@ export class SearchCatalog extends React.Component {
                   <Col>
                     <TextField
                       id="cy-criterias-name-tf"
-                      hintText="Define a name"
-                      fullWidth={true}
-                      onChange={(event, value) => this._onSetSearchCriteriasName(value)}
-                      floatingLabelText="Search Criteria(s) Name"/>
+                      helperText="Define a name"
+                      fullWidth
+                      onChange={this.onSetSearchCriteriasName}
+                      label="Search Criteria(s) Name"/>
                   </Col>
+
+                  <Button variant="contained"
+                          id="cy-save-criterias-btn"
+                          onClick={this.onSaveCriterias}
+                          color="primary"
+                          disabled={!this.props.research.selectedFacets.length}
+                          style={{marginTop: 20}}>
+                    <SaveIcon />Save search criteria(s)
+                  </Button>
+                  <Button variant="contained"
+                          id="cy-reset-criterias-btn"
+                          onClick={this.onResetCriterias}
+                          color="secondary"
+                          disabled={!this.props.research.selectedFacets.length}
+                          style={{marginTop: 20, marginLeft: 20}}>
+                    <RefreshIcon />Reset
+                  </Button>
                 </div>
               </Paper>)
           }
-          <RaisedButton
-            id="cy-save-criterias-btn"
-            onClick={this._SaveCriterias}
-            label="Save search criteria(s)"
-            icon={<SaveIcon />}
-            disabled={!this.props.research.selectedFacets.length}
-            style={{marginTop: 20}}/>
-          <RaisedButton
-            id="cy-reset-criterias-btn"
-            onClick={this._ResetCriterias}
-            label="Reset"
-            icon={<RefreshIcon />}
-            disabled={!this.props.research.selectedFacets.length}
-            style={{marginTop: 20, marginLeft: 20}}/>
           <SearchCatalogResults
+            addDatasetsToVisualize={this.props.addDatasetsToVisualize}
+            selectCurrentDisplayedDataset={this.props.selectCurrentDisplayedDataset}
             clickTogglePanel={this.props.clickTogglePanel}
+            datasetAPIActions={this.props.datasetAPIActions}
             research={this.props.research}
             project={this.props.project}
             projectAPIActions={this.props.projectAPIActions}/>

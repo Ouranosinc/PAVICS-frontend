@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import AccountManagement from './../../components/AccountManagement';
 import {bindActionCreators} from 'redux';
@@ -6,8 +7,8 @@ import {actions as sessionManagement} from '../../redux/modules/SessionManagemen
 
 export class AccountManagementContainer extends React.Component {
   static propTypes = {
-    accountManagementActions: React.PropTypes.object.isRequired,
-    sessionManagement: React.PropTypes.object.isRequired,
+    accountManagementActions: PropTypes.object.isRequired,
+    sessionManagement: PropTypes.object.isRequired,
   };
 
   render() {

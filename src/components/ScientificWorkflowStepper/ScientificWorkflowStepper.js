@@ -1,38 +1,50 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
 import { NotificationManager } from 'react-notifications';
 import ScientificWorkflowList from '../../components/ScientificWorkflowList';
 import ScientificWorkflowForm from '../../components/ScientificWorkflowForm';
-import RaisedButton from 'material-ui/RaisedButton';
-import BackIcon from 'material-ui/svg-icons/navigation/arrow-back';
-import { Step, Stepper, StepLabel, StepContent } from 'material-ui/Stepper';
-import CircularProgress from 'material-ui/CircularProgress';
-import Paper from 'material-ui/Paper';
+import Button from'@material-ui/core/Button';
+import BackIcon from '@material-ui/icons/ArrowBack';
+import Step from'@material-ui/core/Step';
+import Stepper from'@material-ui/core/Stepper';
+import StepLabel from'@material-ui/core/StepLabel';
+import StepContent from'@material-ui/core/StepContent';
+import Typography from'@material-ui/core/Typography';
+import CircularProgress from'@material-ui/core/CircularProgress';
+import Paper from'@material-ui/core/Paper';
 import WpsProcessForm from '../WpsProcessForm';
 import myHttp from '../../util/http';
 import {InputDefinition} from "../WpsProcessFormInput/InputDefinition";
-const styles = {
-  orParagraph: {
+
+const styles = theme => ({
+  white: {
+    color: theme.palette.primary.contrastText
+  },
+  p: {
+    color: theme.palette.primary.contrastText,
     margin: '10px 0',
     textAlign: 'center',
-    color: 'white'
   }
-};
+});
 const FORM_WORKFLOW_ID = 'form-workflow-process';
-export default class ScientificWorkflowStepper extends Component {
+
+class ScientificWorkflowStepper extends Component {
   static propTypes = {
-    showDialog: React.PropTypes.func.isRequired,
-    goToSection: React.PropTypes.func.isRequired,
-    jobAPIActions: React.PropTypes.object.isRequired,
-    project: React.PropTypes.object.isRequired,
-    selectedShapefile: React.PropTypes.object.isRequired,
-    currentDisplayedDataset: React.PropTypes.object.isRequired,
-    selectedRegions: React.PropTypes.array.isRequired,
-    selectedProcess: React.PropTypes.object.isRequired,
-    selectedProvider: React.PropTypes.string.isRequired,
-    workflow: React.PropTypes.object.isRequired,
-    workflowActions: React.PropTypes.object.isRequired,
-    workflowAPI: React.PropTypes.object.isRequired,
-    workflowAPIActions: React.PropTypes.object.isRequired
+    classes: PropTypes.object.isRequired,
+    showDialog: PropTypes.func.isRequired,
+    goToSection: PropTypes.func.isRequired,
+    jobAPIActions: PropTypes.object.isRequired,
+    project: PropTypes.object.isRequired,
+    selectedShapefile: PropTypes.object.isRequired,
+    currentDisplayedDataset: PropTypes.object.isRequired,
+    selectedRegions: PropTypes.array.isRequired,
+    selectedProcess: PropTypes.object.isRequired,
+    selectedProvider: PropTypes.string.isRequired,
+    workflow: PropTypes.object.isRequired,
+    workflowActions: PropTypes.object.isRequired,
+    workflowAPI: PropTypes.object.isRequired,
+    workflowAPIActions: PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -139,7 +151,7 @@ export default class ScientificWorkflowStepper extends Component {
   }
 
   /*
-  mostly duplicated in WorkflowWizardStepper, but this one receives the data
+  mostly duplicated in WpsProcessStepper, but this one receives the data
   TODO both should be the same, the execute function should receive a form data, or something like that
    */
   execute (formData) {
@@ -242,20 +254,19 @@ export default class ScientificWorkflowStepper extends Component {
   }
 
   render () {
-    const styleStepLabel = {
-      color: 'white'
-    };
-    const innerStyleStepLabel = {
-      fontWeight: 'bold',
-      marginTop: '60px',
-      marginLeft: '-340px'
-    };
+    const { classes } = this.props;
     return (
-      <Stepper activeStep={this.state.activeStep} orientation="vertical">
+      <Stepper className={classes.stepper} activeStep={this.state.activeStep} orientation="vertical">
         <Step>
-          <StepLabel id="cy-configure-run-step" style={styleStepLabel}>
-            Choose the 'Configure & Run' action of the desired workflow
-            <span style={innerStyleStepLabel}>{(this.state.workflow)? this.state.workflow.name: ''}</span>
+          <StepLabel id="cy-configure-run-step">
+            <Typography className={classes.white} variant="headline">
+              Choose the 'Configure & Run' action of the desired workflow
+            </Typography>
+            {
+              <Typography className={classes.white} variant="subheading">
+                {(this.state.workflow)? this.state.workflow.name: ''}
+              </Typography>
+            }
           </StepLabel>
           <StepContent>
             <ScientificWorkflowList
@@ -263,23 +274,29 @@ export default class ScientificWorkflowStepper extends Component {
               goToConfigureAndRunStep={this.goToConfigureAndRunStep}
               workflowAPI={this.props.workflowAPI}
               workflowAPIActions={this.props.workflowAPIActions} />
-            <p style={styles.orParagraph}>Or create a new workflow</p>
+            <Typography variant="subheading" className={classes.p}>Or create a new workflow</Typography>
             <ScientificWorkflowForm
               project={this.props.project}
               workflowAPIActions={this.props.workflowAPIActions} />
           </StepContent>
         </Step>
         <Step>
-          <StepLabel style={styleStepLabel}>Configure & Run</StepLabel>
+          <StepLabel>
+            <Typography className={classes.white} variant="headline">
+              Configure & Run
+            </Typography>
+          </StepLabel>
           {
             this.state.isParsing
               ? (
                 <StepContent>
-                  <RaisedButton
+                  <Button
+                    color="secondary"
+                    variant="contained"
                     id="cy-step-back-btn"
-                    label="Back"
-                    onClick={this.handlePrev}
-                    icon={<BackIcon />} />
+                    onClick={this.handlePrev}>
+                    <BackIcon />Back
+                  </Button>
                   <Paper style={{margin: '10px 0', textAlign: 'center', padding: '15px'}}>
                     <CircularProgress />
                     <p>Parsing Workflow</p>
@@ -288,11 +305,13 @@ export default class ScientificWorkflowStepper extends Component {
               )
               : (
                 <StepContent>
-                  <RaisedButton
+                  <Button
+                    color="secondary"
+                    variant="contained"
                     id="cy-step-back-btn"
-                    label="Back"
-                    onClick={this.handlePrev}
-                    icon={<BackIcon />} />
+                    onClick={this.handlePrev}>
+                    <BackIcon />Back
+                  </Button>
                   <WpsProcessForm
                     executeProcess={this.catchAndWrapExecuteProcess}
                     formId={FORM_WORKFLOW_ID}
@@ -311,3 +330,5 @@ export default class ScientificWorkflowStepper extends Component {
     );
   }
 }
+
+export default withStyles(styles)(ScientificWorkflowStepper)

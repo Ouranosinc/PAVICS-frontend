@@ -1,18 +1,20 @@
-import React from 'react'
+import React from 'react';
+import PropTypes from 'prop-types';
 import classes from './ProjectCreation.scss';
 import * as constants from '../../constants';
-import Paper from 'material-ui/Paper';
-import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
+import Paper from'@material-ui/core/Paper';
+import Button from'@material-ui/core/Button';
+import TextField from'@material-ui/core/TextField';
+import CreateIcon from '@material-ui/icons/PlaylistAdd';
 import { NotificationManager } from 'react-notifications';
 
 export class ProjectCreation extends React.Component {
   static propTypes = {
-    sessionManagement: React.PropTypes.object.isRequired,
-    project: React.PropTypes.object.isRequired,
-    projectActions: React.PropTypes.object.isRequired,
-    projectAPI: React.PropTypes.object.isRequired,
-    projectAPIActions: React.PropTypes.object.isRequired
+    sessionManagement: PropTypes.object.isRequired,
+    project: PropTypes.object.isRequired,
+    projectActions: PropTypes.object.isRequired,
+    projectAPI: PropTypes.object.isRequired,
+    projectAPIActions: PropTypes.object.isRequired
   };
 
   constructor(props) {
@@ -68,28 +70,28 @@ export class ProjectCreation extends React.Component {
           <div className="container">
             <TextField
               id="cy-project-name-tf"
-              hintText="Define a project name"
-              fullWidth={true}
-              onChange={(event, value) => this._onSetNewProjectName(value)}
-              floatingLabelText="Project name" />
+              placeholder="Define a project name"
+              fullWidth
+              onChange={(event) => this._onSetNewProjectName(event.target.value)}
+              label="Project name" />
             <TextField
               id="cy-project-description-tf"
-              hintText="Write a project description"
-              fullWidth={true}
-              multiLine={true}
-              rows={1}
-              rowsMax={7}
-              onChange={(event, value) => this._onSetNewProjectDescription(value)}
-              floatingLabelText="Project description" />
+              placeholder="Write a project description"
+              fullWidth
+              multiline
+              rows="1"
+              rowsMax="4"
+              onChange={(event) => this._onSetNewProjectDescription(event.target.value)}
+              label="Project description" />
+            <Button variant="contained"
+                    id="cy-create-project-btn"
+                    color="primary"
+                    onClick={this._onCreateProject}
+                    disabled={!this.state.projectName || !this.state.projectName.length}>
+              <CreateIcon />Create new project
+            </Button>
           </div>
         </Paper>
-
-        <RaisedButton
-          id="cy-create-project-btn"
-          onClick={this._onCreateProject}
-          label="Create new project"
-          disabled={!this.state.projectName || !this.state.projectName.length}
-          style={{marginTop: 20}} />
       </div>
     )
   }

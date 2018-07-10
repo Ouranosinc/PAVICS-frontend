@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import * as constants from '../../constants';
 
 const successStyle = {
@@ -17,7 +18,7 @@ const warningStyle = {
 
 export class StatusElement extends React.Component {
   static propTypes = {
-    job: React.PropTypes.object.isRequired
+    job: PropTypes.object.isRequired
   };
 
   constructor(props) {

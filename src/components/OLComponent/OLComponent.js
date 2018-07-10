@@ -1,6 +1,10 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import classes from './OLComponent.scss';
-import Dialog from 'material-ui/Dialog';
+import Dialog from'@material-ui/core/Dialog';
+import DialogContent from'@material-ui/core/DialogContent';
+import DialogTitle from'@material-ui/core/DialogTitle';
+import Typography from '@material-ui/core/Typography';
 import * as constants from './../../constants';
 import myHttp from '../../util/http';
 import { NotificationManager } from 'react-notifications';
@@ -32,26 +36,26 @@ function getMaxPoly (polys) {
 
 class OLComponent extends React.Component {
   static propTypes = {
-    currentDateTime: React.PropTypes.string.isRequired,
-    mapManipulationMode: React.PropTypes.string.isRequired,
-    setCurrentDateTime: React.PropTypes.func.isRequired,
-    selectedRegions: React.PropTypes.array.isRequired,
-    selectedColorPalette: React.PropTypes.string.isRequired,
-    currentDisplayedDataset: React.PropTypes.object.isRequired,
-    selectedShapefile: React.PropTypes.object.isRequired,
-    selectedBasemap: React.PropTypes.string.isRequired,
-    selectedDatasetCapabilities: React.PropTypes.object.isRequired,
-    setSelectedDatasetCapabilities: React.PropTypes.func.isRequired,
-    selectRegion: React.PropTypes.func.isRequired,
-    unselectRegion: React.PropTypes.func.isRequired,
-    capabilities: React.PropTypes.object,
-    dataset: React.PropTypes.object,
-    layer: React.PropTypes.object.isRequired,
-    fetchWMSLayerDetails: React.PropTypes.func.isRequired,
-    fetchWMSLayerTimesteps: React.PropTypes.func.isRequired,
-    fetchPlotlyData: React.PropTypes.func.isRequired,
-    fetchScalarValue: React.PropTypes.func.isRequired,
-    testWMSGetMapPermission: React.PropTypes.func.isRequired,
+    currentDateTime: PropTypes.string.isRequired,
+    mapManipulationMode: PropTypes.string.isRequired,
+    setCurrentDateTime: PropTypes.func.isRequired,
+    selectedRegions: PropTypes.array.isRequired,
+    selectedColorPalette: PropTypes.string.isRequired,
+    currentDisplayedDataset: PropTypes.object.isRequired,
+    selectedShapefile: PropTypes.object.isRequired,
+    selectedBasemap: PropTypes.string.isRequired,
+    selectedDatasetCapabilities: PropTypes.object.isRequired,
+    setSelectedDatasetCapabilities: PropTypes.func.isRequired,
+    selectRegion: PropTypes.func.isRequired,
+    unselectRegion: PropTypes.func.isRequired,
+    capabilities: PropTypes.object,
+    dataset: PropTypes.object,
+    layer: PropTypes.object.isRequired,
+    fetchWMSLayerDetails: PropTypes.func.isRequired,
+    fetchWMSLayerTimesteps: PropTypes.func.isRequired,
+    fetchPlotlyData: PropTypes.func.isRequired,
+    fetchScalarValue: PropTypes.func.isRequired,
+    testWMSGetMapPermission: PropTypes.func.isRequired,
   };
 
   config = {
@@ -338,14 +342,14 @@ class OLComponent extends React.Component {
   handleMapClick (event) {
     console.log('handling map click:', event);
     switch (this.props.mapManipulationMode) {
-      case constants.VISUALIZE_MODE_JOB_MANAGEMENT:
+      case constants.VISUALIZE_MODE_REGION_SELECTION:
         if (this.props.selectedShapefile.title) {
           console.log('selected shapefile:', this.props.selectedShapefile);
           return this.handleSelectRegionClick(event);
         }
         console.log('choose a shapefile first');
         return;
-      case constants.VISUALIZE_MODE_VISUALIZE:
+      case constants.VISUALIZE_MODE_GRID_VALUES:
         if (this.props.currentDisplayedDataset['dataset_id']) {
           console.log('selected dataset:', this.props.currentDisplayedDataset);
           return this.getScalarValue(event);
@@ -625,11 +629,16 @@ class OLComponent extends React.Component {
           <div id="popup" className="ol-popup"></div>
         </div>
         <Dialog
-          title={this.state.dialogTitle}
-          modal={false}
-          onRequestClose={this.handleClose}
+          onClose={this.handleClose}
           open={this.state.dialogOpened}>
-          <div>{this.state.dialogContent}</div>
+          <DialogTitle>
+            {this.state.dialogTitle}
+          </DialogTitle>
+          <DialogContent>
+            <Typography>
+              {this.state.dialogContent}
+            </Typography>
+          </DialogContent>
         </Dialog>
       </div>
     );

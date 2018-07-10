@@ -1,14 +1,19 @@
 import React from 'react';
-import RaisedButton from 'material-ui/RaisedButton';
-import Dialog from 'material-ui/Dialog';
+import PropTypes from 'prop-types';
+import Button from'@material-ui/core/Button';
+import Dialog from'@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Typography from '@material-ui/core/Typography';
 
 export class ConfirmDialog extends React.Component {
   static propTypes = {
-    isOpen: React.PropTypes.bool.isRequired,
-    affectedResource: React.PropTypes.object.isRequired,
-    onDialogConfirmed: React.PropTypes.func.isRequired,
-    onCloseDialog: React.PropTypes.func.isRequired,
-    dialogContent: React.PropTypes.string.isRequired,
+    isOpen: PropTypes.bool.isRequired,
+    affectedResource: PropTypes.object,
+    onDialogConfirmed: PropTypes.func.isRequired,
+    onCloseDialog: PropTypes.func.isRequired,
+    dialogContent: PropTypes.string.isRequired,
   };
 
   constructor(props) {
@@ -18,29 +23,34 @@ export class ConfirmDialog extends React.Component {
   render () {
     return (
       <Dialog
-      title="Confirmation"
-      modal={false}
       open={this.props.isOpen}
-      onRequestClose={() => this.props.onCloseDialog()}
-      actions={[
-        <RaisedButton
-          id="cy-confirm-cancel-btn"
-          label="Cancel"
-          keyboardFocused={false}
-          onTouchTap={() => this.props.onCloseDialog()}
-        />,
-        <RaisedButton
-          id="cy-confirm-ok-btn"
-          label="OK"
-          primary={true}
-          style={{marginLeft: '10px'}}
-          keyboardFocused={true}
-          onTouchTap={() => {
-            this.props.onDialogConfirmed(this.props.affectedResource);
-          }}
-        />
-      ]}>
-      {this.props.dialogContent}
+      onClose={() => this.props.onCloseDialog()}>
+        <DialogTitle>
+          Confirmation
+        </DialogTitle>
+        <DialogContent>
+          <Typography>
+            {this.props.dialogContent}
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained"
+                  id="cy-confirm-cancel-btn"
+                  label="Cancel"
+                  color="secondary"
+                  onClick={
+                    () => this.props.onCloseDialog()
+                  }>
+            Cancel
+          </Button>
+          <Button variant="contained"
+                  id="cy-confirm-ok-btn"
+                  color="primary"
+                  style={{marginLeft: '10px'}}
+                  onClick={() => this.props.onDialogConfirmed(this.props.affectedResource)}>
+            OK
+          </Button>
+        </DialogActions>
     </Dialog>
     );
   }

@@ -1,30 +1,33 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Row, Col } from 'react-bootstrap';
-import Dialog from 'material-ui/Dialog';
-import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
-import Checkbox from 'material-ui/Checkbox';
-import Card from 'material-ui/Card';
-import CardActions from 'material-ui/Card/CardActions';
-import CardHeader from 'material-ui/Card/CardHeader';
-import CardMedia from 'material-ui/Card/CardMedia';
-import CardTitle from 'material-ui/Card/CardTitle';
-import FlatButton from 'material-ui/FlatButton';
-import CardText from 'material-ui/Card/CardText';
-import Toggle from 'material-ui/Toggle';
-import Subheader from 'material-ui/Subheader';
-import { List, ListItem } from 'material-ui/List';
-import IconButton from 'material-ui/IconButton';
-import RemoveIcon from 'material-ui/svg-icons/content/remove-circle'
+import Dialog from'@material-ui/core/Dialog';
+import Button from'@material-ui/core/Button';
+import TextField from'@material-ui/core/TextField';
+import Checkbox from'@material-ui/core/Checkbox';
+import Card from'@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from'@material-ui/core/CardContent';
+import CardHeader from'@material-ui/core/CardHeader';
+import Switch from'@material-ui/core/Switch';
+import List from'@material-ui/core/List';
+import ListItem from'@material-ui/core/List';
+import ListItemSecondaryAction from'@material-ui/core/ListItemSecondaryAction';
+import ListItemText from'@material-ui/core/ListItemText';
+import ListSubheader from'@material-ui/core/ListSubheader';
+import IconButton from'@material-ui/core/IconButton';
+import RemoveIcon from '@material-ui/icons/RemoveCircle';
+import Collapse from '@material-ui/core/Collapse';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 export class PersistResultDialog extends React.Component {
   static propTypes = {
-    output: React.PropTypes.object.isRequired,
-    isOpen:  React.PropTypes.bool.isRequired,
-    onPersistConfirmed: React.PropTypes.func.isRequired,
-    closePersistDialog: React.PropTypes.func.isRequired,
-    monitorActions: React.PropTypes.object.isRequired,
-    username: React.PropTypes.string.isRequired
+    output: PropTypes.object.isRequired,
+    isOpen:  PropTypes.bool.isRequired,
+    onPersistConfirmed: PropTypes.func.isRequired,
+    closePersistDialog: PropTypes.func.isRequired,
+    monitorActions: PropTypes.object.isRequired,
+    username: PropTypes.string.isRequired
   };
   constructor (props) {
     super(props);
@@ -52,8 +55,8 @@ export class PersistResultDialog extends React.Component {
     this.setState({expanded: expanded});
   };
 
-  handleToggle = (event, toggle) => {
-    this.setState({expanded: toggle});
+  handleToggle = (event) => {
+    this.setState({expanded: event.target.checked});
   };
 
   handleKeyChange = (e) => {
@@ -74,7 +77,7 @@ export class PersistResultDialog extends React.Component {
     });
   };
 
-  handleOverwriteChange = (e) => {
+  handleOverwriteChange = (event) => {
     this.setState({
       overwrite: !this.state.overwrite
     });
@@ -115,109 +118,109 @@ export class PersistResultDialog extends React.Component {
   render () {
       return <Dialog
         id="cy-persist-dialog"
-        title="Persist result"
-        modal={false}
         open={this.props.isOpen}
-        onRequestClose={this.props.closePersistDialog}
-        actions={
-          [
-            <RaisedButton
-              id="cy-persist-dialog-launch-btn"
-              label="Launch Persist"
-              primary={true}
-              keyboardFocused={true}
-              onTouchTap={(event) => this.onPersistOutputClicked()}
-              style={{marginRight: '10px' }} />,
-            <RaisedButton
-              id="cy-persist-dialog-close-btn"
-              label="Close"
-              primary={false}
-              keyboardFocused={false}
-              onTouchTap={this.props.closePersistDialog} />
-          ]
-        }
-        autoScrollBodyContent={true}>
-        <Card expanded={this.state.expanded} onExpandChange={this.handleExpandChange}>
-          <CardText>
+        onClose={this.props.closePersistDialog}>
+        <Card style={{width: '600px'}}>
+          <CardHeader title="Persist a temporary resource" />
+          <CardContent>
             <TextField
               id="cy-resource-link-tf"
-              hintText="Resource"
-              fullWidth={true}
+              fullWidth
               disabled={true}
               value={this.props.output.reference}
-              floatingLabelText="Resource to persist" />
-            <Checkbox
-              id="cy-overwrite-destination-cb"
+              label="Resource to persist" />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  id="cy-overwrite-destination-cb"
+                  checked={this.state.overwrite}
+                  onChange={this.handleOverwriteChange}/>
+              }
               label="Overwrite destination"
-              labelPosition="right"
-              labelStyle={{textAlign: "left"}}
-              checked={this.state.overwrite}
-              onCheck={this.handleOverwriteChange}/>
-          </CardText>
-          <CardText>
-            <Toggle
-              id="cy-advanced-toggle"
-              toggled={this.state.expanded}
-              onToggle={this.handleToggle}
-              labelPosition="right"
+            />
+          </CardContent>
+          <CardContent>
+            <FormControlLabel
+              control={
+                <Switch
+                  id="cy-advanced-toggle"
+                  checked={this.state.expanded}
+                  onChange={this.handleToggle} />
+              }
               label="Advanced configuration"
             />
-          </CardText>
-          <CardText expandable={true}>
-            <TextField
-              id="cy-workspace-path-tf"
-              hintText="Location"
-              fullWidth={true}
-              value={this.state.location}
-              onChange={this.handleLocationChange}
-              floatingLabelText="Location" />
-            <Row>
-              <Col sm={4} md={4} lg={4}>
-                <TextField
-                  hintText="Key"
-                  fullWidth={true}
-                  onChange={this.handleKeyChange}
-                  floatingLabelText="Key"
-                  value={this.state.key} />
-              </Col>
-              <Col sm={4} md={4} lg={4}>
-                <TextField
-                  hintText="Value"
-                  fullWidth={true}
-                  onChange={this.handleValueChange}
-                  floatingLabelText="Value"
-                  value={this.state.value} />
-              </Col>
-              <Col sm={4} md={4} lg={4}>
-                <RaisedButton
-                  style={{marginTop: '25px'}}
-                  label="Add"
-                  primary={false}
-                  keyboardFocused={true}
-                  onTouchTap={this.onAddedFacet} />
-              </Col>
-            </Row>
-            <Row>
-              <List>
-                <Subheader>Default facets</Subheader>
-                {
-                  this.state.facets.map((facet, index) => {
-                    return (
-                      <ListItem
-                        key={index}
-                        primaryText={facet.key + '-' + facet.value}
-                        rightIconButton={
-                          <IconButton>
-                            <RemoveIcon onTouchTap={(event) => this.onRemovedFacet(index)} />
-                          </IconButton>
-                        }
-                      />
-                    );
-                  })
-                }
-              </List>
-            </Row>
-          </CardText>
+          </CardContent>
+          <Collapse in={this.state.expanded}>
+            <CardContent>
+              <TextField
+                id="cy-workspace-path-tf"
+                fullWidth
+                value={this.state.location}
+                onChange={this.handleLocationChange}
+                label="Location" />
+              <Row>
+                <Col sm={4} md={4} lg={4}>
+                  <TextField
+                    fullWidth
+                    onChange={this.handleKeyChange}
+                    label="Key"
+                    value={this.state.key} />
+                </Col>
+                <Col sm={4} md={4} lg={4}>
+                  <TextField
+                    fullWidth
+                    onChange={this.handleValueChange}
+                    label="Value"
+                    value={this.state.value} />
+                </Col>
+                <Col sm={4} md={4} lg={4}>
+                  <Button variant="contained"
+                          onClick={this.onAddedFacet}
+                          style={{marginTop: '25px'}}
+                          color="primary">
+                      Add
+                    </Button>
+                </Col>
+              </Row>
+              <Row>
+                <Col sm={12}>
+                  <List>
+                    <ListSubheader style={{'paddingLeft': '0'}}>Default facets</ListSubheader>
+                    {
+                      this.state.facets.map((facet, index) => {
+                        return (
+                          <ListItem
+                            key={index}>
+                            <ListItemText primary={facet.key + '-' + facet.value} />
+                            <ListItemSecondaryAction>
+                              <IconButton onClick={(event) => this.onRemovedFacet(index)}>
+                                <RemoveIcon />
+                              </IconButton>
+                            </ListItemSecondaryAction>
+                          </ListItem>
+                        );
+                      })
+                    }
+                  </List>
+                </Col>
+              </Row>
+            </CardContent>
+          </Collapse>
+          <CardActions>
+            <Button variant="contained"
+                    color="primary"
+                    style={{marginRight: '10px' }}
+                    id="cy-persist-dialog-launch-btn"
+                    onClick={(event) => this.onPersistOutputClicked()}>
+              Launch Persist
+            </Button>,
+            <Button variant="contained"
+                    color="secondary"
+                    id="cy-persist-dialog-close-btn"
+                    onClick={this.props.closePersistDialog}>
+              Close
+            </Button>
+          </CardActions>
         </Card>
       </Dialog>;
    }

@@ -1,76 +1,88 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import * as classes from './LayerSwitcher.scss';
 import * as constants from './../../constants';
-import {List, ListItem} from 'material-ui/List';
-import {Tabs, Tab} from 'material-ui/Tabs';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
-import Slider from 'material-ui/Slider';
-import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
-import FontIcon from 'material-ui/FontIcon';
-import Paper from 'material-ui/Paper';
-import Subheader from 'material-ui/Subheader';
-import RaisedButton from 'material-ui/RaisedButton';
-import AppBar from 'material-ui/AppBar';
-import IconButton from 'material-ui/IconButton';
-import LayersIcon from 'material-ui/svg-icons/maps/layers';
-import MinimizeIcon from 'material-ui/svg-icons/content/remove';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import ListSubheader from '@material-ui/core/ListSubheader';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import Tab from'@material-ui/core/Tab';
+import Tabs from '@material-ui/core/Tabs';
+import Select from'@material-ui/core/Select';
+import MenuItem from'@material-ui/core/MenuItem';
+import Slider from '@material-ui/lab/Slider';
+import Radio from'@material-ui/core/Radio';
+import RadioGroup from'@material-ui/core/RadioGroup';
+import Satellite from '@material-ui/icons/Satellite';
+import LocalLibrary from '@material-ui/icons/LocalLibrary';
+import Map from '@material-ui/icons/Map';
+import Paper from'@material-ui/core/Paper';
+import Button from'@material-ui/core/Button';
+import AppBar from'@material-ui/core/AppBar';
+import IconButton from'@material-ui/core/IconButton';
+import LayersIcon from '@material-ui/icons/Layers';
+import MinimizeIcon from '@material-ui/icons/Remove';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
 
 const AVAILABLE_COLOR_PALETTES = [
   'seq-Blues',
   'div-BuRd',
   'default'
 ];
+const listStyle = {
+  'height': '350px',
+  'overflowY': 'auto'
+}
 
 export default class LayerSwitcher extends React.Component {
   static propTypes = {
-    onToggleMapPanel: React.PropTypes.func.isRequired,
-    fetchShapefiles: React.PropTypes.func.isRequired,
-    selectColorPalette: React.PropTypes.func.isRequired,
-    selectCurrentDisplayedDataset: React.PropTypes.func.isRequired,
-    selectShapefile: React.PropTypes.func.isRequired,
-    selectBasemap: React.PropTypes.func.isRequired,
-    currentVisualizedDatasets: React.PropTypes.array.isRequired,
-    selectedColorPalette: React.PropTypes.string.isRequired,
-    currentDisplayedDataset: React.PropTypes.object.isRequired,
-    selectedShapefile: React.PropTypes.object.isRequired,
-    resetSelectedRegions: React.PropTypes.func.isRequired,
-    selectedBasemap: React.PropTypes.string.isRequired,
-    publicShapeFiles: React.PropTypes.array.isRequired,
-    baseMaps: React.PropTypes.array.isRequired
+    onToggleMapPanel: PropTypes.func.isRequired,
+    fetchShapefiles: PropTypes.func.isRequired,
+    selectColorPalette: PropTypes.func.isRequired,
+    selectCurrentDisplayedDataset: PropTypes.func.isRequired,
+    selectShapefile: PropTypes.func.isRequired,
+    selectBasemap: PropTypes.func.isRequired,
+    currentVisualizedDatasets: PropTypes.array.isRequired,
+    selectedColorPalette: PropTypes.string.isRequired,
+    currentDisplayedDataset: PropTypes.object.isRequired,
+    selectedShapefile: PropTypes.object.isRequired,
+    resetSelectedRegions: PropTypes.func.isRequired,
+    selectedBasemap: PropTypes.string.isRequired,
+    publicShapeFiles: PropTypes.array.isRequired,
+    baseMaps: PropTypes.array.isRequired
   };
 
   constructor (props) {
     super(props);
-    this._onHideLayerSwitcherPanel = this._onHideLayerSwitcherPanel.bind(this);
-    this.setSelectedShapefile = this.setSelectedShapefile.bind(this);
-    this.setSelectedBaseMap = this.setSelectedBaseMap.bind(this);
-    this.setCurrentDisplayedDataset = this.setCurrentDisplayedDataset.bind(this);
-    this.setDatasetLayerOpacity = this.setDatasetLayerOpacity.bind(this);
-    this.setSelectedColorPalette = this.setSelectedColorPalette.bind(this);
-    this.resetDatasetLayer = this.resetDatasetLayer.bind(this);
-    this.resetShapefile = this.resetShapefile.bind(this);
     this.props.selectColorPalette(AVAILABLE_COLOR_PALETTES[0]);
+    this.state = {
+      tabValue: 0
+    }
   }
 
   componentDidMount () {
     this.props.fetchShapefiles();
   }
 
-  _onHideLayerSwitcherPanel () {
+  onHideLayerSwitcherPanel = () => {
     this.props.onToggleMapPanel(constants.VISUALIZE_LAYER_SWITCHER_PANEL);
   }
 
-  setSelectedShapefile (event, value) {
+  setSelectedShapefile = (event, value) => {
     this.props.resetSelectedRegions();
-    this.props.selectShapefile(value);
-  }
+    this.props.selectShapefile(this.props.publicShapeFiles.find(f => f.title === value));
+  };
 
-  setSelectedBaseMap (event, value) {
+  setSelectedBaseMap = (event, value) => {
     this.props.selectBasemap(value);
   }
 
-  setCurrentDisplayedDataset (event, value) {
+  setCurrentDisplayedDataset = (event, value) => {
     let selectedDataset = this.props.currentVisualizedDatasets.find(dataset => dataset.uniqueLayerSwitcherId === value);
     this.props.selectCurrentDisplayedDataset({
       ...selectedDataset,
@@ -79,7 +91,7 @@ export default class LayerSwitcher extends React.Component {
     });
   }
 
-  setDatasetLayerOpacity (event, value) {
+  setDatasetLayerOpacity = (event, value) => {
     this.props.selectCurrentDisplayedDataset({
       ...this.props.currentDisplayedDataset,
       currentFileIndex: 0,
@@ -87,53 +99,52 @@ export default class LayerSwitcher extends React.Component {
     });
   }
 
-  setSelectedColorPalette (event, index, value) {
-    this.props.selectColorPalette(value);
+  setSelectedColorPalette = (event) => {
+    this.props.selectColorPalette(event.target.value);
   }
 
-  resetShapefile () {
+  resetShapefile = () => {
     this.props.selectShapefile({});
     this.props.resetSelectedRegions();
   }
 
-  resetDatasetLayer () {
+  resetDatasetLayer = () => {
     this.props.selectCurrentDisplayedDataset({});
   }
 
   /*
-  this routine should iterate through the different workspaces that are available to the user and show them separated by workspace name
-  presently, they're all grouped under "public", which would be replaced by the workspace name
+  this routine should iterate through the different workspaces that are available to the user and show them separated by workspace name.
+  Presently, they're all flat on a single level, but should eventually be grouped by the workspace name
    */
   makeShapefileList () {
-    // lol 302 px. such precision. very design.
     return (
       <List
-        style={{height: '302px', overflowY: 'auto'}}
+        style={listStyle}
         className={classes['layers']}>
-        <ListItem
-          initiallyOpen
-          primaryTogglesNestedList
-          primaryText="Public"
-          nestedItems={
-            this.props.publicShapeFiles.map( (shapeFile, i) => {
-              return (
-                <ListItem
-                  className="cy-layerswitcher-shapefile-item"
-                  id={`cy-shapefile-name-${shapeFile.title}`}
-                  primaryText={shapeFile.title}
-                  key={i}
-                  leftCheckbox={
-                    <RadioButtonGroup
-                      name="selectedShapeFile"
-                      valueSelected={this.props.selectedShapefile}
-                      onChange={this.setSelectedShapefile}>
-                      <RadioButton value={shapeFile} />
-                    </RadioButtonGroup>
-                  }
-                />
-              );
-            })
-          } />
+        <ListSubheader>
+          <Button variant="contained"
+                  color="primary"
+                  id="cy-reset-shapefile-btn"
+                  onClick={this.resetShapefile}>
+            Reset
+          </Button>
+        </ListSubheader>
+        {
+          this.props.publicShapeFiles.map( (shapeFile, i) =>
+            <ListItem
+            className="cy-layerswitcher-shapefile-item"
+            id={`cy-shapefile-name-${shapeFile.title}`}// `
+            primaryText={shapeFile.title}
+            key={i}>
+              <RadioGroup
+                name="selectedShapeFile"
+                value={this.props.selectedShapefile.title}
+                onChange={this.setSelectedShapefile}>
+                <FormControlLabel value={shapeFile.title} control={<Radio color="secondary" />} label={shapeFile.title} />
+              </RadioGroup>
+            </ListItem>
+          )
+        }
       </List>
     );
   }
@@ -141,31 +152,23 @@ export default class LayerSwitcher extends React.Component {
   makeBaseMapsList () {
     return (
       <List
-        style={{height: '350px', overflowY: 'auto'}}
+        component="nav"
+        style={listStyle}
         className={classes['layers']}>
-        <ListItem
-          initiallyOpen
-          primaryTogglesNestedList
-          primaryText="Bing"
-          nestedItems={
-            this.props.baseMaps.map((map, i) => {
-              return (
-                <ListItem
-                  className="cy-layerswitcher-basemap-item"
-                  primaryText={map}
-                  key={i}
-                  leftCheckbox={
-                    <RadioButtonGroup
-                      name="selectedBaseMap" f
-                      valueSelected={this.props.selectedBasemap}
-                      onChange={this.setSelectedBaseMap}>
-                      <RadioButton value={map} />
-                    </RadioButtonGroup>
-                  }
-                />
-              );
-            })
-          } />
+        {
+          this.props.baseMaps.map((map, i) =>
+            <ListItem
+            className="cy-layerswitcher-basemap-item"
+            key={i}>
+              <RadioGroup
+                name="selectedBaseMap"
+                value={this.props.selectedBasemap}
+                onChange={this.setSelectedBaseMap}>
+                <FormControlLabel value={map} control={<Radio color="secondary" />} label={map} />
+              </RadioGroup>
+            </ListItem>
+          )
+        }
       </List>
     );
   }
@@ -173,35 +176,51 @@ export default class LayerSwitcher extends React.Component {
   makeDatasetsList () {
     return (
       <List
-        style={{height: '221px', overflowY: 'auto'}}
+        style={listStyle}
         className={classes['layers']}>
+        <ListSubheader>
+          <div style={{width: '25%', display: 'inline-block'}}>
+            <Button variant="contained"
+                    color="primary"
+                    id="cy-reset-dataset-btn"
+                    onClick={this.resetDatasetLayer}>
+              Reset
+            </Button>
+          </div>
+          <div style={{width: '75%', display: 'inline-block', padding: '0 15px'}}>
+            {this.makeColorPalettesSelect()}
+          </div>
+          {this.makeSlider()}
+        </ListSubheader>
         {
           this.props.currentVisualizedDatasets.map((dataset, i) => {
             let secondaryText = '';
             if (dataset.wms_url.length === 1) {
               const SEARCH_VALUE = '/';
               let index = dataset.wms_url[0].lastIndexOf(SEARCH_VALUE);
-              secondaryText = `${dataset.wms_url[0].substring(index + SEARCH_VALUE.length)}`;
+              secondaryText = `${dataset.wms_url[0].substring(index + SEARCH_VALUE.length)}`;// `
             } else {
-              secondaryText = `${dataset.wms_url.length} aggregated file${(dataset.wms_url.length > 1) ? 's' : ''}`;
+              secondaryText = `${dataset.wms_url.length} aggregated file${(dataset.wms_url.length > 1) ? 's' : ''}`;// `
             }
             return (
               <ListItem
                 key={i}
-                className="cy-layerswitcher-dataset-item"
-                primaryText={dataset['aggregate_title']}
-                secondaryText={<span>{secondaryText}</span>}
-                secondaryTextLines={1}
-                leftCheckbox={
-                  <RadioButtonGroup
+                className="cy-layerswitcher-dataset-item">
+                  <RadioGroup
                     name="currentDisplayedDataset"
-                    valueSelected={this.props.currentDisplayedDataset.uniqueLayerSwitcherId}
+                    value={this.props.currentDisplayedDataset.uniqueLayerSwitcherId}
                     onChange={this.setCurrentDisplayedDataset}>
-                    <RadioButton
-                      data-cy-selected={this.props.currentDisplayedDataset.uniqueLayerSwitcherId === dataset.uniqueLayerSwitcherId}
-                      value={dataset.uniqueLayerSwitcherId} />
-                  </RadioButtonGroup>
-                } />
+                    <FormControlLabel
+                      value={dataset.uniqueLayerSwitcherId}
+                      label={<ListItemText inset
+                                         primary={dataset['aggregate_title']}
+                                         secondary={<span>{secondaryText}</span>} />}
+                      control={
+                      <Radio
+                        color="secondary"
+                        data-cy-selected={this.props.currentDisplayedDataset.uniqueLayerSwitcherId === dataset.uniqueLayerSwitcherId}/>} />
+                  </RadioGroup>
+              </ListItem>
             );
           })
         }
@@ -216,99 +235,104 @@ export default class LayerSwitcher extends React.Component {
       this.setDatasetLayerOpacity(null, 0.8);
     }
     return (
-      <div style={{padding: '0 15px'}}>
-        <div style={{textAlign: 'center'}}>opacity: {Math.floor(this.props.currentDisplayedDataset.opacity * 100)}%
-        </div>
-        <Slider
-          disabled={!this.props.currentDisplayedDataset.uniqueLayerSwitcherId}
-          sliderStyle={{margin: '0'}}
-          step={0.05}
-          onChange={this.setDatasetLayerOpacity}
-          value={this.props.currentDisplayedDataset.opacity} />
-      </div>
+      <Slider
+         disabled={!this.props.currentDisplayedDataset.uniqueLayerSwitcherId}
+         min={0}
+         max={1}
+         step={0.05}
+         value={this.props.currentDisplayedDataset.opacity}
+         onChange={this.setDatasetLayerOpacity}/>
     );
   }
 
   makeColorPalettesSelect () {
     return (
-      <SelectField
-        selectedMenuItemStyle={{color: 'inherit'}}
-        floatingLabelText="Color Palette"
-        value={this.props.selectedColorPalette}
-        onChange={this.setSelectedColorPalette}>{
-        AVAILABLE_COLOR_PALETTES.map((palette, i) => {
-          return (
+      <FormControl style={{width: '100%'}}>
+        <InputLabel htmlFor="palette">Color Palette</InputLabel>
+        <Select
+          style={{
+            width: '100%',
+            textAlign: 'center',
+            background: `url(${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=${this.props.selectedColorPalette}&COLORBARONLY=true&WIDTH=200&HEIGHT=20&VERTICAL=false) center no-repeat`/*`*/,
+            padding: '0 0 0 10px'
+          }}
+          value={this.props.selectedColorPalette}
+          onChange={this.setSelectedColorPalette}
+          inputProps={{
+            name: 'palette',
+            id: 'palette',
+          }}>
+          {AVAILABLE_COLOR_PALETTES.map((palette, i) =>
             <MenuItem
               key={i}
               value={palette}
-              primaryText={
-                <div style={{background: `url(${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=${palette}&COLORBARONLY=true&WIDTH=200&HEIGHT=20&VERTICAL=false) center no-repeat`, padding: '0 0 0 10px'}}>
-                  {palette}
-                </div>
-              } />
-          );
-        })
-      }</SelectField>
+              style={{width: '120%', background: `url(${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=${palette}&COLORBARONLY=true&WIDTH=200&HEIGHT=20&VERTICAL=false) center no-repeat`, padding: '0 0 0 10px'}}/*`*/>
+              {palette}
+            </MenuItem>
+          )}
+        </Select>
+      </FormControl>
     );
   }
 
   render () {
     return (
-      <div className={classes['LayerSwitcher']}>
+      <Paper className={classes['LayerSwitcher']}>
         <div className={classes['Tabs']}>
-          <AppBar
-            title="Layer Switcher"
-            iconElementLeft={<IconButton><LayersIcon /></IconButton>}
-            iconElementRight={<IconButton className="cy-minimize-btn" onTouchTap={this._onHideLayerSwitcherPanel}><MinimizeIcon /></IconButton>} />
-          <Tabs>
-            <Tab
-              id="cy-layerswitcher-datasets-tab"
-              style={{height: '100%'}}
-              icon={<FontIcon className="material-icons">satellite</FontIcon>}
-              label="Datasets">
-              <Paper zDepth={2}>
-                <div style={{width: '65%', display: 'inline-block', padding: '0 15px'}}>
-                  {this.makeColorPalettesSelect()}
-                </div>
-                <div style={{width: '35%', display: 'inline-block'}}>
-                  <Subheader>
-                    <RaisedButton
-                      id="cy-reset-dataset-btn"
-                      style={{marginLeft: '10px'}}
-                      onClick={this.resetDatasetLayer}
-                      label="Reset" />
-                  </Subheader>
-                </div>
-                {this.makeSlider()}
-                {this.makeDatasetsList()}
-              </Paper>
-            </Tab>
-            <Tab
-              id="cy-layerswitcher-regions-tab"
-              icon={<FontIcon className="material-icons">local_library</FontIcon>}
-              label="Regions">
-              <Paper zDepth={2}>
-                <Subheader>
-                  <RaisedButton
-                    id="cy-reset-shapefile-btn"
-                    onClick={this.resetShapefile}
-                    label="Reset" />
-                </Subheader>
-                {this.makeShapefileList()}
-              </Paper>
-            </Tab>
-            <Tab
-              id="cy-layerswitcher-basemaps-tab"
-              style={{height: '100%'}}
-              icon={<FontIcon className="material-icons">map</FontIcon>}
-              label="Base Maps">
-              <Paper zDepth={2}>
-                {this.makeBaseMapsList()}
-              </Paper>
-            </Tab>
-          </Tabs>
+          <AppBar position="static" color="primary">
+            <Toolbar>
+              <IconButton disableRipple color="inherit"><LayersIcon /></IconButton>
+              <Typography variant="title" color="inherit" style={{flex: 1}}>
+                Layer Switcher
+              </Typography>
+              <IconButton color="inherit" className="cy-minimize-btn" onClick={this.onHideLayerSwitcherPanel}><MinimizeIcon /></IconButton>
+            </Toolbar>
+          </AppBar>
+          <AppBar position="static" color="default">
+            <Tabs
+              centered
+              fullWidth
+              value={this.state.tabValue}
+              indicatorColor="primary"
+              textColor="primary"
+              onChange={(event, value) => this.setState({ tabValue: value })}>
+              <Tab
+                style={{minWidth: '130px'}}
+                id="cy-layerswitcher-datasets-tab"
+                icon={<Satellite />}
+                label="Datasets">
+              </Tab>
+              <Tab
+                style={{minWidth: '130px'}}
+                id="cy-layerswitcher-regions-tab"
+                icon={<LocalLibrary />}
+                label="Regions">
+              </Tab>
+              <Tab
+                style={{minWidth: '130px'}}
+                id="cy-layerswitcher-basemaps-tab"
+                icon={<Map />}
+                label="Base Maps">
+              </Tab>
+            </Tabs>
+          </AppBar>
+          {this.state.tabValue === 0 &&
+          <Paper elevation={2} style={{height: '100%'}}>
+            {this.makeDatasetsList()}
+          </Paper>
+          }
+          {this.state.tabValue === 1 &&
+          <Paper elevation={2} style={{height: '100%'}}>
+            {this.makeShapefileList()}
+          </Paper>
+          }
+          {this.state.tabValue === 2 &&
+          <Paper elevation={2} style={{height: '100%'}}>
+            {this.makeBaseMapsList()}
+          </Paper>
+          }
         </div>
-      </div>
+      </Paper>
     );
   }
 }

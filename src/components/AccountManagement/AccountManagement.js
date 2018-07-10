@@ -1,13 +1,14 @@
 import React from 'react';
-import Paper from 'material-ui/Paper';
+import PropTypes from 'prop-types';
+import Paper from'@material-ui/core/Paper';
 import classes from './AccountManagement.scss';
 import SessionStatus from '../SessionStatus';
 
 export class AccountManagement extends React.Component {
   static propTypes = {
-    sessionStatus: React.PropTypes.any.isRequired,
-    sendCredentialsToZiggurat: React.PropTypes.func.isRequired,
-    logout: React.PropTypes.func.isRequired,
+    sessionStatus: PropTypes.any.isRequired,
+    sendCredentialsToZiggurat: PropTypes.func.isRequired,
+    logout: PropTypes.func.isRequired,
   };
 
   constructor(props) {

@@ -1,8 +1,10 @@
-import React from 'react'
+import React from 'react';
+import PropTypes from 'prop-types';
+
 class TableRow extends React.Component {
   static propTypes = {
-    fields: React.PropTypes.array.isRequired,
-    selected: React.PropTypes.bool.isRequired,
+    fields: PropTypes.array.isRequired,
+    selected: PropTypes.bool.isRequired,
   };
 
   render() {
