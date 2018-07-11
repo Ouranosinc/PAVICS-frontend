@@ -8,11 +8,11 @@ export const PLATFORM_SECTION_WORKFLOWS = 'Data Processing';
 export const VISUALIZE_SET_MAP_MANIPULATION_MODE = 'Visualize.VISUALIZE_SET_MAP_MANIPULATION_MODE';
 export const VISUALIZE_MODE_GRID_VALUES = 'VISUALIZE.MODE_VISUALIZE';
 export const VISUALIZE_MODE_REGION_SELECTION = 'VISUALIZE.MODE_REGION_SELECTION';
-export const VISUALIZE_CHART_PANEL = 'Time Series Chart';
-export const VISUALIZE_LAYER_SWITCHER_PANEL = 'Layer Switcher';
-export const VISUALIZE_INFO_PANEL = 'Point Informations';
-export const VISUALIZE_MAP_CONTROLS_PANEL = 'Map Controls';
-export const VISUALIZE_TIME_SLIDER_PANEL = 'Temporal Slider';
+export const CHART_WIDGET_TITLE = 'Time Series Chart';
+export const LAYER_SWITCHER_WIDGET_TITLE = 'Layer Switcher';
+export const INFO_WIDGET_TITLE = 'Point Informations';
+export const MAP_CONTROLS_WIDGET_TITLE = 'Map Controls';
+export const TIME_SLIDER_WIDGET_TITLE = 'Temporal Slider';
 // monitor
 export const MONITOR_SET_JOBS = 'MONITOR_SET_JOBS';
 export const JOB_ACCEPTED_STATUS = 'ProcessAccepted';

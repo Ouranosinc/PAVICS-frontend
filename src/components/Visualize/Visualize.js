@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classes from './Visualize.scss';
 import OLComponent from '../OLComponent';
 import SpeedDialMenu from '../SpeedDialMenu'
 import TimeSlider from '../TimeSlider';
@@ -9,7 +8,71 @@ import LayerSwitcher from '../LayerSwitcher';
 import TimeSeriesChart from './../TimeSeriesChart';
 import MapControls from './../MapControls';
 import { constants } from './../../redux/modules/Widgets';
+import * as labels from './../../constants';
 import BigColorPalette from '../BigColorPalette/BigColorPalette';
+import VisualizeWidget from './VisualizeWidget';
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
+import LayersIcon from '@material-ui/icons/Layers';
+import MapControlsIcon from '@material-ui/icons/MyLocation';
+import InfoIcon from '@material-ui/icons/Description';
+import ChartIcon from '@material-ui/icons/Timeline';
+
+const OPACITY = 0.9;
+const styles = {
+  mapContainer: {
+    zIndex: 0,
+    padding: 0 ,
+    margin: 0,
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    top: 0,
+    left: 0
+  },
+  left: {
+    maxWidth: '65%',
+    float: 'left'
+  },
+  panel: {
+    margin: '3px 0 0 3px',
+    float: 'left',
+    /*display: 'contents'*/
+  },
+  mapControls: {
+    textAlign: 'left',
+    opacity: OPACITY,
+    overflow: 'hidden',
+    height: '330px',
+    width: '250px'
+  },
+  timeSlider: {
+    height: '330px',
+    width: '620px',
+    bottom: 0,
+    textAlign: 'left',
+    opacity: OPACITY,
+  },
+  layerSwitcher: {
+    width: '400px',
+    bottom: 0,
+    textAlign: 'left',
+    opacity: OPACITY,
+    height: '436px',
+    minHeight: '486px'
+  },
+  chart: {
+    opacity: OPACITY,
+    overflow: 'hidden',
+    height: '330px',
+    width: '500px'
+  },
+  info: {
+    height: '330px',
+    overflow: 'auto',
+    width: '500px',
+    opacity: OPACITY
+  }
+};
 
 class Visualize extends React.Component {
   static propTypes = {
@@ -31,76 +94,99 @@ class Visualize extends React.Component {
 
   render () {
     return (
-      <div>
-        <div className={classes['Visualize']}>
-          <div className={classes['mapContainer']}>
-            <OLComponent
-              visualize={this.props.visualize}
-              visualizeActions={this.props.visualizeActions} />
-          </div>
-          <BigColorPalette
+      <React.Fragment>
+        <div style={styles.mapContainer}>
+          <OLComponent
             visualize={this.props.visualize}
             visualizeActions={this.props.visualizeActions} />
-          <SpeedDialMenu widgets={this.props.widgets}
-                         widgetsActions={this.props.widgetsActions} />
-          <div className={classes['left']}>
+        </div>
+        <BigColorPalette
+          visualize={this.props.visualize}
+          visualizeActions={this.props.visualizeActions} />
+        <SpeedDialMenu widgets={this.props.widgets}
+                       widgetsActions={this.props.widgetsActions} />
+
+        <div style={styles.left}>
+          <div style={{display: 'contents'}}>
             {
               (this.props.widgets.info) ?
-                <div className={classes['panel']}>
-                  <InformationPanel
-                    onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_INFO_KEY)}
-                    currentScalarValue={this.props.visualize.currentScalarValue} />
-                </div>
-              : null
-            }
-            {
-              (this.props.widgets.chart) ?
-                <div className={classes['panel']}>
-                    <TimeSeriesChart
-                      currentScalarValue={this.props.visualize.currentScalarValue}
-                      currentDisplayedDataset={this.props.visualize.currentDisplayedDataset}
-                      onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_CHART_KEY)}
-                      plotlyData={this.props.visualize.plotlyData}
-                      fetchPlotlyData={this.props.visualizeActions.fetchPlotlyData}
-                    />
+                <div style={styles.panel}>
+                  <VisualizeWidget
+                    title={labels.INFO_WIDGET_TITLE}
+                    icon={<InfoIcon />}
+                    rootStyle={styles.info}
+                    onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_INFO_KEY)}>
+                    <InformationPanel
+                      visualize={this.props.visualize} />
+                  </VisualizeWidget>
                 </div>
                 : null
             }
             {
-              (this.props.widgets.layerSwitcher)?
-                <div className={classes['panel']}>
-                  <LayerSwitcher
-                    onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_LAYER_SWITCHER_KEY)}
-                    visualize={this.props.visualize}
-                    visualizeActions={this.props.visualizeActions} />
+              (this.props.widgets.chart) ?
+                <div style={styles.panel}>
+                  <VisualizeWidget
+                    title={labels.CHART_WIDGET_TITLE}
+                    icon={<ChartIcon />}
+                    rootStyle={styles.chart}
+                    onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_CHART_KEY)}>
+                    <TimeSeriesChart
+                      visualize={this.props.visualize}
+                      visualizeActions={this.props.visualizeActions}/>
+                  </VisualizeWidget>
                 </div>
                 : null
             }
             {
               (this.props.widgets.timeSlider)?
-                <div className={classes['panel']}>
-                  <TimeSlider
-                    monthsRange={false}
-                    yearsRange={false}
-                    onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_TIME_SLIDER_KEY)}
-                    visualize={this.props.visualize}
-                    visualizeActions={this.props.visualizeActions} />
+                <div style={styles.panel}>
+                  <VisualizeWidget
+                    title={labels.TIME_SLIDER_WIDGET_TITLE}
+                    icon={<AccessTimeIcon />}
+                    rootStyle={styles.timeSlider}
+                    onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_TIME_SLIDER_KEY)}>
+                    <TimeSlider
+                      monthsRange={false}
+                      yearsRange={false}
+                      visualize={this.props.visualize}
+                      visualizeActions={this.props.visualizeActions} />
+                  </VisualizeWidget>
                 </div>
                 : null
             }
             {
               (this.props.widgets.mapControls)?
-                <div className={classes['panel']} style={{clear: 'left'}}>
-                  <MapControls
-                    onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_MAP_CONTROLS_KEY)}
-                    visualize={this.props.visualize}
-                    visualizeActions={this.props.visualizeActions} />
+                <div style={styles.panel}>
+                  <VisualizeWidget
+                    title={labels.MAP_CONTROLS_WIDGET_TITLE}
+                    icon={<MapControlsIcon />}
+                    rootStyle={styles.mapControls}
+                    onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_MAP_CONTROLS_KEY)}>
+                    <MapControls
+                      visualize={this.props.visualize}
+                      visualizeActions={this.props.visualizeActions} />
+                  </VisualizeWidget>
+                </div>
+                : null
+            }
+            {
+              (this.props.widgets.layerSwitcher)?
+                <div style={styles.panel}>
+                  <VisualizeWidget
+                    title={labels.LAYER_SWITCHER_WIDGET_TITLE}
+                    icon={<LayersIcon />}
+                    rootStyle={styles.layerSwitcher}
+                    onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_LAYER_SWITCHER_KEY)}>
+                    <LayerSwitcher
+                      visualize={this.props.visualize}
+                      visualizeActions={this.props.visualizeActions} />
+                  </VisualizeWidget>
                 </div>
                 : null
             }
           </div>
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 }

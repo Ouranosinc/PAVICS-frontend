@@ -316,7 +316,7 @@ class OLComponent extends React.Component {
     let opendapUrl = this.props.visualize.currentDisplayedDataset['opendap_url'][0];
     let lon = converted[0];
     let lat = converted[1];
-    let time = this.props.visualize.currentDateTime.substr(0, this.props.currentDateTime.length - 5);
+    let time = this.props.visualize.currentDateTime.substr(0, this.props.visualize.currentDateTime.length - 5);
     let variable = this.props.visualize.currentDisplayedDataset['variable'];
     this.props.visualizeActions.fetchScalarValue(opendapUrl, lat, lon, time, variable);
   }
