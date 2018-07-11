@@ -57,8 +57,7 @@ const styles = {
     bottom: 0,
     textAlign: 'left',
     opacity: OPACITY,
-    height: '436px',
-    minHeight: '486px'
+    height: '436px'
   },
   chart: {
     opacity: OPACITY,
@@ -89,7 +88,7 @@ class Visualize extends React.Component {
   }
 
   componentDidMount() {
-
+    this.props.visualizeActions.selectBasemap('Aerial');
   }
 
   render () {

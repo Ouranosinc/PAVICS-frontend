@@ -9,11 +9,11 @@ class CoreLayout extends React.Component {
   };
   render () {
     return (
-      <div>
+      <React.Fragment>
         <div className={classes.mainContainer}>
           {this.props.children}
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 }

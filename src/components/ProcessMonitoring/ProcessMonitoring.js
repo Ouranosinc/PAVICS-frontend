@@ -523,7 +523,7 @@ class ProcessMonitoring extends React.Component {
     }
     console.log('ProcessMonitoring component');
     return (
-      <div>
+      <React.Fragment>
         {this.state.loadingScreen}
         <div id="cy-process-monitoring" className="container">
           <Paper style={{ marginTop: 20 }}>
@@ -570,7 +570,7 @@ class ProcessMonitoring extends React.Component {
             username={this.props.session.sessionStatus.user.username}>
           </PersistResultDialog>
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 }

@@ -131,7 +131,7 @@ export class SearchCatalog extends React.Component {
   render () {
     return (
       <div style={{ margin: 20 }}>
-        <div>
+        <React.Fragment>
           {
             (this.props.research.facets.length === 0) ?
               (<Paper style={{marginTop: 20}}>
@@ -236,7 +236,7 @@ export class SearchCatalog extends React.Component {
             research={this.props.research}
             project={this.props.project}
             projectAPIActions={this.props.projectAPIActions}/>
-        </div>
+        </React.Fragment>
       </div>
     );
   }

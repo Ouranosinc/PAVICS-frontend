@@ -138,7 +138,7 @@ class WpsProcessStepper extends React.Component {
             </Typography>
           </StepLabel>
           <StepContent>
-            <div>
+            <React.Fragment>
               <Button variant="contained"
                       color="secondary"
                       id="cy-step-back-btn"
@@ -156,7 +156,7 @@ class WpsProcessStepper extends React.Component {
                   workflow={this.props.workflow}
                   workflowActions={this.props.workflowActions} />
               }
-            </div>
+            </React.Fragment>
           </StepContent>
         </Step>
       </Stepper>

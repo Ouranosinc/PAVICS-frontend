@@ -180,9 +180,9 @@ export class SearchCatalogResults extends React.Component {
       }
     }
     return (
-      <div>
+      <React.Fragment>
         {mainComponent}
-      </div>
+      </React.Fragment>
     );
   }
 }

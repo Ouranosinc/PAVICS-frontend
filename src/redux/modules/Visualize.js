@@ -1,6 +1,6 @@
 import myHttp from '../../util/http';
 import { NotificationManager } from 'react-notifications';
-import { VISUALIZE_SET_MAP_MANIPULATION_MODE } from './../../constants';
+import { VISUALIZE_SET_MAP_MANIPULATION_MODE, VISUALIZE_MODE_GRID_VALUES} from './../../constants';
 
 // Constants
 export const constants = {
@@ -86,35 +86,6 @@ function receivePlotlyData (json) {
       isFetching: false,
       data: data,
       layout: layout
-    }
-  };
-}
-function requestClimateIndicators () {
-  return {
-    type: constants.FETCH_CLIMATE_INDICATORS_REQUEST,
-    climateIndicators: {
-      requestedAt: Date.now(),
-      isFetching: true
-    }
-  };
-}
-function receiveClimateIndicatorsFailure (error) {
-  return {
-    type: constants.FETCH_CLIMATE_INDICATORS_FAILURE,
-    climateIndicators: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      error: error
-    }
-  };
-}
-function receiveClimateIndicators (items) {
-  return {
-    type: constants.FETCH_CLIMATE_INDICATORS_SUCCESS,
-    climateIndicators: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      items: items
     }
   };
 }
@@ -216,18 +187,6 @@ function receiveWMSLayerTimesteps (data) {
     }
   };
 }
-function setMapManipulationMode (mode) {
-  return {
-    type: VISUALIZE_SET_MAP_MANIPULATION_MODE,
-    mode: mode
-  };
-}
-function setSelectedColorPalette (palette) {
-  return {
-    type: constants.SET_SELECTED_COLOR_PALETTE,
-    palette: palette
-  };
-}
 function restoreInitialSelectedRegions () {
   return {
     type: constants.RESET_SELECTED_REGIONS
@@ -258,24 +217,6 @@ function setShapefiles (shapefiles) {
     publicShapeFiles: shapefiles
   };
 }
-function setSelectedShapefile (shapefile) {
-  return {
-    type: constants.SET_SELECTED_SHAPEFILE,
-    shapefile: shapefile
-  };
-}
-function setSelectedBasemap (basemap) {
-  return {
-    type: constants.SET_SELECTED_BASEMAP,
-    basemap: basemap
-  };
-}
-function setCurrentDisplayedDataset (layer) {
-  return {
-    type: constants.SET_SELECTED_DATASET_LAYER,
-    layer: layer
-  };
-}
 function setLayer (layer) {
   return {
     type: constants.SET_WMS_LAYER,
@@ -295,6 +236,7 @@ export const actions = {
   addDatasetsToVisualize: addDatasetsToVisualize,
   setCurrentDateTime: setCurrentDateTime,
   setLayer: setLayer,
+  setSelectedDatasetCapabilities: setSelectedDatasetCapabilities,
   fetchScalarValue: function (opendapUrl, lat, lon, time, variable) {
     return function (dispatch) {
       dispatch(requestScalarValue());
@@ -405,37 +347,36 @@ export const actions = {
         .catch(error => NotificationManager.error(`Method GetMap failed at being fetched from the NcWMS2 server: ${error}`, 'Error', 10000));
     };
   },
-  // TODO: Should just be a single synchronous function
   selectShapefile: function (shapefile) {
-    return dispatch => {
-      dispatch(setSelectedShapefile(shapefile));
+    return {
+      type: constants.SET_SELECTED_SHAPEFILE,
+      shapefile: shapefile
     };
   },
-  // TODO: Should just be a single synchronous function
   selectMapManipulationMode: function (mode) {
-    return dispatch => {
-      dispatch(setMapManipulationMode(mode));
+    return {
+      type: VISUALIZE_SET_MAP_MANIPULATION_MODE,
+      mode: mode
     };
   },
-  // TODO: Should just be a single synchronous function
   selectBasemap: function (basemap) {
-    return dispatch => {
-      dispatch(setSelectedBasemap(basemap));
+    return {
+      type: constants.SET_SELECTED_BASEMAP,
+      basemap: basemap
     };
   },
-  // TODO: Should just be a single synchronous function
   selectCurrentDisplayedDataset: function (layer) {
-    return dispatch => {
-      dispatch(setCurrentDisplayedDataset(layer));
+    return {
+      type: constants.SET_SELECTED_DATASET_LAYER,
+      layer: layer
     };
   },
-  // TODO: Should just be a single synchronous function
   selectColorPalette: function (palette) {
-    return dispatch => {
-      dispatch(setSelectedColorPalette(palette));
+    return {
+      type: constants.SET_SELECTED_COLOR_PALETTE,
+      palette: palette
     };
   },
-  setSelectedDatasetCapabilities: setSelectedDatasetCapabilities,
   fetchShapefiles: function () {
     const parser = new ol.format.WMSCapabilities();
     return dispatch => {
@@ -653,10 +594,10 @@ const HANDLERS = {
 // Reducer
 export const initialState = {
   variablePreferences: {},
-  mapManipulationMode: constants.VISUALIZE_MODE_GRID_VALUES,
+  mapManipulationMode: VISUALIZE_MODE_GRID_VALUES,
   selectedColorPalette: '',
   selectedShapefile: {},
-  selectedBasemap: 'Aerial',
+  selectedBasemap: '',
   currentDisplayedDataset: {
     opacity: 0.8
   },

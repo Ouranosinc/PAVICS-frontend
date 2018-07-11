@@ -80,10 +80,9 @@ export class TimeSlider extends React.Component {
   state = DEFAULT_STATE;
 
   static propTypes = {
-    // Not sure why monthsRange and yearsRange, but maybe for future range selection?
+    // monthsRange and yearsRange are present for future range selection
     monthsRange: PropTypes.bool.isRequired,
     yearsRange: PropTypes.bool.isRequired,
-    onMinimizeClicked: PropTypes.func.isRequired,
     visualize: PropTypes.object.isRequired,
     visualizeActions: PropTypes.object.isRequired
   };
@@ -95,21 +94,22 @@ export class TimeSlider extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (nextProps.visualize.currentDateTime && nextProps.visualize.currentDateTime !== this.props.visualize.currentDateTime) {
+    const { nextCurrentDateTime, nextCurrentDisplayedDataset} = nextProps.visualize;
+    if (nextCurrentDateTime && nextCurrentDateTime !== this.props.visualize.currentDateTime) {
       this.setState(
         {
-          currentDate: nextProps.visualize.currentDateTime.substring(0, 10),
-          currentMonthDay: nextProps.visualize.currentDateTime.substring(5, 10),
-          currentTime: nextProps.visualize.currentDateTime.substring(11, 24),
-          currentYear: nextProps.visualize.currentDateTime.substring(0, 4)
+          currentDate: nextCurrentDateTime.substring(0, 10),
+          currentMonthDay: nextCurrentDateTime.substring(5, 10),
+          currentTime: nextCurrentDateTime.substring(11, 24),
+          currentYear: nextCurrentDateTime.substring(0, 4)
         }
       );
     }
-    if(nextProps.visualize.currentDisplayedDataset && nextProps.visualize.currentDisplayedDataset !== this.props.visualize.currentDisplayedDataset ) {
-      if (!nextProps.visualize.currentDisplayedDataset['dataset_id']) {
+    if(nextCurrentDisplayedDataset && nextCurrentDisplayedDataset !== this.props.visualize.currentDisplayedDataset ) {
+      if (!nextCurrentDisplayedDataset['dataset_id']) {
         this.setState(DEFAULT_STATE);
       }
-      if (nextProps.visualize.currentDisplayedDataset['uniqueLayerSwitcherId'] !== this.props.visualize.currentDisplayedDataset['uniqueLayerSwitcherId']) {
+      if (nextCurrentDisplayedDataset['uniqueLayerSwitcherId'] !== this.props.visualize.currentDisplayedDataset['uniqueLayerSwitcherId']) {
         this.hasDatasetChanged = true;
       }
     }

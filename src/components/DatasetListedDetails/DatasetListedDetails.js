@@ -53,7 +53,7 @@ export class DatasetListedDetails extends React.Component {
           <List>
             {
               Object.keys(this.props.dataset).map((key) =>
-                <div>
+                <React.Fragment>
                   <ListItem component="div">
                     <ListItemIcon>
                       <AddIcon />
@@ -85,7 +85,7 @@ export class DatasetListedDetails extends React.Component {
                       }
                     </List>
                   }
-                </div>
+                </React.Fragment>
               )
             }
           </List>

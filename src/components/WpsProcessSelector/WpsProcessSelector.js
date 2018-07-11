@@ -56,7 +56,7 @@ class WpsProcessSelector extends React.Component {
       });
     }
     return (
-      <div>
+      <React.Fragment>
         <Paper style={{marginTop: 20}}>
           <div className="container">
             <TextField
@@ -89,7 +89,7 @@ class WpsProcessSelector extends React.Component {
             })
           }
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 }

@@ -149,7 +149,7 @@ export class ProjectDatasets extends React.Component {
                   disabledVisualize = true;
                 }
                 return (
-                  <div>
+                  <React.Fragment>
                     <ListItem
                       className="cy-project-dataset-item cy-project-dataset-level-0"
                       key={`dataset-item-${i}`}>
@@ -174,7 +174,7 @@ export class ProjectDatasets extends React.Component {
                         datasetAPIActions={this.props.datasetAPIActions}
                         project={this.props.project}/>
                     </ListItem>
-                  </div>
+                  </React.Fragment>
                 );
               }
 

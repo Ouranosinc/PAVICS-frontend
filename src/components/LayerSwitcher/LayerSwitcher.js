@@ -35,7 +35,6 @@ const styles = {
 
 export default class LayerSwitcher extends React.Component {
   static propTypes = {
-    onMinimizeClicked: PropTypes.func.isRequired,
     visualize: PropTypes.object.isRequired,
     visualizeActions: PropTypes.object.isRequired
   };
@@ -252,7 +251,7 @@ export default class LayerSwitcher extends React.Component {
 
   render () {
     return (
-      <div>
+      <React.Fragment>
         <AppBar position="static" color="default">
           <Tabs
             centered
@@ -282,21 +281,21 @@ export default class LayerSwitcher extends React.Component {
           </Tabs>
         </AppBar>
         {this.state.tabValue === 0 &&
-        <Paper elevation={2} style={{height: '100%'}}>
+        <Paper elevation={2}>
           {this.makeDatasetsList()}
         </Paper>
         }
         {this.state.tabValue === 1 &&
-        <Paper elevation={2} style={{height: '100%'}}>
+        <Paper elevation={2}>
           {this.makeShapefileList()}
         </Paper>
         }
         {this.state.tabValue === 2 &&
-        <Paper elevation={2} style={{height: '100%'}}>
+        <Paper elevation={2}>
           {this.makeBaseMapsList()}
         </Paper>
         }
-      </div>
+      </React.Fragment>
     );
   }
 }

@@ -43,7 +43,7 @@ export class ProjectManagement extends React.Component {
 
   render () {
    return (
-     <div>
+     <React.Fragment>
        <AppBar position="static" color="default">
          <Tabs
            centered
@@ -67,7 +67,7 @@ export class ProjectManagement extends React.Component {
               projectAPI={this.props.projectAPI} />
            {
              this.props.project.currentProject.id &&
-             <div>
+             <React.Fragment>
                <ProjectEditor
                  project={this.props.project}
                  projectActions={this.props.projectActions}
@@ -85,7 +85,7 @@ export class ProjectManagement extends React.Component {
                  researchActions={this.props.researchActions}
                  researchAPI={this.props.researchAPI}
                  researchAPIActions={this.props.researchAPIActions} />
-             </div>
+             </React.Fragment>
            }
          </div>
        }
@@ -113,7 +113,7 @@ export class ProjectManagement extends React.Component {
              session={this.props.session} />
          </div>
        }
-     </div>
+     </React.Fragment>
     );
   }
 }

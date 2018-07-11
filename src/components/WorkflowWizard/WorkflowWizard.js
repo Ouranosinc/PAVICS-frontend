@@ -93,7 +93,7 @@ class WorkflowWizard extends React.Component {
   render () {
     const { classes } = this.props;
     return (
-      <div>
+      <React.Fragment>
         <AppBar position="static" color="default">
           <Tabs
             fullWidth
@@ -150,7 +150,7 @@ class WorkflowWizard extends React.Component {
             </Button>
           </DialogActions>
         </Dialog>
-      </div>
+      </React.Fragment>
 
     );
   }

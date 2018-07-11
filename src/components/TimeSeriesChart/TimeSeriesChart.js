@@ -100,13 +100,13 @@ class TimeSeriesChart extends React.Component {
       content = null;
     }
     return (
-      <div className={classes['Chart']}>
+      <React.Fragment>
         {content}
         <div className={((plotlyData.isFetching || currentScalarValue.isFetching) &&
           (!currentScalarValue.data || !currentScalarValue.data._dimensions)) ? 'hidden' : ''}>
           <div id="plotly" ref={this._bindRef}></div>
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 }

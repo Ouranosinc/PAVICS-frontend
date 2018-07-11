@@ -20,11 +20,9 @@ export default class MapControls extends React.Component {
     this.state = {
       isFullScreen: false
     };
-    this._onSelectedFullScreenMode = this._onSelectedFullScreenMode.bind(this);
-    this._onSelectMapManipulationMode = this._onSelectMapManipulationMode.bind(this);
   }
 
-  _onSelectedFullScreenMode() {
+  onSelectedFullScreenMode = () => {
     if (!this.state.isFullScreen) {
       let el = document.documentElement;
       let rfs = el.requestFullscreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullscreen;
@@ -42,11 +40,11 @@ export default class MapControls extends React.Component {
     this.setState({
       isFullScreen: !this.state.isFullScreen
     });
-  }
+  };
 
-  _onSelectMapManipulationMode(event, value) {
+  onSelectMapManipulationMode = (event, value) => {
     this.props.visualizeActions.selectMapManipulationMode(value);
-  }
+  };
 
   render () {
     return (
@@ -54,7 +52,7 @@ export default class MapControls extends React.Component {
         <h4>Mouse Click Mode</h4>
         <RadioGroup
           style={{marginTop: '10px'}}
-          onChange={this._onSelectMapManipulationMode}
+          onChange={this.onSelectMapManipulationMode}
           name="map-manipulation-mode"
           value={this.props.visualize.mapManipulationMode}>
           <FormControlLabel
@@ -77,7 +75,7 @@ export default class MapControls extends React.Component {
         <Button variant="contained"
           style={{marginBottom: '10px'}}
           color="primary"
-          onClick={this._onSelectedFullScreenMode}>
+          onClick={this.onSelectedFullScreenMode}>
           Full screen
           {(!this.state.isFullScreen)? <FullScreenIcon /> :<ExitFullScreenIcon />}
         </Button>

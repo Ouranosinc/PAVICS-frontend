@@ -112,7 +112,7 @@ class CriteriaSelection extends React.Component {
             </ListItem>
           </List>
         </div>
-        <div>
+        <React.Fragment>
           {
             this.props.research.selectedFacets.map((x, i) =>
               x.key === this.props.criteriaName &&
@@ -123,7 +123,7 @@ class CriteriaSelection extends React.Component {
                 label={x.value} />
             )
           }
-        </div>
+        </React.Fragment>
       </Col>
     );
   }
