@@ -32,15 +32,13 @@ const FORM_WORKFLOW_ID = 'form-workflow-process';
 class ScientificWorkflowStepper extends Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
-    showDialog: PropTypes.func.isRequired,
-    goToSection: PropTypes.func.isRequired,
     jobAPIActions: PropTypes.object.isRequired,
     project: PropTypes.object.isRequired,
-    selectedShapefile: PropTypes.object.isRequired,
-    currentDisplayedDataset: PropTypes.object.isRequired,
-    selectedRegions: PropTypes.array.isRequired,
+    sectionActions: PropTypes.object.isRequired,
     selectedProcess: PropTypes.object.isRequired,
     selectedProvider: PropTypes.string.isRequired,
+    showDialog: PropTypes.func.isRequired,
+    visualize: PropTypes.object.isRequired,
     workflow: PropTypes.object.isRequired,
     workflowActions: PropTypes.object.isRequired,
     workflowAPI: PropTypes.object.isRequired,
@@ -315,12 +313,10 @@ class ScientificWorkflowStepper extends Component {
                   <WpsProcessForm
                     executeProcess={this.catchAndWrapExecuteProcess}
                     formId={FORM_WORKFLOW_ID}
-                    selectedRegions={this.props.selectedRegions}
-                    currentDisplayedDataset={this.props.currentDisplayedDataset}
-                    selectedShapefile={this.props.selectedShapefile}
-                    goToSection={this.props.goToSection}
-                    workflow={this.props.workflow}
-                    workflowActions={this.props.workflowActions} />
+                    sectionActions={this.props.sectionActions}
+                    visualize={this.props.visualize}
+                    workflowActions={this.props.workflowActions}
+                    workflow={this.props.workflow} />
                 </StepContent>
               )
           }

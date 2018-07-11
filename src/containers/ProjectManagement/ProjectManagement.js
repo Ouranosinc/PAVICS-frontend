@@ -3,16 +3,16 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ProjectManagement from './../../components/ProjectManagement';
-import { actions as datasetAPIActionsCreators } from '../../redux/modules/DatasetAPI';
-import { actions as projectActionsCreators } from './../../redux/modules/Project';
-import { actions as projectAPIActionsCreators } from '../../redux/modules/ProjectAPI';
-import { actions as researchActionsCreators } from './../../redux/modules/Research';
-import { actions as researchAPIActionsCreators } from '../../redux/modules/ResearchAPI';
+import { actions as datasetAPIActions } from '../../redux/modules/DatasetAPI';
+import { actions as projectActions } from './../../redux/modules/Project';
+import { actions as projectAPIActions } from '../../redux/modules/ProjectAPI';
+import { actions as researchActions } from './../../redux/modules/Research';
+import { actions as researchAPIActions } from '../../redux/modules/ResearchAPI';
+import { actions as sectionActions } from '../../redux/modules/Section';
+import { actions as visualizeActions } from '../../redux/modules/Visualize';
 
 export class ProjectManagementContainer extends React.Component {
-  static propTypes = {
-
-  };
+  static propTypes = {};
 
   constructor(props) {
     super(props);
@@ -33,16 +33,19 @@ const mapStateToProps = (state) => {
     researchAPI: state.researchAPI,
     project: state.project,
     projectAPI: state.projectAPI,
-    sessionManagement: state.sessionManagement,
+    session: state.session,
+    visualize: state.visualize,
   }
 };
 const mapDispatchToProps = (dispatch) => {
   return {
-    datasetAPIActions: bindActionCreators({...datasetAPIActionsCreators}, dispatch),
-    projectActions: bindActionCreators({...projectActionsCreators}, dispatch),
-    projectAPIActions: bindActionCreators({...projectAPIActionsCreators}, dispatch),
-    researchActions: bindActionCreators({...researchActionsCreators}, dispatch),
-    researchAPIActions: bindActionCreators({...researchAPIActionsCreators}, dispatch)
+    datasetAPIActions: bindActionCreators({...datasetAPIActions}, dispatch),
+    projectActions: bindActionCreators({...projectActions}, dispatch),
+    projectAPIActions: bindActionCreators({...projectAPIActions}, dispatch),
+    researchActions: bindActionCreators({...researchActions}, dispatch),
+    researchAPIActions: bindActionCreators({...researchAPIActions}, dispatch),
+    sectionActions: bindActionCreators({...sectionActions}, dispatch),
+    visualizeActions: bindActionCreators({...visualizeActions}, dispatch),
   }
 };
 

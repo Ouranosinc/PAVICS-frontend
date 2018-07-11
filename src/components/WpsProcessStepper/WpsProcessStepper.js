@@ -26,12 +26,10 @@ const styles = theme => ({
 class WpsProcessStepper extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
-    goToSection: PropTypes.func.isRequired,
     jobAPIActions: PropTypes.object.isRequired,
     project: PropTypes.object.isRequired,
-    selectedShapefile: PropTypes.object.isRequired,
-    currentDisplayedDataset: PropTypes.object.isRequired,
-    selectedRegions: PropTypes.array.isRequired,
+    sectionActions: PropTypes.object.isRequired,
+    visualize: PropTypes.object.isRequired,
     workflow: PropTypes.object.isRequired,
     workflowActions: PropTypes.object.isRequired
   };
@@ -118,12 +116,6 @@ class WpsProcessStepper extends React.Component {
                 {(this.props.workflow.selectedProcess && this.props.workflow.stepIndex >= 2)? this.props.workflow.selectedProcess.title: ''}
               </Typography>
             }
-            {
-              /*(this.props.workflow.selectedProcess && this.props.workflow.stepIndex >= 2)?
-              <WpsProcessDetails
-                workflow={this.props.workflow} />:
-              null*/
-            }
           </StepLabel>
           <StepContent>
             <Button variant="contained"
@@ -159,10 +151,8 @@ class WpsProcessStepper extends React.Component {
                   : <WpsProcessForm
                   executeProcess={this.execute}
                   formId={FORM_PROCESS_ID}
-                  goToSection={this.props.goToSection}
-                  selectedRegions={this.props.selectedRegions}
-                  currentDisplayedDataset={this.props.currentDisplayedDataset}
-                  selectedShapefile={this.props.selectedShapefile}
+                  sectionActions={this.props.sectionActions}
+                  visualize={this.props.visualize}
                   workflow={this.props.workflow}
                   workflowActions={this.props.workflowActions} />
               }

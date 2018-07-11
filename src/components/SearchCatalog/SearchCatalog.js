@@ -19,22 +19,18 @@ import FormControl from '@material-ui/core/FormControl';
 
 export class SearchCatalog extends React.Component {
   static propTypes = {
-    currentProjectSearchCriterias: PropTypes.array.isRequired,
-    clickTogglePanel: PropTypes.func.isRequired,
-    addSearchCriteriasToProject: PropTypes.func.isRequired,
-    addDatasetsToProject: PropTypes.func.isRequired,
     datasetAPI: PropTypes.object.isRequired,
     datasetAPIActions: PropTypes.object.isRequired,
     project: PropTypes.object.isRequired,
     projectActions: PropTypes.object.isRequired,
     projectAPI: PropTypes.object.isRequired,
     projectAPIActions: PropTypes.object.isRequired,
-    sessionManagement: PropTypes.object.isRequired,
+    session: PropTypes.object.isRequired,
     research: PropTypes.object.isRequired,
     researchActions: PropTypes.object.isRequired,
     researchAPI: PropTypes.object.isRequired,
     researchAPIActions: PropTypes.object.isRequired,
-    panelControls: PropTypes.object.isRequired
+    visualizeActions: PropTypes.object.isRequired
   };
 
   state = {
@@ -51,7 +47,7 @@ export class SearchCatalog extends React.Component {
 
   constructor (props) {
     super(props);
-    if(!this.props.sessionManagement.sessionStatus.user.authenticated) {
+    if(!this.props.session.sessionStatus.user.authenticated) {
       NotificationManager.warning(`You need to be authenticated to use search datasets features.`, 'Warning', 10000);
     }
   }
@@ -152,7 +148,7 @@ export class SearchCatalog extends React.Component {
                         <InputLabel htmlFor="saved-criteria">Load criteria(s)</InputLabel>
                         <Select
                           value={this.state.selectedSavedCriteria}
-                          onChange={(event) => this.onLoadSavedCriteria(search.id)}
+                          onChange={(event) => this.onLoadSavedCriteria(event.target.value)}
                           inputProps={{
                             id: 'saved-criteria',
                           }}
@@ -235,9 +231,7 @@ export class SearchCatalog extends React.Component {
               </Paper>)
           }
           <SearchCatalogResults
-            addDatasetsToVisualize={this.props.addDatasetsToVisualize}
-            selectCurrentDisplayedDataset={this.props.selectCurrentDisplayedDataset}
-            clickTogglePanel={this.props.clickTogglePanel}
+            visualizeActions={this.props.visualizeActions}
             datasetAPIActions={this.props.datasetAPIActions}
             research={this.props.research}
             project={this.props.project}

@@ -19,17 +19,12 @@ import MinimizeIcon from '@material-ui/icons/Remove';
 
 export default class InformationPanel extends React.Component {
   static propTypes = {
-    onToggleMapPanel: PropTypes.func.isRequired,
+    onMinimizeClicked: PropTypes.func.isRequired,
     currentScalarValue: PropTypes.object.isRequired
   };
 
   constructor () {
     super();
-    this._onHideInformationPanel = this._onHideInformationPanel.bind(this);
-  }
-
-  _onHideInformationPanel () {
-    this.props.onToggleMapPanel(constants.VISUALIZE_INFO_PANEL);
   }
 
   render () {
@@ -91,7 +86,7 @@ export default class InformationPanel extends React.Component {
             <Typography variant="title" color="inherit" style={{flex: 1}}>
               Point Informations
             </Typography>
-            <IconButton color="inherit" className="cy-minimize-btn" onClick={this._onHideInformationPanel}><MinimizeIcon /></IconButton>
+            <IconButton color="inherit" className="cy-minimize-btn" onClick={(event) => this.props.onMinimizeClicked()}><MinimizeIcon /></IconButton>
           </Toolbar>
         </AppBar>
         <div className={classes['Content']}>

@@ -29,9 +29,10 @@ on external changes
  */
 export default class BigColorPalette extends React.Component {
   static propTypes = {
-    variablePreference: PropTypes.object,
-    setVariablePreferenceBoundaries: PropTypes.func.isRequired
+    visualize: PropTypes.object.isRequired,
+    visualizeActions: PropTypes.object.isRequired
   };
+
   constructor (props) {
     super(props);
     this.changeMin = this.changeMin.bind(this);
@@ -50,12 +51,12 @@ export default class BigColorPalette extends React.Component {
   here, we will cast them to strings so that the validations do not fail horribly later on
    */
   componentWillReceiveProps (nextProps) {
-    if (nextProps.variablePreference) {
-      if (this.props.variablePreference !== nextProps.variablePreference) {
+    if (nextProps.visualize.variablePreference) {
+      if (this.props.visualize.variablePreference !== nextProps.visualize.variablePreference) {
         this.setState({
           ...this.state,
-          localMin: (nextProps.variablePreference.min)? nextProps.variablePreference.min.toString(): '',
-          localMax: (nextProps.variablePreference.max)? nextProps.variablePreference.max.toString(): ''
+          localMin: (nextProps.visualize.variablePreference.min)? nextProps.visualize.variablePreference.min.toString(): '',
+          localMax: (nextProps.visualize.variablePreference.max)? nextProps.visualize.variablePreference.max.toString(): ''
         });
       }
     }
@@ -82,7 +83,7 @@ export default class BigColorPalette extends React.Component {
     let min = (this.state.localMin.indexOf('e') !== -1) ? parseFloat(this.state.localMin).toFixed(ARBITRARY_MAX_DECIMAL_QUANTITY) : this.state.localMin;
     let max = (this.state.localMax.indexOf('e') !== -1) ? parseFloat(this.state.localMax).toFixed(ARBITRARY_MAX_DECIMAL_QUANTITY) : this.state.localMax;
     if (min < max) {
-      this.props.setVariablePreferenceBoundaries(this.state.localMin, this.state.localMax);
+      this.props.visualizeActions.setVariablePreferenceBoundaries(this.state.localMin, this.state.localMax);
     } else {
       NotificationManager.warning('Please input valid min max values (min should be smaller than max).', 'Warning', 10000);
     }
@@ -95,7 +96,7 @@ export default class BigColorPalette extends React.Component {
   }
 
   render () {
-    if (this.props.variablePreference && this.props.variablePreference.colorPalette) {
+    if (this.props.visualize.variablePreference && this.props.visualize.variablePreference.colorPalette) {
       return (
         <Grid id="cy-big-color-palette" className={classes.BigColorPalette}>
           <Row>
@@ -113,8 +114,8 @@ export default class BigColorPalette extends React.Component {
             <Col xs={8} md={6}>
               <div
                 className={classes.ImageContainer}
-                style={{backgroundImage: `url(${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=${this.props.variablePreference.colorPalette}&COLORBARONLY=true&WIDTH=600&HEIGHT=60&VERTICAL=false)`}}>
-                {this.props.variablePreference.colorPalette}
+                style={{backgroundImage: `url(${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=${this.props.visualize.variablePreference.colorPalette}&COLORBARONLY=true&WIDTH=600&HEIGHT=60&VERTICAL=false)`}}>
+                {this.props.visualize.variablePreference.colorPalette}
               </div>
             </Col>
             <Col xs={2} md={1}>

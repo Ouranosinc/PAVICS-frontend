@@ -36,7 +36,7 @@ class TimeSeriesChart extends React.Component {
   static propTypes = {
     currentScalarValue: PropTypes.object.isRequired,
     currentDisplayedDataset: PropTypes.object.isRequired,
-    onToggleMapPanel: PropTypes.func.isRequired,
+    onMinimizeClicked: PropTypes.func.isRequired,
     plotlyData: PropTypes.object.isRequired,
     fetchPlotlyData: PropTypes.func.isRequired
   };
@@ -44,7 +44,6 @@ class TimeSeriesChart extends React.Component {
   constructor (props) {
     super(props);
     this._bindRef = this._bindRef.bind(this);
-    this._onHideChartPanel = this._onHideChartPanel.bind(this);
   }
 
   componentWillReceiveProps (nextProps) {
@@ -89,10 +88,6 @@ class TimeSeriesChart extends React.Component {
     Plotly.plot(this.container, this.props.plotlyData.data, layout, { displayModeBar: false });
   }
 
-  _onHideChartPanel () {
-    this.props.onToggleMapPanel(constants.VISUALIZE_CHART_PANEL);
-  }
-
   _bindRef (node) {
     this.container = node;
   }
@@ -127,7 +122,7 @@ class TimeSeriesChart extends React.Component {
             <Typography variant="title" color="inherit" style={{flex: 1}}>
               Time Series Chart
             </Typography>
-            <IconButton color="inherit" className="cy-minimize-btn" onClick={this._onHideChartPanel}><MinimizeIcon /></IconButton>
+            <IconButton color="inherit" className="cy-minimize-btn" onClick={(event) => this.props.onMinimizeClicked()}><MinimizeIcon /></IconButton>
           </Toolbar>
         </AppBar>
         <div className={classes['Chart']}>

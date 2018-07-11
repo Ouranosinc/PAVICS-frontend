@@ -99,8 +99,7 @@ class WpsProcessFormInput extends Component {
               <Checkbox
                 name={this.props.inputDefinition.name}
                 checked={value}
-                onChange={this.handleCheckboxChange}
-                value={value} />
+                onChange={this.handleCheckboxChange} />
             }>
           </FormControlLabel>
           <FormHelperText style={{marginTop: '-12px'}}>

@@ -41,10 +41,8 @@ export default class WpsProcessForm extends React.Component {
   static propTypes = {
     executeProcess: PropTypes.func.isRequired,
     formId: PropTypes.string.isRequired,
-    goToSection: PropTypes.func.isRequired,
-    selectedShapefile: PropTypes.object.isRequired,
-    currentDisplayedDataset: PropTypes.object.isRequired,
-    selectedRegions: PropTypes.array.isRequired,
+    sectionActions: PropTypes.object.isRequired,
+    visualize: PropTypes.object.isRequired,
     workflow: PropTypes.object.isRequired,
     workflowActions: PropTypes.object.isRequired
   };
@@ -114,8 +112,8 @@ export default class WpsProcessForm extends React.Component {
     // If not, fields will be loaded with workflow default values if defined
     for(let inputName in this.state.formData) {
       if (inputName.startsWith(constants.LABEL_NETCDF.split('.')[0]) && inputName.endsWith(constants.LABEL_NETCDF.split('.')[1])) {
-        if (props.currentDisplayedDataset['url']) {
-          changedState[inputName] = props.currentDisplayedDataset['url'];
+        if (props.visualize.currentDisplayedDataset['url']) {
+          changedState[inputName] = props.visualize.currentDisplayedDataset['url'];
         } else {
           // If dataset unselected => reset value, else value might be the workflow default value (so do nothing)
           if (oldProps&& oldProps.currentDisplayedDataset && oldProps.currentDisplayedDataset['url']) {
@@ -125,24 +123,24 @@ export default class WpsProcessForm extends React.Component {
       }
 
       if (inputName.startsWith(constants.LABEL_OPENDAP.split('.')[0]) && inputName.endsWith(constants.LABEL_OPENDAP.split('.')[1])) {
-        if (props.currentDisplayedDataset['opendap_url']) {
-          changedState[inputName] = props.currentDisplayedDataset['opendap_url'];
+        if (props.visualize.currentDisplayedDataset['opendap_url']) {
+          changedState[inputName] = props.visualize.currentDisplayedDataset['opendap_url'];
         } else {
           // If dataset unselected => reset value, else value might be the workflow default value (so do nothing)
-          if (oldProps && oldProps.currentDisplayedDataset && oldProps.currentDisplayedDataset['opendap_url']) {
+          if (oldProps && oldProps.visualize.currentDisplayedDataset && oldProps.visualize.currentDisplayedDataset['opendap_url']) {
             changedState[inputName] = '';
           }
         }
       }
 
       // TODO Support for thredds catalog url autofill based on dataset selection: string.url update state with catalog_urls
-
       if (inputName.startsWith(constants.LABEL_SHAPEFILE.split('.')[0]) && inputName.endsWith(constants.LABEL_SHAPEFILE.split('.')[1])) {
-        if (props.selectedShapefile['wmsParams'] && props.selectedShapefile['wmsParams']['LAYERS']) {
-          changedState[inputName] = props.selectedShapefile['wmsParams']['LAYERS'];
+        if (props.visualize.selectedShapefile['wmsParams'] && props.visualize.selectedShapefile['wmsParams']['LAYERS']) {
+          changedState[inputName] = props.visualize.selectedShapefile['wmsParams']['LAYERS'];
         } else {
           // If shapefile unselected => reset value, else value might be the workflow default value (so do nothing)
-          if (oldProps && oldProps.selectedShapefile && oldProps.selectedShapefile['wmsParams'] && oldProps.selectedShapefile['wmsParams']['LAYERS']) {
+          if (oldProps && oldProps.visualize.selectedShapefile && oldProps.visualize.selectedShapefile['wmsParams'] &&
+            oldProps.visualize.selectedShapefile['wmsParams']['LAYERS']) {
             changedState[inputName] = '';
             // FIXME: empty selectedRegions array since value won't fit anymore
           }
@@ -150,11 +148,11 @@ export default class WpsProcessForm extends React.Component {
       }
 
       if (inputName.startsWith(constants.LABEL_FEATURE_IDS.split('.')[0]) && inputName.endsWith(constants.LABEL_FEATURE_IDS.split('.')[1])) {
-        if (props.selectedRegions && props.selectedRegions.length) {
-          changedState[inputName] = props.selectedRegions;
+        if (props.visualize.selectedRegions && props.visualize.selectedRegions.length) {
+          changedState[inputName] = props.visualize.selectedRegions;
         } else {
           // If region unselected => reset value, else value might be the workflow default value (so do nothing)
-          if (oldProps && oldProps.selectedRegions && oldProps.selectedRegions.length) {
+          if (oldProps && oldProps.visualize.selectedRegions && oldProps.visualize.selectedRegions.length) {
             changedState[inputName] = []
           }
         }
@@ -171,7 +169,8 @@ export default class WpsProcessForm extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if(nextProps.workflow.selectedProcessInputs && this.props.workflow.selectedProcessInputs !== nextProps.workflow.selectedProcessInputs) {
+    if(nextProps.workflow.selectedProcessInputs &&
+      this.props.workflow.selectedProcessInputs !== nextProps.workflow.selectedProcessInputs) {
       this.buildFormData(nextProps)
     } else {
       this.verifyMeaningfulValues(nextProps, this.props);
@@ -211,7 +210,6 @@ export default class WpsProcessForm extends React.Component {
   //   if minOccurs = 0 mark as optional
   //   if maxOccurs > 1 trigger rendering with start and end inputs
   //   create html
-
   render () {
     console.log('creating deform wrapper for inputs %o, current state: %o', this.props.workflow.selectedProcessInputs, this.state);
     return (

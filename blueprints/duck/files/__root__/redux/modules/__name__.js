@@ -1,14 +1,19 @@
 // Constants
-// export const constants = { }
+export const constants = {};
+
+// Actions
+
 
 // Action Creators
-// export const actions = { }
+export const actions = {};
 
 // Reducer
-export const initialState = {}
+const HANDLERS = {};
+
+// Initial State
+export const initialState = {};
+
 export default function (state = initialState, action) {
-  switch (action.type) {
-    default:
-      return state
-  }
+  const handler = HANDLERS[action.type];
+  return handler ? handler(state, action) : state;
 }

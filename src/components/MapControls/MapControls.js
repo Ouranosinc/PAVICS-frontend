@@ -19,9 +19,9 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 export default class MapControls extends React.Component {
   static propTypes = {
-    mapManipulationMode: PropTypes.string.isRequired,
-    onToggleMapPanel: PropTypes.func.isRequired,
-    selectMapManipulationMode: PropTypes.func.isRequired
+    onMinimizeClicked: PropTypes.func.isRequired,
+    visualize: PropTypes.object.isRequired,
+    visualizeActions: PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -29,13 +29,8 @@ export default class MapControls extends React.Component {
     this.state = {
       isFullScreen: false
     };
-    this._onHideMapControlsPanel = this._onHideMapControlsPanel.bind(this);
     this._onSelectedFullScreenMode = this._onSelectedFullScreenMode.bind(this);
     this._onSelectMapManipulationMode = this._onSelectMapManipulationMode.bind(this);
-  }
-
-  _onHideMapControlsPanel () {
-    this.props.onToggleMapPanel(constants.VISUALIZE_MAP_CONTROLS_PANEL);
   }
 
   _onSelectedFullScreenMode() {
@@ -59,7 +54,7 @@ export default class MapControls extends React.Component {
   }
 
   _onSelectMapManipulationMode(event, value) {
-    this.props.selectMapManipulationMode(value);
+    this.props.visualizeActions.selectMapManipulationMode(value);
   }
 
   render () {
@@ -69,9 +64,9 @@ export default class MapControls extends React.Component {
           <Toolbar>
             <IconButton disableRipple color="inherit"><MapControlsIcon /></IconButton>
             <Typography variant="title" color="inherit" style={{flex: 1}}>
-              Map Controls
+              {constants.VISUALIZE_MAP_CONTROLS_PANEL}
             </Typography>
-            <IconButton color="inherit" className="cy-minimize-btn" onClick={(event) => this._onHideMapControlsPanel()}><MinimizeIcon /></IconButton>
+            <IconButton color="inherit" className="cy-minimize-btn" onClick={(event) => this.props.onMinimizeClicked()}><MinimizeIcon /></IconButton>
           </Toolbar>
         </AppBar>
         <div className="container">
@@ -80,7 +75,7 @@ export default class MapControls extends React.Component {
             style={{marginTop: '10px'}}
             onChange={this._onSelectMapManipulationMode}
             name="map-manipulation-mode"
-            value={this.props.mapManipulationMode}>
+            value={this.props.visualize.mapManipulationMode}>
             <FormControlLabel
               id="cy-grid-point-values-btn"
               label="Grid Point Values"

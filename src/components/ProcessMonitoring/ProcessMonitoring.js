@@ -38,7 +38,7 @@ class ProcessMonitoring extends React.Component {
     monitor: PropTypes.object.isRequired,
     monitorActions: PropTypes.object.isRequired,
     project: PropTypes.object.isRequired,
-    sessionManagement: PropTypes.object.isRequired
+    session: PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -567,7 +567,7 @@ class ProcessMonitoring extends React.Component {
             monitorActions={this.props.monitorActions}
             onPersistConfirmed={this._onPersistOutputClicked}
             closePersistDialog={this._closePersistDialog}
-            username={this.props.sessionManagement.sessionStatus.user.username}>
+            username={this.props.session.sessionStatus.user.username}>
           </PersistResultDialog>
         </div>
       </div>

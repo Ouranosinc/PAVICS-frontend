@@ -43,14 +43,13 @@ export class DatasetMenuActions extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     dataset: PropTypes.object.isRequired,
+    datasetAPIActions: PropTypes.object.isRequired,
+    disabledVisualize: PropTypes.bool.isRequired,
+    fileIndex: PropTypes.number,
     isFile: PropTypes.bool,
     isRemoveFromProjectEnabled: PropTypes.bool.isRequired,
-    fileIndex: PropTypes.number,
-    disabledVisualize: PropTypes.bool.isRequired,
-    addDatasetsToVisualize: PropTypes.func.isRequired,
-    selectCurrentDisplayedDataset: PropTypes.func.isRequired,
-    datasetAPIActions: PropTypes.object.isRequired,
-    project: PropTypes.object.isRequired
+    project: PropTypes.object.isRequired,
+    visualizeActions: PropTypes.object.isRequired,
   };
 
   constructor(props) {
@@ -79,8 +78,8 @@ export class DatasetMenuActions extends React.Component {
       if(index > -1) {
         copy = this.setFileAsAggregateArrayFields(copy, index);
       }
-      this.props.addDatasetsToVisualize([copy]);
-      this.props.selectCurrentDisplayedDataset({
+      this.props.visualizeActions.addDatasetsToVisualize([copy]);
+      this.props.visualizeActions.selectCurrentDisplayedDataset({
         ...copy,
         currentFileIndex: 0,
         opacity: 0.8
@@ -92,8 +91,8 @@ export class DatasetMenuActions extends React.Component {
         let copy = JSON.parse(JSON.stringify(this.props.dataset));
         splittedDatasets.push(this.setFileAsAggregateArrayFields(copy, index));
       });
-      this.props.addDatasetsToVisualize(splittedDatasets);
-      this.props.selectCurrentDisplayedDataset({
+      this.props.visualizeActions.addDatasetsToVisualize(splittedDatasets);
+      this.props.visualizeActions.selectCurrentDisplayedDataset({
         ...splittedDatasets[0],
         currentFileIndex: 0,
         opacity: 0.8

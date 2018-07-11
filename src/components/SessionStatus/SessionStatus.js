@@ -92,7 +92,7 @@ export default withStyles(styles)(
             className={classes.textField}
             value={this.props.sessionStatus.user.email}
             label="Email"/>
-          <List fullWidth>
+          <List>
             <ListSubheader style={{'paddingLeft': '0'}}>
               <Typography variant="subheading" gutterBottom>Access groups: </Typography>
             </ListSubheader>

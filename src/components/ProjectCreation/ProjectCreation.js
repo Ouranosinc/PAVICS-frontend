@@ -10,7 +10,7 @@ import { NotificationManager } from 'react-notifications';
 
 export class ProjectCreation extends React.Component {
   static propTypes = {
-    sessionManagement: PropTypes.object.isRequired,
+    session: PropTypes.object.isRequired,
     project: PropTypes.object.isRequired,
     projectActions: PropTypes.object.isRequired,
     projectAPI: PropTypes.object.isRequired,
@@ -48,11 +48,11 @@ export class ProjectCreation extends React.Component {
     })
   }
   _onCreateProject(event, value){
-    if(this.props.sessionManagement.sessionStatus.user && this.props.sessionManagement.sessionStatus.user.username.length) {
+    if(this.props.session.sessionStatus.user && this.props.session.sessionStatus.user.username.length) {
       this.props.projectAPIActions.createProject({
         name: this.state.projectName,
         description: this.state.projectDescription,
-        owner: this.props.sessionManagement.sessionStatus.user.username
+        owner: this.props.session.sessionStatus.user.username
       });
       this.setState({
         projectName: '',

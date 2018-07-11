@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import * as constants from './../../constants';
+import { constants } from './../../redux/modules/Widgets';
+import * as labels from './../../constants';
 import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
@@ -13,7 +14,7 @@ import MapControlsIcon from '@material-ui/icons/MyLocation';
 import InfoIcon from '@material-ui/icons/Description';
 
 const styles = theme => {
-  console.log(theme)
+  // console.log(theme)
   return ({
     speedDial: {
       position: 'fixed',
@@ -33,8 +34,8 @@ class SpeedDialMenu extends React.Component {
 
   static propTypes = {
     classes: PropTypes.object.isRequired,
-    mapPanelStatus: PropTypes.object.isRequired,
-    onToggleMapPanel: PropTypes.func.isRequired
+    widgets: PropTypes.object.isRequired,
+    widgetsActions: PropTypes.object.isRequired
   };
 
   handleClick = () => {
@@ -55,26 +56,6 @@ class SpeedDialMenu extends React.Component {
     this.setState({
       open: false,
     });
-  };
-
-  toggleInfoPanel = () => {
-    this.props.onToggleMapPanel(constants.VISUALIZE_INFO_PANEL);
-  };
-
-  toggleMapControlsPanel = () => {
-    this.props.onToggleMapPanel(constants.VISUALIZE_MAP_CONTROLS_PANEL);
-  };
-
-  toggleLayerSwitcherPanel = () => {
-    this.props.onToggleMapPanel(constants.VISUALIZE_LAYER_SWITCHER_PANEL);
-  };
-
-  toggleChartPanel = () => {
-    this.props.onToggleMapPanel(constants.VISUALIZE_CHART_PANEL);
-  };
-
-  toggleTimeSliderPanel = () => {
-    this.props.onToggleMapPanel(constants.VISUALIZE_TIME_SLIDER_PANEL);
   };
 
   render() {
@@ -98,43 +79,43 @@ class SpeedDialMenu extends React.Component {
         open={open}>
         <SpeedDialAction
           icon={<MapControlsIcon className={classes.white} />}
-          tooltipTitle={constants.VISUALIZE_MAP_CONTROLS_PANEL}
-          onClick={(event) => this.toggleMapControlsPanel()}
+          tooltipTitle={labels.VISUALIZE_MAP_CONTROLS_PANEL}
+          onClick={(event) => this.props.widgetsActions.toggleWidget(constants.WIDGET_MAP_CONTROLS_KEY)}
           ButtonProps={{
             id: "cy-menu-map-controls-toggle-btn",
-            color: this.props.mapPanelStatus[constants.VISUALIZE_MAP_CONTROLS_PANEL]? 'primary': 'secondary'
+            color: this.props.widgets.mapControls? 'primary': 'secondary'
           }} />
         <SpeedDialAction
           icon={<AccessTimeIcon className={classes.white}/>}
-          tooltipTitle={constants.VISUALIZE_TIME_SLIDER_PANEL}
-          onClick={(event) => this.toggleTimeSliderPanel()}
+          tooltipTitle={labels.VISUALIZE_TIME_SLIDER_PANEL}
+          onClick={(event) => this.props.widgetsActions.toggleWidget(constants.WIDGET_TIME_SLIDER_KEY)}
           ButtonProps={{
             id: "cy-menu-temporal-slider-toggle-btn",
-            color: this.props.mapPanelStatus[constants.VISUALIZE_TIME_SLIDER_PANEL]? 'primary': 'secondary'
+            color: this.props.widgets.timeSlider? 'primary': 'secondary'
           }} />
         <SpeedDialAction
           icon={<LayersIcon className={classes.white}/>}
-          tooltipTitle={constants.VISUALIZE_LAYER_SWITCHER_PANEL}
-          onClick={(event) => this.toggleLayerSwitcherPanel()}
+          tooltipTitle={labels.VISUALIZE_LAYER_SWITCHER_PANEL}
+          onClick={(event) => this.props.widgetsActions.toggleWidget(constants.WIDGET_LAYER_SWITCHER_KEY)}
           ButtonProps={{
             id: "cy-menu-layer-switcher-toggle-btn",
-            color: this.props.mapPanelStatus[constants.VISUALIZE_LAYER_SWITCHER_PANEL]? 'primary': 'secondary'
+            color: this.props.widgets.layerSwitcher? 'primary': 'secondary'
           }} />
         <SpeedDialAction
           icon={<ChartIcon className={classes.white}/>}
-          tooltipTitle={constants.VISUALIZE_CHART_PANEL}
-          onClick={(event) => this.toggleChartPanel()}
+          tooltipTitle={labels.VISUALIZE_CHART_PANEL}
+          onClick={(event) => this.props.widgetsActions.toggleWidget(constants.WIDGET_CHART_KEY)}
           ButtonProps={{
             id: "cy-menu-time-series-toggle-btn",
-            color: this.props.mapPanelStatus[constants.VISUALIZE_CHART_PANEL]? 'primary': 'secondary'
+            color: this.props.widgets.chart? 'primary': 'secondary'
           }} />
         <SpeedDialAction
           icon={<InfoIcon className={classes.white}/>}
-          tooltipTitle={constants.VISUALIZE_INFO_PANEL}
-          onClick={(event) => this.toggleInfoPanel()}
+          tooltipTitle={labels.VISUALIZE_INFO_PANEL}
+          onClick={(event) => this.props.widgetsActions.toggleWidget(constants.WIDGET_INFO_KEY)}
           ButtonProps={{
             id: "cy-menu-point-info-toggle-btn",
-            color: this.props.mapPanelStatus[constants.VISUALIZE_INFO_PANEL]? 'primary': 'secondary'
+            color: this.props.widgets.info? 'primary': 'secondary'
           }} />
       </SpeedDial>
     );
