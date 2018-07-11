@@ -28,7 +28,7 @@ const AVAILABLE_COLOR_PALETTES = [
 ];
 const styles = {
   list: {
-    height: '350px',
+    height: '260px',
     overflowY: 'auto'
   }
 };
@@ -151,8 +151,8 @@ export default class LayerSwitcher extends React.Component {
 
   makeDatasetsList () {
     return (
-      <List style={styles.list}>
-        <ListSubheader>
+      <React.Fragment>
+        <ListSubheader disableSticky>
           <div style={{width: '25%', display: 'inline-block'}}>
             <Button variant="contained"
                     color="primary"
@@ -166,20 +166,21 @@ export default class LayerSwitcher extends React.Component {
           </div>
           {this.makeSlider()}
         </ListSubheader>
-        {
-          this.props.visualize.currentVisualizedDatasets.map((dataset, i) => {
-            let secondaryText = '';
-            if (dataset.wms_url.length === 1) {
-              const SEARCH_VALUE = '/';
-              let index = dataset.wms_url[0].lastIndexOf(SEARCH_VALUE);
-              secondaryText = `${dataset.wms_url[0].substring(index + SEARCH_VALUE.length)}`;// `
-            } else {
-              secondaryText = `${dataset.wms_url.length} aggregated file${(dataset.wms_url.length > 1) ? 's' : ''}`;// `
-            }
-            return (
-              <ListItem
-                key={i}
-                className="cy-layerswitcher-dataset-item">
+        <List style={styles.list}>
+          {
+            this.props.visualize.currentVisualizedDatasets.map((dataset, i) => {
+              let secondaryText = '';
+              if (dataset.wms_url.length === 1) {
+                const SEARCH_VALUE = '/';
+                let index = dataset.wms_url[0].lastIndexOf(SEARCH_VALUE);
+                secondaryText = `${dataset.wms_url[0].substring(index + SEARCH_VALUE.length)}`;// `
+              } else {
+                secondaryText = `${dataset.wms_url.length} aggregated file${(dataset.wms_url.length > 1) ? 's' : ''}`;// `
+              }
+              return (
+                <ListItem
+                  key={i}
+                  className="cy-layerswitcher-dataset-item">
                   <RadioGroup
                     name="currentDisplayedDataset"
                     value={this.props.visualize.currentDisplayedDataset.uniqueLayerSwitcherId}
@@ -187,18 +188,19 @@ export default class LayerSwitcher extends React.Component {
                     <FormControlLabel
                       value={dataset.uniqueLayerSwitcherId}
                       label={<ListItemText inset
-                                         primary={dataset['aggregate_title']}
-                                         secondary={<span>{secondaryText}</span>} />}
+                                           primary={dataset['aggregate_title']}
+                                           secondary={<span>{secondaryText}</span>} />}
                       control={
-                      <Radio
-                        color="secondary"
-                        data-cy-selected={this.props.visualize.currentDisplayedDataset.uniqueLayerSwitcherId === dataset.uniqueLayerSwitcherId}/>} />
+                        <Radio
+                          color="secondary"
+                          data-cy-selected={this.props.visualize.currentDisplayedDataset.uniqueLayerSwitcherId === dataset.uniqueLayerSwitcherId}/>} />
                   </RadioGroup>
-              </ListItem>
-            );
-          })
-        }
-      </List>
+                </ListItem>
+              );
+            })
+          }
+        </List>
+      </React.Fragment>
     );
   }
 
