@@ -78,6 +78,7 @@ export class ProjectManagement extends React.Component {
                  projectActions={this.props.projectActions}
                  datasetAPI={this.props.datasetAPI}
                  datasetAPIActions={this.props.datasetAPIActions}
+                 visualize={this.props.visualizeActions}
                  visualizeActions={this.props.visualizeActions}/>
                <ProjectSearchCriterias
                  sectionActions={this.props.sectionActions}

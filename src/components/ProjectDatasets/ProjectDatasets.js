@@ -40,6 +40,7 @@ export class ProjectDatasets extends React.Component {
     projectActions: PropTypes.object.isRequired,
     datasetAPI: PropTypes.object.isRequired,
     datasetAPIActions: PropTypes.object.isRequired,
+    visualize: PropTypes.object.isRequired,
     visualizeActions: PropTypes.object.isRequired
   };
 
@@ -145,7 +146,7 @@ export class ProjectDatasets extends React.Component {
               } else {
                 // FileAsAggregate
                 let disabledVisualize = false;
-                if (this.props.currentVisualizedDatasets.find(x => x.dataset_id === dataset.dataset_id)) {
+                if (this.props.visualize.currentVisualizedDatasets.find(x => x.dataset_id === dataset.dataset_id)) {
                   disabledVisualize = true;
                 }
                 return (

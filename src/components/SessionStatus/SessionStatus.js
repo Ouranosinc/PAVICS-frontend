@@ -136,8 +136,8 @@ export default withStyles(styles)(
               (event, index) => this.setState({provider: event.target.value})}
             fullWidth>
             {
-              PROVIDERS.map(provider =>
-                <MenuItem value={provider.provider_name}>
+              PROVIDERS.map((provider, i) =>
+                <MenuItem key={i} value={provider.provider_name}>
                   {provider.display_text}
                 </MenuItem>
               )
