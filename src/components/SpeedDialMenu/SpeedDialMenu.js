@@ -31,6 +31,7 @@ class SpeedDialMenu extends React.Component {
   state = {
     open: false
   };
+  wrapperRef = null;
 
   static propTypes = {
     classes: PropTypes.object.isRequired,
@@ -38,24 +39,29 @@ class SpeedDialMenu extends React.Component {
     widgetsActions: PropTypes.object.isRequired
   };
 
-  handleClick = () => {
-    this.setState(state => ({
-      open: !state.open,
-    }));
+  componentDidMount() {
+    document.addEventListener('mousedown', this.handleClickOutside);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('mousedown', this.handleClickOutside);
+  }
+
+  onToggleClicked = () => {
+    this.setState({
+      open: !this.state.open,
+    });
   };
 
-  handleOpen = () => {
-    if (!this.state.hidden) {
-      this.setState({
-        open: true,
-      });
+  handleClickOutside = (event) => {
+    // If clicking outside the popover when its open, close it
+    if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+      this.setState({open: false});
     }
   };
 
-  handleClose = () => {
-    this.setState({
-      open: false,
-    });
+  setWrapperRef = (node) => {
+    this.wrapperRef = node;
   };
 
   render() {
@@ -63,61 +69,58 @@ class SpeedDialMenu extends React.Component {
     const { open } = this.state;
 
     return (
-      <SpeedDial
-        ariaLabel="SpeedDial openIcon example"
-        className={classes.speedDial}
-        icon={<SpeedDialIcon openIcon={<VisibilityIcon />} />}
-        onBlur={this.handleClose}
-        onClick={this.handleClick}
-        onClose={this.handleClose}
-        onFocus={this.handleOpen}
-        onMouseEnter={this.handleOpen}
-        onMouseLeave={this.handleClose}
-        ButtonProps={{
-          id: "cy-speed-dial-menu-btn"
-        }}
-        open={open}>
-        <SpeedDialAction
-          icon={<LayersIcon className={classes.white}/>}
-          tooltipTitle={labels.LAYER_SWITCHER_WIDGET_TITLE}
-          onClick={(event) => this.props.widgetsActions.toggleWidget(constants.WIDGET_LAYER_SWITCHER_KEY)}
+      <div ref={this.setWrapperRef}>
+        <SpeedDial
+          ariaLabel="SpeedDial openIcon example"
+          className={classes.speedDial}
+          icon={<SpeedDialIcon openIcon={<VisibilityIcon />} />}
+          onClick={this.onToggleClicked}
           ButtonProps={{
-            id: "cy-menu-layer-switcher-toggle-btn",
-            color: this.props.widgets.layerSwitcher? 'primary': 'secondary'
-          }} />
-        <SpeedDialAction
-          icon={<MapControlsIcon className={classes.white} />}
-          tooltipTitle={labels.MAP_CONTROLS_WIDGET_TITLE}
-          onClick={(event) => this.props.widgetsActions.toggleWidget(constants.WIDGET_MAP_CONTROLS_KEY)}
-          ButtonProps={{
-            id: "cy-menu-map-controls-toggle-btn",
-            color: this.props.widgets.mapControls? 'primary': 'secondary'
-          }} />
-        <SpeedDialAction
-          icon={<AccessTimeIcon className={classes.white}/>}
-          tooltipTitle={labels.TIME_SLIDER_WIDGET_TITLE}
-          onClick={(event) => this.props.widgetsActions.toggleWidget(constants.WIDGET_TIME_SLIDER_KEY)}
-          ButtonProps={{
-            id: "cy-menu-temporal-slider-toggle-btn",
-            color: this.props.widgets.timeSlider? 'primary': 'secondary'
-          }} />
-        <SpeedDialAction
-          icon={<ChartIcon className={classes.white}/>}
-          tooltipTitle={labels.CHART_WIDGET_TITLE}
-          onClick={(event) => this.props.widgetsActions.toggleWidget(constants.WIDGET_CHART_KEY)}
-          ButtonProps={{
-            id: "cy-menu-time-series-toggle-btn",
-            color: this.props.widgets.chart? 'primary': 'secondary'
-          }} />
-        <SpeedDialAction
-          icon={<InfoIcon className={classes.white}/>}
-          tooltipTitle={labels.INFO_WIDGET_TITLE}
-          onClick={(event) => this.props.widgetsActions.toggleWidget(constants.WIDGET_INFO_KEY)}
-          ButtonProps={{
-            id: "cy-menu-point-info-toggle-btn",
-            color: this.props.widgets.info? 'primary': 'secondary'
-          }} />
-      </SpeedDial>
+            id: "cy-speed-dial-menu-btn"
+          }}
+          open={open}>
+          <SpeedDialAction
+            icon={<LayersIcon className={classes.white}/>}
+            tooltipTitle={labels.LAYER_SWITCHER_WIDGET_TITLE}
+            onClick={(event) => this.props.widgetsActions.toggleWidget(constants.WIDGET_LAYER_SWITCHER_KEY)}
+            ButtonProps={{
+              id: "cy-menu-layer-switcher-toggle-btn",
+              color: this.props.widgets.layerSwitcher? 'primary': 'secondary'
+            }} />
+          <SpeedDialAction
+            icon={<MapControlsIcon className={classes.white} />}
+            tooltipTitle={labels.MAP_CONTROLS_WIDGET_TITLE}
+            onClick={(event) => this.props.widgetsActions.toggleWidget(constants.WIDGET_MAP_CONTROLS_KEY)}
+            ButtonProps={{
+              id: "cy-menu-map-controls-toggle-btn",
+              color: this.props.widgets.mapControls? 'primary': 'secondary'
+            }} />
+          <SpeedDialAction
+            icon={<AccessTimeIcon className={classes.white}/>}
+            tooltipTitle={labels.TIME_SLIDER_WIDGET_TITLE}
+            onClick={(event) => this.props.widgetsActions.toggleWidget(constants.WIDGET_TIME_SLIDER_KEY)}
+            ButtonProps={{
+              id: "cy-menu-temporal-slider-toggle-btn",
+              color: this.props.widgets.timeSlider? 'primary': 'secondary'
+            }} />
+          <SpeedDialAction
+            icon={<ChartIcon className={classes.white}/>}
+            tooltipTitle={labels.CHART_WIDGET_TITLE}
+            onClick={(event) => this.props.widgetsActions.toggleWidget(constants.WIDGET_CHART_KEY)}
+            ButtonProps={{
+              id: "cy-menu-time-series-toggle-btn",
+              color: this.props.widgets.chart? 'primary': 'secondary'
+            }} />
+          <SpeedDialAction
+            icon={<InfoIcon className={classes.white}/>}
+            tooltipTitle={labels.INFO_WIDGET_TITLE}
+            onClick={(event) => this.props.widgetsActions.toggleWidget(constants.WIDGET_INFO_KEY)}
+            ButtonProps={{
+              id: "cy-menu-point-info-toggle-btn",
+              color: this.props.widgets.info? 'primary': 'secondary'
+            }} />
+        </SpeedDial>
+      </div>
     );
   }
 }
