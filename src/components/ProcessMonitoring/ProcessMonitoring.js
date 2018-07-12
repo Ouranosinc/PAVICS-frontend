@@ -402,7 +402,6 @@ class ProcessMonitoring extends React.Component {
                                       </MenuItem>
                                       <MenuItem
                                         id="cy-visualize-all-split-item"
-                                        primaryText="Visualize All (Splitted)"
                                         disabled={!visualizableOutputs.length}
                                         onClick={(event) => this._onVisualiseDatasets(visualizableOutputs, false)}>
                                         <ListItemIcon>

@@ -111,7 +111,6 @@ export default class LayerSwitcher extends React.Component {
             <ListItem
             className="cy-layerswitcher-shapefile-item"
             id={`cy-shapefile-name-${shapeFile.title}`}// `
-            primaryText={shapeFile.title}
             key={i}>
               <RadioGroup
                 name="selectedShapeFile"

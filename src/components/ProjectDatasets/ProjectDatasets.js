@@ -146,7 +146,8 @@ export class ProjectDatasets extends React.Component {
               } else {
                 // FileAsAggregate
                 let disabledVisualize = false;
-                if (this.props.visualize.currentVisualizedDatasets.find(x => x.dataset_id === dataset.dataset_id)) {
+                const { currentVisualizedDatasets } = this.props.visualize;
+                if (currentVisualizedDatasets && currentVisualizedDatasets.find(x => x.dataset_id === dataset.dataset_id)) {
                   disabledVisualize = true;
                 }
                 return (

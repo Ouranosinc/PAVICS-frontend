@@ -42,7 +42,7 @@ export const constants = {
 function resetVisualizeState() {
   return {
     type: constants.RESET_VISUALIZE_STATE,
-    visualizeInitialState: initialState.visualize
+    visualizeInitialState: initialState
   };
 }
 function addDatasetsToVisualize (datasets) {

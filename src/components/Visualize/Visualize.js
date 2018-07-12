@@ -99,9 +99,7 @@ class Visualize extends React.Component {
             visualize={this.props.visualize}
             visualizeActions={this.props.visualizeActions} />
         </div>
-        <BigColorPalette
-          visualize={this.props.visualize}
-          visualizeActions={this.props.visualizeActions} />
+        <BigColorPalette />
         <SpeedDialMenu widgets={this.props.widgets}
                        widgetsActions={this.props.widgetsActions} />
 
