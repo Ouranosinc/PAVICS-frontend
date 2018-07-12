@@ -62,11 +62,11 @@ const styles = {
   chart: {
     opacity: OPACITY,
     overflow: 'hidden',
-    height: '330px',
+    height: '310px',
     width: '500px'
   },
   info: {
-    height: '330px',
+    height: '310px',
     overflow: 'auto',
     width: '500px',
     opacity: OPACITY

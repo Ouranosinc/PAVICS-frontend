@@ -96,8 +96,7 @@ export default class LayerSwitcher extends React.Component {
    */
   makeShapefileList () {
     return (
-      <List
-        style={styles.list}>
+      <React.Fragment>
         <ListSubheader>
           <Button variant="contained"
                   color="primary"
@@ -106,22 +105,33 @@ export default class LayerSwitcher extends React.Component {
             Reset
           </Button>
         </ListSubheader>
-        {
-          this.props.visualize.publicShapeFiles.map( (shapeFile, i) =>
-            <ListItem
-            className="cy-layerswitcher-shapefile-item"
-            id={`cy-shapefile-name-${shapeFile.title}`}// `
-            key={i}>
-              <RadioGroup
-                name="selectedShapeFile"
-                value={this.props.visualize.selectedShapefile.title}
-                onChange={this.setSelectedShapefile}>
-                <FormControlLabel value={shapeFile.title} control={<Radio color="secondary" />} label={shapeFile.title} />
-              </RadioGroup>
-            </ListItem>
-          )
-        }
-      </List>
+        <List
+          style={styles.list}>
+          <ListSubheader>
+            <Button variant="contained"
+                    color="primary"
+                    id="cy-reset-shapefile-btn"
+                    onClick={this.resetShapefile}>
+              Reset
+            </Button>
+          </ListSubheader>
+          {
+            this.props.visualize.publicShapeFiles.map( (shapeFile, i) =>
+              <ListItem
+                className="cy-layerswitcher-shapefile-item"
+                id={`cy-shapefile-name-${shapeFile.title}`}// `
+                key={i}>
+                <RadioGroup
+                  name="selectedShapeFile"
+                  value={this.props.visualize.selectedShapefile.title}
+                  onChange={this.setSelectedShapefile}>
+                  <FormControlLabel value={shapeFile.title} control={<Radio color="secondary" />} label={shapeFile.title} />
+                </RadioGroup>
+              </ListItem>
+            )
+          }
+        </List>
+      </React.Fragment>
     );
   }
 
