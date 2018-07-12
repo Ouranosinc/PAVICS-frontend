@@ -11,18 +11,15 @@ export const VISUALIZE_MODE_REGION_SELECTION = 'VISUALIZE.MODE_REGION_SELECTION'
 export const CHART_WIDGET_TITLE = 'Time Series Chart';
 export const LAYER_SWITCHER_WIDGET_TITLE = 'Layer Switcher';
 export const INFO_WIDGET_TITLE = 'Point Informations';
-export const MAP_CONTROLS_WIDGET_TITLE = 'Map Controls';
+export const MAP_CONTROLS_WIDGET_TITLE = 'Controls';
 export const TIME_SLIDER_WIDGET_TITLE = 'Temporal Slider';
 // monitor
-export const MONITOR_SET_JOBS = 'MONITOR_SET_JOBS';
 export const JOB_ACCEPTED_STATUS = 'ProcessAccepted';
 export const JOB_FAILED_STATUS = 'ProcessFailed';
 export const JOB_SUCCESS_STATUS = 'ProcessSucceeded';
 export const JOB_STARTED_STATUS = 'ProcessStarted';
 export const JOB_PAUSED_STATUS = 'ProcessPaused';
 export const PAVICS_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
-// Visualize
-export const DEFAULT_SELECTED_KEY = 'frequency';
 // Pagination
 export const PER_PAGE_OPTIONS = [5, 10, 25];
 export const PER_PAGE_INITIAL_INDEX = 0;

@@ -236,8 +236,9 @@ export default class LayerSwitcher extends React.Component {
         <InputLabel htmlFor="palette">Color Palette</InputLabel>
         <Select
           style={{
-            width: '100%',
+            width: '80%',
             textAlign: 'center',
+            textShadow: '1px 1px 2px white, 0 0 25px white, 0 0 5px white',
             background: `url(${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=${this.props.visualize.selectedColorPalette}&COLORBARONLY=true&WIDTH=200&HEIGHT=20&VERTICAL=false) center no-repeat`/*`*/,
             padding: '0 0 0 10px'
           }}
@@ -251,7 +252,10 @@ export default class LayerSwitcher extends React.Component {
             <MenuItem
               key={i}
               value={palette}
-              style={{width: '120%', background: `url(${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=${palette}&COLORBARONLY=true&WIDTH=200&HEIGHT=20&VERTICAL=false) center no-repeat`, padding: '0 0 0 10px'}}/*`*/>
+              style={{
+                textShadow: '1px 1px 2px white, 0 0 25px white, 0 0 5px white',
+                width: '100%',
+                background: `url(${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=${palette}&COLORBARONLY=true&WIDTH=200&HEIGHT=20&VERTICAL=false) center no-repeat`, padding: '0 0 0 10px'}}/*`*/>
               {palette}
             </MenuItem>
           )}
