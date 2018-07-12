@@ -8,6 +8,7 @@ import Button from'@material-ui/core/Button';
 import FullScreenIcon from '@material-ui/icons/Fullscreen';
 import ExitFullScreenIcon from '@material-ui/icons/FullscreenExit';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Typography from '@material-ui/core/Typography';
 
 export default class MapControls extends React.Component {
   static propTypes = {
@@ -49,7 +50,9 @@ export default class MapControls extends React.Component {
   render () {
     return (
       <div className="container">
-        <h4>Mouse Click Mode</h4>
+        <Typography variant="subheading">
+          Mouse Click Mode
+        </Typography>
         <RadioGroup
           style={{marginTop: '10px'}}
           onChange={this.onSelectMapManipulationMode}
@@ -70,8 +73,10 @@ export default class MapControls extends React.Component {
               <Radio color="primary" />
             }/>
         </RadioGroup>
-        <Divider />
-        <h4>Toggle Full Screen Mode</h4>
+        <Divider style={{marginBottom: '5px'}} />
+        <Typography variant="subheading">
+          Toggle Full Screen Mode
+        </Typography>
         <Button variant="contained"
           style={{marginBottom: '10px'}}
           color="primary"

@@ -42,11 +42,11 @@ const styles = {
     textAlign: 'left',
     opacity: OPACITY,
     overflow: 'hidden',
-    height: '330px',
+    height: '310px',
     width: '250px'
   },
   timeSlider: {
-    height: '330px',
+    height: '310px',
     width: '620px',
     bottom: 0,
     textAlign: 'left',

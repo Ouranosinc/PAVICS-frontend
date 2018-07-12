@@ -103,7 +103,7 @@ export class ProjectShare extends React.Component {
       <div className={classes['ProjectShare']}>
         <Paper style={{marginTop: 20}}>
           <form className="container">
-            <Typography variant='title' gutterBottom>
+            <Typography variant='subheading' gutterBottom>
               Share project to
             </Typography>
             <RadioGroup
@@ -142,7 +142,7 @@ export class ProjectShare extends React.Component {
                 })}
               </Select>
             }
-            <Typography style={{marginTop: '15px'}} variant='title' gutterBottom>
+            <Typography style={{marginTop: '15px'}} variant='subheading' gutterBottom>
               Project permissions to be shared:
             </Typography>
             <FormControlLabel

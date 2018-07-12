@@ -31,7 +31,7 @@ const theme = createMuiTheme({
     },
     MuiGrid: {
       item: {
-        padding: '3px'
+        padding: '0 5px'
       }
     },
     MuiSvgIcon: {
@@ -51,7 +51,7 @@ const theme = createMuiTheme({
     }
   },
   typography: {
-    fontSize: '18'
+    /*fontSize: '18'*/
   }
 });
 
