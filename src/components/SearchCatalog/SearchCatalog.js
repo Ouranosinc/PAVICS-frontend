@@ -6,8 +6,8 @@ import SearchCatalogResults from './../../components/SearchCatalogResults';
 import CriteriaSelection from './../../components/CriteriaSelection';
 import Select from'@material-ui/core/Select';
 import MenuItem from'@material-ui/core/MenuItem';
-import Paper from'@material-ui/core/Paper';
-import { Row, Col } from 'react-bootstrap';
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
 import ListSubheader from'@material-ui/core/ListSubheader';
 import List from'@material-ui/core/List';
 import Button from'@material-ui/core/Button';
@@ -142,8 +142,8 @@ export class SearchCatalog extends React.Component {
               : (
               <Paper>
                 <div className="container" id="cy-search-facets">
-                  <Row>
-                    <Col sm={12} md={6} lg={6}>
+                  <Grid container>
+                    <Grid item sm={12} md={6} lg={6}>
                       <FormControl style={{width: '95%'}}>
                         <InputLabel htmlFor="saved-criteria">Load criteria(s)</InputLabel>
                         <Select
@@ -164,8 +164,8 @@ export class SearchCatalog extends React.Component {
                           }
                         </Select>
                       </FormControl>
-                    </Col>
-                    <Col sm={12} md={6} lg={6}>
+                    </Grid>
+                    <Grid item sm={12} md={6} lg={6}>
                       <FormControl style={{width: '95%'}}>
                         <InputLabel htmlFor="add-criteria">Add additional criteria</InputLabel>
                         <Select
@@ -187,9 +187,9 @@ export class SearchCatalog extends React.Component {
                           }
                         </Select>
                       </FormControl>
-                    </Col>
-                  </Row>
-                  <Row style={{marginBottom: 15}}>
+                    </Grid>
+                  </Grid>
+                  <Grid container style={{marginBottom: 15}}>
                     {
                       this.state.criteriaKeys.map((facetKey, i) => {
                         return <CriteriaSelection
@@ -201,15 +201,13 @@ export class SearchCatalog extends React.Component {
                           researchActions={this.props.researchActions}/>;
                       })
                     }
-                  </Row>
-                  <Col>
-                    <TextField
-                      id="cy-criterias-name-tf"
-                      helperText="Define a name"
-                      fullWidth
-                      onChange={this.onSetSearchCriteriasName}
-                      label="Search Criteria(s) Name"/>
-                  </Col>
+                  </Grid>
+                  <TextField
+                    id="cy-criterias-name-tf"
+                    helperText="Define a name"
+                    fullWidth
+                    onChange={this.onSetSearchCriteriasName}
+                    label="Search Criteria(s) Name"/>
 
                   <Button variant="contained"
                           id="cy-save-criterias-btn"

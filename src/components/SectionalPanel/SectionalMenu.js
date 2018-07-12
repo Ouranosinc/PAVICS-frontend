@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classes from './SectionalPanel.scss';
 import { NotificationManager } from 'react-notifications';
-import { Glyphicon } from 'react-bootstrap';
 import * as constants from './../../constants';
+import MonitoringIcon from '@material-ui/icons/FormatListBulleted';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import InputIcon from '@material-ui/icons/Input';
@@ -20,7 +20,7 @@ class SectionalMenu extends React.Component {
     if (constants.PLATFORM_SECTION_SEARCH_DATASETS !== this.props.section.openedSection) {
       if(!this.isUserAuthenticated()){
         this.triggerAuthWarning(constants.PLATFORM_SECTION_SEARCH_DATASETS)
-      }else if (!this.isCurrentProjectSelected()) {
+      }else if (!this.isCurrentProjectSelected()) {Fboot
         this.triggerCurrentProjectWarning(constants.PLATFORM_SECTION_SEARCH_DATASETS);
       }else {
         this.props.sectionActions.goToSection(constants.PLATFORM_SECTION_SEARCH_DATASETS);
@@ -112,7 +112,7 @@ class SectionalMenu extends React.Component {
           </a>
           <a id="cy-process-monitoring"onClick={this.monitor} title="Processes Monitoring"
             className={(this.props.section.openedSection === constants.PLATFORM_SECTION_MONITOR) ? classes['active'] : ''}>
-            <Glyphicon glyph="tasks" />
+            <MonitoringIcon />
           </a>
           <a id="cy-account-management" onClick={this.account} title="Account Management"
             className={(this.props.section.openedSection === constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT) ? classes['active'] : ''}>

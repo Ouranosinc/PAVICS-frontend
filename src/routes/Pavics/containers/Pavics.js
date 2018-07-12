@@ -29,6 +29,11 @@ const theme = createMuiTheme({
         margin: '5px 0'
       }
     },
+    MuiGrid: {
+      item: {
+        padding: '3px'
+      }
+    },
     MuiSvgIcon: {
       root: {
         marginRight: '2px'
