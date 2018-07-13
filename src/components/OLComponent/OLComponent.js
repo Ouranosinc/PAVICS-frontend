@@ -325,7 +325,7 @@ class OLComponent extends React.Component {
     console.log('handling map click:', event);
     switch (this.props.visualize.mapManipulationMode) {
       case constants.VISUALIZE_MODE_REGION_SELECTION:
-        if (this.props.visualizeActions.selectedShapefile.title) {
+        if (this.props.visualize.selectedShapefile.title) {
           console.log('selected shapefile:', this.props.visualize.selectedShapefile);
           return this.handleSelectRegionClick(event);
         }

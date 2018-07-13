@@ -33,57 +33,51 @@ import CollapseNestedList from '../CollapseNestedList';
 
 class ProcessMonitoring extends React.Component {
   static propTypes = {
-    addDatasetsToVisualize: PropTypes.func.isRequired,
-    selectCurrentDisplayedDataset: PropTypes.func.isRequired,
     monitor: PropTypes.object.isRequired,
     monitorActions: PropTypes.object.isRequired,
     project: PropTypes.object.isRequired,
-    session: PropTypes.object.isRequired
+    session: PropTypes.object.isRequired,
+    visualizeActions: PropTypes.object.isRequired,
+  };
+
+  state = {
+    anchor: null,
+    logDialogArray: [],
+    logDialogOpened: false,
+    persistDialogOutput: {},
+    persistDialogOpened: false,
+    pageNumber: 1,
+    numberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX],
+    loadingScreen: null
   };
 
   constructor (props) {
     super(props);
     this.loop = null;
-    this.state = {
-      anchor: null,
-      logDialogArray: [],
-      logDialogOpened: false,
-      persistDialogOutput: {},
-      persistDialogOpened: false,
-      pageNumber: 1,
-      numberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX],
-      loadingScreen: null
-    };
     this.props.monitorActions.fetchWPSJobs(this.props.project.currentProject.id, constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX], 1);
-    this._closeLogDialog = this._closeLogDialog.bind(this);
-    this._onShowLogDialog = this._onShowLogDialog.bind(this);
-    this._closePersistDialog = this._closePersistDialog.bind(this);
-    this._onPersistOutputClicked = this._onPersistOutputClicked.bind(this);
-    this._onShowPersistDialog = this._onShowPersistDialog.bind(this);
-    this._onRefreshResults = this._onRefreshResults.bind(this);
-    this._onPageChanged = this._onPageChanged.bind(this);
-    this._onVisualiseDatasets = this._onVisualiseDatasets.bind(this);
   }
 
   componentWillReceiveProps (nextProps) {
-    if (nextProps.monitor.jobs && nextProps.monitor.jobs.items.length) {
+    const { jobs, visualizedTempDatasets } = nextProps.monitor;
+
+    if (jobs && jobs.items.length) {
       // Removed previous launched timeout if any
       clearTimeout(this.loop);
 
       // Launch polling only if any job is UNKNOWN, ACCEPTED or IN_PROGRESS
-      if(nextProps.monitor.jobs.items.find(job =>
+      if(jobs.items.find(job =>
           !job.status || job.status === constants.JOB_PAUSED_STATUS ||
           job.status === constants.JOB_ACCEPTED_STATUS || job.status === constants.JOB_STARTED_STATUS
         )){
         this.pollWPSJobs();
       }
     }
-    if(nextProps.monitor.visualizedTempDatasets &&
-      nextProps.monitor.visualizedTempDatasets.items.length &&
-      nextProps.monitor.visualizedTempDatasets !== this.props.monitor.visualizedTempDatasets){
-      this.props.addDatasetsToVisualize(nextProps.monitor.visualizedTempDatasets.items);
-      this.props.selectCurrentDisplayedDataset({
-        ...nextProps.monitor.visualizedTempDatasets.items[0],
+    if(visualizedTempDatasets &&
+      visualizedTempDatasets.items.length &&
+      visualizedTempDatasets !== this.props.monitor.visualizedTempDatasets){
+      this.props.visualizeActions.addDatasetsToVisualize(visualizedTempDatasets.items);
+      this.props.visualizeActions.selectCurrentDisplayedDataset({
+        ...visualizedTempDatasets.items[0],
         currentFileIndex: 0,
         opacity: 0.8
       });
@@ -99,19 +93,19 @@ class ProcessMonitoring extends React.Component {
     }, 3000);
   }
 
-  _onRefreshResults () {
+  onRefreshResults = () => {
     this.props.monitorActions.fetchWPSJobs(this.props.project.currentProject.id, this.state.numberPerPage, this.state.pageNumber);
-  }
+  };
 
-  _onPageChanged (pageNumber, numberPerPage) {
+  onPageChanged = (pageNumber, numberPerPage) => {
     this.setState({
       pageNumber: pageNumber,
       numberPerPage: numberPerPage
     });
     this.props.monitorActions.fetchWPSJobs(this.props.project.currentProject.id, numberPerPage, pageNumber);
-  }
+  };
 
-  _onVisualiseDatasets (httpURLArray, aggregate = false) {
+  onVisualiseDatasets = (httpURLArray, aggregate = false) => {
     if(httpURLArray.length){
       this.onMenuClosed();
       this.props.monitorActions.visualizeTemporaryResult(httpURLArray, aggregate);
@@ -119,40 +113,40 @@ class ProcessMonitoring extends React.Component {
         loadingScreen: <LoadingScreen />
       });
     }
-  }
+  };
 
-  _onShowLogDialog (log) {
+  onShowLogDialog = (log)  =>{
     this.onMenuClosed();
     this.setState({
       logDialogOpened: true,
       logDialogArray: log
     });
-  }
+  };
 
-  _closeLogDialog () {
+  onCloseLogDialog = () => {
     this.setState({
       logDialogOpened: false,
       logDialogArray: ''
     });
-  }
+  };
 
-  _onShowPersistDialog (output) {
+  onShowPersistDialog = (output) => {
     this.setState({
       persistDialogOpened: true,
       persistDialogOutput: output
     });
-  }
+  };
 
-  _onPersistOutputClicked () {
-    this._closePersistDialog();
-  }
+  onPersistOutputClicked = () => {
+    this.onClosePersistDialog();
+  };
 
-  _closePersistDialog () {
+  onClosePersistDialog = () => {
     this.setState({
       persistDialogOpened: false,
       persistDialogOutput: {}
     });
-  }
+  };
 
   onMenuClosed = event => {
     this.setState({ anchor: null });
@@ -173,7 +167,7 @@ class ProcessMonitoring extends React.Component {
         total={this.props.monitor.jobs.count}
         initialPerPageOptionIndex={constants.PER_PAGE_INITIAL_INDEX}
         perPageOptions={constants.PER_PAGE_OPTIONS}
-        onChange={this._onPageChanged} />;
+        onChange={this.onPageChanged} />;
     if (this.props.monitor.jobs.isFetching) {
       mainComponent =
         <Loader name="wps jobs" />;
@@ -196,9 +190,9 @@ class ProcessMonitoring extends React.Component {
                 //        FAILED process
                 return <ProcessListItem job={x}
                                         key={i}
-                                        onShowLogDialog={this._onShowLogDialog}
-                                        onShowPersistDialog={this._onShowPersistDialog}
-                                        onVisualiseDatasets={this._onVisualiseDatasets}/>;
+                                        onShowLogDialog={this.onShowLogDialog}
+                                        onShowPersistDialog={this.onShowPersistDialog}
+                                        onVisualiseDatasets={this.onVisualiseDatasets}/>;
               }else {
                 if (x.process_id === __PAVICS_RUN_WORKFLOW_IDENTIFIER__) {
                   //Threat FAILED and SUCCESSFULL workflow (both are expandable)
@@ -269,7 +263,7 @@ class ProcessMonitoring extends React.Component {
                   }else {
                     logMenu = <MenuItem
                       id="cy-logs-item"
-                      onClick={(event) => this._onShowLogDialog(x.log)}>
+                      onClick={(event) => this.onShowLogDialog(x.log)}>
                       <ListItemIcon>
                         <LogIcon />
                       </ListItemIcon>
@@ -341,8 +335,8 @@ class ProcessMonitoring extends React.Component {
                               isWorkflowTask={true}
                               key={j}
                               job={taskDetails}
-                              onShowPersistDialog={this._onShowPersistDialog}
-                              onVisualiseDatasets={this._onVisualiseDatasets}/>;
+                              onShowPersistDialog={this.onShowPersistDialog}
+                              onVisualiseDatasets={this.onVisualiseDatasets}/>;
                           } else {
                             let completedTasks = parrallelTasks.filter(x => x.status === constants.JOB_SUCCESS_STATUS);
                             let visualizableOutputs = [];
@@ -394,7 +388,7 @@ class ProcessMonitoring extends React.Component {
                                       <MenuItem
                                         id="cy-visualize-all-agg-item"
                                         disabled={!visualizableOutputs.length}
-                                        onClick={(event) => this._onVisualiseDatasets(visualizableOutputs, true)}>
+                                        onClick={(event) => this.onVisualiseDatasets(visualizableOutputs, true)}>
                                         <ListItemIcon>
                                           <VisualizeIcon />
                                         </ListItemIcon>
@@ -403,7 +397,7 @@ class ProcessMonitoring extends React.Component {
                                       <MenuItem
                                         id="cy-visualize-all-split-item"
                                         disabled={!visualizableOutputs.length}
-                                        onClick={(event) => this._onVisualiseDatasets(visualizableOutputs, false)}>
+                                        onClick={(event) => this.onVisualiseDatasets(visualizableOutputs, false)}>
                                         <ListItemIcon>
                                           <VisualizeIcon />
                                         </ListItemIcon>
@@ -421,9 +415,9 @@ class ProcessMonitoring extends React.Component {
                                       isWorkflowTask={true}
                                       key={k}
                                       job={task}
-                                      onShowLogDialog={this._onShowLogDialog}
-                                      onShowPersistDialog={this._onShowPersistDialog}
-                                      onVisualiseDatasets={this._onVisualiseDatasets}/>;
+                                      onShowLogDialog={this.onShowLogDialog}
+                                      onShowPersistDialog={this.onShowPersistDialog}
+                                      onVisualiseDatasets={this.onVisualiseDatasets}/>;
                                   })
                                 }
                               </CollapseNestedList>
@@ -505,9 +499,9 @@ class ProcessMonitoring extends React.Component {
                   }
                   return <ProcessListItem job={x}
                                           key={i}
-                                          onShowLogDialog={this._onShowLogDialog}
-                                          onShowPersistDialog={this._onShowPersistDialog}
-                                          onVisualiseDatasets={this._onVisualiseDatasets}/>
+                                          onShowLogDialog={this.onShowLogDialog}
+                                          onShowPersistDialog={this.onShowPersistDialog}
+                                          onVisualiseDatasets={this.onVisualiseDatasets}/>
                 }
               }
             }
@@ -532,13 +526,13 @@ class ProcessMonitoring extends React.Component {
           <Button
             variant="contained"
             color="primary"
-            onClick={(event) => this._onRefreshResults()}>
+            onClick={(event) => this.onRefreshResults()}>
             <RefreshIcon />Refresh
           </Button>
 
           <Dialog
             open={this.state.logDialogOpened}
-            onClose={this._closeLogDialog}>
+            onClose={this.onCloseLogDialog}>
             <DialogTitle>
               Log informations
             </DialogTitle>
@@ -555,7 +549,7 @@ class ProcessMonitoring extends React.Component {
             <DialogActions>
               <Button variant="contained"
                       color="secondary"
-                      onClick={this._closeLogDialog}>
+                      onClick={this.onCloseLogDialog}>
                 Close
                 </Button>
             </DialogActions>
@@ -564,8 +558,8 @@ class ProcessMonitoring extends React.Component {
             output={this.state.persistDialogOutput}
             isOpen={this.state.persistDialogOpened}
             monitorActions={this.props.monitorActions}
-            onPersistConfirmed={this._onPersistOutputClicked}
-            closePersistDialog={this._closePersistDialog}
+            onPersistConfirmed={this.onPersistOutputClicked}
+            onClosePersistDialog={this.onClosePersistDialog}
             username={this.props.session.sessionStatus.user.username}>
           </PersistResultDialog>
         </div>
@@ -573,4 +567,5 @@ class ProcessMonitoring extends React.Component {
     );
   }
 }
+
 export default ProcessMonitoring;

@@ -31,7 +31,7 @@ export class PersistResultDialog extends React.Component {
     output: PropTypes.object.isRequired,
     isOpen:  PropTypes.bool.isRequired,
     onPersistConfirmed: PropTypes.func.isRequired,
-    closePersistDialog: PropTypes.func.isRequired,
+    onClosePersistDialog: PropTypes.func.isRequired,
     monitorActions: PropTypes.object.isRequired,
     username: PropTypes.string.isRequired
   };
@@ -125,7 +125,7 @@ export class PersistResultDialog extends React.Component {
       return <Dialog
         id="cy-persist-dialog"
         open={this.props.isOpen}
-        onClose={this.props.closePersistDialog}>
+        onClose={this.props.onClosePersistDialog}>
         <Card style={{width: '600px'}}>
           <CardHeader title="Persist a temporary resource" />
           <CardContent>
@@ -220,7 +220,7 @@ export class PersistResultDialog extends React.Component {
             <Button variant="contained"
                     color="secondary"
                     id="cy-persist-dialog-close-btn"
-                    onClick={this.props.closePersistDialog}>
+                    onClick={this.props.onClosePersistDialog}>
               Close
             </Button>
           </CardActions>

@@ -64,9 +64,9 @@ on external changes
 class BigColorPalette extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
+    currentDisplayedDataset: PropTypes.object.isRequired,
     preference: PropTypes.object.isRequired,
-    visualize: PropTypes.object.isRequired,
-    visualizeActions: PropTypes.object.isRequired
+    setVariablePreferenceBoundaries: PropTypes.func.isRequired
   };
 
   state = {

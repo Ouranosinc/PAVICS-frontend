@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import ProcessMonitoring from './../../components/ProcessMonitoring';
 import { bindActionCreators } from 'redux';
 import { actions as monitorActions } from './../../redux/modules/Monitor';
+import { actions as visualizeActions } from './../../redux/modules/Visualize';
 
 export class ProcessMonitoringContainer extends React.Component {
   static propTypes = {};
@@ -31,6 +32,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     monitorActions: bindActionCreators({...monitorActions}, dispatch),
+    visualizeActions: bindActionCreators({...visualizeActions}, dispatch),
   }
 };
 
