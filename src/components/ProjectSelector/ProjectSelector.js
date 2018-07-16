@@ -10,12 +10,13 @@ import { NotificationManager } from 'react-notifications';
 
 export class ProjectSelector extends React.Component {
   static propTypes = {
-
-  }
+    project: PropTypes.object.isRequired,
+    projectActions: PropTypes.object.isRequired,
+    projectAPI: PropTypes.object.isRequired
+  };
 
   constructor(props) {
     super(props);
-    this._onSetCurrentProject = this._onSetCurrentProject.bind(this);
   }
 
   componentWillMount() {
@@ -23,7 +24,7 @@ export class ProjectSelector extends React.Component {
     // this.props.projectAPIActions.fetchByMagpieAccessProjects();
   }
 
-  _onSetCurrentProject(id){
+  onSetCurrentProject = (id) => {
     let project = this.props.projectAPI.items.find(x => x.id === id);
     this.props.projectActions.setCurrentProject(project);
     NotificationManager.info(`Project '${project.name}' has been selected as the current project.`, 'Information', 10000);
@@ -43,7 +44,7 @@ export class ProjectSelector extends React.Component {
                   name: 'cy-project-selector'
                 }}
                 value={this.props.project.currentProject.id}
-                onChange={(event) => this._onSetCurrentProject(event.target.value)}>
+                onChange={(event) => this.onSetCurrentProject(event.target.value)}>
                 {
                   this.props.projectAPI.items.map((project, i) =>
                     <MenuItem data-cy-item-project-id={project.id} key={i} value={project.id}>

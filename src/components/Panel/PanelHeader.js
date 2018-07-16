@@ -12,14 +12,14 @@ class PanelHeader extends React.Component {
 
   render () {
     return (
-      <div>
+      <React.Fragment>
         <ToggleButton onClick={this.props.onClick} icon={this.props.icon} />
         {
           this.props.panelIsActive
             ? <span className={style['header']}>{this.props.children}</span>
             : null
         }
-      </div>
+      </React.Fragment>
     )
   }
 }

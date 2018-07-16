@@ -1,31 +1,26 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
-import { NotificationManager } from 'react-notifications';
 import * as constants from '../../constants';
 import Loader from './../../components/Loader';
 import Pagination from './../../components/Pagination';
 import List from'@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from'@material-ui/core/ListSubheader';
 import Checkbox from'@material-ui/core/Checkbox';
 import Paper from'@material-ui/core/Paper';
-import IconButton from'@material-ui/core/IconButton';
-import InfoIcon from '@material-ui/icons/Info';
 import Button from'@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
 import DatasetMenuActions from './../DatasetMenuActions';
 
 export class SearchCatalogResults extends React.Component {
   static propTypes = {
-    clickTogglePanel: PropTypes.func.isRequired,
     project: PropTypes.object.isRequired,
     projectAPIActions: PropTypes.object.isRequired,
     research: PropTypes.object.isRequired,
-    datasetAPIActions: PropTypes.object.isRequired
+    datasetAPIActions: PropTypes.object.isRequired,
+    visualizeActions: PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -105,19 +100,6 @@ export class SearchCatalogResults extends React.Component {
     });
   }
 
-  onInfoButtonClicked = (dataset) => {
-    this.setState({
-      infoOpened: true,
-      infoDataset: dataset});
-  };
-
-  onInfoModalClosed = () => {
-    this.setState({
-      infoOpened: false,
-      infoDataset: {}
-    });
-  };
-
   render () {
     // console.log("render SearchCatalogResults");
     let mainComponent;
@@ -130,7 +112,6 @@ export class SearchCatalogResults extends React.Component {
       if (this.props.research.pavicsDatasets.items.length) {
         let start = (this.state.pageNumber - 1) * this.state.numberPerPage;
         let paginated = this.props.research.pavicsDatasets.items.slice(start, start + this.state.numberPerPage);
-        let confirmation = null;
         mainComponent =
           <div id="cy-search-results">
             <Paper style={{ marginTop: 20 }}>
@@ -155,8 +136,7 @@ export class SearchCatalogResults extends React.Component {
                         </span>
                       }/>
                     <DatasetMenuActions
-                      addDatasetsToVisualize={this.props.addDatasetsToVisualize}
-                      selectCurrentDisplayedDataset={this.props.selectCurrentDisplayedDataset}
+                      visualizeActions={this.props.visualizeActions}
                       isRemoveFromProjectEnabled={false}
                       dataset={x}
                       disabledVisualize={false}
@@ -200,9 +180,9 @@ export class SearchCatalogResults extends React.Component {
       }
     }
     return (
-      <div>
+      <React.Fragment>
         {mainComponent}
-      </div>
+      </React.Fragment>
     );
   }
 }

@@ -21,19 +21,20 @@ export class ProjectManagement extends React.Component {
   };
 
   static propTypes = {
+    sectionActions: PropTypes.object.isRequired,
+    datasetAPI: PropTypes.object.isRequired,
+    datasetAPIActions: PropTypes.object.isRequired,
     project: PropTypes.object.isRequired,
-    projectActions: PropTypes.object.isRequired,
     projectAPI: PropTypes.object.isRequired,
+    projectActions: PropTypes.object.isRequired,
     projectAPIActions: PropTypes.object.isRequired,
+    research: PropTypes.object.isRequired,
+    researchAPI: PropTypes.object.isRequired,
     researchActions: PropTypes.object.isRequired,
-    currentProjectDatasets: PropTypes.array.isRequired,
-    currentProjectSearchCriterias: PropTypes.array.isRequired,
-    currentVisualizedDatasets: PropTypes.array.isRequired,
-    addDatasetsToVisualize: PropTypes.func.isRequired,
-    removeSearchCriteriasFromProject: PropTypes.func.isRequired,
-    selectCurrentDisplayedDataset: PropTypes.func.isRequired,
-    goToSection: PropTypes.func.isRequired,
-    sessionManagement: PropTypes.object.isRequired,
+    researchAPIActions: PropTypes.object.isRequired,
+    session: PropTypes.object.isRequired,
+    visualize: PropTypes.object.isRequired,
+    visualizeActions: PropTypes.object.isRequired,
   };
 
   constructor (props) {
@@ -42,7 +43,7 @@ export class ProjectManagement extends React.Component {
 
   render () {
    return (
-     <div>
+     <React.Fragment>
        <AppBar position="static" color="default">
          <Tabs
            centered
@@ -60,32 +61,60 @@ export class ProjectManagement extends React.Component {
        {
          this.state.activeTab === CURRENT_PROJECT_TAB_VALUE &&
          <div style={{margin: 20}}>
-           <ProjectSelector {...this.props}/>
+           <ProjectSelector
+              project={this.props.project}
+              projectActions={this.props.projectActions}
+              projectAPI={this.props.projectAPI} />
            {
              this.props.project.currentProject.id &&
-             <div>
-               <ProjectEditor {...this.props}/>
-               <ProjectDatasets {...this.props} />
-               <ProjectSearchCriterias {...this.props} />
-
-             </div>
+             <React.Fragment>
+               <ProjectEditor
+                 project={this.props.project}
+                 projectActions={this.props.projectActions}
+                 projectAPI={this.props.projectAPI}
+                 projectAPIActions={this.props.projectAPIActions} />
+               <ProjectDatasets
+                 project={this.props.project}
+                 projectActions={this.props.projectActions}
+                 datasetAPI={this.props.datasetAPI}
+                 datasetAPIActions={this.props.datasetAPIActions}
+                 visualize={this.props.visualizeActions}
+                 visualizeActions={this.props.visualizeActions}/>
+               <ProjectSearchCriterias
+                 sectionActions={this.props.sectionActions}
+                 project={this.props.project}
+                 researchActions={this.props.researchActions}
+                 researchAPI={this.props.researchAPI}
+                 researchAPIActions={this.props.researchAPIActions} />
+             </React.Fragment>
            }
          </div>
        }
        {
          this.state.activeTab === CREATE_PROJECT_TAB_VALUE &&
          <div style={{ margin: 20 }}>
-           <ProjectCreation  {...this.props}/>
+           <ProjectCreation
+             session={this.props.session}
+             project={this.props.project}
+             projectActions={this.props.projectActions}
+             projectAPI={this.props.projectAPI}
+             projectAPIActions={this.props.projectAPIActions} />
          </div>
        }
        {
          this.state.activeTab === SHARE_PROJECT_TAB_VALUE &&
          <div style={{ margin: 20 }}>
-           <ProjectSelector {...this.props}/>
-           <ProjectShare {...this.props}/>
+           <ProjectSelector
+             project={this.props.project}
+             projectActions={this.props.projectActions}
+             projectAPI={this.props.projectAPI} />
+           <ProjectShare
+             project={this.props.project}
+             projectAPIActions={this.props.projectAPIActions}
+             session={this.props.session} />
          </div>
        }
-     </div>
+     </React.Fragment>
     );
   }
 }

@@ -36,26 +36,8 @@ function getMaxPoly (polys) {
 
 class OLComponent extends React.Component {
   static propTypes = {
-    currentDateTime: PropTypes.string.isRequired,
-    mapManipulationMode: PropTypes.string.isRequired,
-    setCurrentDateTime: PropTypes.func.isRequired,
-    selectedRegions: PropTypes.array.isRequired,
-    selectedColorPalette: PropTypes.string.isRequired,
-    currentDisplayedDataset: PropTypes.object.isRequired,
-    selectedShapefile: PropTypes.object.isRequired,
-    selectedBasemap: PropTypes.string.isRequired,
-    selectedDatasetCapabilities: PropTypes.object.isRequired,
-    setSelectedDatasetCapabilities: PropTypes.func.isRequired,
-    selectRegion: PropTypes.func.isRequired,
-    unselectRegion: PropTypes.func.isRequired,
-    capabilities: PropTypes.object,
-    dataset: PropTypes.object,
-    layer: PropTypes.object.isRequired,
-    fetchWMSLayerDetails: PropTypes.func.isRequired,
-    fetchWMSLayerTimesteps: PropTypes.func.isRequired,
-    fetchPlotlyData: PropTypes.func.isRequired,
-    fetchScalarValue: PropTypes.func.isRequired,
-    testWMSGetMapPermission: PropTypes.func.isRequired,
+    visualize: PropTypes.object.isRequired,
+    visualizeActions: PropTypes.object.isRequired
   };
 
   config = {
@@ -224,23 +206,23 @@ class OLComponent extends React.Component {
     }
     let extent = [minX, minY, maxX, maxY];
     let url = __PAVICS_GEOSERVER_PATH__ + '/wfs?service=WFS&' +
-      `version=1.1.0&request=GetFeature&typename=${this.props.selectedShapefile.wmsParams.LAYERS}&` +
+      `version=1.1.0&request=GetFeature&typename=${this.props.visualize.selectedShapefile.wmsParams.LAYERS}&` +
       'outputFormat=application/json&srsname=EPSG:3857&' +
       'bbox=' + extent.join(',') + ',EPSG:3857';
     myHttp.get(url)
       .then(response => response.json(), err => console.log(err))
       .then(
         response => {
-          console.log('selected regions before click:', this.props.selectedRegions);
+          console.log('selected regions before click:', this.props.visualize.selectedRegions);
           let id = response.features[0].id;
-          if (this.props.selectedRegions.indexOf(id) !== -1) {
+          if (this.props.visualize.selectedRegions.indexOf(id) !== -1) {
             console.log('removing feature', id);
-            this.props.unselectRegion(id);
+            this.props.visualizeActions.unselectRegion(id);
             let feature = this.layers[LAYER_SELECTED_REGIONS].getSource().getFeatures().find(elem => elem.f === id);
             this.layers[LAYER_SELECTED_REGIONS].getSource().removeFeature(feature);
           } else {
             console.log('adding feature', id);
-            this.props.selectRegion(id);
+            this.props.visualizeActions.selectRegion(id);
             let format = new ol.format.GeoJSON();
             let features = format.readFeatures(response, {featureProjection: 'EPSG:3857'});
             console.log('adding feature named', features[0].name);
@@ -330,28 +312,28 @@ class OLComponent extends React.Component {
     let coordinates = this.map.getCoordinateFromPixel(event.pixel);
     let converted = ol.proj.transform(coordinates, 'EPSG:3857', 'EPSG:4326');
     console.log('scalar value from coosrindates', converted);
-    console.log('selected dataset:', this.props.currentDisplayedDataset);
-    let opendapUrl = this.props.currentDisplayedDataset['opendap_url'][0];
+    console.log('selected dataset:', this.props.visualize.currentDisplayedDataset);
+    let opendapUrl = this.props.visualize.currentDisplayedDataset['opendap_url'][0];
     let lon = converted[0];
     let lat = converted[1];
-    let time = this.props.currentDateTime.substr(0, this.props.currentDateTime.length - 5);
-    let variable = this.props.currentDisplayedDataset['variable'];
-    this.props.fetchScalarValue(opendapUrl, lat, lon, time, variable);
+    let time = this.props.visualize.currentDateTime.substr(0, this.props.visualize.currentDateTime.length - 5);
+    let variable = this.props.visualize.currentDisplayedDataset['variable'];
+    this.props.visualizeActions.fetchScalarValue(opendapUrl, lat, lon, time, variable);
   }
 
   handleMapClick (event) {
     console.log('handling map click:', event);
-    switch (this.props.mapManipulationMode) {
+    switch (this.props.visualize.mapManipulationMode) {
       case constants.VISUALIZE_MODE_REGION_SELECTION:
-        if (this.props.selectedShapefile.title) {
-          console.log('selected shapefile:', this.props.selectedShapefile);
+        if (this.props.visualize.selectedShapefile.title) {
+          console.log('selected shapefile:', this.props.visualize.selectedShapefile);
           return this.handleSelectRegionClick(event);
         }
         console.log('choose a shapefile first');
         return;
       case constants.VISUALIZE_MODE_GRID_VALUES:
-        if (this.props.currentDisplayedDataset['dataset_id']) {
-          console.log('selected dataset:', this.props.currentDisplayedDataset);
+        if (this.props.visualize.currentDisplayedDataset['dataset_id']) {
+          console.log('selected dataset:', this.props.visualize.currentDisplayedDataset);
           return this.getScalarValue(event);
         }
         console.log('choose a dataset first');
@@ -374,14 +356,14 @@ class OLComponent extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (nextProps.currentDateTime && nextProps.currentDateTime !== this.props.currentDateTime) {
+    if (nextProps.visualize.currentDateTime && nextProps.visualize.currentDateTime !== this.props.visualize.currentDateTime) {
       if (this.datasetSource) {
         this.datasetSource.updateParams(
           {
-            TIME: nextProps.currentDateTime
+            TIME: nextProps.visualize.currentDateTime
           }
         );
-        console.log('Openlayers time changed ' + nextProps.currentDateTime);
+        console.log('Openlayers time changed ' + nextProps.visualize.currentDateTime);
         this.datasetSource.setTileLoadFunction(this.datasetSource.getTileLoadFunction());
         this.datasetSource.changed();
       }
@@ -389,10 +371,10 @@ class OLComponent extends React.Component {
   }
 
   setBasemap (prevProps) {
-    console.log('change base map:', this.props.selectedBasemap);
-    let layer = this.getLayer(prevProps.selectedBasemap);
+    console.log('change base map:', this.props.visualize.selectedBasemap);
+    let layer = this.getLayer(prevProps.visualize.selectedBasemap);
     this.map.removeLayer(layer);
-    this.addBingLayer(this.props.selectedBasemap, this.props.selectedBasemap);
+    this.addBingLayer(this.props.visualize.selectedBasemap, this.props.visualize.selectedBasemap);
   }
 
   /*
@@ -400,7 +382,7 @@ class OLComponent extends React.Component {
   they are stored as a "map" built from their title
    */
   setShapefile (prevProps) {
-    let shapefile = this.props.selectedShapefile;
+    let shapefile = this.props.visualize.selectedShapefile;
     console.log('change shapefile:', shapefile);
     this.layers[LAYER_SELECTED_REGIONS].getSource().clear();
     this.map.removeLayer(this.layers[LAYER_REGIONS]);
@@ -508,14 +490,14 @@ class OLComponent extends React.Component {
           if (layer['Dimension']) {
             const timeDimension = this.findDimension(layer['Dimension'], 'time');
             const date = timeDimension.values.substring(0, 24);
-            this.props.fetchWMSLayerTimesteps(wmsServerUrl, layerName, date);
-            // this.props.setCurrentDateTime(date);
+            this.props.visualizeActions.fetchWMSLayerTimesteps(wmsServerUrl, layerName, date);
+            // this.props.visualizeActions.setCurrentDateTime(date);
           }
 
-          this.props.setSelectedDatasetCapabilities(capabilities);
-          this.props.fetchWMSLayerDetails(wmsServerUrl, layerName);
+          this.props.visualizeActions.setSelectedDatasetCapabilities(capabilities);
+          this.props.visualizeActions.fetchWMSLayerDetails(wmsServerUrl, layerName);
           // Normally fetched entirely by OpenLayers, but we want to an error when returning an error: ex. 401 Unauthorized
-          this.props.testWMSGetMapPermission(wmsServerUrl, layerName);
+          this.props.visualizeActions.testWMSGetMapPermission(wmsServerUrl, layerName);
         })
         .catch(err => {
           console.log(err);
@@ -528,9 +510,9 @@ class OLComponent extends React.Component {
     // TODO there is something that feels somewhat wrong about having the datasetLayer in a prop
     // it might be totally ok, but be bit careful ot
     if (this.layers[LAYER_DATASET]) {
-      console.log('changing color palette:', this.props.selectedColorPalette);
+      console.log('changing color palette:', this.props.visualize.selectedColorPalette);
       this.datasetSource.updateParams({
-        'STYLES': `default-scalar/${this.props.selectedColorPalette}`
+        'STYLES': `default-scalar/${this.props.visualize.selectedColorPalette}`
       });
     } else {
       console.log('select a dataset first');
@@ -557,17 +539,17 @@ class OLComponent extends React.Component {
 
   componentDidUpdate (prevProps, prevState) {
     console.log('OLComponent did update. prev props: %o vs current props: %o. prev state: %o vs current state: %o.', prevProps, this.props, prevState, this.state);
-    if (this.props.selectedColorPalette !== prevProps.selectedColorPalette) {
+    if (this.props.visualize.selectedColorPalette !== prevProps.visualize.selectedColorPalette) {
       this.updateColorPalette();
     }
-    if (this.props.selectedBasemap !== prevProps.selectedBasemap) {
+    if (this.props.visualize.selectedBasemap !== prevProps.visualize.selectedBasemap) {
       this.setBasemap(prevProps);
     }
-    if (this.props.selectedShapefile !== prevProps.selectedShapefile) {
+    if (this.props.visualize.selectedShapefile !== prevProps.visualize.selectedShapefile) {
       this.setShapefile(prevProps);
     }
-    const newDataset = this.props.currentDisplayedDataset;
-    const oldDataset = prevProps.currentDisplayedDataset;
+    const newDataset = this.props.visualize.currentDisplayedDataset;
+    const oldDataset = prevProps.visualize.currentDisplayedDataset;
     const hasDisplayedDataset = this.hasCurrentlyDisplayedDataset();
     console.log('current displayed dataset: %o, this should be a boolean indicating it exists: %o', this.layers[LAYER_DATASET], hasDisplayedDataset);
 

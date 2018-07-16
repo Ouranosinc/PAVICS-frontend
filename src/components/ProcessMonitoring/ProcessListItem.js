@@ -104,7 +104,6 @@ export class ProcessListItem extends React.Component {
               </MenuItem>,
               <MenuItem
                 id="cy-visualize-all-agg-item"
-                primaryText="Visualize All (Aggregated)"
                 disabled={!visualizableReferences.length}
                 onClick={(event) => this.onVisualizeOutput(visualizableReferences, true)}>
                 <ListItemIcon>
@@ -167,18 +166,12 @@ export class ProcessListItem extends React.Component {
       );
     }else{
       // Not a success has typically no outputs and only a log file to be shown
-      let logMenuItem = <MenuItem
-        id="cy-logs-item"
-        primaryText="Show Logs"
-        onClick={(event) => this.props.onShowLogDialog(this.props.job.log)}
-        leftIcon={<LogIcon />}/>;
       if(this.props.job.status === constants.JOB_ACCEPTED_STATUS){
         secondaryText =
           <span>
             <span>Will be launched soon using provider <strong>{this.props.job.service}</strong>.</span><br/>
             <StatusElement job={this.props.job} />
           </span>;
-        logMenuItem = null
       }
 
       return <ListItem

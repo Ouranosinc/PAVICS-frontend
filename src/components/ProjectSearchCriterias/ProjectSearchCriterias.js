@@ -28,7 +28,11 @@ const styles = theme => ({
 export class ProjectSearchCriterias extends React.Component {
 
   static propTypes = {
-
+    sectionActions: PropTypes.object.isRequired,
+    project: PropTypes.object.isRequired,
+    researchActions: PropTypes.object.isRequired,
+    researchAPI: PropTypes.object.isRequired,
+    researchAPIActions: PropTypes.object.isRequired
   };
 
   constructor(props) {
@@ -60,7 +64,7 @@ export class ProjectSearchCriterias extends React.Component {
   };
 
   onReloadSearchCriteria = research => {
-    this.props.goToSection(constants.PLATFORM_SECTION_SEARCH_DATASETS);
+    this.props.sectionActions.goToSection(constants.PLATFORM_SECTION_SEARCH_DATASETS);
     this.props.researchActions.clearFacetKeyValuePairs();
     research.facets.forEach((facet) => {
       this.props.researchActions.addFacetKeyValuePair(facet.key, facet.value);
@@ -116,9 +120,10 @@ export class ProjectSearchCriterias extends React.Component {
                       <span>
                           {
                             research.facets.map((criteria, i) => {
-                              return <span  key={`facet-${criteria.key}-${criteria.value}`}>
-                                {criteria.key + '=' + criteria.value + ((i + 1 === research.facets.length) ? '' : ', ')}
-                                </span>;
+                              return (
+                                <span key={`facet-${criteria.key}-${criteria.value}`}>
+                                  {criteria.key + '=' + criteria.value + ((i + 1 === research.facets.length) ? '' : ', ')}
+                                </span>);
                             })
                           }
                         </span>
@@ -131,6 +136,7 @@ export class ProjectSearchCriterias extends React.Component {
                       menuId="criterias-menu-actions"
                       menuItems={[
                         <MenuItem
+                          key="cy-restore-item"
                           id="cy-restore-item"
                           onClick={(event) => this.onRestoreSearchCriteria(research)}>
                           <ListItemIcon>
@@ -139,6 +145,7 @@ export class ProjectSearchCriterias extends React.Component {
                           <ListItemText inset primary="Restore results"/>
                         </MenuItem>,
                         <MenuItem
+                          key="cy-relaunch-item"
                           id="cy-relaunch-item"
                           onClick={(event) => this.onRelaunchSearch(research)}>
                           <ListItemIcon>
@@ -147,6 +154,7 @@ export class ProjectSearchCriterias extends React.Component {
                           <ListItemText inset primary="Relaunch search"/>
                         </MenuItem>,
                         <MenuItem
+                          key="cy-remove-item"
                           id="cy-remove-item"
                           onClick={(event) => this.onRemoveSearchCriteria(research)}>
                           <ListItemIcon>

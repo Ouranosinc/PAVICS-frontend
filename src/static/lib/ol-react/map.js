@@ -45,14 +45,14 @@ export default class Map extends React.Component {
 
   render() {
     return (
-      <div>
+      <React.Fragment>
         <div ref="target">
         </div>
-        <div>
+        <React.Fragment>
           {this.props.children}
           {this.props.view}
-        </div>
-      </div>
+        </React.Fragment>
+      </React.Fragment>
     );
   }
 }

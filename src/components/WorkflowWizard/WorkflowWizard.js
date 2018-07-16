@@ -22,32 +22,30 @@ const styles = {
 };
 
 class WorkflowWizard extends React.Component {
+  state = {
+    dialogOpened: false,
+    dialogTitle: '',
+    dialogContent: '',
+    dialogActions: [],
+    activeTab: WORKFLOW_TAB_VALUE
+  };
 
   static propTypes = {
-    goToSection: PropTypes.func.isRequired,
     jobAPIActions: PropTypes.object.isRequired,
-    selectedShapefile: PropTypes.object.isRequired,
-    currentDisplayedDataset: PropTypes.object.isRequired,
-    selectedRegions: PropTypes.array.isRequired,
     project: PropTypes.object.isRequired,
+    sectionActions: PropTypes.object.isRequired,
     workflow: PropTypes.object.isRequired,
     workflowAPI: PropTypes.object.isRequired,
     workflowActions: PropTypes.object.isRequired,
-    workflowAPIActions: PropTypes.object.isRequired
+    workflowAPIActions: PropTypes.object.isRequired,
+    visualize: PropTypes.object.isRequired,
   };
 
   constructor (props) {
     super(props);
     this.props.workflowActions.fetchProviders();
-    this.state = {
-      dialogOpened: false,
-      dialogTitle: '',
-      dialogContent: '',
-      dialogActions: [],
-      activeTab: WORKFLOW_TAB_VALUE
-    };
     if (this.props.workflow.selectedProvider) {
-      this.props.workflowActions.fetchProcesses(this.props.selectedProvider);
+      this.props.workflowActions.fetchProcesses(this.props.workflow.selectedProvider);
     }
   }
 
@@ -95,7 +93,7 @@ class WorkflowWizard extends React.Component {
   render () {
     const { classes } = this.props;
     return (
-      <div>
+      <React.Fragment>
         <AppBar position="static" color="default">
           <Tabs
             fullWidth
@@ -110,15 +108,13 @@ class WorkflowWizard extends React.Component {
         {
           (this.state.activeTab === WORKFLOW_TAB_VALUE) ?
             <ScientificWorkflowStepper
-              goToSection={this.props.goToSection}
               jobAPIActions={this.props.jobAPIActions}
               project={this.props.project}
-              showDialog={this.showDialog}
-              selectedRegions={this.props.selectedRegions}
-              currentDisplayedDataset={this.props.currentDisplayedDataset}
-              selectedShapefile={this.props.selectedShapefile}
+              sectionActions={this.props.sectionActions}
               selectedProvider={__PAVICS_WORKFLOW_PROVIDER__}
               selectedProcess={{identifier: __PAVICS_RUN_WORKFLOW_IDENTIFIER__}}
+              showDialog={this.showDialog}
+              visualize={this.props.visualize}
               workflow={this.props.workflow}
               workflowActions={this.props.workflowActions}
               workflowAPI={this.props.workflowAPI}
@@ -127,12 +123,10 @@ class WorkflowWizard extends React.Component {
         {
           (this.state.activeTab === PROCESS_TAB_VALUE) ?
             <WpsProcessStepper
-              goToSection={this.props.goToSection}
+              sectionActions={this.props.sectionActions}
               jobAPIActions={this.props.jobAPIActions}
               project={this.props.project}
-              selectedRegions={this.props.selectedRegions}
-              currentDisplayedDataset={this.props.currentDisplayedDataset}
-              selectedShapefile={this.props.selectedShapefile}
+              visualize={this.props.visualize}
               workflow={this.props.workflow}
               workflowActions={this.props.workflowActions}
             /> : null
@@ -156,7 +150,7 @@ class WorkflowWizard extends React.Component {
             </Button>
           </DialogActions>
         </Dialog>
-      </div>
+      </React.Fragment>
 
     );
   }

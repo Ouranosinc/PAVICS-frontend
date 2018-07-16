@@ -5,12 +5,12 @@ import { SectionalMenu, SectionalContent } from './.';
 
 class SectionalPanel extends React.Component {
   static propTypes = {
-    goToSection: PropTypes.func.isRequired,
-    section: PropTypes.string.isRequired,
     currentContent: PropTypes.object,
     currentTitle: PropTypes.string.isRequired,
+    section: PropTypes.object.isRequired,
+    sectionActions: PropTypes.object.isRequired,
+    session: PropTypes.object.isRequired,
     showContent: PropTypes.bool.isRequired,
-    sessionManagement: PropTypes.object.isRequired,
     project: PropTypes.object.isRequired,
   };
 
@@ -20,9 +20,9 @@ class SectionalPanel extends React.Component {
         <div className={(this.props.showContent) ? classes['Shown'] : classes['Hidden']}>
           <SectionalMenu
             section={this.props.section}
-            goToSection={this.props.goToSection}
-            sessionManagement={this.props.sessionManagement}
-            project={this.props.project}/>
+            sectionActions={this.props.sectionActions}
+            session={this.props.session}
+            project={this.props.project} />
           <SectionalContent
             showContent={this.props.showContent}
             title={this.props.currentTitle}

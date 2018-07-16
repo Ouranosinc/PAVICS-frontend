@@ -1,19 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Plotly from 'plotly.js';
-import classes from './TimeSeriesChart.scss';
-import * as constants from './../../constants';
 import Loader from './../../components/Loader';
-import Paper from'@material-ui/core/Paper';
-import AppBar from'@material-ui/core/AppBar';
-import Toolbar from'@material-ui/core/Toolbar';
-import Typography from'@material-ui/core/Typography';
-import IconButton from'@material-ui/core/IconButton';
-import TimelineIcon from '@material-ui/icons/Timeline';
-import MinimizeIcon from '@material-ui/icons/Remove';
 import Card from'@material-ui/core/Card';
 import CardHeader from'@material-ui/core/CardHeader';
-import {Alert} from 'react-bootstrap';
 
 const LAYOUT = {
   // autosize: false,
@@ -34,25 +24,24 @@ const LAYOUT = {
 
 class TimeSeriesChart extends React.Component {
   static propTypes = {
-    currentScalarValue: PropTypes.object.isRequired,
-    currentDisplayedDataset: PropTypes.object.isRequired,
-    onToggleMapPanel: PropTypes.func.isRequired,
-    plotlyData: PropTypes.object.isRequired,
-    fetchPlotlyData: PropTypes.func.isRequired
+    visualize: PropTypes.object.isRequired,
+    visualizeActions: PropTypes.object.isRequired
   };
 
   constructor (props) {
     super(props);
     this._bindRef = this._bindRef.bind(this);
-    this._onHideChartPanel = this._onHideChartPanel.bind(this);
   }
 
   componentWillReceiveProps (nextProps) {
-    if (nextProps.currentScalarValue.data && nextProps.currentScalarValue.data.variable && nextProps.currentScalarValue.data !== this.props.currentScalarValue.data) {
-      if (this.props.currentDisplayedDataset && this.props.currentDisplayedDataset['opendap_url'].length) {
-        let opendapUrl = this.props.currentDisplayedDataset['opendap_url'][0];
-        let variable = nextProps.currentScalarValue.data.variable;
-        this.props.fetchPlotlyData(
+    const { nextCurrentScalarValue, nextPlotlyData } = nextProps.visualize;
+    const { currentDisplayedDataset, plotlyData } = this.props.visualize;
+    if (nextCurrentScalarValue && nextCurrentScalarValue.data && nextCurrentScalarValue.data.variable &&
+      nextCurrentScalarValue.data !== this.props.visualize.currentScalarValue.data) {
+      if (currentDisplayedDataset && currentDisplayedDataset['opendap_url'].length) {
+        let opendapUrl = currentDisplayedDataset['opendap_url'][0];
+        let variable = nextCurrentScalarValue.data.variable;
+        this.props.visualizeActions.fetchPlotlyData(
           opendapUrl,
           variable['name'],
           0,
@@ -64,7 +53,7 @@ class TimeSeriesChart extends React.Component {
       }
     }
 
-    if (nextProps.plotlyData.data && nextProps.plotlyData.data !== this.props.plotlyData.data) {
+    if (nextPlotlyData && nextPlotlyData.data && nextPlotlyData.data !== plotlyData.data) {
       this.container.data = nextProps.plotlyData.data;
       // We merge this.props.plotlyData.layout with predefined LAYOUT
       this.container.layout = JSON.parse(JSON.stringify(nextProps.plotlyData.layout));
@@ -79,18 +68,15 @@ class TimeSeriesChart extends React.Component {
   }
 
   componentDidMount () {
+    const { plotlyData } = this.props.visualize;
     // We merge this.props.plotlyData.layout with predefined LAYOUT
-    let layout = JSON.parse(JSON.stringify(this.props.plotlyData.layout));
+    let layout = JSON.parse(JSON.stringify(plotlyData.layout));
     for (let propName in LAYOUT) {
       if (LAYOUT.hasOwnProperty(propName)) {
         layout[propName] = LAYOUT[propName];
       }
     }
-    Plotly.plot(this.container, this.props.plotlyData.data, layout, { displayModeBar: false });
-  }
-
-  _onHideChartPanel () {
-    this.props.onToggleMapPanel(constants.VISUALIZE_CHART_PANEL);
+    Plotly.plot(this.container, plotlyData.data, layout, { displayModeBar: false });
   }
 
   _bindRef (node) {
@@ -98,46 +84,29 @@ class TimeSeriesChart extends React.Component {
   }
 
   render () {
+    const { currentScalarValue, plotlyData } = this.props.visualize;
     let content = null;
-    if (this.props.currentScalarValue.data &&
-      this.props.currentScalarValue.data._dimensions &&
-      this.props.plotlyData.layout &&
-      this.props.plotlyData.layout.title) {
+    if (currentScalarValue.data && currentScalarValue.data._dimensions && plotlyData.layout && plotlyData.layout.title) {
       content =
         <Card>
           <CardHeader
-            title={this.props.plotlyData.layout.title.split('/')[this.props.plotlyData.layout.title.split('/').length - 1]}
-            subtitle={`Latitude: ${this.props.currentScalarValue.data._dimensions.lat.value} / Longitude: ${this.props.currentScalarValue.data._dimensions.lon.value}`}
+            title={plotlyData.layout.title.split('/')[plotlyData.layout.title.split('/').length - 1]}
+            subtitle={`Latitude: ${currentScalarValue.data._dimensions.lat.value} / Longitude: ${currentScalarValue.data._dimensions.lon.value}`}
           />
         </Card>;
-    } else if (this.props.plotlyData.isFetching || this.props.currentScalarValue.isFetching) {
+    } else if (plotlyData.isFetching || currentScalarValue.isFetching) {
       content = <Loader name="chart" />;
-    } else if (!this.props.currentScalarValue.data || !this.props.currentScalarValue.data._dimensions) {
-      content =
-        <Alert bsStyle="info" style={{marginTop: 20}}>
-          A dataset must first be selected. Then a point must be clicked on the map with the map controls mode 'Point scalar values' activated for chart to be loaded.
-        </Alert>;
+    } else if (!currentScalarValue.data || !currentScalarValue.data._dimensions) {
+      content = null;
     }
     return (
-      // !this.props.currentScalarValue.data || !this.props.currentScalarValue.data._dimensions ? classes['Empty'] : classes['Chart']
-      <Paper className={classes['TimeSeriesChart']}>
-        <AppBar position="static" color="primary">
-          <Toolbar>
-            <IconButton disableRipple color="inherit"><TimelineIcon /></IconButton>
-            <Typography variant="title" color="inherit" style={{flex: 1}}>
-              Time Series Chart
-            </Typography>
-            <IconButton color="inherit" className="cy-minimize-btn" onClick={this._onHideChartPanel}><MinimizeIcon /></IconButton>
-          </Toolbar>
-        </AppBar>
-        <div className={classes['Chart']}>
-          {content}
-          <div className={((this.props.plotlyData.isFetching || this.props.currentScalarValue.isFetching) &&
-          (!this.props.currentScalarValue.data || !this.props.currentScalarValue.data._dimensions)) ? 'hidden' : ''}>
-            <div id="plotly" ref={this._bindRef}></div>
-          </div>
+      <React.Fragment>
+        {content}
+        <div className={((plotlyData.isFetching || currentScalarValue.isFetching) &&
+          (!currentScalarValue.data || !currentScalarValue.data._dimensions)) ? 'hidden' : ''}>
+          <div id="plotly" ref={this._bindRef}></div>
         </div>
-      </Paper>
+      </React.Fragment>
     );
   }
 }

@@ -99,8 +99,7 @@ class WpsProcessFormInput extends Component {
               <Checkbox
                 name={this.props.inputDefinition.name}
                 checked={value}
-                onChange={this.handleCheckboxChange}
-                value={value} />
+                onChange={this.handleCheckboxChange} />
             }>
           </FormControlLabel>
           <FormHelperText style={{marginTop: '-12px'}}>
@@ -141,7 +140,7 @@ class WpsProcessFormInput extends Component {
     // leave this check before the isArray one, or the fields will be rendered as text fields on next rendering
     if (this.props.inputDefinition.selectable) {
       return (
-        <div>
+        <React.Fragment>
           <Select
             multiple
             fullWidth
@@ -165,7 +164,7 @@ class WpsProcessFormInput extends Component {
               (selectedRegion, i) => <input key={i} type="hidden" name={this.props.inputDefinition.name} value={selectedRegion} />
             ) : null
           }
-        </div>
+        </React.Fragment>
       );
     }
 

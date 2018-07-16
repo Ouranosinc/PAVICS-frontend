@@ -4,32 +4,22 @@ export const PLATFORM_SECTION_PROJECT_MANAGEMENT = 'Project Management';
 export const PLATFORM_SECTION_MONITOR = 'Processes Monitoring';
 export const PLATFORM_SECTION_SEARCH_DATASETS = 'Search Datasets';
 export const PLATFORM_SECTION_WORKFLOWS = 'Data Processing';
-export const PLATFORM_SET_SECTION = 'PLATFORM_SET_SECTION';
 // Visualize
 export const VISUALIZE_SET_MAP_MANIPULATION_MODE = 'Visualize.VISUALIZE_SET_MAP_MANIPULATION_MODE';
 export const VISUALIZE_MODE_GRID_VALUES = 'VISUALIZE.MODE_VISUALIZE';
 export const VISUALIZE_MODE_REGION_SELECTION = 'VISUALIZE.MODE_REGION_SELECTION';
-export const VISUALIZE_CHART_PANEL = 'Time Series Chart';
-export const VISUALIZE_LAYER_SWITCHER_PANEL = 'Layer Switcher';
-export const VISUALIZE_INFO_PANEL = 'Point Informations';
-export const VISUALIZE_MAP_CONTROLS_PANEL = 'Map Controls';
-export const VISUALIZE_TIME_SLIDER_PANEL = 'Temporal Slider';
+export const CHART_WIDGET_TITLE = 'Time Series Chart';
+export const LAYER_SWITCHER_WIDGET_TITLE = 'Layer Switcher';
+export const INFO_WIDGET_TITLE = 'Point Informations';
+export const MAP_CONTROLS_WIDGET_TITLE = 'Controls';
+export const TIME_SLIDER_WIDGET_TITLE = 'Temporal Slider';
 // monitor
-export const MONITOR_SET_JOBS = 'MONITOR_SET_JOBS';
 export const JOB_ACCEPTED_STATUS = 'ProcessAccepted';
 export const JOB_FAILED_STATUS = 'ProcessFailed';
 export const JOB_SUCCESS_STATUS = 'ProcessSucceeded';
 export const JOB_STARTED_STATUS = 'ProcessStarted';
 export const JOB_PAUSED_STATUS = 'ProcessPaused';
 export const PAVICS_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
-// Visualize
-// TODO Delete
-export const PANEL_SEARCH_CATALOG = 'Visualize.SearchCatalog';
-export const PANEL_DATASET_DETAILS = 'Visualize.DatasetDetails';
-export const PANEL_DATASET_WMS_LAYERS = 'Visualize.DatasetWMSLayers';
-export const PANEL_CLIMATE_INDICATORS = 'Visualize.ClimateIndicators';
-export const PANEL_PLOTLY = 'Visualize.Plotly';
-export const DEFAULT_SELECTED_KEY = 'frequency';
 // Pagination
 export const PER_PAGE_OPTIONS = [5, 10, 25];
 export const PER_PAGE_INITIAL_INDEX = 0;

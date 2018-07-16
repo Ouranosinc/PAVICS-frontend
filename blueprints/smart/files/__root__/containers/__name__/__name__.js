@@ -15,7 +15,7 @@ export class <%= pascalEntityName %> extends React.Component {
 
   render () {
     return (
-      <div>
+      <React.Fragment>
         <h1><%= pascalEntityName %></h1>
       </div>
     )

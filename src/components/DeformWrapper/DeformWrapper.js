@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from "@material-ui/core/styles";
-import { Form } from 'react-bootstrap';
 import { ExecuteButton } from '../WorkflowWizard';
 import Typography from'@material-ui/core/Typography';
 import Paper from'@material-ui/core/Paper';
@@ -29,7 +28,7 @@ class DeformWrapper extends Component {
     return (
       // this id="FORM_ID" is used when submitting the form.
       // don't change or remove it, or make sure you update it in the execute function as well
-      <Form id={this.props.formId} horizontal>
+      <form id={this.props.formId}>
         <Paper elevation={2} className={this.props.classes.grid}>
           <div className="container">
             <Typography variant="headline">
@@ -43,7 +42,7 @@ class DeformWrapper extends Component {
         </Paper>
         <ExecuteButton executeProcess={this.props.execute}/>
         <input type="hidden" name="submit" value="submit"/>
-      </Form>
+      </form>
     );
   }
 }

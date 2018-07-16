@@ -122,6 +122,7 @@ export class ProjectEditor extends React.Component {
               {
                 this.props.project.currentProject.permissions.map((permission, i) =>
                   <FormControlLabel
+                    key={"permission-" + i}
                     className="cy-project-permission"
                     label={permission.toUpperCase()}
                     control={

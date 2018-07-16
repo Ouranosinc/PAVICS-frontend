@@ -1,38 +1,42 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import * as constants from '../../constants';
-require('rc-slider/assets/index.css');
 import moment from 'moment';
-import classes from './TimeSlider.scss';
 import Slider  from 'rc-slider';
-import { Col, Row} from 'react-bootstrap'
-import Paper from'@material-ui/core/Paper';
-import AppBar from'@material-ui/core/AppBar';
+import Grid from '@material-ui/core/Grid'
 import Select from'@material-ui/core/Select';
 import MenuItem from'@material-ui/core/MenuItem';
 import Button from'@material-ui/core/Button';
 import TextField from'@material-ui/core/TextField';
-import IconButton from'@material-ui/core/IconButton';
-import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import PlayIcon from '@material-ui/icons/PlayArrow';
 import PauseIcon from '@material-ui/icons/Pause';
 import ForwardIcon from '@material-ui/icons/SkipNext';
 import BackwardIcon from '@material-ui/icons/SkipPrevious';
 import FastForwardIcon from '@material-ui/icons/FastForward';
 import FastBackwardIcon from '@material-ui/icons/FastRewind';
-import MinimizeIcon from '@material-ui/icons/Remove';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
-const buttonStyle = {
-  margin: '0 5px 0 5px',
-  width: '18%'
+require('rc-slider/assets/index.css');
+
+const styles = {
+  button: {
+    width: '100%',
+    margin: '0',
+  },
+  stepControls: {
+    marginTop: '20px'
+  },
+  sliderYears: {
+    marginTop: '20px'
+  },
+  slider: {
+    paddingRight: '6px',
+    paddingLeft: '6px'
+  },
 };
 
 /* Constants */
 const DIVIDER = 100000;
+
 /* Step controls actions */
 const FAST_BACKWARD_ACTION = 'fast-backward';
 const FAST_FORWARD_ACTION = 'fast-forward';
@@ -40,6 +44,7 @@ const PAUSE_ACTION = 'pause';
 const PLAY_ACTION = 'play';
 const STEP_BACKWARD_ACTION = 'step-backward';
 const STEP_FORWARD_ACTION = 'step-forward';
+
 /* Time values */
 const DAY_VALUE = 'day';
 const HOUR_VALUE = 'hour';
@@ -51,9 +56,9 @@ const DEFAULT_STATE = {
   disabled: true,
   maxDatetime: '2020-12-31T00:00:00.000Z',
   minDatetime: '1900-01-01T00:00:00.000Z',
-  currentDate: '1900-01-01', // props.currentDateTime.substring(0, 10),
-  currentMonthDay: '01-01', // props.currentDateTime.substring(5, 10),
-  currentTime: '00:00:00.000Z', // props.currentDateTime.substring(11, 24),
+  currentDate: '1900-01-01', // props.visualize.currentDateTime.substring(0, 10),
+  currentMonthDay: '01-01', // props.visualize.currentDateTime.substring(5, 10),
+  currentTime: '00:00:00.000Z', // props.visualize.currentDateTime.substring(11, 24),
   currentYear: 1900,
   firstDay: 1,
   firstMonth: 1,
@@ -76,43 +81,39 @@ const DEFAULT_STATE = {
 };
 
 export class TimeSlider extends React.Component {
+  state = DEFAULT_STATE;
+
   static propTypes = {
-    // Not sure why monthsRange and yearsRange, but maybe for future range selection?
+    // monthsRange and yearsRange are present for future range selection
     monthsRange: PropTypes.bool.isRequired,
     yearsRange: PropTypes.bool.isRequired,
-    currentDateTime: PropTypes.string.isRequired,
-    currentDisplayedDataset: PropTypes.object.isRequired,
-    selectedDatasetCapabilities: PropTypes.object.isRequired,
-    selectedWMSLayerDetails: PropTypes.object.isRequired,
-    selectedWMSLayerTimesteps: PropTypes.object.isRequired,
-    setCurrentDateTime: PropTypes.func.isRequired,
-    selectCurrentDisplayedDataset: PropTypes.func.isRequired,
-    onToggleMapPanel: PropTypes.func.isRequired
+    visualize: PropTypes.object.isRequired,
+    visualizeActions: PropTypes.object.isRequired
   };
 
   constructor (props) {
     super(props);
-    this.state = DEFAULT_STATE;
     this.playLoopTimeout =  null;
     this.hasDatasetChanged = false;
   }
 
   componentWillReceiveProps (nextProps) {
-    if (nextProps.currentDateTime && nextProps.currentDateTime !== this.props.currentDateTime) {
+    const { nextCurrentDateTime, nextCurrentDisplayedDataset} = nextProps.visualize;
+    if (nextCurrentDateTime && nextCurrentDateTime !== this.props.visualize.currentDateTime) {
       this.setState(
         {
-          currentDate: nextProps.currentDateTime.substring(0, 10),
-          currentMonthDay: nextProps.currentDateTime.substring(5, 10),
-          currentTime: nextProps.currentDateTime.substring(11, 24),
-          currentYear: nextProps.currentDateTime.substring(0, 4)
+          currentDate: nextCurrentDateTime.substring(0, 10),
+          currentMonthDay: nextCurrentDateTime.substring(5, 10),
+          currentTime: nextCurrentDateTime.substring(11, 24),
+          currentYear: nextCurrentDateTime.substring(0, 4)
         }
       );
     }
-    if(nextProps.currentDisplayedDataset && nextProps.currentDisplayedDataset !== this.props.currentDisplayedDataset ) {
-      if (!nextProps.currentDisplayedDataset['dataset_id']) {
+    if(nextCurrentDisplayedDataset && nextCurrentDisplayedDataset !== this.props.visualize.currentDisplayedDataset ) {
+      if (!nextCurrentDisplayedDataset['dataset_id']) {
         this.setState(DEFAULT_STATE);
       }
-      if (nextProps.currentDisplayedDataset['uniqueLayerSwitcherId'] !== this.props.currentDisplayedDataset['uniqueLayerSwitcherId']) {
+      if (nextCurrentDisplayedDataset['uniqueLayerSwitcherId'] !== this.props.visualize.currentDisplayedDataset['uniqueLayerSwitcherId']) {
         this.hasDatasetChanged = true;
       }
     }
@@ -127,8 +128,8 @@ export class TimeSlider extends React.Component {
   }
 
   init() {
-    if (!this.props.selectedWMSLayerDetails.isFetching && !this.props.selectedWMSLayerTimesteps.isFetching) {
-      if (this.props.selectedWMSLayerDetails.data.datesWithData) {
+    if (!this.props.visualize.selectedWMSLayerDetails.isFetching && !this.props.visualize.selectedWMSLayerTimesteps.isFetching) {
+      if (this.props.visualize.selectedWMSLayerDetails.data.datesWithData) {
         this.setState({disabled: false});
         if(this.hasDatasetChanged){
           this.changeGlobalRange(); // This will also triggers -­> this.dispatchCurrentDateTime (this.state.minDatetime);
@@ -145,19 +146,15 @@ export class TimeSlider extends React.Component {
   componentDidUpdate (prevProps, prevState) {
     // Context: We have two async fetch requests and we have no idea which one will be proceeded first
     // And we need both values to be fetched to calculate ranges and steps
-    if (this.props.selectedWMSLayerDetails && this.props.selectedWMSLayerDetails.data &&
-      (this.props.selectedWMSLayerDetails.data !== prevProps.selectedWMSLayerDetails.data)) {
+    if (this.props.visualize.selectedWMSLayerDetails && this.props.visualize.selectedWMSLayerDetails.data &&
+      (this.props.visualize.selectedWMSLayerDetails.data !== prevProps.visualize.selectedWMSLayerDetails.data)) {
       this.init();
     }
 
-    if (this.props.selectedWMSLayerTimesteps && this.props.selectedWMSLayerTimesteps.data &&
-      (this.props.selectedWMSLayerTimesteps.data !== prevProps.selectedWMSLayerTimesteps.data)) {
+    if (this.props.visualize.selectedWMSLayerTimesteps && this.props.visualize.selectedWMSLayerTimesteps.data &&
+      (this.props.visualize.selectedWMSLayerTimesteps.data !== prevProps.visualize.selectedWMSLayerTimesteps.data)) {
       this.init();
     }
-  }
-
-  _onHideTimeSliderPanel () {
-    this.props.onToggleMapPanel(constants.VISUALIZE_TIME_SLIDER_PANEL);
   }
 
   // TODO duplicated in OLComponent
@@ -179,10 +176,10 @@ export class TimeSlider extends React.Component {
   }
 
   changeGlobalRange () {
-    let layerDetails = this.props.selectedWMSLayerDetails.data;
-    let timeSteps = this.props.selectedWMSLayerTimesteps.data.timesteps;
-    let minDatetime = this.props.currentDisplayedDataset.datetime_min[0];
-    let maxDatetime = this.props.currentDisplayedDataset.datetime_max[this.props.currentDisplayedDataset.datetime_max.length - 1];
+    let layerDetails = this.props.visualize.selectedWMSLayerDetails.data;
+    let timeSteps = this.props.visualize.selectedWMSLayerTimesteps.data.timesteps;
+    let minDatetime = this.props.visualize.currentDisplayedDataset.datetime_min[0];
+    let maxDatetime = this.props.visualize.currentDisplayedDataset.datetime_max[this.props.visualize.currentDisplayedDataset.datetime_max.length - 1];
 
     // Define MIN and MAX dataset datetime values
     /*this.setState({
@@ -208,9 +205,9 @@ export class TimeSlider extends React.Component {
       let yearBegin = moment.parseZone(`${year}-01-01`/*T00:00:00Z*/);
       let yearEnd = moment.parseZone(`${year}-12-31`/*T24:00:00Z*/);
       let found = false;
-      for (let i = 0; i < this.props.currentDisplayedDataset.datetime_min.length && !found; ++i) {
-        let currentFileMomentMin = moment.parseZone(this.props.currentDisplayedDataset.datetime_min[i]);
-        let currentFileMomentMax = moment.parseZone(this.props.currentDisplayedDataset.datetime_max[i]);
+      for (let i = 0; i < this.props.visualize.currentDisplayedDataset.datetime_min.length && !found; ++i) {
+        let currentFileMomentMin = moment.parseZone(this.props.visualize.currentDisplayedDataset.datetime_min[i]);
+        let currentFileMomentMax = moment.parseZone(this.props.visualize.currentDisplayedDataset.datetime_max[i]);
         if ((yearBegin.isSameOrBefore(currentFileMomentMax) && yearBegin.isSameOrAfter(currentFileMomentMin)) ||
           (yearEnd.isSameOrBefore(currentFileMomentMax) && yearEnd.isSameOrAfter(currentFileMomentMin))) {
           console.log('Found data for year ' + year);
@@ -289,8 +286,8 @@ export class TimeSlider extends React.Component {
   changeTimesteps () {
     // NOTE: Calculated timestep is based on one file datesWithData + timesteps values
     // Aggregated files should always have same timesteps
-    let datesWithData = this.props.selectedWMSLayerDetails.data.datesWithData;
-    let timeSteps = this.props.selectedWMSLayerTimesteps.data.timesteps;
+    let datesWithData = this.props.visualize.selectedWMSLayerDetails.data.datesWithData;
+    let timeSteps = this.props.visualize.selectedWMSLayerTimesteps.data.timesteps;
     let stepLength = 1;
     let stepGranularity = DAY_VALUE;
 
@@ -345,18 +342,18 @@ export class TimeSlider extends React.Component {
 
   changeCurrentDateTime () {
     let newDateTime = `${this.state.currentYear}-${this.state.currentMonthDay}T${this.state.currentTime}`;
-    if (this.props.currentDateTime !== newDateTime) {
+    if (this.props.visualize.currentDateTime !== newDateTime) {
       // console.log("New datetime provided by TimeSlider: %s", newDateTime);
-      this.props.setCurrentDateTime(newDateTime);
-      let currentFileMomentMin = moment.parseZone(this.props.currentDisplayedDataset.datetime_min[this.props.currentDisplayedDataset.currentFileIndex]);
-      let currentFileMomentMax = moment.parseZone(this.props.currentDisplayedDataset.datetime_max[this.props.currentDisplayedDataset.currentFileIndex]);
+      this.props.visualizeActions.setCurrentDateTime(newDateTime);
+      let currentFileMomentMin = moment.parseZone(this.props.visualize.currentDisplayedDataset.datetime_min[this.props.visualize.currentDisplayedDataset.currentFileIndex]);
+      let currentFileMomentMax = moment.parseZone(this.props.visualize.currentDisplayedDataset.datetime_max[this.props.visualize.currentDisplayedDataset.currentFileIndex]);
       let currentMoment = moment.parseZone(newDateTime);
       let newCurrentFileIndex = -1;
       if(currentMoment.isAfter(currentFileMomentMax) || currentMoment.isBefore(currentFileMomentMin)){
         // Search for new matching fileIndex
-        for(let i = 0; i < this.props.currentDisplayedDataset.datetime_min.length; ++i){
-          currentFileMomentMin = moment.parseZone(this.props.currentDisplayedDataset.datetime_min[i]);
-          currentFileMomentMax = moment.parseZone(this.props.currentDisplayedDataset.datetime_max[i]);
+        for(let i = 0; i < this.props.visualize.currentDisplayedDataset.datetime_min.length; ++i){
+          currentFileMomentMin = moment.parseZone(this.props.visualize.currentDisplayedDataset.datetime_min[i]);
+          currentFileMomentMax = moment.parseZone(this.props.visualize.currentDisplayedDataset.datetime_max[i]);
           if (currentMoment.isSameOrBefore(currentFileMomentMax) && currentMoment.isSameOrAfter(currentFileMomentMin)) {
             newCurrentFileIndex = i;
           }
@@ -381,9 +378,9 @@ export class TimeSlider extends React.Component {
           //     nearestDayDiff = Number.MAX_SAFE_INTEGER,
           //     isMax = false;
 
-          // for(let i = 0; i < this.props.currentDisplayedDataset.datetime_min.length; ++i){
-          //   let currentFileMinDiff = Math.abs(newMomentDatetime.diff(moment.parseZone(this.props.currentDisplayedDataset.datetime_min[i]))),
-          //       currentFileMaxDiff = Math.abs(newMomentDatetime.diff(moment.parseZone(this.props.currentDisplayedDataset.datetime_max[i])));
+          // for(let i = 0; i < this.props.visualize.currentDisplayedDataset.datetime_min.length; ++i){
+          //   let currentFileMinDiff = Math.abs(newMomentDatetime.diff(moment.parseZone(this.props.visualize.currentDisplayedDataset.datetime_min[i]))),
+          //       currentFileMaxDiff = Math.abs(newMomentDatetime.diff(moment.parseZone(this.props.visualize.currentDisplayedDataset.datetime_max[i])));
           //   if(currentFileMinDiff < nearestDayDiff) {
           //     isMax = false;
           //     nearestIndex = i;
@@ -397,14 +394,14 @@ export class TimeSlider extends React.Component {
           // }
           // if(nearestIndex > -1) {
           //   let propertyName = (isMax)? 'datetime_max': 'datetime_min';
-          //   newDateTime = this.props.currentDisplayedDataset[propertyName][nearestIndex];
+          //   newDateTime = this.props.visualize.currentDisplayedDataset[propertyName][nearestIndex];
           //   newCurrentFileIndex = nearestIndex;
           //   console.log('Data hole, Best match is with file index %i for date %s', nearestIndex, newDateTime);
-          //   this.props.setCurrentDateTime(newDateTime);
+          //   this.props.visualizeActions.setCurrentDateTime(newDateTime);
           //
         }
-        this.props.selectCurrentDisplayedDataset({
-          ...this.props.currentDisplayedDataset,
+        this.props.visualizeActions.selectCurrentDisplayedDataset({
+          ...this.props.visualize.currentDisplayedDataset,
           currentFileIndex: newCurrentFileIndex,
           opacity: 0.8
         });
@@ -570,7 +567,7 @@ export class TimeSlider extends React.Component {
   }
 
   moveOneStep (forward = true) {
-    let date = new Date(this.props.currentDateTime);
+    let date = new Date(this.props.visualize.currentDateTime);
     let stepLength = parseInt(this.state.stepLength);
     switch (this.state.stepGranularity) {
       case MINUTE_VALUE:
@@ -641,207 +638,201 @@ export class TimeSlider extends React.Component {
     marksMonths[new Date(this.state.currentYear, 11, 1).valueOf() / DIVIDER] = 'Nov';
     marksMonths[new Date(this.state.currentYear, 12, 1).valueOf() / DIVIDER] = 'Dec';
     return (
-      <Paper className={classes['TimeSlider']}>
-        <AppBar position="static" color="primary">
-          <Toolbar>
-            <IconButton disableRipple color="inherit"><AccessTimeIcon /></IconButton>
-            <Typography variant="title" color="inherit" style={{flex: 1}}>
-              Temporal Slider
-            </Typography>
-            <IconButton color="inherit"className="cy-minimize-btn" onClick={(event) => this._onHideTimeSliderPanel()}><MinimizeIcon /></IconButton>
-          </Toolbar>
-        </AppBar>
-        <div className="container" id="cy-timeslider" data-cy-enabled={!this.state.disabled}>
-          <Row>
-            <Col md={4} lg={4}>
-              {/* helperText="Format 9999-99-99" */}
-              <TextField
-                disabled={this.state.disabled}
-                value={this.state.currentDate}
-                fullWidth
-                onChange={(event) => this.onChangedCurrentDate(event)}
-                label="Current Date" />
-            </Col>
-            <Col md={4} lg={4}>
-              <FormControl fullWidth>
-                <InputLabel htmlFor="time">Time</InputLabel>
-                <Select
-                  disabled={this.state.disabled}
-                  value={this.state.currentTime}
-                  inputProps={{
-                    name: 'time',
-                    id: 'time',
-                  }}
-                  onChange={(event) => this.onSelectedTime(event)}>
-                   {
-                    (this.state.timesteps && this.state.timesteps.length) ?
-                    this.state.timesteps.map((x) => <MenuItem key={x} value={x}>{x.substring(0, 8)}</MenuItem>) :
-                    <MenuItem value="00:00:00.000Z">
-                      00:00:00
-                    </MenuItem>
-                  }
-                </Select>
-              </FormControl>
-            </Col>
-            <Col md={4} lg={4}>
-              {/*helperText="Format 9999-99-99 00:00:00"*/}
-              <TextField
-                disabled={true}
-                value={this.props.currentDateTime.substring(0, 10) + ' ' + this.props.currentDateTime.substring(11, 19)}
-                fullWidth
-                label="Current Datetime" />
-            </Col>
-          </Row>
-          <Row>
-            <Col sm={12} style={{paddingRight: '20px', paddingLeft: '20px'}}>
-              <Slider
-                disabled={this.state.disabled}
-                tipFormatter={(v) => {
-                  let date = new Date(v * DIVIDER);
-                  // Same problem with moment.js
-                  return ((date.getMonth() === 0) ? '12' : date.getMonth()) + '/' + date.getDate();
-                }}
-                className={classes['SliderMonths']}
-                min={new Date(this.state.currentYear, 1, 1).valueOf() / DIVIDER}
-                max={new Date(this.state.currentYear, 12, 31).valueOf() / DIVIDER}
-                marks={marksMonths}
-                included={false}
-                range={false}
-                value={new Date(
-                  this.state.currentYear, this.state.currentMonthDay.substring(0, 2), this.state.currentMonthDay.substring(3, 5)
-                ).valueOf() / DIVIDER}
-                onChange={(values) => this.onChangedMonthSlider(values)}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col sm={12} style={{paddingRight: '20px', paddingLeft: '20px'}}>
-              <Slider className={classes['SliderYears']}
-                disabled={this.state.disabled}
-                min={this.state.firstYear}
-                max={this.state.lastYear}
-                marks={this.state.marksYears}
-                range={false}
-                included={false}
-                value={this.state.currentYear}
-                defaultValue={1900}
-                handleStyle={{
-                  zIndex: 1000
-                }}
-                dotStyle={{
-                  zIndex: 1000
-                }}
-                onChange={(values) => this.onChangedYearSlider(values)}
-              />
-            </Col>
-            <Col sm={12} style={{height:"4px", marginTop: '-8px', zIndex: "1", pointerEvents: 'none'}}>
+      <Grid container spacing={12} className="container" id="cy-timeslider" data-cy-enabled={!this.state.disabled}>
+        <Grid item md={4}>
+          <TextField
+            disabled={this.state.disabled}
+            value={this.state.currentDate}
+            fullWidth
+            onChange={(event) => this.onChangedCurrentDate(event)}
+            label="Current Date" />
+        </Grid>
+        <Grid item md={4}>
+          <FormControl fullWidth>
+            <InputLabel htmlFor="time">Time</InputLabel>
+            <Select
+              disabled={this.state.disabled}
+              value={this.state.currentTime}
+              inputProps={{
+                name: 'time',
+                id: 'time',
+              }}
+              onChange={(event) => this.onSelectedTime(event)}>
               {
-                this.state.yearDataMarks.map((x, i) => {
-                  return <span key={i} style={{height:"3px", width: x.width, background: x.hasData? 'transparent':'#8b0000', float: 'left'}}>&nbsp;</span>;
-                })
+                (this.state.timesteps && this.state.timesteps.length) ?
+                  this.state.timesteps.map((x) => <MenuItem key={x} value={x}>{x.substring(0, 8)}</MenuItem>) :
+                  <MenuItem value="00:00:00.000Z">
+                    00:00:00
+                  </MenuItem>
               }
-            </Col>
-          </Row>
-          <Row className={classes['StepControls']}>
-            <Col md={4} lg={4}>
-              <TextField
-                disabled={this.state.disabled}
-                type="number"
-                value={this.state.stepLength}
-                onChange={(event) => this.onChangedStepLength(event)}
-                helperText="Number"
-                fullWidth
-                label="Timestep Length" />
-            </Col>
-            <Col md={4} lg={4}>
-              <FormControl fullWidth>
-                <InputLabel htmlFor="granularity-level">Timestep Granularity Level</InputLabel>
-                <Select
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item  md={4}>
+          {/*helperText="Format 9999-99-99 00:00:00"*/}
+          <TextField
+            disabled={true}
+            value={this.props.visualize.currentDateTime.substring(0, 10) + ' ' + this.props.visualize.currentDateTime.substring(11, 19)}
+            fullWidth
+            label="Current Datetime" />
+        </Grid>
+
+        <Grid item  sm={12} style={styles.slider}>
+          <Slider
+            disabled={this.state.disabled}
+            tipFormatter={(v) => {
+              let date = new Date(v * DIVIDER);
+              // Same problem with moment.js
+              return ((date.getMonth() === 0) ? '12' : date.getMonth()) + '/' + date.getDate();
+            }}
+            min={new Date(this.state.currentYear, 1, 1).valueOf() / DIVIDER}
+            max={new Date(this.state.currentYear, 12, 31).valueOf() / DIVIDER}
+            marks={marksMonths}
+            included={false}
+            range={false}
+            value={new Date(
+              this.state.currentYear, this.state.currentMonthDay.substring(0, 2), this.state.currentMonthDay.substring(3, 5)
+            ).valueOf() / DIVIDER}
+            onChange={(values) => this.onChangedMonthSlider(values)}
+          />
+        </Grid>
+
+        <Grid item sm={12} style={styles.slider}>
+          <Slider style={styles.sliderYears}
                   disabled={this.state.disabled}
-                  value={this.state.stepGranularity}
-                  inputProps={{
-                    name: 'granularity-level',
-                    id: 'granularity-level',
+                  min={this.state.firstYear}
+                  max={this.state.lastYear}
+                  marks={this.state.marksYears}
+                  range={false}
+                  included={false}
+                  value={this.state.currentYear}
+                  defaultValue={1900}
+                  handleStyle={{
+                    zIndex: 1000
                   }}
-                  onChange={(event) => this.onChangedStepGranularity(event)}>
-                  <MenuItem value={MINUTE_VALUE}>Minute(s)</MenuItem>
-                  <MenuItem value={HOUR_VALUE}>Hour(s)</MenuItem>
-                  <MenuItem value={DAY_VALUE}>Day(s)</MenuItem>
-                  <MenuItem value={MONTH_VALUE}>Month(s)</MenuItem>
-                  <MenuItem value={YEAR_VALUE}>Year(s)</MenuItem>
-                </Select>
-              </FormControl>
-            </Col>
-            <Col md={4} lg={4}>
-              <FormControl fullWidth>
-                <InputLabel htmlFor="speed-level">Play Speed Level</InputLabel>
-                <Select
-                  disabled={this.state.disabled}
-                  value={this.state.stepSpeed}
-                  inputProps={{
-                    name: 'speed-level',
-                    id: 'speed-level',
+                  dotStyle={{
+                    zIndex: 1000
                   }}
-                  onChange={(event) => this.onChangedStepSpeed(event)}>
-                  <MenuItem value={10000}>Very Slow (10 seconds</MenuItem>
-                  <MenuItem value={5000}>Slow (5 seconds)</MenuItem>
-                  <MenuItem value={3000}>Medium (3 seconds)</MenuItem>
-                  <MenuItem value={1000}>Fast (Every second)</MenuItem>
-                </Select>
-              </FormControl>
-            </Col>
-          </Row>
-          <Row>
-            <Col sm={12}>
+                  onChange={(values) => this.onChangedYearSlider(values)}/>
+          </Grid>
+
+        <Grid item sm={12} style={{height:"4px", marginTop: '-8px', zIndex: "1", pointerEvents: 'none'}}>
+          {
+            this.state.yearDataMarks.map((x, i) => {
+              return <span key={i} style={{height:"3px", width: x.width, background: x.hasData? 'transparent':'#8b0000', float: 'left'}}>&nbsp;</span>;
+            })
+          }
+        </Grid>
+
+        <Grid item style={styles.stepControls} md={4}>
+          <TextField
+            disabled={this.state.disabled}
+            type="number"
+            value={this.state.stepLength}
+            onChange={(event) => this.onChangedStepLength(event)}
+            fullWidth
+            label="Timestep Length" />
+        </Grid>
+
+        <Grid item style={styles.stepControls} md={4}>
+          <FormControl fullWidth>
+            <InputLabel htmlFor="granularity-level">Timestep Granularity Level</InputLabel>
+            <Select
+              disabled={this.state.disabled}
+              value={this.state.stepGranularity}
+              inputProps={{
+                name: 'granularity-level',
+                id: 'granularity-level',
+              }}
+              onChange={(event) => this.onChangedStepGranularity(event)}>
+              <MenuItem value={MINUTE_VALUE}>Minute(s)</MenuItem>
+              <MenuItem value={HOUR_VALUE}>Hour(s)</MenuItem>
+              <MenuItem value={DAY_VALUE}>Day(s)</MenuItem>
+              <MenuItem value={MONTH_VALUE}>Month(s)</MenuItem>
+              <MenuItem value={YEAR_VALUE}>Year(s)</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+
+        <Grid item style={styles.stepControls} md={4}>
+          <FormControl fullWidth>
+            <InputLabel htmlFor="speed-level">Play Speed Level</InputLabel>
+            <Select
+              disabled={this.state.disabled}
+              value={this.state.stepSpeed}
+              inputProps={{
+                name: 'speed-level',
+                id: 'speed-level',
+              }}
+              onChange={(event) => this.onChangedStepSpeed(event)}>
+              <MenuItem value={10000}>Very Slow (10 seconds</MenuItem>
+              <MenuItem value={5000}>Slow (5 seconds)</MenuItem>
+              <MenuItem value={3000}>Medium (3 seconds)</MenuItem>
+              <MenuItem value={1000}>Fast (Every second)</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+
+        <Grid item md={2}>
+          <Button variant="contained"
+                  disabled={(this.state.minDatetime === this.props.visualize.currentDateTime) || this.state.disabled || this.state.isPlaying}
+                  onClick={() => this.onClickedStepControls(FAST_BACKWARD_ACTION)}
+                  style={styles.button}
+                  color="primary">
+            <FastBackwardIcon />
+          </Button>
+        </Grid>
+
+        <Grid item md={2}>
+          <Button variant="contained"
+                  disabled={(this.state.minDatetime === this.props.visualize.currentDateTime) || this.state.disabled || this.state.isPlaying}
+                  color="primary"
+                  style={styles.button}
+                  onClick={() => this.onClickedStepControls(STEP_BACKWARD_ACTION)}>
+            <BackwardIcon />
+          </Button>
+        </Grid>
+
+        <Grid item md={4}>
+          {
+            (this.state.isPlaying)?
               <Button variant="contained"
-                disabled={(this.state.minDatetime === this.props.currentDateTime) || this.state.disabled || this.state.isPlaying}
-                onClick={() => this.onClickedStepControls(FAST_BACKWARD_ACTION)}
-                style={buttonStyle}
-                color="primary">
-                <FastBackwardIcon />
-              </Button>
+                      disabled={this.state.disabled}
+                      color="primary"
+                      style={styles.button}
+                      onClick={() => this.onClickedStepControls(PAUSE_ACTION)}>
+                <PauseIcon />
+              </Button>:
               <Button variant="contained"
-                disabled={(this.state.minDatetime === this.props.currentDateTime) || this.state.disabled || this.state.isPlaying}
-                color="primary"
-                style={buttonStyle}
-                onClick={() => this.onClickedStepControls(STEP_BACKWARD_ACTION)}>
-                <BackwardIcon />
+                      disabled={this.state.disabled}
+                      color="primary"
+                      style={styles.button}
+                      onClick={() => this.onClickedStepControls(PLAY_ACTION)}>
+                <PlayIcon />
               </Button>
-              {
-                (this.state.isPlaying)?
-                  <Button variant="contained"
-                          disabled={this.state.disabled}
-                          color="primary"
-                          style={buttonStyle}
-                          onClick={() => this.onClickedStepControls(PAUSE_ACTION)}>
-                    <PauseIcon />
-                  </Button>:
-                <Button variant="contained"
-                        disabled={this.state.disabled}
-                        color="primary"
-                        style={buttonStyle}
-                        onClick={() => this.onClickedStepControls(PLAY_ACTION)}>
-                  <PlayIcon />
-                </Button>
-              }
-              <Button variant="contained"
-                disabled={(this.state.maxDatetime === this.props.currentDateTime) || this.state.disabled || this.state.isPlaying}
-                color="primary"
-                style={buttonStyle}
-                onClick={() => this.onClickedStepControls(STEP_FORWARD_ACTION)}>
-                <ForwardIcon />
-              </Button>
-              <Button variant="contained"
-                disabled={(this.state.maxDatetime === this.props.currentDateTime) || this.state.disabled || this.state.isPlaying}
-                color="primary"
-                style={buttonStyle}
-                onClick={() => this.onClickedStepControls(FAST_FORWARD_ACTION)}>
-                <FastForwardIcon />
-              </Button>
-            </Col>
-          </Row>
-        </div>
-      </Paper>
+          }
+        </Grid>
+
+        <Grid item md={2}>
+          <Button variant="contained"
+                  disabled={(this.state.maxDatetime === this.props.visualize.currentDateTime) || this.state.disabled || this.state.isPlaying}
+                  color="primary"
+                  style={styles.button}
+                  onClick={() => this.onClickedStepControls(STEP_FORWARD_ACTION)}>
+            <ForwardIcon />
+          </Button>
+        </Grid>
+
+        <Grid item md={2}>
+          <Button variant="contained"
+                  disabled={(this.state.maxDatetime === this.props.visualize.currentDateTime) || this.state.disabled || this.state.isPlaying}
+                  color="primary"
+                  style={styles.button}
+                  onClick={() => this.onClickedStepControls(FAST_FORWARD_ACTION)}>
+            <FastForwardIcon />
+          </Button>
+        </Grid>
+      </Grid>
     );
   }
 }

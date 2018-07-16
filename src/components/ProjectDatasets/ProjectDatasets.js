@@ -39,7 +39,9 @@ export class ProjectDatasets extends React.Component {
     project: PropTypes.object.isRequired,
     projectActions: PropTypes.object.isRequired,
     datasetAPI: PropTypes.object.isRequired,
-    datasetAPIActions: PropTypes.object.isRequired
+    datasetAPIActions: PropTypes.object.isRequired,
+    visualize: PropTypes.object.isRequired,
+    visualizeActions: PropTypes.object.isRequired
   };
 
   constructor(props) {
@@ -85,11 +87,10 @@ export class ProjectDatasets extends React.Component {
             {datasetsPaginated.map((dataset, i) => {
               if (dataset.type === "Aggregate") {
                 return (
-                  <div>
+                  <div key={i}>
                     <ListItem
                       button onClick={(event) => this.onDatasetListItemToggled(dataset)}
-                      className={classes.listItem + " cy-project-dataset-item cy-project-dataset-level-0"}
-                      key={`dataset-item-${i}`}>
+                      className={classes.listItem + " cy-project-dataset-item cy-project-dataset-level-0"}>
                       <ListItemIcon>
                         <Folder />
                       </ListItemIcon>
@@ -103,8 +104,7 @@ export class ProjectDatasets extends React.Component {
                             <strong>Keywords: </strong>{dataset.keywords.join(', ')}
                           </span>
                         }/>
-                      <DatasetMenuActions addDatasetsToVisualize={this.props.addDatasetsToVisualize}
-                                          selectCurrentDisplayedDataset={this.props.selectCurrentDisplayedDataset}
+                      <DatasetMenuActions visualizeActions={this.props.visualizeActions}
                                           datasetAPIActions={this.props.datasetAPIActions}
                                           project={this.props.project}
                                           dataset={dataset}
@@ -132,8 +132,7 @@ export class ProjectDatasets extends React.Component {
                                                     isRemoveFromProjectEnabled={true}
                                                     dataset={dataset}
                                                     disabledVisualize={false}
-                                                    addDatasetsToVisualize={this.props.addDatasetsToVisualize}
-                                                    selectCurrentDisplayedDataset={this.props.selectCurrentDisplayedDataset}
+                                                    visualizeActions={this.props.visualizeActions}
                                                     datasetAPIActions={this.props.datasetAPIActions}
                                                     project={this.props.project}/>
                               </ListItem>
@@ -147,11 +146,12 @@ export class ProjectDatasets extends React.Component {
               } else {
                 // FileAsAggregate
                 let disabledVisualize = false;
-                if (this.props.currentVisualizedDatasets.find(x => x.dataset_id === dataset.dataset_id)) {
+                const { currentVisualizedDatasets } = this.props.visualize;
+                if (currentVisualizedDatasets && currentVisualizedDatasets.find(x => x.dataset_id === dataset.dataset_id)) {
                   disabledVisualize = true;
                 }
                 return (
-                  <div>
+                  <React.Fragment>
                     <ListItem
                       className="cy-project-dataset-item cy-project-dataset-level-0"
                       key={`dataset-item-${i}`}>
@@ -169,15 +169,14 @@ export class ProjectDatasets extends React.Component {
                           </span>
                         }/>
                       <DatasetMenuActions
-                        addDatasetsToVisualize={this.props.addDatasetsToVisualize}
-                        selectCurrentDisplayedDataset={this.props.selectCurrentDisplayedDataset}
+                        visualizeActions={this.props.visualizeActions}
                         isRemoveFromProjectEnabled={true}
                         dataset={dataset}
                         disabledVisualize={disabledVisualize}
                         datasetAPIActions={this.props.datasetAPIActions}
                         project={this.props.project}/>
                     </ListItem>
-                  </div>
+                  </React.Fragment>
                 );
               }
 

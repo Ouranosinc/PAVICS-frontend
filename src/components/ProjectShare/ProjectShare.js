@@ -18,7 +18,7 @@ export class ProjectShare extends React.Component {
   static propTypes = {
     project: PropTypes.object.isRequired,
     projectAPIActions: PropTypes.object.isRequired,
-    sessionManagement: PropTypes.object.isRequired,
+    session: PropTypes.object.isRequired,
   };
 
   constructor(props) {
@@ -103,7 +103,7 @@ export class ProjectShare extends React.Component {
       <div className={classes['ProjectShare']}>
         <Paper style={{marginTop: 20}}>
           <form className="container">
-            <Typography variant='title' gutterBottom>
+            <Typography variant='subheading' gutterBottom>
               Share project to
             </Typography>
             <RadioGroup
@@ -130,7 +130,7 @@ export class ProjectShare extends React.Component {
                 value={this.state.group}
                 onChange={(event) => this.onUpdateStateKey('group', event.target.value)}
                 label="Select a user group">
-                {this.props.sessionManagement.sessionStatus.user.groups.map((group, i) => {
+                {this.props.session.sessionStatus.user.groups.map((group, i) => {
                   return (
                     <MenuItem
                       data-cy-item-group={group}
@@ -142,7 +142,7 @@ export class ProjectShare extends React.Component {
                 })}
               </Select>
             }
-            <Typography style={{marginTop: '15px'}} variant='title' gutterBottom>
+            <Typography style={{marginTop: '15px'}} variant='subheading' gutterBottom>
               Project permissions to be shared:
             </Typography>
             <FormControlLabel

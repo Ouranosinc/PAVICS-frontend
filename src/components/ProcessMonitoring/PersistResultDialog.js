@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col } from 'react-bootstrap';
-import Dialog from'@material-ui/core/Dialog';
+import Grid from '@material-ui/core/Grid';
+import Dialog from '@material-ui/core/Dialog';
 import Button from'@material-ui/core/Button';
 import TextField from'@material-ui/core/TextField';
 import Checkbox from'@material-ui/core/Checkbox';
@@ -20,12 +20,18 @@ import RemoveIcon from '@material-ui/icons/RemoveCircle';
 import Collapse from '@material-ui/core/Collapse';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 
+const styles = {
+  spacing: {
+    padding: '0 5px'
+  }
+};
+
 export class PersistResultDialog extends React.Component {
   static propTypes = {
     output: PropTypes.object.isRequired,
     isOpen:  PropTypes.bool.isRequired,
     onPersistConfirmed: PropTypes.func.isRequired,
-    closePersistDialog: PropTypes.func.isRequired,
+    onClosePersistDialog: PropTypes.func.isRequired,
     monitorActions: PropTypes.object.isRequired,
     username: PropTypes.string.isRequired
   };
@@ -119,7 +125,7 @@ export class PersistResultDialog extends React.Component {
       return <Dialog
         id="cy-persist-dialog"
         open={this.props.isOpen}
-        onClose={this.props.closePersistDialog}>
+        onClose={this.props.onClosePersistDialog}>
         <Card style={{width: '600px'}}>
           <CardHeader title="Persist a temporary resource" />
           <CardContent>
@@ -158,32 +164,29 @@ export class PersistResultDialog extends React.Component {
                 value={this.state.location}
                 onChange={this.handleLocationChange}
                 label="Location" />
-              <Row>
-                <Col sm={4} md={4} lg={4}>
+              <Grid container>
+                <Grid sm={4} md={4} lg={4} style={styles.spacing}>
                   <TextField
                     fullWidth
                     onChange={this.handleKeyChange}
                     label="Key"
                     value={this.state.key} />
-                </Col>
-                <Col sm={4} md={4} lg={4}>
+                </Grid>
+                <Grid m={4} md={4} lg={4} style={styles.spacing}>
                   <TextField
                     fullWidth
                     onChange={this.handleValueChange}
                     label="Value"
                     value={this.state.value} />
-                </Col>
-                <Col sm={4} md={4} lg={4}>
+                </Grid>
+                <Grid sm={2} md={2} lg={2} style={styles.spacing}>
                   <Button variant="contained"
                           onClick={this.onAddedFacet}
-                          style={{marginTop: '25px'}}
                           color="primary">
-                      Add
-                    </Button>
-                </Col>
-              </Row>
-              <Row>
-                <Col sm={12}>
+                    Add
+                  </Button>
+                </Grid>
+                <Grid sm={12}>
                   <List>
                     <ListSubheader style={{'paddingLeft': '0'}}>Default facets</ListSubheader>
                     {
@@ -202,8 +205,8 @@ export class PersistResultDialog extends React.Component {
                       })
                     }
                   </List>
-                </Col>
-              </Row>
+                </Grid>
+              </Grid>
             </CardContent>
           </Collapse>
           <CardActions>
@@ -217,7 +220,7 @@ export class PersistResultDialog extends React.Component {
             <Button variant="contained"
                     color="secondary"
                     id="cy-persist-dialog-close-btn"
-                    onClick={this.props.closePersistDialog}>
+                    onClick={this.props.onClosePersistDialog}>
               Close
             </Button>
           </CardActions>

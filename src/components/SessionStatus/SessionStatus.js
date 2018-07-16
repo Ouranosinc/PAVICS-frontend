@@ -76,7 +76,7 @@ export default withStyles(styles)(
     makeUserCard () {
       const { classes } = this.props;
       return (
-        <div>
+        <React.Fragment>
           <Typography variant='display1' gutterBottom>
             Logged in as "{this.props.sessionStatus.user.username}"
           </Typography>
@@ -92,7 +92,7 @@ export default withStyles(styles)(
             className={classes.textField}
             value={this.props.sessionStatus.user.email}
             label="Email"/>
-          <List fullWidth>
+          <List>
             <ListSubheader style={{'paddingLeft': '0'}}>
               <Typography variant="subheading" gutterBottom>Access groups: </Typography>
             </ListSubheader>
@@ -108,7 +108,7 @@ export default withStyles(styles)(
           <Button variant="contained" style={{marginTop: '10px'}} id="cy-logout-btn" onClick={this.logout} color="primary">
             Logout
           </Button>
-        </div>
+        </React.Fragment>
       );
     }
 
@@ -136,8 +136,8 @@ export default withStyles(styles)(
               (event, index) => this.setState({provider: event.target.value})}
             fullWidth>
             {
-              PROVIDERS.map(provider =>
-                <MenuItem value={provider.provider_name}>
+              PROVIDERS.map((provider, i) =>
+                <MenuItem key={i} value={provider.provider_name}>
                   {provider.display_text}
                 </MenuItem>
               )

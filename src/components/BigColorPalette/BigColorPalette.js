@@ -1,12 +1,46 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Grid, Row, Col} from 'react-bootstrap';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
+import { withStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
 import TextField from'@material-ui/core/TextField';
-import * as classes from './BigColorPalette.scss';
 import * as constants from '../../constants';
 import {NotificationManager} from 'react-notifications';
+import { actions as visualizeActions } from './../../redux/modules/Visualize';
 
 const ARBITRARY_MAX_DECIMAL_QUANTITY = 15;
+
+const styles = theme => ({
+  root: {
+    position: 'fixed',
+    bottom: '60px',
+    left: 0,
+  },
+  imageContainer: {
+    backgroundSize: '100% auto',
+    height: '60px',
+    width: '100%',
+    textAlign: 'center',
+    verticalAlign: 'middle'
+  },
+  boundaryInput: {
+    padding: '0 7px',
+    height: '60px',
+    backgroundColor: theme.palette.primary.contrastText
+  }
+});
+
+const mapState = (state) => {
+  return {
+    currentDisplayedDataset: state.visualize.currentDisplayedDataset,
+    preference: state.visualize.variablePreferences[state.visualize.currentDisplayedDataset.variable]
+  };
+};
+
+const actions = {
+  setVariablePreferenceBoundaries: visualizeActions.setVariablePreferenceBoundaries
+};
 
 /*
 this component show the current preferences for the selected dataset's variable
@@ -27,21 +61,21 @@ on external changes
     update inputs values
 
  */
-export default class BigColorPalette extends React.Component {
+class BigColorPalette extends React.Component {
   static propTypes = {
-    variablePreference: PropTypes.object,
+    classes: PropTypes.object.isRequired,
+    currentDisplayedDataset: PropTypes.object.isRequired,
+    preference: PropTypes.object.isRequired,
     setVariablePreferenceBoundaries: PropTypes.func.isRequired
   };
+
+  state = {
+    localMin: '0',
+    localMax: '1'
+  };
+
   constructor (props) {
     super(props);
-    this.changeMin = this.changeMin.bind(this);
-    this.changeMax = this.changeMax.bind(this);
-    this.catchReturn = this.catchReturn.bind(this);
-    this.persistBoundaries = this.persistBoundaries.bind(this);
-    this.state = {
-      localMin: '',
-      localMax: ''
-    };
   }
 
   /*
@@ -50,88 +84,103 @@ export default class BigColorPalette extends React.Component {
   here, we will cast them to strings so that the validations do not fail horribly later on
    */
   componentWillReceiveProps (nextProps) {
-    if (nextProps.variablePreference) {
-      if (this.props.variablePreference !== nextProps.variablePreference) {
+    const { preference } = nextProps;
+    if (preference) {
+      if (this.props.preference !== preference) {
         this.setState({
-          ...this.state,
-          localMin: (nextProps.variablePreference.min)? nextProps.variablePreference.min.toString(): '',
-          localMax: (nextProps.variablePreference.max)? nextProps.variablePreference.max.toString(): ''
+          localMin: (preference.min)? preference.min.toString(): '',
+          localMax: (preference.max)? preference.max.toString(): ''
         });
       }
     }
   }
 
-  changeMin (event) {
+  changeMin = (event) => {
     this.setState({
-      ...this.state,
       localMin: event.target.value
     });
-  }
+  };
 
-  changeMax (event) {
+  changeMax = (event) => {
     this.setState({
-      ...this.state,
       localMax: event.target.value
     });
-  }
+  };
 
-  persistBoundaries () {
+  persistBoundaries = () => {
+    const { localMax, localMin } = this.state;
+
     // javascript does not handle very small numbers well which is problematic for comparison
     // we'd expect parseFloat(1e-7) to return 0.0000001 but we get 1e-7 back
     // whereas parseFloat(1e-6) returns the expected 0.000001
-    let min = (this.state.localMin.indexOf('e') !== -1) ? parseFloat(this.state.localMin).toFixed(ARBITRARY_MAX_DECIMAL_QUANTITY) : this.state.localMin;
-    let max = (this.state.localMax.indexOf('e') !== -1) ? parseFloat(this.state.localMax).toFixed(ARBITRARY_MAX_DECIMAL_QUANTITY) : this.state.localMax;
+    let min = (localMin.indexOf('e') !== -1) ? parseFloat(localMin).toFixed(ARBITRARY_MAX_DECIMAL_QUANTITY) : localMin;
+    let max = (localMax.indexOf('e') !== -1) ? parseFloat(localMax).toFixed(ARBITRARY_MAX_DECIMAL_QUANTITY) : localMax;
     if (min < max) {
-      this.props.setVariablePreferenceBoundaries(this.state.localMin, this.state.localMax);
+      this.props.setVariablePreferenceBoundaries(localMin, localMax);
     } else {
       NotificationManager.warning('Please input valid min max values (min should be smaller than max).', 'Warning', 10000);
     }
-  }
+  };
 
-  catchReturn (event) {
+  catchReturn = (event) => {
     if (event.key === constants.KEY_ENTER) {
       this.persistBoundaries();
     }
-  }
+  };
 
   render () {
-    if (this.props.variablePreference && this.props.variablePreference.colorPalette) {
+    const { classes, currentDisplayedDataset, preference } = this.props;
+    const { localMax, localMin } = this.state;
+
+    if (preference && preference.colorPalette) {
       return (
-        <Grid id="cy-big-color-palette" className={classes.BigColorPalette}>
-          <Row>
-            <Col xs={2} md={1} mdOffset={2}>
-              <div className={classes.BoundaryInput}>
-                <TextField
-                  fullWidth
-                  id="variable-min"
-                  onKeyPress={this.catchReturn}
-                  onBlur={this.persistBoundaries}
-                  onChange={this.changeMin}
-                  value={this.state.localMin} />
-              </div>
-            </Col>
-            <Col xs={8} md={6}>
-              <div
-                className={classes.ImageContainer}
-                style={{backgroundImage: `url(${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=${this.props.variablePreference.colorPalette}&COLORBARONLY=true&WIDTH=600&HEIGHT=60&VERTICAL=false)`}}>
-                {this.props.variablePreference.colorPalette}
-              </div>
-            </Col>
-            <Col xs={2} md={1}>
-              <div className={classes.BoundaryInput}>
-                <TextField
-                  fullWidth
-                  id="variable-max"
-                  onKeyPress={this.catchReturn}
-                  onBlur={this.persistBoundaries}
-                  onChange={this.changeMax}
-                  value={this.state.localMax} />
-              </div>
-            </Col>
-          </Row>
+        <Grid container spacing={24} id="cy-big-color-palette" className={classes.root}>
+          <Grid item md={2}>
+
+          </Grid>
+          <Grid item xs={2} md={1}>
+            <div className={classes.boundaryInput}>
+              <TextField
+                fullWidth
+                id="variable-min"
+                onKeyPress={this.catchReturn}
+                onBlur={this.persistBoundaries}
+                onChange={this.changeMin}
+                value={localMin}
+                label={`Min (${currentDisplayedDataset.units})`}/>
+            </div>
+          </Grid>
+          <Grid item xs={8} md={6}>
+            <div
+              className={classes.imageContainer}
+              style={{backgroundImage: `url(${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=${preference.colorPalette}&COLORBARONLY=true&WIDTH=600&HEIGHT=60&VERTICAL=false)`}}>
+              {preference.colorPalette}
+            </div>
+          </Grid>
+          <Grid item xs={2} md={1}>
+            <div className={classes.boundaryInput}>
+              <TextField
+                fullWidth
+                id="variable-max"
+                onKeyPress={this.catchReturn}
+                onBlur={this.persistBoundaries}
+                onChange={this.changeMax}
+                value={localMax}
+                label={`Max (${currentDisplayedDataset.units})`}/>
+            </div>
+          </Grid>
+          <Grid item md={2}>
+
+          </Grid>
         </Grid>
       );
     }
     return null;
   }
 }
+export default compose(
+  withStyles(styles, {
+    name: 'BigColorPalette',
+  }),
+  connect(mapState, actions),
+)(BigColorPalette);

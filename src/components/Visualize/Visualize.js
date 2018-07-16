@@ -1,380 +1,189 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classes from './Visualize.scss';
 import OLComponent from '../OLComponent';
-import CurrentProjectSnackbar from '../CurrentProjectSnackbar';
 import SpeedDialMenu from '../SpeedDialMenu'
 import TimeSlider from '../TimeSlider';
 import InformationPanel from '../InformationPanel';
 import LayerSwitcher from '../LayerSwitcher';
 import TimeSeriesChart from './../TimeSeriesChart';
 import MapControls from './../MapControls';
-import * as constants from '../../constants';
+import { constants } from './../../redux/modules/Widgets';
+import * as labels from './../../constants';
 import BigColorPalette from '../BigColorPalette/BigColorPalette';
+import VisualizeWidget from './VisualizeWidget';
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
+import LayersIcon from '@material-ui/icons/Layers';
+import MapControlsIcon from '@material-ui/icons/MyLocation';
+import InfoIcon from '@material-ui/icons/Description';
+import ChartIcon from '@material-ui/icons/Timeline';
+
+const OPACITY = 0.9;
+const styles = {
+  mapContainer: {
+    zIndex: 0,
+    padding: 0 ,
+    margin: 0,
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    top: 0,
+    left: 0
+  },
+  left: {
+    maxWidth: '65%',
+    float: 'left'
+  },
+  panel: {
+    margin: '3px 0 0 3px',
+    float: 'left',
+    /*display: 'contents'*/
+  },
+  mapControls: {
+    textAlign: 'left',
+    opacity: OPACITY,
+    overflow: 'hidden',
+    height: '310px',
+    width: '250px'
+  },
+  timeSlider: {
+    height: '310px',
+    width: '620px',
+    bottom: 0,
+    textAlign: 'left',
+    opacity: OPACITY,
+  },
+  layerSwitcher: {
+    width: '400px',
+    bottom: 0,
+    textAlign: 'left',
+    opacity: OPACITY,
+    height: '436px'
+  },
+  chart: {
+    opacity: OPACITY,
+    overflow: 'hidden',
+    height: '310px',
+    width: '500px'
+  },
+  info: {
+    height: '310px',
+    overflow: 'auto',
+    width: '500px',
+    opacity: OPACITY
+  }
+};
 
 class Visualize extends React.Component {
   static propTypes = {
-    goToSection: PropTypes.func.isRequired,
+    sectionActions: PropTypes.object.isRequired,
     project: PropTypes.object.isRequired,
-    // TODO: Move following into visualize redux module
-    selectMapManipulationMode: PropTypes.func.isRequired,
-    selectedDatasetCapabilities: PropTypes.object.isRequired,
-    currentDisplayedDataset: PropTypes.object.isRequired,
-    currentScalarValue: PropTypes.object.isRequired,
-    currentVisualizedDatasets: PropTypes.array.isRequired,
-    fetchShapefiles: PropTypes.func.isRequired,
-    selectedShapefile: PropTypes.object.isRequired,
-    selectedBasemap: PropTypes.string.isRequired,
-    selectCurrentDisplayedDataset: PropTypes.func.isRequired,
-    selectShapefile: PropTypes.func.isRequired,
-    selectBasemap: PropTypes.func.isRequired,
-    // fetchFacets: PropTypes.func.isRequired,
-    fetchPlotlyData: PropTypes.func.isRequired,
-    panelControls: PropTypes.object.isRequired,
-    plotlyData: PropTypes.object.isRequired,
-    publicShapeFiles: PropTypes.array.isRequired,
-    mapManipulationMode: PropTypes.string.isRequired,
-    baseMaps: PropTypes.array.isRequired,
-    currentDateTime: PropTypes.string.isRequired,
-    fetchScalarValue: PropTypes.func.isRequired,
-    fetchWMSLayerDetails: PropTypes.func.isRequired,
-    fetchWMSLayerTimesteps: PropTypes.func.isRequired,
-    selectedWMSLayerTimesteps: PropTypes.object.isRequired,
-    selectedWMSLayerDetails: PropTypes.object.isRequired,
-    setCurrentDateTime: PropTypes.func.isRequired,
-    setSelectedDatasetCapabilities: PropTypes.func.isRequired,
-    selectedRegions: PropTypes.array.isRequired,
-    selectedColorPalette: PropTypes.string.isRequired,
-    selectColorPalette: PropTypes.func.isRequired,
-    selectRegion: PropTypes.func.isRequired,
-    unselectRegion: PropTypes.func.isRequired,
-    resetSelectedRegions: PropTypes.func.isRequired,
-    layer: PropTypes.any,
-    setVariablePreferenceBoundaries: PropTypes.func.isRequired,
-    variablePreferences: PropTypes.object.isRequired,
-    testWMSGetMapPermission: PropTypes.func.isRequired
+    visualize: PropTypes.object.isRequired,
+    visualizeActions:  PropTypes.object.isRequired,
+    widgets:  PropTypes.object.isRequired,
+    widgetsActions:  PropTypes.object.isRequired
   };
 
   constructor (props) {
     super(props);
-    let mapPanelStatus = {};
-    mapPanelStatus[constants.VISUALIZE_INFO_PANEL] = false;
-    mapPanelStatus[constants.VISUALIZE_MAP_CONTROLS_PANEL] = true;
-    mapPanelStatus[constants.VISUALIZE_CHART_PANEL] = false;
-    mapPanelStatus[constants.VISUALIZE_LAYER_SWITCHER_PANEL] = true;
-    mapPanelStatus[constants.VISUALIZE_TIME_SLIDER_PANEL] = true;
-    this.state = {
-      mapPanelStatus: mapPanelStatus,
-      OLComponentReference: {}
-    };
-    this._onToggleMapPanel = this._onToggleMapPanel.bind(this);
-    this.setOLComponentReference = this.setOLComponentReference.bind(this);
   }
 
   componentDidMount() {
-    this.props.selectBasemap('Aerial');
-
-    // TEST PURPOSE (TimeSlider): Load this dataset when opening the platform
-    // let dataset = {
-    //   "has_time": null,
-    //   "cf_standard_name": "precipitation_flux",
-    //   "abstract": [
-    //     "birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1961.nc",
-    //     "birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1962.nc",
-    //     "birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1963.nc",
-    //     "birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1964.nc",
-    //     "birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1965.nc",
-    //     "birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1966.nc",
-    //     "birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1967.nc",
-    //     "birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1968.nc",
-    //     "birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1969.nc",
-    //     "birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1970.nc"
-    //   ],
-    //   "replica": false,
-    //   "wms_url": [
-    //     "https://pluvier.crim.ca/ncWMS2/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&DATASET=outputs/ouranos/subdaily/aet/pcp/aet_pcp_1961.nc",
-    //     "https://pluvier.crim.ca/ncWMS2/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&DATASET=outputs/ouranos/subdaily/aet/pcp/aet_pcp_1962.nc",
-    //     "https://pluvier.crim.ca/ncWMS2/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&DATASET=outputs/ouranos/subdaily/aet/pcp/aet_pcp_1963.nc",
-    //     "https://pluvier.crim.ca/ncWMS2/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&DATASET=outputs/ouranos/subdaily/aet/pcp/aet_pcp_1964.nc",
-    //     "https://pluvier.crim.ca/ncWMS2/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&DATASET=outputs/ouranos/subdaily/aet/pcp/aet_pcp_1965.nc",
-    //     "https://pluvier.crim.ca/ncWMS2/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&DATASET=outputs/ouranos/subdaily/aet/pcp/aet_pcp_1966.nc",
-    //     "https://pluvier.crim.ca/ncWMS2/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&DATASET=outputs/ouranos/subdaily/aet/pcp/aet_pcp_1967.nc",
-    //     "https://pluvier.crim.ca/ncWMS2/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&DATASET=outputs/ouranos/subdaily/aet/pcp/aet_pcp_1968.nc",
-    //     "https://pluvier.crim.ca/ncWMS2/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&DATASET=outputs/ouranos/subdaily/aet/pcp/aet_pcp_1969.nc",
-    //     "https://pluvier.crim.ca/ncWMS2/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&DATASET=outputs/ouranos/subdaily/aet/pcp/aet_pcp_1970.nc"
-    //   ],
-    //   "keywords": [
-    //     "precipitation_flux",
-    //     "thredds",
-    //     "sresa2",
-    //     "application/netcdf",
-    //     "PCP",
-    //     "Ouranos",
-    //     "Ouranos",
-    //     "6hr",
-    //     "CRCM"
-    //   ],
-    //   "dataset_id": "ouranos.subdaily.aet.pcp",
-    //   "datetime_max": [
-    //     "1961-12-31T18:00:00Z",
-    //     "1962-12-31T18:00:00Z",
-    //     //"1963-12-31T18:00:00Z",
-    //     "1964-12-31T18:00:00Z",
-    //     "1965-12-31T18:00:00Z",
-    //     "1966-12-31T18:00:00Z",
-    //     //"1967-12-31T18:00:00Z",
-    //     //"1968-12-31T18:00:00Z",
-    //     "1969-12-31T18:00:00Z",
-    //     "1970-12-31T18:00:00Z"
-    //   ],
-    //   "frequency": "6hr",
-    //   "data_min": null,
-    //   "id": 6,
-    //   "subject": "Birdhouse Thredds Catalog",
-    //   "category": "thredds",
-    //   "_version_": "NaN",
-    //   "opendap_url": [
-    //     "http://pluvier.crim.ca:8083/thredds/dodsC/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1961.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/dodsC/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1962.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/dodsC/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1963.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/dodsC/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1964.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/dodsC/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1965.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/dodsC/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1966.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/dodsC/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1967.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/dodsC/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1968.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/dodsC/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1969.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/dodsC/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1970.nc"
-    //   ],
-    //   "title": [
-    //     "aet_pcp_1961.nc",
-    //     "aet_pcp_1962.nc",
-    //     "aet_pcp_1963.nc",
-    //     "aet_pcp_1964.nc",
-    //     "aet_pcp_1965.nc",
-    //     "aet_pcp_1966.nc",
-    //     "aet_pcp_1967.nc",
-    //     "aet_pcp_1968.nc",
-    //     "aet_pcp_1969.nc",
-    //     "aet_pcp_1970.nc"
-    //   ],
-    //   "variable_palette": "default",
-    //   "variable_long_name": "Total precipitation rate",
-    //   "source": "http://pluvier.crim.ca:8083/thredds/catalog.xml",
-    //   "datetime_min": [
-    //     "1961-01-01T00:00:00Z",
-    //     "1962-01-01T00:00:00Z",
-    //     //"1963-01-01T00:00:00Z",
-    //     "1964-01-01T00:00:00Z",
-    //     "1965-01-01T00:00:00Z",
-    //     "1966-01-01T00:00:00Z",
-    //     //"1967-01-01T00:00:00Z",
-    //     //"1968-01-01T00:00:00Z",
-    //     "1969-01-01T00:00:00Z",
-    //     "1970-01-01T00:00:00Z"
-    //   ],
-    //   "experiment": "sresa2",
-    //   "variable_max": "1",
-    //   "units": "kg m-2 s-1",
-    //   "resourcename": [
-    //     "birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1961.nc",
-    //     "birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1962.nc",
-    //     "birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1963.nc",
-    //     "birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1964.nc",
-    //     "birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1965.nc",
-    //     "birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1966.nc",
-    //     "birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1967.nc",
-    //     "birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1968.nc",
-    //     "birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1969.nc",
-    //     "birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1970.nc"
-    //   ],
-    //   "type": "Aggregate",
-    //   "catalog_url": [
-    //     "http://pluvier.crim.ca:8083/thredds/catalog/birdhouse/ouranos/subdaily/aet/pcp/catalog.xml?dataset=birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1961.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/catalog/birdhouse/ouranos/subdaily/aet/pcp/catalog.xml?dataset=birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1962.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/catalog/birdhouse/ouranos/subdaily/aet/pcp/catalog.xml?dataset=birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1963.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/catalog/birdhouse/ouranos/subdaily/aet/pcp/catalog.xml?dataset=birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1964.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/catalog/birdhouse/ouranos/subdaily/aet/pcp/catalog.xml?dataset=birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1965.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/catalog/birdhouse/ouranos/subdaily/aet/pcp/catalog.xml?dataset=birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1966.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/catalog/birdhouse/ouranos/subdaily/aet/pcp/catalog.xml?dataset=birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1967.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/catalog/birdhouse/ouranos/subdaily/aet/pcp/catalog.xml?dataset=birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1968.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/catalog/birdhouse/ouranos/subdaily/aet/pcp/catalog.xml?dataset=birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1969.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/catalog/birdhouse/ouranos/subdaily/aet/pcp/catalog.xml?dataset=birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1970.nc"
-    //   ],
-    //   "aggregate_title": "ouranos.subdaily.aet.pcp",
-    //   "last_modified": [
-    //     "2016-07-21T13:31:32Z",
-    //     "2016-07-21T13:31:25Z",
-    //     "2016-07-21T13:31:45Z",
-    //     "2016-07-21T13:31:47Z",
-    //     "2016-07-21T13:31:24Z",
-    //     "2016-07-21T13:32:04Z",
-    //     "2016-07-21T13:31:22Z",
-    //     "2016-07-21T13:31:54Z",
-    //     "2016-07-21T13:32:00Z",
-    //     "2016-07-21T13:31:49Z"
-    //   ],
-    //   "content_type": "application/netcdf",
-    //   "variable_min": "0",
-    //   "variable": "PCP",
-    //   "url": [
-    //     "http://pluvier.crim.ca:8083/thredds/fileServer/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1961.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/fileServer/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1962.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/fileServer/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1963.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/fileServer/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1964.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/fileServer/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1965.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/fileServer/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1966.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/fileServer/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1967.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/fileServer/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1968.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/fileServer/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1969.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/fileServer/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1970.nc"
-    //   ],
-    //   "institute": "Ouranos",
-    //   "model": "CRCM",
-    //   "fileserver_url": [
-    //     "http://pluvier.crim.ca:8083/thredds/fileServer/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1961.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/fileServer/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1962.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/fileServer/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1963.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/fileServer/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1964.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/fileServer/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1965.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/fileServer/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1966.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/fileServer/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1967.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/fileServer/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1968.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/fileServer/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1969.nc",
-    //     "http://pluvier.crim.ca:8083/thredds/fileServer/birdhouse/ouranos/subdaily/aet/pcp/aet_pcp_1970.nc"
-    //   ],
-    //   "latest": true,
-    //   "projectId": 1,
-    //   "researchId": null,
-    //   "project": "Ouranos",
-    //   "opacity": 0.8,
-    //   "currentFileIndex": 0
-    // };
-    // this.props.addDatasetsToVisualize([dataset]);
-    // this.props.selectCurrentDisplayedDataset(dataset);
-  }
-
-  _onToggleMapPanel (panel) {
-    let mapPanelStatus = this.state.mapPanelStatus;
-    mapPanelStatus[panel] = !mapPanelStatus[panel];
-    this.setState({
-      mapPanelStatus: mapPanelStatus,
-      OLComponentReference: this.state.OLComponentReference
-    });
-    console.log(panel);
-  }
-
-  setOLComponentReference (ref) {
-    this.setState({
-      mapPanelStatus: this.state.mapPanelStatus,
-      OLComponentReference: ref
-    });
+    this.props.visualizeActions.selectBasemap('Aerial');
   }
 
   render () {
     return (
-      <div>
-        <div className={classes['Visualize']}>
-          <div className={classes.mapContainer}>
-            <OLComponent
-              selectRegion={this.props.selectRegion}
-              unselectRegion={this.props.unselectRegion}
-              currentDateTime={this.props.currentDateTime}
-              fetchPlotlyData={this.props.fetchPlotlyData}
-              fetchScalarValue={this.props.fetchScalarValue}
-              fetchWMSLayerDetails={this.props.fetchWMSLayerDetails}
-              fetchWMSLayerTimesteps={this.props.fetchWMSLayerTimesteps}
-              layer={this.props.layer}
-              mapManipulationMode={this.props.mapManipulationMode}
-              selectedBasemap={this.props.selectedBasemap}
-              selectedColorPalette={this.props.selectedColorPalette}
-              selectedDatasetCapabilities={this.props.selectedDatasetCapabilities}
-              currentDisplayedDataset={this.props.currentDisplayedDataset}
-              selectedRegions={this.props.selectedRegions}
-              selectedShapefile={this.props.selectedShapefile}
-              setCurrentDateTime={this.props.setCurrentDateTime}
-              setSelectedDatasetCapabilities={this.props.setSelectedDatasetCapabilities}
-              testWMSGetMapPermission={this.props.testWMSGetMapPermission}
-              ref={this.setOLComponentReference} />
-          </div>
-          <BigColorPalette
-            setVariablePreferenceBoundaries={this.props.setVariablePreferenceBoundaries}
-            variablePreference={this.props.variablePreferences[this.props.currentDisplayedDataset.variable]}
-            selectedColorPalette={this.props.selectedColorPalette} />
-          <SpeedDialMenu mapPanelStatus={this.state.mapPanelStatus}
-                         onToggleMapPanel={this._onToggleMapPanel} />
-          <div className={classes.left}>
-            {
-              (this.state.mapPanelStatus[constants.VISUALIZE_INFO_PANEL])
-              ? <div className={classes.panel}>
-                  <InformationPanel
-                    onToggleMapPanel={this._onToggleMapPanel}
-                    currentScalarValue={this.props.currentScalarValue} />
-                </div>
-              : null
-            }
-            {
-              (this.state.mapPanelStatus[constants.VISUALIZE_CHART_PANEL])
-              ? <div className={classes.panel}>
-                <TimeSeriesChart
-                  currentScalarValue={this.props.currentScalarValue}
-                  currentDisplayedDataset={this.props.currentDisplayedDataset}
-                  onToggleMapPanel={this._onToggleMapPanel}
-                  plotlyData={this.props.plotlyData}
-                  fetchPlotlyData={this.props.fetchPlotlyData}
-                />
-              </div> : null
-            }
-            {
-              (this.state.mapPanelStatus[constants.VISUALIZE_LAYER_SWITCHER_PANEL])
-                ? <div className={classes['panel']}>
-                  <LayerSwitcher
-                    resetSelectedRegions={this.props.resetSelectedRegions}
-                    onToggleMapPanel={this._onToggleMapPanel}
-                    selectColorPalette={this.props.selectColorPalette}
-                    selectedColorPalette={this.props.selectedColorPalette}
-                    fetchShapefiles={this.props.fetchShapefiles}
-                    selectCurrentDisplayedDataset={this.props.selectCurrentDisplayedDataset}
-                    selectShapefile={this.props.selectShapefile}
-                    selectBasemap={this.props.selectBasemap}
-                    currentVisualizedDatasets={this.props.currentVisualizedDatasets}
-                    currentDisplayedDataset={this.props.currentDisplayedDataset}
-                    selectedShapefile={this.props.selectedShapefile}
-                    selectedBasemap={this.props.selectedBasemap}
-                    publicShapeFiles={this.props.publicShapeFiles}
-                    baseMaps={this.props.baseMaps} />
-                </div> : null
-            }
-            {(this.state.mapPanelStatus[constants.VISUALIZE_TIME_SLIDER_PANEL])
-              ? <div className={classes.panel}>
-                <TimeSlider
-                  selectedWMSLayerDetails={this.props.selectedWMSLayerDetails}
-                  selectedWMSLayerTimesteps={this.props.selectedWMSLayerTimesteps}
-                  setCurrentDateTime={this.props.setCurrentDateTime}
-                  selectCurrentDisplayedDataset={this.props.selectCurrentDisplayedDataset}
-                  currentDisplayedDataset={this.props.currentDisplayedDataset}
-                  selectedDatasetCapabilities={this.props.selectedDatasetCapabilities}
-                  currentDateTime={this.props.currentDateTime}
-                  monthsRange={false}
-                  yearsRange={false}
-                  onToggleMapPanel={this._onToggleMapPanel} />
-              </div> : null
-            }
-            {
-              this.state.mapPanelStatus[constants.VISUALIZE_MAP_CONTROLS_PANEL]
-                ? <div className={classes['panel']} style={{clear: 'left'}}>
-                  <MapControls
-                    mapManipulationMode={this.props.mapManipulationMode}
-                    onToggleMapPanel={this._onToggleMapPanel}
-                    selectMapManipulationMode={this.props.selectMapManipulationMode} />
-                </div> : null
-            }
-          </div>
-          <CurrentProjectSnackbar
-            project={this.props.project}
-            goToSection={this.props.goToSection}
-          />
+      <React.Fragment>
+        <div style={styles.mapContainer}>
+          <OLComponent
+            visualize={this.props.visualize}
+            visualizeActions={this.props.visualizeActions} />
         </div>
-      </div>
+        <BigColorPalette />
+        <SpeedDialMenu widgets={this.props.widgets}
+                       widgetsActions={this.props.widgetsActions} />
+
+        <div style={styles.left}>
+          <div style={{display: 'contents'}}>
+            {
+              (this.props.widgets.info) ?
+                <div style={styles.panel}>
+                  <VisualizeWidget
+                    title={labels.INFO_WIDGET_TITLE}
+                    icon={<InfoIcon />}
+                    rootStyle={styles.info}
+                    onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_INFO_KEY)}>
+                    <InformationPanel
+                      visualize={this.props.visualize} />
+                  </VisualizeWidget>
+                </div>
+                : null
+            }
+            {
+              (this.props.widgets.chart) ?
+                <div style={styles.panel}>
+                  <VisualizeWidget
+                    title={labels.CHART_WIDGET_TITLE}
+                    icon={<ChartIcon />}
+                    rootStyle={styles.chart}
+                    onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_CHART_KEY)}>
+                    <TimeSeriesChart
+                      visualize={this.props.visualize}
+                      visualizeActions={this.props.visualizeActions}/>
+                  </VisualizeWidget>
+                </div>
+                : null
+            }
+            {
+              (this.props.widgets.timeSlider)?
+                <div style={styles.panel}>
+                  <VisualizeWidget
+                    title={labels.TIME_SLIDER_WIDGET_TITLE}
+                    icon={<AccessTimeIcon />}
+                    rootStyle={styles.timeSlider}
+                    onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_TIME_SLIDER_KEY)}>
+                    <TimeSlider
+                      monthsRange={false}
+                      yearsRange={false}
+                      visualize={this.props.visualize}
+                      visualizeActions={this.props.visualizeActions} />
+                  </VisualizeWidget>
+                </div>
+                : null
+            }
+            {
+              (this.props.widgets.mapControls)?
+                <div style={styles.panel}>
+                  <VisualizeWidget
+                    title={labels.MAP_CONTROLS_WIDGET_TITLE}
+                    icon={<MapControlsIcon />}
+                    rootStyle={styles.mapControls}
+                    onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_MAP_CONTROLS_KEY)}>
+                    <MapControls
+                      visualize={this.props.visualize}
+                      visualizeActions={this.props.visualizeActions} />
+                  </VisualizeWidget>
+                </div>
+                : null
+            }
+            {
+              (this.props.widgets.layerSwitcher)?
+                <div style={styles.panel}>
+                  <VisualizeWidget
+                    title={labels.LAYER_SWITCHER_WIDGET_TITLE}
+                    icon={<LayersIcon />}
+                    rootStyle={styles.layerSwitcher}
+                    onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_LAYER_SWITCHER_KEY)}>
+                    <LayerSwitcher
+                      visualize={this.props.visualize}
+                      visualizeActions={this.props.visualizeActions} />
+                  </VisualizeWidget>
+                </div>
+                : null
+            }
+          </div>
+        </div>
+      </React.Fragment>
     );
   }
 }

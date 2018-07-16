@@ -3,12 +3,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ProcessMonitoring from './../../components/ProcessMonitoring';
 import { bindActionCreators } from 'redux';
-import { actions as monitorActionsCreators } from './../../redux/modules/Monitor';
+import { actions as monitorActions } from './../../redux/modules/Monitor';
+import { actions as visualizeActions } from './../../redux/modules/Visualize';
 
 export class ProcessMonitoringContainer extends React.Component {
-  static propTypes = {
-
-  };
+  static propTypes = {};
 
   constructor(props) {
     super(props);
@@ -27,12 +26,13 @@ const mapStateToProps = (state) => {
   return {
     monitor: state.monitor,
     project: state.project,
-    sessionManagement: state.sessionManagement
+    session: state.session
   }
 };
 const mapDispatchToProps = (dispatch) => {
   return {
-    monitorActions: bindActionCreators({...monitorActionsCreators}, dispatch),
+    monitorActions: bindActionCreators({...monitorActions}, dispatch),
+    visualizeActions: bindActionCreators({...visualizeActions}, dispatch),
   }
 };
 

@@ -6,10 +6,10 @@ import {mount, render, shallow} from 'enzyme'
 class Fixture extends React.Component {
   render () {
     return (
-      <div>
+      <React.Fragment>
         <input id='checked' defaultChecked />
         <input id='not' defaultChecked={false} />
-      </div>
+      </React.Fragment>
     )
   }
 }

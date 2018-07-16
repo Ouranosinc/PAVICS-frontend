@@ -9,7 +9,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import AddFilter from '@material-ui/icons/AddToPhotos';
-import { Col } from 'react-bootstrap';
+import Grid from '@material-ui/core/Grid';
 
 const styles = theme => ({
   icon: {
@@ -76,7 +76,7 @@ class CriteriaSelection extends React.Component {
 
   render () {
     return (
-      <Col sm={12} md={6} lg={6}>
+      <Grid item sm={12} md={6} lg={6}>
         <div ref={this.setWrapperRef}>
           <List id={`cy-search-facet-${this.props.criteriaName.toLowerCase()}-list`}
                 component="nav">
@@ -112,7 +112,7 @@ class CriteriaSelection extends React.Component {
             </ListItem>
           </List>
         </div>
-        <div>
+        <React.Fragment>
           {
             this.props.research.selectedFacets.map((x, i) =>
               x.key === this.props.criteriaName &&
@@ -123,8 +123,8 @@ class CriteriaSelection extends React.Component {
                 label={x.value} />
             )
           }
-        </div>
-      </Col>
+        </React.Fragment>
+      </Grid>
     );
   }
 }

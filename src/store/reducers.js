@@ -9,9 +9,11 @@ import researchReducer from './../redux/modules/Research';
 import { reducers as ResearchAPIReducer } from '../redux/modules/ResearchAPI';
 import researcherReducer from './../redux/modules/Researcher';
 import { reducers as researcherAPIReducer } from '../redux/modules/ResearcherAPI';
+import sectionReducer from '../redux/modules/Section';
 import workflowReducer from './../redux/modules/Workflow';
 import visualizeReducer from '../redux/modules/Visualize';
-import sessionManagementReducer from '../redux/modules/SessionManagement';
+import sessionReducer from '../redux/modules/Session';
+import widgetsReducer from '../redux/modules/Widgets';
 import { reducers as workflowAPIReducer } from '../redux/modules/WorkflowAPI';
 
 export const makeRootReducer = (asyncReducers) => {
@@ -29,8 +31,10 @@ export const makeRootReducer = (asyncReducers) => {
     'researcherAPI': researcherAPIReducer,
     'workflow': workflowReducer,
     'workflowAPI': workflowAPIReducer,
-    'sessionManagement': sessionManagementReducer,
+    'section': sectionReducer,
+    'session': sessionReducer,
     'visualize': visualizeReducer,
+    'widgets': widgetsReducer,
     // Add async reducers here
     ...asyncReducers
   });

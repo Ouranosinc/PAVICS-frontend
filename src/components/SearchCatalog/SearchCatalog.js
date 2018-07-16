@@ -6,8 +6,8 @@ import SearchCatalogResults from './../../components/SearchCatalogResults';
 import CriteriaSelection from './../../components/CriteriaSelection';
 import Select from'@material-ui/core/Select';
 import MenuItem from'@material-ui/core/MenuItem';
-import Paper from'@material-ui/core/Paper';
-import { Row, Col } from 'react-bootstrap';
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
 import ListSubheader from'@material-ui/core/ListSubheader';
 import List from'@material-ui/core/List';
 import Button from'@material-ui/core/Button';
@@ -19,22 +19,18 @@ import FormControl from '@material-ui/core/FormControl';
 
 export class SearchCatalog extends React.Component {
   static propTypes = {
-    currentProjectSearchCriterias: PropTypes.array.isRequired,
-    clickTogglePanel: PropTypes.func.isRequired,
-    addSearchCriteriasToProject: PropTypes.func.isRequired,
-    addDatasetsToProject: PropTypes.func.isRequired,
     datasetAPI: PropTypes.object.isRequired,
     datasetAPIActions: PropTypes.object.isRequired,
     project: PropTypes.object.isRequired,
     projectActions: PropTypes.object.isRequired,
     projectAPI: PropTypes.object.isRequired,
     projectAPIActions: PropTypes.object.isRequired,
-    sessionManagement: PropTypes.object.isRequired,
+    session: PropTypes.object.isRequired,
     research: PropTypes.object.isRequired,
     researchActions: PropTypes.object.isRequired,
     researchAPI: PropTypes.object.isRequired,
     researchAPIActions: PropTypes.object.isRequired,
-    panelControls: PropTypes.object.isRequired
+    visualizeActions: PropTypes.object.isRequired
   };
 
   state = {
@@ -51,7 +47,7 @@ export class SearchCatalog extends React.Component {
 
   constructor (props) {
     super(props);
-    if(!this.props.sessionManagement.sessionStatus.user.authenticated) {
+    if(!this.props.session.sessionStatus.user.authenticated) {
       NotificationManager.warning(`You need to be authenticated to use search datasets features.`, 'Warning', 10000);
     }
   }
@@ -135,7 +131,7 @@ export class SearchCatalog extends React.Component {
   render () {
     return (
       <div style={{ margin: 20 }}>
-        <div>
+        <React.Fragment>
           {
             (this.props.research.facets.length === 0) ?
               (<Paper style={{marginTop: 20}}>
@@ -146,13 +142,13 @@ export class SearchCatalog extends React.Component {
               : (
               <Paper>
                 <div className="container" id="cy-search-facets">
-                  <Row>
-                    <Col sm={12} md={6} lg={6}>
+                  <Grid container>
+                    <Grid item sm={12} md={6} lg={6}>
                       <FormControl style={{width: '95%'}}>
                         <InputLabel htmlFor="saved-criteria">Load criteria(s)</InputLabel>
                         <Select
                           value={this.state.selectedSavedCriteria}
-                          onChange={(event) => this.onLoadSavedCriteria(search.id)}
+                          onChange={(event) => this.onLoadSavedCriteria(event.target.value)}
                           inputProps={{
                             id: 'saved-criteria',
                           }}
@@ -168,8 +164,8 @@ export class SearchCatalog extends React.Component {
                           }
                         </Select>
                       </FormControl>
-                    </Col>
-                    <Col sm={12} md={6} lg={6}>
+                    </Grid>
+                    <Grid item sm={12} md={6} lg={6}>
                       <FormControl style={{width: '95%'}}>
                         <InputLabel htmlFor="add-criteria">Add additional criteria</InputLabel>
                         <Select
@@ -191,9 +187,9 @@ export class SearchCatalog extends React.Component {
                           }
                         </Select>
                       </FormControl>
-                    </Col>
-                  </Row>
-                  <Row style={{marginBottom: 15}}>
+                    </Grid>
+                  </Grid>
+                  <Grid container style={{marginBottom: 15}}>
                     {
                       this.state.criteriaKeys.map((facetKey, i) => {
                         return <CriteriaSelection
@@ -205,15 +201,13 @@ export class SearchCatalog extends React.Component {
                           researchActions={this.props.researchActions}/>;
                       })
                     }
-                  </Row>
-                  <Col>
-                    <TextField
-                      id="cy-criterias-name-tf"
-                      helperText="Define a name"
-                      fullWidth
-                      onChange={this.onSetSearchCriteriasName}
-                      label="Search Criteria(s) Name"/>
-                  </Col>
+                  </Grid>
+                  <TextField
+                    id="cy-criterias-name-tf"
+                    helperText="Define a name"
+                    fullWidth
+                    onChange={this.onSetSearchCriteriasName}
+                    label="Search Criteria(s) Name"/>
 
                   <Button variant="contained"
                           id="cy-save-criterias-btn"
@@ -235,14 +229,12 @@ export class SearchCatalog extends React.Component {
               </Paper>)
           }
           <SearchCatalogResults
-            addDatasetsToVisualize={this.props.addDatasetsToVisualize}
-            selectCurrentDisplayedDataset={this.props.selectCurrentDisplayedDataset}
-            clickTogglePanel={this.props.clickTogglePanel}
+            visualizeActions={this.props.visualizeActions}
             datasetAPIActions={this.props.datasetAPIActions}
             research={this.props.research}
             project={this.props.project}
             projectAPIActions={this.props.projectAPIActions}/>
-        </div>
+        </React.Fragment>
       </div>
     );
   }
