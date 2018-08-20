@@ -105,16 +105,7 @@ export default class LayerSwitcher extends React.Component {
             Reset
           </Button>
         </ListSubheader>
-        <List
-          style={styles.list}>
-          <ListSubheader>
-            <Button variant="contained"
-                    color="primary"
-                    id="cy-reset-shapefile-btn"
-                    onClick={this.resetShapefile}>
-              Reset
-            </Button>
-          </ListSubheader>
+        <List style={styles.list}>
           {
             this.props.visualize.publicShapeFiles.map( (shapeFile, i) =>
               <ListItem
