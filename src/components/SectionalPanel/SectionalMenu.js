@@ -20,7 +20,7 @@ class SectionalMenu extends React.Component {
     if (constants.PLATFORM_SECTION_SEARCH_DATASETS !== this.props.section.openedSection) {
       if(!this.isUserAuthenticated()){
         this.triggerAuthWarning(constants.PLATFORM_SECTION_SEARCH_DATASETS)
-      }else if (!this.isCurrentProjectSelected()) {Fboot
+      }else if (!this.isCurrentProjectSelected()) {
         this.triggerCurrentProjectWarning(constants.PLATFORM_SECTION_SEARCH_DATASETS);
       }else {
         this.props.sectionActions.goToSection(constants.PLATFORM_SECTION_SEARCH_DATASETS);
