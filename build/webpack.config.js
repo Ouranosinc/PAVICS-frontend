@@ -125,7 +125,7 @@ webpackConfig.eslint = {
 // JavaScript / JSON
 webpackConfig.module.loaders = [{
   test: /\.(js|jsx)$/,
-  exclude: /node_modules/,
+  exclude: /(node_modules.(?!ol\/))/, // Exclude all modules BUT openlayers who has published ES6 code
   loader: 'babel',
   query: {
     cacheDirectory: true,

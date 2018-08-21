@@ -1,5 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
+import Map from 'ol/Map';
+import View from 'ol/View';
+import MousePosition from 'ol/control/MousePosition';
+import { ScaleLine, ZoomSlider } from 'ol/control';
+import TileLayer from 'ol/layer/Tile';
+import BingMaps from 'ol/source/BingMaps';
+import { GeoJSON, WMSCapabilities } from 'ol/format';
+import { Fill, Text, Stroke, Style } from 'ol/style';
+import VectorLayer from 'ol/layer/Vector';
+import VectorSource from 'ol/source/Vector';
+import TileWMS from 'ol/source/TileWMS';
+import { add, createStringXY } from 'ol/coordinate';
+import { transform } from 'ol/proj';
+
 import classes from './OLComponent.scss';
 import Dialog from'@material-ui/core/Dialog';
 import DialogContent from'@material-ui/core/DialogContent';
@@ -76,7 +91,7 @@ class OLComponent extends React.Component {
   }
 
   addTileWMSLayer (position, title, source, opacity, extent, visible = true) {
-    let layer = new ol.layer.Tile(
+    let layer = new TileLayer(
       {
         visible: visible,
         title: title,
@@ -92,11 +107,11 @@ class OLComponent extends React.Component {
   }
 
   addBingLayer (title, bingStyle) {
-    let layer = new ol.layer.Tile(
+    let layer = new TileLayer(
       {
         visible: true,
         preload: Infinity,
-        source: new ol.source.BingMaps(
+        source: new BingMaps(
           {
             key: G_BING_API_KEY,
             imagerySet: bingStyle
@@ -124,7 +139,7 @@ class OLComponent extends React.Component {
     let minZoom = 2;
     let maxZoom = 13;
 
-    this.view = new ol.View(
+    this.view = new View(
       {
         center: [-10997148, 8569099],
         zoom: 4,
@@ -132,31 +147,25 @@ class OLComponent extends React.Component {
         maxZoom: maxZoom
       }
     );
-    var scaleLineControl = new ol.control.ScaleLine();
-    let panZoom = new ol.control.PanZoom({
+    /*let panZoom = new ol.control.PanZoom({
       imgPath: 'lib/ol3-panzoom/zoombar_black',
       minZoom: minZoom,
       maxZoom: maxZoom,
       slider: true
-    });
-    this.map = new ol.Map(
+    });*/
+    this.map = new Map(
       {
-        controls: ol.control.defaults({
-          zoom: false
-        }).extend([
-          scaleLineControl,
-          panZoom
-        ]),
         layers: [],
         target: 'map',
         renderer: 'canvas',
         view: this.view
       }
     );
+    this.map.addControl(new ScaleLine());
     window.cyCurrentMap = this.map;
 
-    let mousePosition = new ol.control.MousePosition({
-      coordinateFormat: ol.coordinate.createStringXY(6),
+    let mousePosition = new MousePosition({
+      coordinateFormat: createStringXY(6),
       projection: 'EPSG:4326',
       target: document.getElementById('mouseCoordinates')
     });
@@ -166,12 +175,12 @@ class OLComponent extends React.Component {
   }
 
   createVectorLayer (nameId) {
-    let source = new ol.source.Vector(
+    let source = new VectorSource(
       {
-        format: new ol.format.GeoJSON()
+        format: new GeoJSON()
       }
     );
-    let layer = new ol.layer.Vector(
+    let layer = new VectorLayer(
       {
         source: source,
         style: this.createPolygonStyleFunction(),
@@ -184,8 +193,8 @@ class OLComponent extends React.Component {
 
   handleSelectRegionClick (event) {
     let coordinates = this.map.getCoordinateFromPixel(event.pixel);
-    let tl = ol.coordinate.add(coordinates, [-10e-6, -10e-6]);
-    let br = ol.coordinate.add(coordinates, [10e-6, 10e-6]);
+    let tl = add(coordinates, [-10e-6, -10e-6]);
+    let br = add(coordinates, [10e-6, 10e-6]);
     let minX;
     let maxX;
     if (tl[0] < br[0]) {
@@ -223,7 +232,7 @@ class OLComponent extends React.Component {
           } else {
             console.log('adding feature', id);
             this.props.visualizeActions.selectRegion(id);
-            let format = new ol.format.GeoJSON();
+            let format = new GeoJSON();
             let features = format.readFeatures(response, {featureProjection: 'EPSG:3857'});
             console.log('adding feature named', features[0].name);
             console.log('received response:', response);
@@ -273,13 +282,13 @@ class OLComponent extends React.Component {
     let fillColor = dom.color;
     let outlineColor = dom.outline;
     let outlineWidth = parseInt(dom.outlineWidth, 10);
-    return new ol.style.Text({
+    return new Text({
       textAlign: align,
       textBaseline: baseline,
       font: font,
       text: this.getText(feature, resolution, dom),
-      fill: new ol.style.Fill({color: fillColor}),
-      stroke: new ol.style.Stroke({color: outlineColor, width: outlineWidth}),
+      fill: new Fill({color: fillColor}),
+      stroke: new Stroke({color: outlineColor, width: outlineWidth}),
       offsetX: offsetX,
       offsetY: offsetY,
       rotation: rotation
@@ -291,11 +300,11 @@ class OLComponent extends React.Component {
       // first style is the actual filling of the region
       // second is the label with added hack to work around multi polygons having multiple labels
       return [
-        new ol.style.Style({
-          stroke: new ol.style.Stroke({ color: 'rgba(255,255,255,0.5)' }),
-          fill: new ol.style.Fill({ color: 'rgba(0,255,255,0.5)' })
+        new Style({
+          stroke: new Stroke({ color: 'rgba(255,255,255,0.5)' }),
+          fill: new Fill({ color: 'rgba(0,255,255,0.5)' })
         }),
-        new ol.style.Style({
+        new Style({
           text: this.createTextStyle(feature, resolution, this.config.polygons),
           geometry: feature => {
             if (feature.getGeometry().getType() === 'MultiPolygon') {
@@ -310,7 +319,7 @@ class OLComponent extends React.Component {
 
   getScalarValue (event) {
     let coordinates = this.map.getCoordinateFromPixel(event.pixel);
-    let converted = ol.proj.transform(coordinates, 'EPSG:3857', 'EPSG:4326');
+    let converted = transform(coordinates, 'EPSG:3857', 'EPSG:4326');
     console.log('scalar value from coosrindates', converted);
     console.log('selected dataset:', this.props.visualize.currentDisplayedDataset);
     let opendapUrl = this.props.visualize.currentDisplayedDataset['opendap_url'][0];
@@ -386,7 +395,7 @@ class OLComponent extends React.Component {
     console.log('change shapefile:', shapefile);
     this.layers[LAYER_SELECTED_REGIONS].getSource().clear();
     this.map.removeLayer(this.layers[LAYER_REGIONS]);
-    let source = new ol.source.TileWMS(
+    let source = new TileWMS(
       {
         url: shapefile.wmsUrl,
         params: shapefile.wmsParams
@@ -426,7 +435,7 @@ class OLComponent extends React.Component {
       'TIME': ''
     };
     this.map.removeLayer(this.layers[LAYER_DATASET]);
-    this.datasetSource = new ol.source.TileWMS({
+    this.datasetSource = new TileWMS({
       url: resourceUrl,
       params: wmsParams
     });
@@ -457,7 +466,7 @@ class OLComponent extends React.Component {
           }
         })
         .then(text => {
-          const parser = new ol.format.WMSCapabilities();
+          const parser = new WMSCapabilities();
           let capabilities = "";
           try {
             capabilities = parser.read(text);
