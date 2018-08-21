@@ -1,12 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+// OpenLayers 5
 import Map from 'ol/Map';
 import View from 'ol/View';
 import MousePosition from 'ol/control/MousePosition';
 import { ScaleLine, ZoomSlider } from 'ol/control';
 import TileLayer from 'ol/layer/Tile';
 import BingMaps from 'ol/source/BingMaps';
+import OSM from 'ol/source/OSM';
 import { GeoJSON, WMSCapabilities } from 'ol/format';
 import { Fill, Text, Stroke, Style } from 'ol/style';
 import VectorLayer from 'ol/layer/Vector';
@@ -14,6 +16,12 @@ import VectorSource from 'ol/source/Vector';
 import TileWMS from 'ol/source/TileWMS';
 import { add, createStringXY } from 'ol/coordinate';
 import { transform } from 'ol/proj';
+
+// Cesium
+import Cesium from 'cesium/Cesium';
+window.Cesium = Cesium; // expose Cesium to the OL-Cesium library
+require('cesium/Widgets/widgets.css');
+import OLCesium from 'ol-cesium';
 
 import classes from './OLComponent.scss';
 import Dialog from'@material-ui/core/Dialog';
@@ -155,7 +163,11 @@ class OLComponent extends React.Component {
     });*/
     this.map = new Map(
       {
-        layers: [],
+        layers: [
+          new TileLayer({
+            source: new OSM()
+          })
+        ],
         target: 'map',
         renderer: 'canvas',
         view: this.view
@@ -171,6 +183,11 @@ class OLComponent extends React.Component {
     });
     // let zoomSlider = new ol.control.ZoomSlider();
     this.map.addControl(mousePosition);
+    this.ol3d = new OLCesium({map: this.map}); // map is the ol.Map instance
+    let scene = this.ol3d.getCesiumScene();
+    scene.terrainProvider = Cesium.createWorldTerrain();
+
+    this.ol3d.setEnabled(true);
     // this.map.addControl(zoomSlider);
   }
 
@@ -552,7 +569,8 @@ class OLComponent extends React.Component {
       this.updateColorPalette();
     }
     if (this.props.visualize.selectedBasemap !== prevProps.visualize.selectedBasemap) {
-      this.setBasemap(prevProps);
+      // FIXME: Cesium
+      // this.setBasemap(prevProps);
     }
     if (this.props.visualize.selectedShapefile !== prevProps.visualize.selectedShapefile) {
       this.setShapefile(prevProps);
