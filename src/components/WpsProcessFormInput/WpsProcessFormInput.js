@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Checkbox from'@material-ui/core/Checkbox';
 import TextField from'@material-ui/core/TextField';
-// import DatePicker from'@material-ui/core/DatePicker';
-// import TimePicker from'@material-ui/core/TimePicker';
+import InputLabel  from'@material-ui/core/InputLabel';
 import Select from'@material-ui/core/Select';
 import MenuItem from'@material-ui/core/MenuItem';
 import FormControl from'@material-ui/core/FormControl';
@@ -140,15 +139,17 @@ class WpsProcessFormInput extends Component {
     // leave this check before the isArray one, or the fields will be rendered as text fields on next rendering
     if (this.props.inputDefinition.selectable) {
       return (
-        <React.Fragment>
+        <FormControl fullWidth>
+          <InputLabel htmlFor={this.props.inputDefinition.title}>{this.props.inputDefinition.title}</InputLabel>
           <Select
             multiple
             fullWidth
-            className="cy-workflow-input-select-field"
+            inputProps={{
+              id: this.props.inputDefinition.title,
+              className: "cy-workflow-input-select-field"
+            }}
             value={(this.props.value)? this.props.value: []}
-            onChange={this.handleSelectChange}
-            helperText={this.props.inputDefinition.description}
-            label={this.props.inputDefinition.title}>
+            onChange={this.handleSelectChange}>
             {this.props.inputDefinition.allowedValues.map((value, i) => {
               return (
                 <MenuItem
@@ -159,12 +160,13 @@ class WpsProcessFormInput extends Component {
               );
             })}
           </Select>
+          <FormHelperText>{this.props.inputDefinition.description}</FormHelperText>
           { this.props.value
             ? this.props.value.map(
               (selectedRegion, i) => <input key={i} type="hidden" name={this.props.inputDefinition.name} value={selectedRegion} />
             ) : null
           }
-        </React.Fragment>
+        </FormControl>
       );
     }
 

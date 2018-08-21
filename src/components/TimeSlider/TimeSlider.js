@@ -638,7 +638,7 @@ export class TimeSlider extends React.Component {
     marksMonths[new Date(this.state.currentYear, 11, 1).valueOf() / DIVIDER] = 'Nov';
     marksMonths[new Date(this.state.currentYear, 12, 1).valueOf() / DIVIDER] = 'Dec';
     return (
-      <Grid container spacing={12} className="container" id="cy-timeslider" data-cy-enabled={!this.state.disabled}>
+      <Grid container className="container" id="cy-timeslider" data-cy-enabled={!this.state.disabled}>
         <Grid item md={4}>
           <TextField
             disabled={this.state.disabled}

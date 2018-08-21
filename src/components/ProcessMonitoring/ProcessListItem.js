@@ -81,11 +81,13 @@ export class ProcessListItem extends React.Component {
         <ListItemSecondaryAction
           className={`cy-monitoring-sec-actions cy-monitoring-level-${this.props.indentationLevel}`}>
           <CustomIconMenu
+            key={visualizableReferences}
             onRef={ref => (this.customIconMenu = ref)}
             iconButtonClass="cy-actions-btn"
             menuId="ouput-menu-actions"
             menuItems={[
               <MenuItem
+                key="status-item"
                 id="cy-status-item"
                 onClick={(event) => this.onBrowseXMLStatus()}>
                 <ListItemIcon>
@@ -95,6 +97,7 @@ export class ProcessListItem extends React.Component {
               </MenuItem>,
               (this.props.isWorkflowTask)? null:
               <MenuItem
+                key="logs-item"
                 id="cy-logs-item"
                 onClick={(event) => this.onShowLogs()}>
                 <ListItemIcon>
@@ -103,6 +106,7 @@ export class ProcessListItem extends React.Component {
                 <ListItemText inset primary="Show Logs" />
               </MenuItem>,
               <MenuItem
+                key="visualize-all-agg-item"
                 id="cy-visualize-all-agg-item"
                 disabled={!visualizableReferences.length}
                 onClick={(event) => this.onVisualizeOutput(visualizableReferences, true)}>
@@ -114,6 +118,7 @@ export class ProcessListItem extends React.Component {
                               secondary="Aggregated"/>
               </MenuItem>,
               <MenuItem
+                key="visualize-all-split-item"
                 id="cy-visualize-all-split-item"
                 disabled={!visualizableReferences.length}
                 onClick={(event) => this.onVisualizeOutput(visualizableReferences, false)}>

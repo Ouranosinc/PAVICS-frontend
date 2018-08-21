@@ -65,7 +65,7 @@ class BigColorPalette extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     currentDisplayedDataset: PropTypes.object.isRequired,
-    preference: PropTypes.object.isRequired,
+    preference: PropTypes.object,
     setVariablePreferenceBoundaries: PropTypes.func.isRequired
   };
 
