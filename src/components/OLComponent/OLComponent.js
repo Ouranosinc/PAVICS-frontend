@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import Map from 'ol/Map';
 import View from 'ol/View';
 import MousePosition from 'ol/control/MousePosition';
-import { ScaleLine, ZoomSlider } from 'ol/control';
+import { defaults as ControlDefaults, ScaleLine, ZoomSlider } from 'ol/control';
 import TileLayer from 'ol/layer/Tile';
 import BingMaps from 'ol/source/BingMaps';
 import OSM from 'ol/source/OSM';
@@ -114,6 +114,15 @@ class OLComponent extends React.Component {
     console.log('addTileWMSLayer:', layer);
   }
 
+  addCesiumTileLayer(title) {
+    let layer = new TileLayer({
+      source: new OSM()
+    });
+    this.map.getLayers().insertAt(INDEX_BASE_MAP, layer);
+    layer.set('nameId', title);
+    this.layers[title] = layer;
+  }
+
   addBingLayer (title, bingStyle) {
     let layer = new TileLayer(
       {
@@ -145,7 +154,7 @@ class OLComponent extends React.Component {
 
   initMap () {
     let minZoom = 2;
-    let maxZoom = 13;
+    let maxZoom = 20/*13*/;
 
     this.view = new View(
       {
@@ -164,9 +173,9 @@ class OLComponent extends React.Component {
     this.map = new Map(
       {
         layers: [
-          new TileLayer({
+          /*new TileLayer({
             source: new OSM()
-          })
+          })*/
         ],
         target: 'map',
         renderer: 'canvas',
@@ -175,6 +184,8 @@ class OLComponent extends React.Component {
     );
     this.map.addControl(new ScaleLine());
     window.cyCurrentMap = this.map;
+    this.ol3d = new OLCesium({map: this.map});
+    this.ol3d.setEnabled(false);
 
     let mousePosition = new MousePosition({
       coordinateFormat: createStringXY(6),
@@ -183,11 +194,6 @@ class OLComponent extends React.Component {
     });
     // let zoomSlider = new ol.control.ZoomSlider();
     this.map.addControl(mousePosition);
-    this.ol3d = new OLCesium({map: this.map}); // map is the ol.Map instance
-    let scene = this.ol3d.getCesiumScene();
-    scene.terrainProvider = Cesium.createWorldTerrain();
-
-    this.ol3d.setEnabled(true);
     // this.map.addControl(zoomSlider);
   }
 
@@ -396,10 +402,14 @@ class OLComponent extends React.Component {
     }
   }
 
-  setBasemap (prevProps) {
-    console.log('change base map:', this.props.visualize.selectedBasemap);
+  removeBasemap(prevProps) {
+    console.log('remove base map:', this.props.visualize.selectedBasemap);
     let layer = this.getLayer(prevProps.visualize.selectedBasemap);
     this.map.removeLayer(layer);
+  }
+
+  setBasemap (prevProps) {
+    this.removeBasemap(prevProps)
     this.addBingLayer(this.props.visualize.selectedBasemap, this.props.visualize.selectedBasemap);
   }
 
@@ -569,8 +579,16 @@ class OLComponent extends React.Component {
       this.updateColorPalette();
     }
     if (this.props.visualize.selectedBasemap !== prevProps.visualize.selectedBasemap) {
-      // FIXME: Cesium
-      // this.setBasemap(prevProps);
+      if(this.props.visualize.selectedBasemap === 'Cesium') {
+        this.removeBasemap(prevProps);
+        this.addCesiumTileLayer(this.props.visualize.selectedBasemap);
+        let scene = this.ol3d.getCesiumScene();
+        scene.terrainProvider = Cesium.createWorldTerrain();
+        this.ol3d.setEnabled(true);
+      } else {
+        this.ol3d.setEnabled(false);
+        this.setBasemap(prevProps);
+      }
     }
     if (this.props.visualize.selectedShapefile !== prevProps.visualize.selectedShapefile) {
       this.setShapefile(prevProps);

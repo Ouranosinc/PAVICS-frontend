@@ -28,7 +28,7 @@ const AVAILABLE_COLOR_PALETTES = [
 ];
 const styles = {
   list: {
-    height: '260px',
+    height: '300px',
     overflowY: 'auto'
   }
 };
@@ -131,6 +131,7 @@ export default class LayerSwitcher extends React.Component {
       <List
         component="nav"
         style={styles.list}>
+        <ListSubheader disableSticky>2D EPSG:4326</ListSubheader>
         {
           this.props.visualize.baseMaps.map((map, i) =>
             <ListItem
@@ -145,6 +146,15 @@ export default class LayerSwitcher extends React.Component {
             </ListItem>
           )
         }
+        <ListSubheader disableSticky>3D</ListSubheader>
+        <ListItem className="cy-layerswitcher-basemap-item">
+          <RadioGroup
+            name="selectedBaseMap"
+            value={this.props.visualize.selectedBasemap}
+            onChange={this.setSelectedBaseMap}>
+            <FormControlLabel value="Cesium" control={<Radio color="secondary" />} label="Cesium (prototype)" />
+          </RadioGroup>
+        </ListItem>
       </List>
     );
   }

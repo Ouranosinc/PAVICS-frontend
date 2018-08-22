@@ -175,7 +175,7 @@ class Pavics extends React.Component {
         }
         errorObject['stack'] = stack;
       }
-      NotificationManager.error(message, 'Error', 10000);
+      // FIXME: NotificationManager.error(message, 'Error', 10000);
       return false;
     }
   }
