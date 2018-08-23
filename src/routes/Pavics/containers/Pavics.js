@@ -11,14 +11,7 @@ import { actions as sessionActions } from '../../../redux/modules/Session';
 import { actions as visualizeActions } from '../../../redux/modules/Visualize';
 import cookie from 'react-cookies';
 import * as constants from './../../../constants';
-import {
-  AccountManagementContainer,
-  ProjectManagementContainer,
-  ResearchContainer,
-  ProcessMonitoringContainer,
-  VisualizeContainer,
-  WorkflowWizardContainer } from './../../../containers';
-import { SectionalPanel } from './../../../components/SectionalPanel';
+import { VisualizeContainer } from './../../../containers';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 require('react-notifications/lib/notifications.css');
 
@@ -180,64 +173,11 @@ class Pavics extends React.Component {
     }
   }
 
-  makeSection () {
-    switch (this.props.section.openedSection) {
-      case constants.PLATFORM_SECTION_SEARCH_DATASETS:
-        return (
-          <ResearchContainer />
-        );
-      case constants.PLATFORM_SECTION_PROJECT_MANAGEMENT:
-        return (
-          <ProjectManagementContainer />
-        );
-      case constants.PLATFORM_SECTION_WORKFLOWS:
-        return (
-          <WorkflowWizardContainer />
-        );
-      case constants.PLATFORM_SECTION_MONITOR:
-        return (
-          <ProcessMonitoringContainer />
-        );
-      case constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT:
-        return (
-          <AccountManagementContainer />
-        );
-      default:
-        return null;
-    }
-  }
-
-  makeTitle () {
-    switch (this.props.section.openedSection) {
-      case constants.PLATFORM_SECTION_SEARCH_DATASETS:
-        return "Search Datasets";
-      case constants.PLATFORM_SECTION_PROJECT_MANAGEMENT:
-        return "Project Management";
-      case constants.PLATFORM_SECTION_WORKFLOWS:
-        return "Data Processing";
-      case constants.PLATFORM_SECTION_MONITOR:
-        return "Processes Monitoring";
-      case constants.PLATFORM_SECTION_ACCOUNT_MANAGEMENT:
-        return "Account Management";
-      default:
-        return "";
-    }
-  }
-
   render () {
     return (
       <MuiThemeProvider theme={theme}>
         <React.Fragment>
           <VisualizeContainer {...this.props} />
-          {/* TODO: SectionalPanel SHOULD BE A CONTAINER AS WELL WITH ITS OWN CONNECT... */}
-          <SectionalPanel
-            section={this.props.section}
-            sectionActions={this.props.sectionActions}
-            showContent={this.makeSection() !== null}
-            currentContent={this.makeSection()}
-            currentTitle={this.makeTitle()}
-            project={this.props.project}
-            session={this.props.session} />
           <NotificationContainer />
         </React.Fragment>
       </MuiThemeProvider>
