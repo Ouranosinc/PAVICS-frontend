@@ -17,8 +17,8 @@ const LAYOUT = {
   },
   paper_bgcolor: 'inherit',
   plot_bgcolor: 'inherit',
-  /*height: 'calc(100% - 64px)',
-  width: 'calc(100% - 0px)'*/
+  height: 351,
+  width: 550
 };
 
 class TimeSeriesChart extends React.Component {
@@ -98,8 +98,11 @@ class TimeSeriesChart extends React.Component {
     } else if (!currentScalarValue.data || !currentScalarValue.data._dimensions) {
       content = null;
     }
+    // style={{overflow: 'auto', height: 'calc(100% - 64px)', width: '100%'}}
     return (
-      <div style={{overflow: 'auto', height: 'calc(100% - 64px)', width: '100%'}}>
+      <div style={{overflow: 'auto', height: 'calc(100% - 64px)', width: '100%',
+        display: (plotlyData.isFetching || currentScalarValue.isFetching ||
+        (currentScalarValue.data && currentScalarValue.data._dimensions))? 'inline-block': 'none'}}>
         {content}
         <div className={((plotlyData.isFetching || currentScalarValue.isFetching) &&
           (!currentScalarValue.data || !currentScalarValue.data._dimensions)) ? 'hidden' : ''}>
