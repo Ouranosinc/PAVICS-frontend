@@ -639,7 +639,7 @@ export class TimeSlider extends React.Component {
     marksMonths[new Date(this.state.currentYear, 12, 1).valueOf() / DIVIDER] = 'Dec';
     return (
       <Grid container className="container" id="cy-timeslider" data-cy-enabled={!this.state.disabled}>
-        <Grid item md={4}>
+        <Grid item sm={4}>
           <TextField
             disabled={this.state.disabled}
             value={this.state.currentDate}
@@ -647,7 +647,7 @@ export class TimeSlider extends React.Component {
             onChange={(event) => this.onChangedCurrentDate(event)}
             label="Current Date" />
         </Grid>
-        <Grid item md={4}>
+        <Grid item sm={4}>
           <FormControl fullWidth>
             <InputLabel htmlFor="time">Time</InputLabel>
             <Select
@@ -668,7 +668,7 @@ export class TimeSlider extends React.Component {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item  md={4}>
+        <Grid item sm={4}>
           {/*helperText="Format 9999-99-99 00:00:00"*/}
           <TextField
             disabled={true}
@@ -677,7 +677,7 @@ export class TimeSlider extends React.Component {
             label="Current Datetime" />
         </Grid>
 
-        <Grid item  sm={12} style={styles.slider}>
+        <Grid item sm={12} style={styles.slider}>
           <Slider
             disabled={this.state.disabled}
             tipFormatter={(v) => {
@@ -724,7 +724,7 @@ export class TimeSlider extends React.Component {
           }
         </Grid>
 
-        <Grid item style={styles.stepControls} md={4}>
+        <Grid item style={styles.stepControls} sm={4}>
           <TextField
             disabled={this.state.disabled}
             type="number"
@@ -734,7 +734,7 @@ export class TimeSlider extends React.Component {
             label="Timestep Length" />
         </Grid>
 
-        <Grid item style={styles.stepControls} md={4}>
+        <Grid item style={styles.stepControls} sm={4}>
           <FormControl fullWidth>
             <InputLabel htmlFor="granularity-level">Timestep Granularity Level</InputLabel>
             <Select
@@ -754,7 +754,7 @@ export class TimeSlider extends React.Component {
           </FormControl>
         </Grid>
 
-        <Grid item style={styles.stepControls} md={4}>
+        <Grid item style={styles.stepControls} sm={4}>
           <FormControl fullWidth>
             <InputLabel htmlFor="speed-level">Play Speed Level</InputLabel>
             <Select
@@ -773,7 +773,7 @@ export class TimeSlider extends React.Component {
           </FormControl>
         </Grid>
 
-        <Grid item md={2}>
+        <Grid item sm={2}>
           <Button variant="contained"
                   disabled={(this.state.minDatetime === this.props.visualize.currentDateTime) || this.state.disabled || this.state.isPlaying}
                   onClick={() => this.onClickedStepControls(FAST_BACKWARD_ACTION)}
@@ -783,7 +783,7 @@ export class TimeSlider extends React.Component {
           </Button>
         </Grid>
 
-        <Grid item md={2}>
+        <Grid item sm={2}>
           <Button variant="contained"
                   disabled={(this.state.minDatetime === this.props.visualize.currentDateTime) || this.state.disabled || this.state.isPlaying}
                   color="primary"
@@ -793,7 +793,7 @@ export class TimeSlider extends React.Component {
           </Button>
         </Grid>
 
-        <Grid item md={4}>
+        <Grid item sm={4}>
           {
             (this.state.isPlaying)?
               <Button variant="contained"
@@ -813,7 +813,7 @@ export class TimeSlider extends React.Component {
           }
         </Grid>
 
-        <Grid item md={2}>
+        <Grid item sm={2}>
           <Button variant="contained"
                   disabled={(this.state.maxDatetime === this.props.visualize.currentDateTime) || this.state.disabled || this.state.isPlaying}
                   color="primary"
@@ -823,7 +823,7 @@ export class TimeSlider extends React.Component {
           </Button>
         </Grid>
 
-        <Grid item md={2}>
+        <Grid item sm={2}>
           <Button variant="contained"
                   disabled={(this.state.maxDatetime === this.props.visualize.currentDateTime) || this.state.disabled || this.state.isPlaying}
                   color="primary"

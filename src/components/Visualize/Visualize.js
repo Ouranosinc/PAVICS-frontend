@@ -7,6 +7,7 @@ import InformationPanel from '../InformationPanel';
 import LayerSwitcher from '../LayerSwitcher';
 import TimeSeriesChart from './../TimeSeriesChart';
 import MapControls from './../MapControls';
+import SectionalPanel from './../../containers/SectionalPanel';
 import { constants } from './../../redux/modules/Widgets';
 import * as labels from './../../constants';
 import BigColorPalette from '../BigColorPalette/BigColorPalette';
@@ -34,15 +35,15 @@ const styles = {
     float: 'left'
   },
   container: {
-    width: '50%',
+    // width: '50%',
     display: 'grid',
     gridColumnGap: '2px',
-    gridRowGap: '2px',
+    gridGap: '2px',
     justifyItems: 'stretch',
-    gridAutoFlow: 'row dense',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-    // gridTemplateColumns: 'repeat(8, minmax(120px, 1fr))',
-    gridAutoRows: '100px'
+    gridAutoFlow: 'dense',
+    // This way, there's always minimum of 6 columns + 5(4+1+n)(min 110px) + 1(40%)
+    gridTemplateColumns: 'repeat(4, minmax(115px, 1fr)) repeat(auto-fit, minmax(115px, 1fr)) [last-col] minmax(45px, 40%) [end-col]', // TODO: 40% -> auto
+    gridTemplateRows: 'repeat(auto-fit, 100px) [last-row] 200px [end-row]',
   },
   widget: {
     height: '100%',
@@ -50,12 +51,10 @@ const styles = {
     opacity: OPACITY
   },
   info: {
-    gridArea: 'span 4 / span 3'
+    gridArea: 'span 3 / span 4'
   },
   chart: {
-    //gridColumn: 'span 3',
-    //gridRow: 'span 4',
-    gridArea: 'span 4 / span 5'
+    gridArea: 'span 3 / span 4'
   },
   timeSlider: {
     gridArea: 'span 3 / span 5'
@@ -64,7 +63,14 @@ const styles = {
     gridArea: 'span 3 / span 2'
   },
   layerSwitcher: {
-    gridArea: 'span 4 / span 3'
+    gridArea: 'span 3 / span 4'
+  },
+  sectionalPanel: {
+
+    gridColumn: 'last-col / span 1',
+    gridRow: 'span 16 / end-row', // 16 rows should be enough (max 3x5+1)
+    // gridRowStart: 'span 9000',
+    // gridArea: '1 / last-col/ last-line / span 1'
   }
 };
 
@@ -176,6 +182,9 @@ class Visualize extends React.Component {
               </div>
               : null
           }
+          <div style={styles.sectionalPanel}>
+            <SectionalPanel />
+          </div>
         </div>
       </React.Fragment>
     );
