@@ -6,8 +6,7 @@ import Card from'@material-ui/core/Card';
 import CardHeader from'@material-ui/core/CardHeader';
 
 const LAYOUT = {
-  // autosize: false,
-  // showlegend: false,
+  autosize: true,
   title: '',
   margin: {
     l: 60,
@@ -18,8 +17,8 @@ const LAYOUT = {
   },
   paper_bgcolor: 'inherit',
   plot_bgcolor: 'inherit',
-  height: 351,
-  width: 550
+  /*height: 'calc(100% - 64px)',
+  width: 'calc(100% - 0px)'*/
 };
 
 class TimeSeriesChart extends React.Component {
@@ -100,13 +99,13 @@ class TimeSeriesChart extends React.Component {
       content = null;
     }
     return (
-      <React.Fragment>
+      <div style={{overflow: 'auto', height: 'calc(100% - 64px)', width: '100%'}}>
         {content}
         <div className={((plotlyData.isFetching || currentScalarValue.isFetching) &&
           (!currentScalarValue.data || !currentScalarValue.data._dimensions)) ? 'hidden' : ''}>
           <div id="plotly" ref={this._bindRef}></div>
         </div>
-      </React.Fragment>
+      </div>
     );
   }
 }
