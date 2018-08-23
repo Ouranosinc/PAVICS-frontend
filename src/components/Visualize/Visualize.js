@@ -34,13 +34,14 @@ const styles = {
     float: 'left'
   },
   container: {
-    width: '60%',
+    width: '50%',
     display: 'grid',
     gridColumnGap: '2px',
     gridRowGap: '2px',
     justifyItems: 'stretch',
     gridAutoFlow: 'row dense',
-    gridTemplateColumns: 'repeat(8, minmax(120px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+    // gridTemplateColumns: 'repeat(8, minmax(120px, 1fr))',
     gridAutoRows: '100px'
   },
   widget: {
@@ -54,7 +55,7 @@ const styles = {
   chart: {
     //gridColumn: 'span 3',
     //gridRow: 'span 4',
-    gridArea: 'span 4 / span 4'
+    gridArea: 'span 4 / span 5'
   },
   timeSlider: {
     gridArea: 'span 3 / span 5'
