@@ -23,10 +23,14 @@ class SectionalPanel extends React.Component {
             sectionActions={this.props.sectionActions}
             session={this.props.session}
             project={this.props.project} />
-          <SectionalContent
-            showContent={this.props.showContent}
-            title={this.props.currentTitle}
-            currentContent={this.props.currentContent} />
+          {
+            (this.props.showContent)
+              ? <SectionalContent
+                showContent={this.props.showContent}
+                title={this.props.currentTitle}
+                currentContent={this.props.currentContent} />
+              : null
+          }
         </div>
       </div>
     );
