@@ -36,6 +36,7 @@ const styles = {
     float: 'left'
   },
   widget: {
+    height: '100%',
     opacity: OPACITY
   }
 };
