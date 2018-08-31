@@ -9,7 +9,19 @@ import { createRegularPolygon, createBox } from 'ol/interaction/Draw';
 import { platformModifierKeyOnly, shiftKeyOnly, singleClick, doubleClick } from 'ol/events/condition';
 import { Vector as VectorSource } from 'ol/source';
 import { Vector as VectorLayer } from 'ol/layer';
-import { Circle, Fill, Text, Stroke, Style } from 'ol/style';
+import { Circle, Fill, Text, Stroke, Style, RegularShape } from 'ol/style';
+
+// Interesting try/catch to avoid main thread error (on Polygon/LineString drawing with Select/Modify interactions)
+// https://github.com/openlayers/openlayers/issues/6310
+import RBush from 'ol/structs/RBush';
+const RBushUpdateOrig = RBush.prototype.update;
+RBush.prototype.update = function () {
+  try {
+    RBushUpdateOrig.apply(this, arguments);
+  } catch (e) {
+    // console.warn('RBushUpdateOrig', e);
+  }
+};
 
 const INDEX_BOUNDING_BOX = 101;
 const LAYER_BOUNDING_BOX = 'LAYER_BOUNDING_BOX';
@@ -51,21 +63,78 @@ export class OLBBoxSelector extends React.Component {
     const { map, visualize } = nextProps;
     if (nextProps.map !== this.props.map) {
       // Map has been initialised
-      this.source = new VectorSource({wrapX: false});
+      this.source = new VectorSource();
       this.layer = this.addBBoxLayer(map);
+      this.select = new Select({
+        style: (feature, resolution) => {
+          return [
+            new Style({
+              /*image: new Circle({
+                fill: new Fill({ color: '#FF0000' }),
+                stroke: new Stroke({ color: '#000000' }),
+                radius: 5
+              }),*/
+              stroke: new Stroke({color: [0, 153, 255, 1], width: 3}),
+              // stroke: new Stroke({ color: 'rgba(245,0,87,0.8)' }),
+              fill: new Fill({ color: 'rgba(255,255,255,0.3)' }),
+              // fill: new Fill({ color: 'rgba(245,0,87,0.5)' }),
+              text: new Text({
+                font: '24px Verdana',
+                text: `${feature.get('name')}\n${feature.get('description')}`
+              })
+            }),
+            new Style()];
+        }
+      });
+      // Activate hand cursor when underlying event
+      map.on('pointermove', function(e) {
+        if (e.dragging) return;
+        let hit = map.hasFeatureAtPixel(map.getEventPixel(e.originalEvent));
+        map.getViewport().style.cursor = hit ? 'pointer' : '';
+      });
+
+      /*var styleClick = function() {
+        // `this` is ol.Feature
+        return [
+          new Style({
+            image: Circle({
+              fill: new Fill({ color: [245, 121, 0, 0.8] }),
+              stroke: new Stroke({ color: [0,0,0,1] }),
+              radius: 7
+            }),
+            text: new Text({
+              font: '24px Verdana',
+              text: 'yolo', //this.get('name'),
+              offsetY: 20,
+              fill: new Fill({
+                color: [255, 255, 255, 0.8]
+              })
+            })
+          })
+        ];
+      };*/
+
+      map.addInteraction(this.select);
+      this.select.on('select', (evt) => {
+        if (evt.selected.length) {
+          console.log(evt.selected[0]);
+          this.selectedFeature(evt.selected[0]);
+        }
+      });
+
+      // Create a modify interaction and add it to the map:
       this.modify = new Modify({
-        source: this.source,
+        features: this.select.getFeatures(),
         insertVertexCondition: (event) => {
-          if(visualize.currentDrawingTool === VISUALIZE_DRAW_MODES.POLYGON.value) return true;
           // Only existing edge could be selected and dragged
           return false;
         }
       });
       map.addInteraction(this.modify);
+
       // set listener on "modifyend":
-      this.modify.on('modifyend', (evt)=> {
+      this.modify.on('modifyend', (evt) => {
         console.log('modify ended');
-        this.props.visualizeActions.setDrawnCustomFeatures(this.source.getFeatures());
       });
     }else if(nextProps.visualize.drawnCustomFeatures !== this.props.visualize.drawnCustomFeatures){
       if (nextProps.visualize.drawnCustomFeatures.length === 0){
@@ -83,10 +152,17 @@ export class OLBBoxSelector extends React.Component {
   }
 
   addBBoxLayer(map) {
+
+
     // Or FeatureOverlay, see http://blog.awesomemap.tools/demo-draw-and-modify-openlayers-3/
     const layer = new VectorLayer({
       source: this.source,
       style: new Style({
+        /*image: new Circle({
+          fill: new Fill({ color: '#0000FF' }),
+          stroke: new Stroke({ color: '#000000' }),
+          radius: 5
+        }),*/
         stroke: new Stroke({ color: 'rgba(255,255,255,0.7)' }),
         fill: new Fill({ color: 'rgba(255,255,255,0.3)' }),
       })
@@ -147,18 +223,24 @@ export class OLBBoxSelector extends React.Component {
 
       this.draw = new Draw({
         source: this.source,
+        style: new Style({
+          // this overwrites hover circle
+          stroke: new Stroke({ color: 'rgba(255,255,255,0.7)' }),
+          fill: new Fill({ color: 'rgba(255,255,255,0.3)' }),
+          /*image: new RegularShape({
+            fill: new Fill({
+              color: 'red'
+            }),
+            points: 4,
+            radius1: 15,
+            radius2: 1
+          }),*/
+        }),
         condition: condition,
         geometryFunction: geometryFunction,
         type: drawType
       });
       map.addInteraction(this.draw);
-
-      // Listener on drawend
-      this.draw.on('drawend', (e) => {
-        console.log('draw ended');
-        const feature = e.feature;
-        this.props.visualizeActions.setDrawnCustomFeatures(this.props.visualize.drawnCustomFeatures.concat([feature]));
-      });
 
       // A MUST: Snapping help limiting multiple features overlapping
       // Snap is not a friend of polygonal freehand drawing somehow
@@ -166,91 +248,22 @@ export class OLBBoxSelector extends React.Component {
         this.snap = new Snap({source: this.source});
         map.addInteraction(this.snap); // The snap interaction must be added last, as it needs to be the first to handle the pointermove event.
       }
+
+      // Listener on drawend
+      this.draw.on('drawend', (e) => {
+        console.log('draw ended');
+        const feature = e.feature;
+        feature.name = 'yolo123';
+        feature.setProperties({'name':'yoloXYZ', 'description':'xyz'});
+        map.removeInteraction(this.draw);
+        map.removeInteraction(this.snap);
+
+        // Only one selected feature at a time
+        this.select.getFeatures().clear();
+        this.select.getFeatures().push(feature);
+        this.props.visualizeActions.setDrawnCustomFeatures(this.props.visualize.drawnCustomFeatures.concat([feature]));
+      });
     }
-  }
-
-  initBBoxSelectorPrototype(nextProps) {
-    const { map } = nextProps;
-    // Might interfere with region selection !!
-    const source = new VectorSource({wrapX: false});
-    this.addBBoxLayer(map, source); // in this.layer
-    let drawInteraction = new Draw({
-      source: this.source,
-      style: new Style({
-        // this overwrites hover circle
-        stroke: new Stroke({ color: 'rgba(255,255,255,0.7)' }),
-        fill: new Fill({ color: 'rgba(255,255,255,0.3)' })
-      }),
-      type: 'Circle',
-      condition: shiftKeyOnly,
-      geometryFunction: createRegularPolygon(4)
-    });
-
-    map.addInteraction(drawInteraction);
-
-    drawInteraction.on('drawend', (e) => {
-      let feature = e.feature;
-      console.log('vector feature %o', feature);
-
-      // remove draw interaction:
-      map.removeInteraction(drawInteraction);
-
-      // Create a select interaction and add it to the map:
-      let selectInteraction = new Select(); // FIXME: Select only the defined edges
-      map.addInteraction(selectInteraction);
-
-      // select feature:
-      selectInteraction.getFeatures().push(feature);
-
-      // clone feature:
-      let featureClone = feature.clone();
-      // transform cloned feature to WGS84:
-      featureClone.getGeometry().transform('EPSG:3857', 'EPSG:4326');
-      featureClone.getGeometry().on('change', function(e) { // https://github.com/openlayers/openlayers/issues/5095
-        if (e.target.getRevision() % 2) return;
-        var coordinates = e.target.getCoordinates();
-        // do something with the coordinates
-        e.target.setCoordinates(coordinates);
-        featureClone.changed()
-      });
-      // get GeoJSON of feature:
-      let geojson = new GeoJSON().writeFeature(featureClone);
-      // save or do whatever...
-      console.log(geojson);
-
-      // Create a modify interaction and add to the map:
-      let modifyInteraction = new Modify({
-        features: selectInteraction.getFeatures(),
-        wrapX: false,
-        /*deleteCondition: (event) => {
-          // alt-click normally deletes point
-          return false;
-        },*/
-        insertVertexCondition: (event) => {
-          // Only existing edge could be selected and dragged
-          return false;
-        }
-      });
-
-      console.log('modify features %o', selectInteraction.getFeatures());
-      map.addInteraction(modifyInteraction);
-
-      // set listener on "modifyend":
-      modifyInteraction.on('modifyend', function(evt) {
-        // get features:
-        var collection = evt.features;
-
-        console.log('new features %o', evt.features);
-        // There's only one feature, so get the first and only one:
-        var featureClone = collection.item(0).clone();
-        // transform cloned feature to WGS84:
-        featureClone.getGeometry().transform('EPSG:3857', 'EPSG:4326');
-        // get GeoJSON of feature:
-        var geojson = new GeoJSON().writeFeature(featureClone);
-        // save or do whatever...
-        console.log(geojson);
-      });
-    });
   }
 
   initBBoxRegionSelector (nextProps) {
