@@ -17,6 +17,7 @@ import TileWMS from 'ol/source/TileWMS';
 import { add, createStringXY } from 'ol/coordinate';
 import { transform } from 'ol/proj';
 
+import OLBBoxSelector from './../OLBBoxSelector';
 // Cesium
 import Cesium from 'cesium/Cesium';
 window.Cesium = Cesium; // expose Cesium to the OL-Cesium library
@@ -57,6 +58,10 @@ function getMaxPoly (polys) {
   return polyObj[polyObj.length - 1].poly;
 }
 
+const MapContext = React.createContext({
+  map: null,
+});
+
 class OLComponent extends React.Component {
   static propTypes = {
     visualize: PropTypes.object.isRequired,
@@ -96,6 +101,7 @@ class OLComponent extends React.Component {
     this.handleClose = this.handleClose.bind(this);
     this.createPolygonStyleFunction = this.createPolygonStyleFunction.bind(this);
     this.createTextStyle = this.createTextStyle.bind(this);
+    this.bboxSelector = React.createRef();
   }
 
   addTileWMSLayer (position, title, source, opacity, extent, visible = true) {
@@ -170,9 +176,17 @@ class OLComponent extends React.Component {
       maxZoom: maxZoom,
       slider: true
     });*/
+    var vectorSource = new VectorSource({
+      url: 'https://openlayers.org/en/latest/examples/data/geojson/countries.geojson',
+      format: new GeoJSON()
+    });
+
     this.map = new Map(
       {
         layers: [
+          /*new VectorLayer({
+            source: vectorSource
+          })*/
           /*new TileLayer({
             source: new OSM()
           })*/
@@ -195,6 +209,9 @@ class OLComponent extends React.Component {
     // let zoomSlider = new ol.control.ZoomSlider();
     this.map.addControl(mousePosition);
     // this.map.addControl(zoomSlider);
+
+    // this.bboxSelector.current.initBBoxRegionSelector(this.map, this.layers[LAYER_REGIONS], this.layers[LAYER_SELECTED_REGIONS]);
+    // this.bboxSelector.current.initBBoxSelector(this.map);
   }
 
   createVectorLayer (nameId) {
@@ -214,8 +231,46 @@ class OLComponent extends React.Component {
     return layer;
   }
 
-  handleSelectRegionClick (event) {
-    let coordinates = this.map.getCoordinateFromPixel(event.pixel);
+  queryGeoserverFeatures = (extent, projection = 'EPSG:3857')  => {
+    if(this.props.visualize.selectedShapefile && this.props.visualize.selectedShapefile.wmsParams) {
+      const url = `${__PAVICS_GEOSERVER_PATH__}/wfs?service=WFS&version=1.1.0&request=GetFeature&typename=${this.props.visualize.selectedShapefile.wmsParams.LAYERS}&outputFormat=application/json&srsname=${projection}&bbox=${extent},${projection}`;
+      myHttp.get(url)
+        .then(
+          response => response.json(),
+          err => console.log(err))
+        .then(
+          response => this.selectFeaturesCallback(response),
+          err => console.log(err)
+        )
+    }
+  };
+
+  selectFeaturesCallback(response) {
+    console.log('selected regions before click:', this.props.visualize.selectedRegions);
+    response.features.forEach((feature) => {
+      const id = feature.id;
+      if (this.props.visualize.selectedRegions.indexOf(id) !== -1) {
+        console.log('removing feature', id);
+        // WPs form liste to visualize.selectedRegions value
+        this.props.visualizeActions.unselectRegion(id);
+        let feature = this.layers[LAYER_SELECTED_REGIONS].getSource().getFeatures().find(elem => elem.id_ === id);
+        this.layers[LAYER_SELECTED_REGIONS].getSource().removeFeature(feature);
+      } else {
+        console.log('adding feature', id);
+        this.props.visualizeActions.selectRegion(id);
+        let format = new GeoJSON();
+        let features = format.readFeatures(response, {featureProjection: 'EPSG:3857'});
+        console.log('adding feature named', features[0].name);
+        console.log('received response:', response);
+        console.log('received feature:', features);
+        this.layers[LAYER_SELECTED_REGIONS].getSource().addFeatures(features);
+      }
+    });
+  }
+
+
+  calculateClickPositionExtent(pixel) {
+    let coordinates = this.map.getCoordinateFromPixel(pixel);
     let tl = add(coordinates, [-10e-6, -10e-6]);
     let br = add(coordinates, [10e-6, 10e-6]);
     let minX;
@@ -236,35 +291,13 @@ class OLComponent extends React.Component {
       minY = br[1];
       maxY = tl[1];
     }
-    let extent = [minX, minY, maxX, maxY];
-    let url = __PAVICS_GEOSERVER_PATH__ + '/wfs?service=WFS&' +
-      `version=1.1.0&request=GetFeature&typename=${this.props.visualize.selectedShapefile.wmsParams.LAYERS}&` +
-      'outputFormat=application/json&srsname=EPSG:3857&' +
-      'bbox=' + extent.join(',') + ',EPSG:3857';
-    myHttp.get(url)
-      .then(response => response.json(), err => console.log(err))
-      .then(
-        response => {
-          console.log('selected regions before click:', this.props.visualize.selectedRegions);
-          let id = response.features[0].id;
-          if (this.props.visualize.selectedRegions.indexOf(id) !== -1) {
-            console.log('removing feature', id);
-            this.props.visualizeActions.unselectRegion(id);
-            let feature = this.layers[LAYER_SELECTED_REGIONS].getSource().getFeatures().find(elem => elem.f === id);
-            this.layers[LAYER_SELECTED_REGIONS].getSource().removeFeature(feature);
-          } else {
-            console.log('adding feature', id);
-            this.props.visualizeActions.selectRegion(id);
-            let format = new GeoJSON();
-            let features = format.readFeatures(response, {featureProjection: 'EPSG:3857'});
-            console.log('adding feature named', features[0].name);
-            console.log('received response:', response);
-            console.log('received feature:', features);
-            this.layers[LAYER_SELECTED_REGIONS].getSource().addFeatures(features);
-          }
-        },
-        err => console.log(err)
-      );
+    return [minX, minY, maxX, maxY];
+  }
+
+
+  handleSelectRegionClick (event) {
+    let extent = this.calculateClickPositionExtent(event.pixel);
+    this.queryGeoserverFeatures(extent);
   }
 
   stringDivider (str, lineLength, addedCharacter) {
@@ -279,7 +312,7 @@ class OLComponent extends React.Component {
   getText (feature, resolution, dom) {
     let type = dom.text.value;
     let maxResolution = dom.maxreso.value;
-    let text = feature['f'];
+    let text = feature.id_;
 
     if (resolution > maxResolution) {
       text = '';
@@ -345,11 +378,11 @@ class OLComponent extends React.Component {
     let converted = transform(coordinates, 'EPSG:3857', 'EPSG:4326');
     console.log('scalar value from coosrindates', converted);
     console.log('selected dataset:', this.props.visualize.currentDisplayedDataset);
-    let opendapUrl = this.props.visualize.currentDisplayedDataset['opendap_url'][0];
-    let lon = converted[0];
-    let lat = converted[1];
-    let time = this.props.visualize.currentDateTime.substr(0, this.props.visualize.currentDateTime.length - 5);
-    let variable = this.props.visualize.currentDisplayedDataset['variable'];
+    const opendapUrl = this.props.visualize.currentDisplayedDataset['opendap_url'][0];
+    const lon = converted[0];
+    const lat = converted[1];
+    const time = this.props.visualize.currentDateTime.substr(0, this.props.visualize.currentDateTime.length - 5);
+    const variable = this.props.visualize.currentDisplayedDataset['variable'];
     this.props.visualizeActions.fetchScalarValue(opendapUrl, lat, lon, time, variable);
   }
 
@@ -375,7 +408,8 @@ class OLComponent extends React.Component {
 
   componentDidMount () {
     this.initMap();
-    this.map.addEventListener('click', this.handleMapClick);
+    // REFACTOR THIS PLEASE USING INTERACTION API
+    // this.map.addEventListener('click', this.handleMapClick);
     let layer = this.createVectorLayer(LAYER_SELECTED_REGIONS);
     this.map.getLayers().insertAt(INDEX_SELECTED_REGIONS, layer);
     this.layers[LAYER_SELECTED_REGIONS] = layer;
@@ -654,6 +688,17 @@ class OLComponent extends React.Component {
       <div className={classes['OLComponent']}>
         <div id="map" className="map" style={{'width': '100%', 'height': '100%', 'position': 'fixed'}}>
           <div id="popup" className="ol-popup"></div>
+          {
+            <MapContext.Provider value={this.map}>
+              <OLBBoxSelector
+                ref={this.bboxSelector}
+                visualize={this.props.visualize}
+                visualizeActions={this.props.visualizeActions}
+                map={this.map}
+                layers={this.layers}
+                queryGeoserverFeatures={this.queryGeoserverFeatures} />
+            </MapContext.Provider>
+          }
         </div>
         <Dialog
           onClose={this.handleClose}
@@ -671,4 +716,5 @@ class OLComponent extends React.Component {
     );
   }
 }
+
 export default OLComponent;
