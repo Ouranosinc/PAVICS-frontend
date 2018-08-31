@@ -77,8 +77,7 @@ export class OLBBoxSelector extends React.Component {
     else if(nextProps !== this.props){
       if (map) {
         // this.initBBoxRegionSelector(nextProps);
-        // this.initBBoxSelector(nextProps); // initBBoxSelectorPrototype
-        this.initBBoxSelectorPrototype(nextProps);
+        this.initBBoxSelector(nextProps); // initBBoxSelectorPrototype
       }
     }
   }
