@@ -150,4 +150,11 @@
     background-color: rgba(255,69,0,0.7);
   }*/
 
+  //this will overwirte dragBox default style
+  #map .ol-dragbox {
+    background-color: rgba(255,255,255,0.3);
+    border-color: rgba(255,255,255,0.7);
+    border-width: 2;
+  }
+
 }

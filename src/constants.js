@@ -1,3 +1,5 @@
+import { Mode } from 'ol/interaction/Draw'
+
 // platform
 export const PLATFORM_SECTION_ACCOUNT_MANAGEMENT = 'Account Management';
 export const PLATFORM_SECTION_PROJECT_MANAGEMENT = 'Project Management';
@@ -13,6 +15,50 @@ export const LAYER_SWITCHER_WIDGET_TITLE = 'Layer Switcher';
 export const INFO_WIDGET_TITLE = 'Point Informations';
 export const MAP_CONTROLS_WIDGET_TITLE = 'Controls';
 export const TIME_SLIDER_WIDGET_TITLE = 'Temporal Slider';
+
+// Not exported as expected
+// import { Mode } from 'ol/interaction/Draw'
+export const VISUALIZE_DRAW_MODES = {
+  BBOX: {
+    value: 'Bbox',
+    label: 'Bounding Box (hold shift key)'
+  },
+  CIRCLE: {
+    value: 'Circle',
+    label: 'Circle (hold shift key)'
+  },
+  HEXAGON: {
+    value: 'Hexagon',
+    label: 'Hexagon (hold shift key)'
+  },
+  LINE_STRING: {
+    value: 'LineString',
+    label: 'Line (optionally hold shift for freehand)'
+  },
+  SQUARE: {
+    value: 'Square',
+    label: 'Square (hold shift key)'
+  },
+  /*POINT: {
+    value: 'Point',
+    label: 'Point'
+  },*/
+  POLYGON: {
+    value: 'Polygon',
+    label: 'Polygon (optionally hold shift for freehand)'
+  }
+  //TODO: https://github.com/Ouranosinc/PAVICS-frontend/issues/134#issuecomment-416724206
+  /*,
+  ZONAL: {
+    value: 'Zonal',
+    label: 'Zonal'
+  },
+  MERIDIONAL: {
+    value: 'Meridional',
+    label: 'Meridional'
+  }*/
+};
+
 // monitor
 export const JOB_ACCEPTED_STATUS = 'ProcessAccepted';
 export const JOB_FAILED_STATUS = 'ProcessFailed';
