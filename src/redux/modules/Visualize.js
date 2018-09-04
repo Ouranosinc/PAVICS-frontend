@@ -382,10 +382,11 @@ export const actions = {
       return myHttp.get(`${__PAVICS_GEOSERVER_API_PATH__}/layers.json`)
         .then(response => response.json())
         .then(json => {
-          let shapefiles = [];
+          let layers = {};
           json.layers.layer.map(layer => {
-            const [, layerName] = layer.name.split(':');
-            shapefiles.push({
+            const [workspaceName, layerName] = layer.name.split(':');
+            layers[workspaceName] = layers[workspaceName] || [];
+            layers[workspaceName].push({
               title: layerName,
               wmsUrl: `${__PAVICS_GEOSERVER_PATH__}/wms`,
               wmsParams: {
@@ -395,7 +396,7 @@ export const actions = {
               }
             });
           });
-          dispatch(setShapefiles(shapefiles));
+          dispatch(setShapefiles(layers));
         });
     };
   },
