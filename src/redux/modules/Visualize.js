@@ -25,6 +25,7 @@ export const constants = {
   CLICK_TOGGLE_PANEL: 'Visualize.CLICK_TOGGLE_PANEL',
   SET_CURRENT_TIME_ISO: 'Visualize.SET_CURRENT_TIME_ISO',
   SET_CURRENT_DRAWING_TOOL: 'Visualize.SET_CURRENT_DRAWING_TOOL',
+  SET_CURRENT_SELECTED_DRAWN_FEATURE: 'Visualize.SET_CURRENT_SELECTED_DRAWN_FEATURE',
   VISUALIZE_SET_VARIABLE_BOUNDARY_VALUES: 'Visualize.VISUALIZE_SET_VARIABLE_BOUNDARY_VALUE',
   // ASYNC
   FETCH_PLOTLY_DATA_REQUEST: 'Visualize.FETCH_PLOTLY_DATA_REQUEST',
@@ -64,6 +65,12 @@ function setCurrentDrawingTool (tool) {
   return {
     type: constants.SET_CURRENT_DRAWING_TOOL,
     currentDrawingTool: tool
+  };
+}
+function setCurrentSelectedDrawnFeature (feature) {
+  return {
+    type: constants.SET_CURRENT_SELECTED_DRAWN_FEATURE,
+    currentSelectedDrawnFeature: feature
   };
 }
 function requestPlotlyData () {
@@ -252,6 +259,7 @@ export const actions = {
   setCurrentDateTime: setCurrentDateTime,
   setCurrentDrawingTool: setCurrentDrawingTool,
   setDrawnCustomFeatures: setDrawnCustomFeatures,
+  setCurrentSelectedDrawnFeature: setCurrentSelectedDrawnFeature,
   setLayer: setLayer,
   setSelectedDatasetCapabilities: setSelectedDatasetCapabilities,
   fetchScalarValue: function (opendapUrl, lat, lon, time, variable) {
@@ -576,6 +584,9 @@ const HANDLERS = {
   [constants.SET_CURRENT_DRAWING_TOOL]: (state, action) => {
     return ({...state, currentDrawingTool: action.currentDrawingTool});
   },
+  [constants.SET_CURRENT_SELECTED_DRAWN_FEATURE]: (state, action) => {
+    return ({...state, currentSelectedDrawnFeature: Object.assign({}, action.currentSelectedDrawnFeature)});
+  },
   [constants.FETCH_PLOTLY_DATA_REQUEST]: (state, action) => {
     return ({...state, plotlyData: Object.assign({}, state.plotlyData, action.plotlyData)});
   },
@@ -636,6 +647,7 @@ export const initialState = {
   selectedRegions: [],
   currentDateTime: '1900-01-01T00:00:00.000Z',
   currentDrawingTool: VISUALIZE_DRAW_MODES.BBOX.value,
+  currentSelectedDrawnFeature: null,
   shouldFlushDrawnFeatures: false,
   currentProjectSearchCriterias: [],
   currentProjectDatasets: [],

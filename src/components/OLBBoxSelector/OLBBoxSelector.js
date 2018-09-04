@@ -93,32 +93,11 @@ export class OLBBoxSelector extends React.Component {
         map.getViewport().style.cursor = hit ? 'pointer' : '';
       });
 
-      /*var styleClick = function() {
-        // `this` is ol.Feature
-        return [
-          new Style({
-            image: Circle({
-              fill: new Fill({ color: [245, 121, 0, 0.8] }),
-              stroke: new Stroke({ color: [0,0,0,1] }),
-              radius: 7
-            }),
-            text: new Text({
-              font: '24px Verdana',
-              text: 'yolo', //this.get('name'),
-              offsetY: 20,
-              fill: new Fill({
-                color: [255, 255, 255, 0.8]
-              })
-            })
-          })
-        ];
-      };*/
-
       map.addInteraction(this.select);
       this.select.on('select', (evt) => {
         if (evt.selected.length) {
           console.log(evt.selected[0]);
-          this.selectedFeature(evt.selected[0]);
+          this.props.visualizeActions.setCurrentSelectedDrawnFeature(evt.selected[0]);
         }
       });
 
@@ -138,9 +117,10 @@ export class OLBBoxSelector extends React.Component {
       });
     }else if(nextProps.visualize.drawnCustomFeatures !== this.props.visualize.drawnCustomFeatures){
       if (nextProps.visualize.drawnCustomFeatures.length === 0){
-        // TODO CLEAN FEATURES
-        let yolo = "";
-        // this.layer.getFeatures().clear();
+        // Clear all drawn features
+        // TODO: Open Confirmation Modal if more than one
+        this.select.getFeatures().clear();
+        this.source.clear();
       }
     }
     else if(nextProps !== this.props){
