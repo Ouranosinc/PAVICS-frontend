@@ -63,7 +63,7 @@ export class DatasetListedDetails extends React.Component {
                       primary={transform.capitalize(transform.sanitize(key))}
                       secondary={
                         !Array.isArray(this.props.dataset[key]) &&
-                        <p>{this.props.dataset[key]}</p>
+                        <span>{this.props.dataset[key]}</span>
                       } />
                   </ListItem>
                   {

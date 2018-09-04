@@ -37,6 +37,7 @@ export class SearchCatalog extends React.Component {
     type: 'Aggregate',
     searchCriteriasName: '',
     selectedKey: '',
+    selectedSavedCriteria: '',
     criteriaKeys: [
       'project',
       'model',

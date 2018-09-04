@@ -335,6 +335,7 @@ class ProcessMonitoring extends React.Component {
                               isWorkflowTask={true}
                               key={j}
                               job={taskDetails}
+                              onShowLogDialog={this.onShowLogDialog}
                               onShowPersistDialog={this.onShowPersistDialog}
                               onVisualiseDatasets={this.onVisualiseDatasets}/>;
                           } else {
@@ -359,10 +360,10 @@ class ProcessMonitoring extends React.Component {
                                   <ListItemText inset
                                     primary={taskName}
                                     secondary={
-                                      <p>
+                                      <span>
                                         Parallel tasks completed with success: <strong>{completedTasks.length}
                                         / {parrallelTasks.length}</strong>
-                                      </p>
+                                      </span>
                                     }/>
                                 }
                                 rootListItemSecondaryActions={

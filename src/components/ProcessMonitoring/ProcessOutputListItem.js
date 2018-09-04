@@ -85,6 +85,7 @@ export class ProcessOutputListItem extends React.Component {
             menuId="output-menu-actions"
             menuItems={[
               <MenuItem
+                key="download-item"
                 id="cy-download-item"
                 disabled={!this.isDownloadAvailable()}
                 onClick={(event) => this.onDownloadClicked()}>
@@ -94,6 +95,7 @@ export class ProcessOutputListItem extends React.Component {
                 <ListItemText inset primary="Download"/>
               </MenuItem>,
               <MenuItem
+                key="publish-item"
                 id="cy-publish-item"
                 disabled={!this.isPublishAvailable()}
                 onClick={(event) => this.onPublishClicked()}>
@@ -103,6 +105,7 @@ export class ProcessOutputListItem extends React.Component {
                 <ListItemText inset primary="Publish (TODO)"/>
               </MenuItem>,
               <MenuItem
+                key="persist-item"
                 id="cy-persist-item"
                 disabled={!this.isPersistAvailable()}
                 onClick={(event) => this.onPersistClicked()}>
@@ -112,6 +115,7 @@ export class ProcessOutputListItem extends React.Component {
                 <ListItemText inset primary="Persist"/>
               </MenuItem>,
               <MenuItem
+                key="visualize-item"
                 id="cy-visualize-item"
                 disabled={!this.isVisualizeAvailable()}
                 onClick={(event) => this.onVisualizeClicked()}>

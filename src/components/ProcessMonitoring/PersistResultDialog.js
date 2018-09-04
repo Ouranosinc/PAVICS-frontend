@@ -165,28 +165,28 @@ export class PersistResultDialog extends React.Component {
                 onChange={this.handleLocationChange}
                 label="Location" />
               <Grid container>
-                <Grid sm={4} md={4} lg={4} style={styles.spacing}>
+                <Grid item sm={4} md={4} lg={4} style={styles.spacing}>
                   <TextField
                     fullWidth
                     onChange={this.handleKeyChange}
                     label="Key"
                     value={this.state.key} />
                 </Grid>
-                <Grid m={4} md={4} lg={4} style={styles.spacing}>
+                <Grid item sm={4} md={4} lg={4} style={styles.spacing}>
                   <TextField
                     fullWidth
                     onChange={this.handleValueChange}
                     label="Value"
                     value={this.state.value} />
                 </Grid>
-                <Grid sm={2} md={2} lg={2} style={styles.spacing}>
+                <Grid item sm={2} md={2} lg={2} style={styles.spacing}>
                   <Button variant="contained"
                           onClick={this.onAddedFacet}
                           color="primary">
                     Add
                   </Button>
                 </Grid>
-                <Grid sm={12}>
+                <Grid item sm={12}>
                   <List>
                     <ListSubheader style={{'paddingLeft': '0'}}>Default facets</ListSubheader>
                     {

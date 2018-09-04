@@ -116,7 +116,7 @@ export default class WpsProcessForm extends React.Component {
           changedState[inputName] = props.visualize.currentDisplayedDataset['url'];
         } else {
           // If dataset unselected => reset value, else value might be the workflow default value (so do nothing)
-          if (oldProps&& oldProps.currentDisplayedDataset && oldProps.currentDisplayedDataset['url']) {
+          if (oldProps.currentDisplayedDataset && oldProps.currentDisplayedDataset['url']) {
             changedState[inputName] = '';
           }
         }
@@ -127,7 +127,7 @@ export default class WpsProcessForm extends React.Component {
           changedState[inputName] = props.visualize.currentDisplayedDataset['opendap_url'];
         } else {
           // If dataset unselected => reset value, else value might be the workflow default value (so do nothing)
-          if (oldProps && oldProps.visualize.currentDisplayedDataset && oldProps.visualize.currentDisplayedDataset['opendap_url']) {
+          if (oldProps.visualize && oldProps.visualize.currentDisplayedDataset && oldProps.visualize.currentDisplayedDataset['opendap_url']) {
             changedState[inputName] = '';
           }
         }
@@ -139,7 +139,7 @@ export default class WpsProcessForm extends React.Component {
           changedState[inputName] = props.visualize.selectedShapefile['wmsParams']['LAYERS'];
         } else {
           // If shapefile unselected => reset value, else value might be the workflow default value (so do nothing)
-          if (oldProps && oldProps.visualize.selectedShapefile && oldProps.visualize.selectedShapefile['wmsParams'] &&
+          if (oldProps.visualize && oldProps.visualize.selectedShapefile && oldProps.visualize.selectedShapefile['wmsParams'] &&
             oldProps.visualize.selectedShapefile['wmsParams']['LAYERS']) {
             changedState[inputName] = '';
             // FIXME: empty selectedRegions array since value won't fit anymore
@@ -152,7 +152,7 @@ export default class WpsProcessForm extends React.Component {
           changedState[inputName] = props.visualize.selectedRegions;
         } else {
           // If region unselected => reset value, else value might be the workflow default value (so do nothing)
-          if (oldProps && oldProps.visualize.selectedRegions && oldProps.visualize.selectedRegions.length) {
+          if (oldProps.visualize && oldProps.visualize.selectedRegions && oldProps.visualize.selectedRegions.length) {
             changedState[inputName] = []
           }
         }
