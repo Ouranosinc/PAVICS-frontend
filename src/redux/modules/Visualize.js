@@ -378,27 +378,25 @@ export const actions = {
     };
   },
   fetchShapefiles: function () {
-    const parser = new ol.format.WMSCapabilities();
     return dispatch => {
-      return myHttp.get(`${__PAVICS_GEOSERVER_PATH__}/wms?request=GetCapabilities`)
-        .then(response => response.text())
-        .then(text => {
-          return parser.read(text);
-        })
+      return myHttp.get(`${__PAVICS_GEOSERVER_API_PATH__}/layers.json`)
+        .then(response => response.json())
         .then(json => {
-          let shapefiles = [];
-          json.Capability.Layer.Layer.map(layer => {
-            shapefiles.push({
-              title: layer.Title,
+          let layers = {};
+          json.layers.layer.map(layer => {
+            const [workspaceName, layerName] = layer.name.split(':');
+            layers[workspaceName] = layers[workspaceName] || [];
+            layers[workspaceName].push({
+              title: layerName,
               wmsUrl: `${__PAVICS_GEOSERVER_PATH__}/wms`,
               wmsParams: {
-                LAYERS: layer.Name,
+                LAYERS: layerName,
                 TILED: true,
                 FORMAT: 'image/png'
               }
             });
           });
-          dispatch(setShapefiles(shapefiles));
+          dispatch(setShapefiles(layers));
         });
     };
   },

@@ -7,19 +7,20 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
-import Tab from'@material-ui/core/Tab';
+import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
-import Select from'@material-ui/core/Select';
-import MenuItem from'@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 import Slider from '@material-ui/lab/Slider';
-import Radio from'@material-ui/core/Radio';
-import RadioGroup from'@material-ui/core/RadioGroup';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
 import Satellite from '@material-ui/icons/Satellite';
 import LocalLibrary from '@material-ui/icons/LocalLibrary';
 import Map from '@material-ui/icons/Map';
-import Paper from'@material-ui/core/Paper';
-import Button from'@material-ui/core/Button';
-import AppBar from'@material-ui/core/AppBar';
+import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
+import AppBar from '@material-ui/core/AppBar';
+import Collapse from '@material-ui/core/Collapse';
 
 const AVAILABLE_COLOR_PALETTES = [
   'seq-Blues',
@@ -30,6 +31,9 @@ const styles = {
   list: {
     height: '260px',
     overflowY: 'auto'
+  },
+  subHeader: {
+    backgroundColor: 'white'
   }
 };
 
@@ -43,12 +47,9 @@ export default class LayerSwitcher extends React.Component {
     super(props);
     this.props.visualizeActions.selectColorPalette(AVAILABLE_COLOR_PALETTES[0]);
     this.state = {
-      tabValue: 0
-    }
-  }
-
-  componentDidMount () {
-    this.props.visualizeActions.fetchShapefiles();
+      tabValue: 0,
+      open: {}
+    };
   }
 
   setSelectedShapefile = (event, value) => {
@@ -90,36 +91,54 @@ export default class LayerSwitcher extends React.Component {
     this.props.visualizeActions.selectCurrentDisplayedDataset({});
   };
 
-  /*
-  this routine should iterate through the different workspaces that are available to the user and show them separated by workspace name.
-  Presently, they're all flat on a single level, but should eventually be grouped by the workspace name
-   */
+  makeToggleWorkspaceCallback = workspaceName => {
+    return () => {
+      this.setState({
+        open: {
+          ...this.state.open,
+          [workspaceName]: !this.state.open[workspaceName]
+        }
+      });
+    };
+  };
+
   makeShapefileList () {
     return (
       <React.Fragment>
-        <ListSubheader>
-          <Button variant="contained"
-                  color="primary"
-                  id="cy-reset-shapefile-btn"
-                  onClick={this.resetShapefile}>
-            Reset
-          </Button>
-        </ListSubheader>
+        <Button
+          variant="contained"
+          color="primary"
+          id="cy-reset-shapefile-btn"
+          onClick={this.resetShapefile}>
+          Reset
+        </Button>
         <List style={styles.list}>
           {
-            this.props.visualize.publicShapeFiles.map( (shapeFile, i) =>
-              <ListItem
-                className="cy-layerswitcher-shapefile-item"
-                id={`cy-shapefile-name-${shapeFile.title}`}// `
-                key={i}>
-                <RadioGroup
-                  name="selectedShapeFile"
-                  value={this.props.visualize.selectedShapefile.title}
-                  onChange={this.setSelectedShapefile}>
-                  <FormControlLabel value={shapeFile.title} control={<Radio color="secondary" />} label={shapeFile.title} />
-                </RadioGroup>
-              </ListItem>
-            )
+            Object.keys(this.props.visualize.publicShapeFiles).map((workspaceName, j) => {
+              const workspaceLayers = this.props.visualize.publicShapeFiles[workspaceName];
+              return (
+                <div style={styles.subHeader} key={j}>
+                  <ListSubheader onClick={this.makeToggleWorkspaceCallback(workspaceName)}>{workspaceName}</ListSubheader>
+                  <Collapse in={this.state.open[workspaceName]}>
+                  {
+                    workspaceLayers.map((shapeFile, i) =>
+                      <ListItem
+                        className="cy-layerswitcher-shapefile-item"
+                        id={`cy-shapefile-name-${shapeFile.title}`}
+                        key={i}>
+                        <RadioGroup
+                          name="selectedShapeFile"
+                          value={this.props.visualize.selectedShapefile.title}
+                          onChange={this.setSelectedShapefile}>
+                          <FormControlLabel value={shapeFile.title} control={<Radio color="secondary" />} label={shapeFile.title} />
+                        </RadioGroup>
+                      </ListItem>
+                    )
+                  }
+                  </Collapse>
+                </div>
+              );
+            })
           }
         </List>
       </React.Fragment>
