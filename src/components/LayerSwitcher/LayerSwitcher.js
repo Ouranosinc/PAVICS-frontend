@@ -31,6 +31,9 @@ const styles = {
   list: {
     height: '260px',
     overflowY: 'auto'
+  },
+  subHeader: {
+    backgroundColor: 'white'
   }
 };
 
@@ -102,21 +105,19 @@ export default class LayerSwitcher extends React.Component {
   makeShapefileList () {
     return (
       <React.Fragment>
-        <ListSubheader>
-          <Button
-            variant="contained"
-            color="primary"
-            id="cy-reset-shapefile-btn"
-            onClick={this.resetShapefile}>
-            Reset
-          </Button>
-        </ListSubheader>
+        <Button
+          variant="contained"
+          color="primary"
+          id="cy-reset-shapefile-btn"
+          onClick={this.resetShapefile}>
+          Reset
+        </Button>
         <List style={styles.list}>
           {
             Object.keys(this.props.visualize.publicShapeFiles).map((workspaceName, j) => {
               const workspaceLayers = this.props.visualize.publicShapeFiles[workspaceName];
               return (
-                <div key={j}>
+                <div style={styles.subHeader} key={j}>
                   <ListSubheader onClick={this.makeToggleWorkspaceCallback(workspaceName)}>{workspaceName}</ListSubheader>
                   <Collapse in={this.state.open[workspaceName]}>
                   {
