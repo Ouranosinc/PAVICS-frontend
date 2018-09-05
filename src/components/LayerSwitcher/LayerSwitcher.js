@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import TextField from '@material-ui/core/TextField';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -34,14 +35,18 @@ const styles = {
     height: '260px',
     overflowY: 'auto'
   },
+  topBar: {
+    padding: '0 24px',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    justifyContent: 'space-between'
+  },
   subHeader: {
     backgroundColor: 'white',
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center'
-  },
-  resetButton: {
-    marginLeft: '24px'
   }
 };
 
@@ -56,9 +61,38 @@ export default class LayerSwitcher extends React.Component {
     this.props.visualizeActions.selectColorPalette(AVAILABLE_COLOR_PALETTES[0]);
     this.state = {
       tabValue: 0,
-      open: {}
+      open: {},
+      textFilter: '',
+      filteredLayers: {}
     };
   }
+
+  componentDidUpdate (prevProps, prevState, snapshot) {
+    if (this.props.visualize.publicShapeFiles !== prevProps.visualize.publicShapeFiles) {
+      this.filterLayers();
+    }
+  }
+
+  setTextFilter = event => {
+    this.setState({
+      textFilter: event.target.value
+    }, this.filterLayers);
+  };
+
+  filterLayers = () => {
+    let layers = {};
+    Object.keys(this.props.visualize.publicShapeFiles).map(workspaceName => {
+      const theseLayers = this.props.visualize.publicShapeFiles[workspaceName].filter(layer => {
+        return layer.title.indexOf(this.state.textFilter) !== -1;
+      });
+      if (theseLayers.length > 0) {
+        layers[workspaceName] = theseLayers;
+      }
+    });
+    this.setState({
+      filteredLayers: layers
+    });
+  };
 
   setSelectedShapefile = (event, value) => {
     this.props.visualizeActions.resetSelectedRegions();
@@ -105,37 +139,40 @@ export default class LayerSwitcher extends React.Component {
     this.props.visualizeActions.selectCurrentDisplayedDataset({});
   };
 
-  makeToggleWorkspaceCallback = workspaceName => {
-    return () => {
-      this.setState({
-        open: {
-          ...this.state.open,
-          [workspaceName]: !this.state.open[workspaceName]
-        }
-      });
-    };
+  toggleWorkspace = workspaceName => () => {
+    this.setState({
+      open: {
+        ...this.state.open,
+        [workspaceName]: !this.state.open[workspaceName]
+      }
+    });
   };
 
   makeShapefileList () {
     return (
       <React.Fragment>
-        <Button
-          style={styles.resetButton}
-          variant="contained"
-          color="primary"
-          id="cy-reset-shapefile-btn"
-          onClick={this.resetShapefile}>
-          Reset
-        </Button>
+        <div style={styles.topBar}>
+          <Button
+            variant="contained"
+            color="primary"
+            id="cy-reset-shapefile-btn"
+            onClick={this.resetShapefile}>
+            Reset
+          </Button>
+          <TextField
+            label="Text filter."
+            onChange={this.setTextFilter}
+            value={this.state.textFilter} />
+        </div>
         <List style={styles.list}>
           {
-            Object.keys(this.props.visualize.publicShapeFiles).map((workspaceName, j) => {
-              const workspaceLayers = this.props.visualize.publicShapeFiles[workspaceName];
+            Object.keys(this.state.filteredLayers).map((workspaceName, j) => {
+              const workspaceLayers = this.state.filteredLayers[workspaceName];
               return (
                 <React.Fragment key={j}>
                   <ListSubheader
                     style={styles.subHeader}
-                    onClick={this.makeToggleWorkspaceCallback(workspaceName)}>
+                    onClick={this.toggleWorkspace(workspaceName)}>
                     {workspaceName}
                     {this.state.open[workspaceName] ? <ExpendLess /> : <ExpendMore />}
                   </ListSubheader>
