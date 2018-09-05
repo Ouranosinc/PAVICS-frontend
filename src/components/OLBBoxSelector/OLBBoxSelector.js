@@ -94,10 +94,13 @@ export class OLBBoxSelector extends React.Component {
       });
 
       map.addInteraction(this.select);
-      this.select.on('select', (evt) => {
-        if (evt.selected.length) {
-          console.log(evt.selected[0]);
-          this.props.visualizeActions.setCurrentSelectedDrawnFeature(evt.selected[0]);
+      this.select.on('select', (e) => {
+        if (e.selected.length) {
+          // If name and description haven't been set it's because feature is being drawn at the moment.
+          // So if feature is being drawn, ignore selection
+          if(e.selected[0].name && e.selected[0].name.length) {
+            this.props.visualizeActions.setCurrentSelectedDrawnFeature(e.selected[0]);
+          }
         }
       });
 
@@ -234,7 +237,11 @@ export class OLBBoxSelector extends React.Component {
         console.log('draw ended');
         const feature = e.feature;
         feature.name = 'yolo123';
-        feature.setProperties({'name':'yoloXYZ', 'description':'xyz'});
+        feature.setProperties({
+          name: 'yoloXYZ',
+          description: 'xyz',
+          type: visualize.currentDrawingTool
+        });
         map.removeInteraction(this.draw);
         map.removeInteraction(this.snap);
 

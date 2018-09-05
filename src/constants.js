@@ -11,6 +11,7 @@ export const VISUALIZE_SET_MAP_MANIPULATION_MODE = 'Visualize.VISUALIZE_SET_MAP_
 export const VISUALIZE_MODE_GRID_VALUES = 'VISUALIZE.MODE_VISUALIZE';
 export const VISUALIZE_MODE_REGION_SELECTION = 'VISUALIZE.MODE_REGION_SELECTION';
 export const CHART_WIDGET_TITLE = 'Time Series Chart';
+export const CUSTOM_REGIONS_WIDGET_TITLE = 'Customize Regions';
 export const LAYER_SWITCHER_WIDGET_TITLE = 'Layer Switcher';
 export const INFO_WIDGET_TITLE = 'Point Informations';
 export const MAP_CONTROLS_WIDGET_TITLE = 'Controls';

@@ -7,6 +7,7 @@ import InformationPanel from '../InformationPanel';
 import LayerSwitcher from '../LayerSwitcher';
 import TimeSeriesChart from './../TimeSeriesChart';
 import MapControls from './../MapControls';
+import DrawFeatures from './../DrawFeatures';
 import { constants } from './../../redux/modules/Widgets';
 import * as labels from './../../constants';
 import BigColorPalette from '../BigColorPalette/BigColorPalette';
@@ -16,6 +17,7 @@ import LayersIcon from '@material-ui/icons/Layers';
 import MapControlsIcon from '@material-ui/icons/MyLocation';
 import InfoIcon from '@material-ui/icons/Description';
 import ChartIcon from '@material-ui/icons/Timeline';
+import DrawIcon from '@material-ui/icons/EditLocation';
 
 const OPACITY = 0.9;
 const styles = {
@@ -69,6 +71,12 @@ const styles = {
     height: '310px',
     overflow: 'auto',
     width: '500px',
+    opacity: OPACITY
+  },
+  customRegions: {
+    height: '400px',
+    overflow: 'auto',
+    width: '400px',
     opacity: OPACITY
   }
 };
@@ -180,6 +188,17 @@ class Visualize extends React.Component {
                   </VisualizeWidget>
                 </div>
                 : null
+            }
+            {
+              <VisualizeWidget
+                title={labels.CUSTOM_REGIONS_WIDGET_TITLE}
+                icon={<DrawIcon />}
+                rootStyle={styles.customRegions}
+                onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_CUSTOM_REGIONS_KEY)}>
+                <DrawFeatures
+                  visualize={this.props.visualize}
+                  visualizeActions={this.props.visualizeActions} />
+              </VisualizeWidget>
             }
           </div>
         </div>

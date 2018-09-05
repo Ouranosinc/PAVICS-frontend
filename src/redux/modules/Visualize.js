@@ -1,5 +1,5 @@
 import myHttp from '../../util/http';
-import WMSCapabilities from 'ol/format/WMSCapabilities';
+import { GeoJSON, WMSCapabilities } from 'ol/format';
 import { NotificationManager } from 'react-notifications';
 import { VISUALIZE_DRAW_MODES, VISUALIZE_SET_MAP_MANIPULATION_MODE, VISUALIZE_MODE_GRID_VALUES} from './../../constants';
 
@@ -26,6 +26,7 @@ export const constants = {
   SET_CURRENT_TIME_ISO: 'Visualize.SET_CURRENT_TIME_ISO',
   SET_CURRENT_DRAWING_TOOL: 'Visualize.SET_CURRENT_DRAWING_TOOL',
   SET_CURRENT_SELECTED_DRAWN_FEATURE: 'Visualize.SET_CURRENT_SELECTED_DRAWN_FEATURE',
+  SAVE_TO_GEO_JSON_DRAWN_FEATURE: 'Visualize.SAVE_TO_GEO_JSON_DRAWN_FEATURE',
   VISUALIZE_SET_VARIABLE_BOUNDARY_VALUES: 'Visualize.VISUALIZE_SET_VARIABLE_BOUNDARY_VALUE',
   // ASYNC
   FETCH_PLOTLY_DATA_REQUEST: 'Visualize.FETCH_PLOTLY_DATA_REQUEST',
@@ -71,6 +72,11 @@ function setCurrentSelectedDrawnFeature (feature) {
   return {
     type: constants.SET_CURRENT_SELECTED_DRAWN_FEATURE,
     currentSelectedDrawnFeature: feature
+  };
+}
+function saveDrawnCustomFeatures () {
+  return {
+    type: constants.SAVE_TO_GEO_JSON_DRAWN_FEATURE,
   };
 }
 function requestPlotlyData () {
@@ -259,6 +265,7 @@ export const actions = {
   setCurrentDateTime: setCurrentDateTime,
   setCurrentDrawingTool: setCurrentDrawingTool,
   setDrawnCustomFeatures: setDrawnCustomFeatures,
+  saveDrawnCustomFeatures: saveDrawnCustomFeatures,
   setCurrentSelectedDrawnFeature: setCurrentSelectedDrawnFeature,
   setLayer: setLayer,
   setSelectedDatasetCapabilities: setSelectedDatasetCapabilities,
@@ -587,6 +594,11 @@ const HANDLERS = {
   [constants.SET_CURRENT_SELECTED_DRAWN_FEATURE]: (state, action) => {
     return ({...state, currentSelectedDrawnFeature: Object.assign({}, action.currentSelectedDrawnFeature)});
   },
+  [constants.SAVE_TO_GEO_JSON_DRAWN_FEATURE]: (state) => {
+    const geoJSONriter= new GeoJSON();
+    const geoJSONString = geoJSONriter.writeFeatures(state.drawnCustomFeatures);
+    return ({...state, geoJSONDrawnFeature: geoJSONString});
+  },
   [constants.FETCH_PLOTLY_DATA_REQUEST]: (state, action) => {
     return ({...state, plotlyData: Object.assign({}, state.plotlyData, action.plotlyData)});
   },
@@ -648,6 +660,7 @@ export const initialState = {
   currentDateTime: '1900-01-01T00:00:00.000Z',
   currentDrawingTool: VISUALIZE_DRAW_MODES.BBOX.value,
   currentSelectedDrawnFeature: null,
+  geoJSONDrawnFeature: '',
   shouldFlushDrawnFeatures: false,
   currentProjectSearchCriterias: [],
   currentProjectDatasets: [],
