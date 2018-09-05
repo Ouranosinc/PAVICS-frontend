@@ -7,6 +7,7 @@ import InformationPanel from '../InformationPanel';
 import LayerSwitcher from '../LayerSwitcher';
 import TimeSeriesChart from './../TimeSeriesChart';
 import MapControls from './../MapControls';
+import DrawFeatures from './../DrawFeatures';
 import SectionalPanel from './../../containers/SectionalPanel';
 import { constants } from './../../redux/modules/Widgets';
 import * as labels from './../../constants';
@@ -17,6 +18,7 @@ import LayersIcon from '@material-ui/icons/Layers';
 import MapControlsIcon from '@material-ui/icons/MyLocation';
 import InfoIcon from '@material-ui/icons/Description';
 import ChartIcon from '@material-ui/icons/Timeline';
+import DrawIcon from '@material-ui/icons/EditLocation';
 
 const OPACITY = 0.9;
 const styles = {
@@ -64,6 +66,9 @@ const styles = {
   },
   layerSwitcher: {
     gridArea: 'span 3 / span 4'
+  },
+  customRegions: {
+    gridArea: 'span 3 / span 3'
   },
   sectionalPanel: {
 
@@ -176,6 +181,21 @@ class Visualize extends React.Component {
                   rootStyle={styles.widget}
                   onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_LAYER_SWITCHER_KEY)}>
                   <LayerSwitcher
+                    visualize={this.props.visualize}
+                    visualizeActions={this.props.visualizeActions} />
+                </VisualizeWidget>
+              </div>
+              : null
+          }
+          {
+            (this.props.widgets.customRegions)?
+              <div style={styles.customRegions}>
+                <VisualizeWidget
+                  title={labels.CUSTOM_REGIONS_WIDGET_TITLE}
+                  icon={<DrawIcon />}
+                  rootStyle={styles.widget}
+                  onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_CUSTOM_REGIONS_KEY)}>
+                  <DrawFeatures
                     visualize={this.props.visualize}
                     visualizeActions={this.props.visualizeActions} />
                 </VisualizeWidget>
