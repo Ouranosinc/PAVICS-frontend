@@ -21,6 +21,8 @@ import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import Collapse from '@material-ui/core/Collapse';
+import ExpendMore from '@material-ui/icons/ExpandMore';
+import ExpendLess from '@material-ui/icons/ExpandLess';
 
 const AVAILABLE_COLOR_PALETTES = [
   'seq-Blues',
@@ -33,7 +35,13 @@ const styles = {
     overflowY: 'auto'
   },
   subHeader: {
-    backgroundColor: 'white'
+    backgroundColor: 'white',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  resetButton: {
+    marginLeft: '24px'
   }
 };
 
@@ -112,6 +120,7 @@ export default class LayerSwitcher extends React.Component {
     return (
       <React.Fragment>
         <Button
+          style={styles.resetButton}
           variant="contained"
           color="primary"
           id="cy-reset-shapefile-btn"
@@ -123,8 +132,13 @@ export default class LayerSwitcher extends React.Component {
             Object.keys(this.props.visualize.publicShapeFiles).map((workspaceName, j) => {
               const workspaceLayers = this.props.visualize.publicShapeFiles[workspaceName];
               return (
-                <div style={styles.subHeader} key={j}>
-                  <ListSubheader onClick={this.makeToggleWorkspaceCallback(workspaceName)}>{workspaceName}</ListSubheader>
+                <React.Fragment key={j}>
+                  <ListSubheader
+                    style={styles.subHeader}
+                    onClick={this.makeToggleWorkspaceCallback(workspaceName)}>
+                    {workspaceName}
+                    {this.state.open[workspaceName] ? <ExpendLess /> : <ExpendMore />}
+                  </ListSubheader>
                   <Collapse in={this.state.open[workspaceName]}>
                   {
                     workspaceLayers.map((shapeFile, i) =>
@@ -142,7 +156,7 @@ export default class LayerSwitcher extends React.Component {
                     )
                   }
                   </Collapse>
-                </div>
+                </React.Fragment>
               );
             })
           }
