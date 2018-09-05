@@ -380,14 +380,21 @@ export const actions = {
   fetchShapefiles: function () {
     return dispatch => {
       const workspaceNames = [];
-      return myHttp.get(`${__PAVICS_GEOSERVER_API_PATH__}/workspaces.json`)
+      return myHttp.get(`${__PAVICS_MAGPIE_PATH__}/users/current/services/geoserver-api/inherited_resources`)
         .then(response => response.json())
         .then(json => {
           const promises = [];
-          json.workspaces.workspace.map(workspace => {
-            workspaceNames.push(workspace.name);
-            const url = `${__PAVICS_GEOSERVER_API_PATH__}/workspaces/${workspace.name}/layers.json`;
-            promises.push(myHttp.get(url));
+          Object.keys(json.service.resources).map(serviceId => {
+            const resource = json.service.resources[serviceId];
+            if (resource.resource_name === 'workspaces') {
+              const workspaces = resource.children;
+              Object.keys(workspaces).map(resourceId => {
+                const workspace = workspaces[resourceId];
+                workspaceNames.push(workspace.resource_name);
+                const url = `${__PAVICS_GEOSERVER_API_PATH__}/workspaces/${workspace.resource_name}/layers.json`;
+                promises.push(myHttp.get(url));
+              });
+            }
           });
           return Promise.all(promises);
         })

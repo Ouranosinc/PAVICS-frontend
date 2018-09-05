@@ -116,6 +116,7 @@ config.globals = {
   '__BASENAME__': JSON.stringify(process.env.BASENAME || ''),
   '__PAVICS_NCWMS_PATH__': JSON.stringify(config.pavics_ncwms_path),
   '__PAVICS_PHOENIX_PATH__': JSON.stringify(config.pavics_phoenix_path),
+  '__PAVICS_MAGPIE_PATH__': JSON.stringify(config.pavics_magpie_host),
   '__PAVICS_GEOSERVER_PATH__': JSON.stringify(config.pavics_geoserver_path),
   '__PAVICS_GEOSERVER_API_PATH__': JSON.stringify(config.pavics_geoserver_api_path),
   '__PAVICS_PROJECT_API_PATH__': JSON.stringify(config.pavics_project_api_path),
