@@ -379,21 +379,44 @@ export const actions = {
   },
   fetchShapefiles: function () {
     return dispatch => {
-      return myHttp.get(`${__PAVICS_GEOSERVER_API_PATH__}/layers.json`)
+      const workspaceNames = [];
+      return myHttp.get(`${__PAVICS_GEOSERVER_API_PATH__}/workspaces.json`)
         .then(response => response.json())
         .then(json => {
+          const promises = [];
+          json.workspaces.workspace.map(workspace => {
+            workspaceNames.push(workspace.name);
+            const url = `${__PAVICS_GEOSERVER_API_PATH__}/workspaces/${workspace.name}/layers.json`;
+            promises.push(myHttp.get(url));
+          });
+          return Promise.all(promises);
+        })
+        .then(allResponses => {
+          const allTransformToJson = [];
+          allResponses.map(res => {
+            allTransformToJson.push(res.json());
+          });
+          return Promise.all(allTransformToJson);
+        })
+        .then(allJson => {
           let layers = {};
-          json.layers.layer.map(layer => {
-            const [workspaceName, layerName] = layer.name.split(':');
-            layers[workspaceName] = layers[workspaceName] || [];
-            layers[workspaceName].push({
-              title: layerName,
-              wmsUrl: `${__PAVICS_GEOSERVER_PATH__}/wms`,
-              wmsParams: {
-                LAYERS: layer.name,
-                TILED: true,
-                FORMAT: 'image/png'
-              }
+          allJson.map((oneRequestLayers, i) => {
+            if (!oneRequestLayers.layers || !oneRequestLayers.layers.layer) {
+              return;
+            }
+            const workspaceName = workspaceNames[i];
+            oneRequestLayers.layers.layer.map(layer => {
+              const layerName = layer.name;
+              layers[workspaceName] = layers[workspaceName] || [];
+              layers[workspaceName].push({
+                title: layerName,
+                wmsUrl: `${__PAVICS_GEOSERVER_PATH__}/wms`,
+                wmsParams: {
+                  LAYERS: `${workspaceName}:${layerName}`,
+                  TILED: true,
+                  FORMAT: 'image/png'
+                }
+              });
             });
           });
           dispatch(setShapefiles(layers));
