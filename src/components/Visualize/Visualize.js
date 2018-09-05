@@ -19,12 +19,13 @@ import MapControlsIcon from '@material-ui/icons/MyLocation';
 import InfoIcon from '@material-ui/icons/Description';
 import ChartIcon from '@material-ui/icons/Timeline';
 import DrawIcon from '@material-ui/icons/EditLocation';
+import classes from './Visualize.scss';
 
 const OPACITY = 0.9;
 const styles = {
   mapContainer: {
     zIndex: 0,
-    padding: 0 ,
+    padding: 0,
     margin: 0,
     width: '100%',
     height: '100%',
@@ -36,46 +37,9 @@ const styles = {
     maxWidth: '65%',
     float: 'left'
   },
-  container: {
-    // width: '50%',
-    display: 'grid',
-    gridColumnGap: '2px',
-    gridGap: '2px',
-    justifyItems: 'stretch',
-    gridAutoFlow: 'dense',
-    // This way, there's always minimum of 6 columns + 5(4+1+n)(min 110px) + 1(40%)
-    gridTemplateColumns: 'repeat(4, minmax(115px, 1fr)) repeat(auto-fit, minmax(115px, 1fr)) [last-col] minmax(45px, 40%) [end-col]', // TODO: 40% -> auto
-    gridTemplateRows: 'repeat(auto-fit, 100px) [last-row] 200px [end-row]',
-  },
   widget: {
     height: '100%',
-    width: '100%',
     opacity: OPACITY
-  },
-  info: {
-    gridArea: 'span 3 / span 4'
-  },
-  chart: {
-    gridArea: 'span 3 / span 4'
-  },
-  timeSlider: {
-    gridArea: 'span 3 / span 5'
-  },
-  mapControls: {
-    gridArea: 'span 3 / span 2'
-  },
-  layerSwitcher: {
-    gridArea: 'span 3 / span 4'
-  },
-  customRegions: {
-    gridArea: 'span 3 / span 3'
-  },
-  sectionalPanel: {
-
-    gridColumn: 'last-col / span 1',
-    gridRow: 'span 16 / end-row', // 16 rows should be enough (max 3x5+1)
-    // gridRowStart: 'span 9000',
-    // gridArea: '1 / last-col/ last-line / span 1'
   }
 };
 
@@ -109,10 +73,11 @@ class Visualize extends React.Component {
         <SpeedDialMenu widgets={this.props.widgets}
                        widgetsActions={this.props.widgetsActions} />
 
-        <div style={styles.container}>
+        <div className={classes.container}>
+          <div className={classes.widgets}>
           {
             (this.props.widgets.info) ?
-              <div style={styles.info}>
+              <div className={classes.info}>
                 <VisualizeWidget
                   title={labels.INFO_WIDGET_TITLE}
                   icon={<InfoIcon />}
@@ -126,7 +91,7 @@ class Visualize extends React.Component {
           }
           {
             (this.props.widgets.chart) ?
-              <div style={styles.chart}>
+              <div className={classes.chart}>
                 <VisualizeWidget
                   title={labels.CHART_WIDGET_TITLE}
                   icon={<ChartIcon />}
@@ -142,7 +107,7 @@ class Visualize extends React.Component {
           }
           {
             (this.props.widgets.timeSlider)?
-              <div style={styles.timeSlider}>
+              <div className={classes.timeSlider}>
                 <VisualizeWidget
                   title={labels.TIME_SLIDER_WIDGET_TITLE}
                   icon={<AccessTimeIcon />}
@@ -159,7 +124,7 @@ class Visualize extends React.Component {
           }
           {
             (this.props.widgets.mapControls)?
-              <div style={styles.mapControls}>
+              <div className={classes.mapControls}>
                 <VisualizeWidget
                   title={labels.MAP_CONTROLS_WIDGET_TITLE}
                   icon={<MapControlsIcon />}
@@ -174,7 +139,7 @@ class Visualize extends React.Component {
           }
           {
             (this.props.widgets.layerSwitcher)?
-              <div style={styles.layerSwitcher}>
+              <div className={classes.layerSwitcher}>
                 <VisualizeWidget
                   title={labels.LAYER_SWITCHER_WIDGET_TITLE}
                   icon={<LayersIcon />}
@@ -189,7 +154,7 @@ class Visualize extends React.Component {
           }
           {
             (this.props.widgets.customRegions)?
-              <div style={styles.customRegions}>
+              <div className={classes.customRegions}>
                 <VisualizeWidget
                   title={labels.CUSTOM_REGIONS_WIDGET_TITLE}
                   icon={<DrawIcon />}
@@ -202,9 +167,7 @@ class Visualize extends React.Component {
               </div>
               : null
           }
-          <div style={styles.sectionalPanel}>
-            <SectionalPanel />
-          </div>
+          <div className={classes.sectionalPanel}><SectionalPanel /></div>
         </div>
       </React.Fragment>
     );
