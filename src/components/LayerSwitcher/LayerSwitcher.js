@@ -54,7 +54,13 @@ export default class LayerSwitcher extends React.Component {
 
   setSelectedShapefile = (event, value) => {
     this.props.visualizeActions.resetSelectedRegions();
-    this.props.visualizeActions.selectShapefile(this.props.visualize.publicShapeFiles.find(f => f.title === value));
+    Object.keys(this.props.visualize.publicShapeFiles).map(workspaceName => {
+      this.props.visualize.publicShapeFiles[workspaceName].map(layer => {
+        if (layer.title === value) {
+          this.props.visualizeActions.selectShapefile(layer);
+        }
+      });
+    });
   };
 
   setSelectedBaseMap = (event, value) => {

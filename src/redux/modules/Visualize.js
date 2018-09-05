@@ -390,7 +390,7 @@ export const actions = {
               title: layerName,
               wmsUrl: `${__PAVICS_GEOSERVER_PATH__}/wms`,
               wmsParams: {
-                LAYERS: layerName,
+                LAYERS: layer.name,
                 TILED: true,
                 FORMAT: 'image/png'
               }
