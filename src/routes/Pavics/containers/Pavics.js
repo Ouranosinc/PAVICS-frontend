@@ -168,6 +168,7 @@ class Pavics extends React.Component {
         }
         errorObject['stack'] = stack;
       }
+      // Commented because of Cesium viewState() Error on 2018-08-24
       // FIXME: NotificationManager.error(message, 'Error', 10000);
       return false;
     }

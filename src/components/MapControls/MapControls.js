@@ -7,10 +7,6 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import Button from'@material-ui/core/Button';
 import FullScreenIcon from '@material-ui/icons/Fullscreen';
 import ExitFullScreenIcon from '@material-ui/icons/FullscreenExit';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Typography from '@material-ui/core/Typography';
 
@@ -51,14 +47,6 @@ export default class MapControls extends React.Component {
     this.props.visualizeActions.selectMapManipulationMode(value);
   };
 
-  onSelectedDrawingTool = (event) => {
-    this.props.visualizeActions.setCurrentDrawingTool(event.target.value);
-  };
-
-  onResetDrawingLayer = () => {
-    this.props.visualizeActions.setDrawnCustomFeatures([]);
-  };
-
   render () {
     return (
       <div className="container">
@@ -85,28 +73,6 @@ export default class MapControls extends React.Component {
               <Radio color="primary" />
             }/>
         </RadioGroup>
-        <Divider style={{marginBottom: '5px'}} />
-        <FormControl fullWidth>
-          <InputLabel htmlFor="cy-drawing-tool">Drawing tool</InputLabel>
-          <Select
-            inputProps={{
-              name: 'cy-drawing-tool'
-            }}
-            value={this.props.visualize.currentDrawingTool}
-            onChange={this.onSelectedDrawingTool}>
-              <MenuItem value="">None</MenuItem>
-              {
-                Object.values(constants.VISUALIZE_DRAW_MODES).map((mode, i) =>
-                  <MenuItem key={i} value={mode.value}>{mode.label}</MenuItem>
-                )
-              }
-          </Select>
-        </FormControl>
-        <Button variant="contained"
-                color="primary"
-                onClick={this.onResetDrawingLayer}>
-          Reset custom drawing
-        </Button>
         <Divider style={{marginBottom: '5px'}} />
         <Typography variant="subheading">
           Toggle Full Screen Mode

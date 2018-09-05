@@ -6,6 +6,7 @@ export const constants = {
   WIDGET_CHART_KEY: 'chart',
   WIDGET_LAYER_SWITCHER_KEY: 'layerSwitcher',
   WIDGET_TIME_SLIDER_KEY: 'timeSlider',
+  WIDGET_CUSTOM_REGIONS_KEY: 'customRegions',
 };
 
 // Actions
@@ -33,6 +34,7 @@ const HANDLERS = {
 // Initial State
 export const initialState = {
   chart: false,
+  customRegions: false,
   info: false,
   mapControls: true,
   timeSlider: true,
