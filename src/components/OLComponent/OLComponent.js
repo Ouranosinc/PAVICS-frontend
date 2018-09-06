@@ -18,6 +18,7 @@ import { add, createStringXY } from 'ol/coordinate';
 import { transform } from 'ol/proj';
 
 import OLBBoxSelector from './../OLBBoxSelector';
+import OLDrawFeatures from './../../containers/OLDrawFeatures';
 // Cesium
 import Cesium from 'cesium/Cesium';
 window.Cesium = Cesium; // expose Cesium to the OL-Cesium library
@@ -102,6 +103,7 @@ class OLComponent extends React.Component {
     this.createPolygonStyleFunction = this.createPolygonStyleFunction.bind(this);
     this.createTextStyle = this.createTextStyle.bind(this);
     this.bboxSelector = React.createRef();
+    this.drawFeatures = React.createRef();
   }
 
   addTileWMSLayer (position, title, source, opacity, extent, visible = true) {
@@ -689,14 +691,19 @@ class OLComponent extends React.Component {
         <div id="map" className="map" style={{'width': '100%', 'height': '100%', 'position': 'fixed'}}>
           <div id="popup" className="ol-popup"></div>
           {
-            <MapContext.Provider value={this.map}>
-              <OLBBoxSelector
+            /*<MapContext.Provider value={this.map}>
+              <<OLBBoxSelector
                 ref={this.bboxSelector}
                 visualize={this.props.visualize}
                 visualizeActions={this.props.visualizeActions}
                 map={this.map}
                 layers={this.layers}
                 queryGeoserverFeatures={this.queryGeoserverFeatures} />
+            </MapContext.Provider>*/
+          }
+          {
+            <MapContext.Provider value={this.map}>
+             <OLDrawFeatures ref={this.drawFeatures} map={this.map} />
             </MapContext.Provider>
           }
         </div>

@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import { routerReducer as router } from 'react-router-redux';
+import customFeatureReducer from './../redux/modules/CustomFeature';
 import { reducers as datasetAPIReducer } from '../redux/modules/DatasetAPI';
 import { reducers as jobAPIReducer } from '../redux/modules/JobAPI';
 import monitorReducer from './../redux/modules/Monitor';
@@ -20,6 +21,7 @@ export const makeRootReducer = (asyncReducers) => {
   return combineReducers({
     // Add sync reducers here
     'router': router,
+    'customFeature': customFeatureReducer,
     'datasetAPI': datasetAPIReducer,
     'jobAPI': jobAPIReducer,
     'monitor': monitorReducer,

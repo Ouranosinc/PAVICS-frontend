@@ -135,8 +135,6 @@ export class OLBBoxSelector extends React.Component {
   }
 
   addBBoxLayer(map) {
-
-
     // Or FeatureOverlay, see http://blog.awesomemap.tools/demo-draw-and-modify-openlayers-3/
     const layer = new VectorLayer({
       source: this.source,
