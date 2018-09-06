@@ -1,15 +1,15 @@
 import myHttp from '../../util/http';
 import { NotificationManager } from 'react-notifications';
-import { VISUALIZE_SET_MAP_MANIPULATION_MODE, VISUALIZE_MODE_GRID_VALUES} from './../../constants';
+import { VISUALIZE_SET_MAP_MANIPULATION_MODE, VISUALIZE_MODE_GRID_VALUES } from './../../constants';
 
 // Constants
 export const constants = {
   // SYNC
   RESET_VISUALIZE_STATE: 'Visualize.RESET_VISUALIZE_STATE',
   SET_WMS_LAYER: 'Visualize.SET_WMS_LAYER',
-  SET_SHAPEFILES: 'Visualize.SET_SHAPEFILES',
+  SET_FEATURE_LAYERS: 'Visualize.SET_FEATURE_LAYERS',
   SET_SELECTED_COLOR_PALETTE: 'Visualize.SET_SELECTED_COLOR_PALETTE',
-  SET_SELECTED_SHAPEFILE: 'Visualize.SET_SELECTED_SHAPEFILE',
+  SET_SELECTED_FEATURE_LAYER: 'Visualize.SET_SELECTED_FEATURE_LAYER',
   SET_SELECTED_BASEMAP: 'Visualize.SET_SELECTED_BASEMAP',
   SET_SELECTED_DATASET_LAYER: 'Visualize.SET_SELECTED_DATASET_LAYER',
   SET_SELECTED_DATASET_CAPABILITIES: 'Visualize.SET_SELECTED_DATASET_CAPABILITIES',
@@ -211,13 +211,13 @@ function setSelectedDatasetCapabilities (capabilities) {
     capabilities: capabilities
   };
 }
-function setShapefiles (shapefiles) {
+function setFeatureLayers (layers) {
   return {
-    type: constants.SET_SHAPEFILES,
-    publicShapeFiles: shapefiles
+    type: constants.SET_FEATURE_LAYERS,
+    featureLayers: layers
   };
 }
-function setLayer (layer) {
+function setDatasetLayer (layer) {
   return {
     type: constants.SET_WMS_LAYER,
     layer: layer
@@ -235,7 +235,7 @@ export const actions = {
   resetVisualizeState: resetVisualizeState,
   addDatasetsToVisualize: addDatasetsToVisualize,
   setCurrentDateTime: setCurrentDateTime,
-  setLayer: setLayer,
+  setLayer: setDatasetLayer,
   setSelectedDatasetCapabilities: setSelectedDatasetCapabilities,
   fetchScalarValue: function (opendapUrl, lat, lon, time, variable) {
     return function (dispatch) {
@@ -347,10 +347,10 @@ export const actions = {
         .catch(error => NotificationManager.error(`Method GetMap failed at being fetched from the NcWMS2 server: ${error}`, 'Error', 10000));
     };
   },
-  selectShapefile: function (shapefile) {
+  selectFeatureLayer: function (layer) {
     return {
-      type: constants.SET_SELECTED_SHAPEFILE,
-      shapefile: shapefile
+      type: constants.SET_SELECTED_FEATURE_LAYER,
+      featureLayer: layer
     };
   },
   selectMapManipulationMode: function (mode) {
@@ -377,7 +377,7 @@ export const actions = {
       palette: palette
     };
   },
-  fetchShapefiles: function () {
+  fetchFeatureLayers: function () {
     return dispatch => {
       const workspaceNames = [];
       return myHttp.get(`${__PAVICS_MAGPIE_PATH__}/users/current/services/geoserver-api/inherited_resources`)
@@ -426,7 +426,7 @@ export const actions = {
               });
             });
           });
-          dispatch(setShapefiles(layers));
+          dispatch(setFeatureLayers(layers));
         });
     };
   },
@@ -475,8 +475,8 @@ const HANDLERS = {
   [constants.SET_WMS_LAYER]: (state, action) => {
     return {...state, layer: action.layer};
   },
-  [constants.SET_SHAPEFILES]: (state, action) => {
-    return {...state, publicShapeFiles: action.publicShapeFiles};
+  [constants.SET_FEATURE_LAYERS]: (state, action) => {
+    return {...state, featureLayers: action.featureLayers};
   },
   [constants.SET_SELECTED_COLOR_PALETTE]: (state, action) => {
     if (state.currentDisplayedDataset.variable && state.variablePreferences[state.currentDisplayedDataset.variable]) {
@@ -494,8 +494,8 @@ const HANDLERS = {
     }
     return {...state, selectedColorPalette: action.palette};
   },
-  [constants.SET_SELECTED_SHAPEFILE]: (state, action) => {
-    return {...state, selectedShapefile: action.shapefile};
+  [constants.SET_SELECTED_FEATURE_LAYER]: (state, action) => {
+    return {...state, selectedFeatureLayer: action.featureLayer};
   },
   [constants.VISUALIZE_SET_VARIABLE_BOUNDARY_VALUES]: (state, action) => {
     return {
@@ -624,12 +624,12 @@ export const initialState = {
   variablePreferences: {},
   mapManipulationMode: VISUALIZE_MODE_GRID_VALUES,
   selectedColorPalette: '',
-  selectedShapefile: {},
+  selectedFeatureLayer: {},
   selectedBasemap: '',
   currentDisplayedDataset: {
     opacity: 0.8
   },
-  publicShapeFiles: [],
+  featureLayers: [],
   baseMaps: [
     'Aerial',
     'Road',

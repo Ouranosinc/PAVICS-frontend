@@ -206,7 +206,7 @@ class OLComponent extends React.Component {
     }
     let extent = [minX, minY, maxX, maxY];
     let url = __PAVICS_GEOSERVER_PATH__ + '/wfs?service=WFS&' +
-      `version=1.1.0&request=GetFeature&typename=${this.props.visualize.selectedShapefile.wmsParams.LAYERS}&` +
+      `version=1.1.0&request=GetFeature&typename=${this.props.visualize.selectedFeatureLayer.wmsParams.LAYERS}&` +
       'outputFormat=application/json&srsname=EPSG:3857&' +
       'bbox=' + extent.join(',') + ',EPSG:3857';
     myHttp.get(url)
@@ -325,8 +325,8 @@ class OLComponent extends React.Component {
     console.log('handling map click:', event);
     switch (this.props.visualize.mapManipulationMode) {
       case constants.VISUALIZE_MODE_REGION_SELECTION:
-        if (this.props.visualize.selectedShapefile.title) {
-          console.log('selected shapefile:', this.props.visualize.selectedShapefile);
+        if (this.props.visualize.selectedFeatureLayer.title) {
+          console.log('selected shapefile:', this.props.visualize.selectedFeatureLayer);
           return this.handleSelectRegionClick(event);
         }
         console.log('choose a shapefile first');
@@ -382,7 +382,7 @@ class OLComponent extends React.Component {
   they are stored as a "map" built from their title
    */
   setShapefile (prevProps) {
-    let shapefile = this.props.visualize.selectedShapefile;
+    let shapefile = this.props.visualize.selectedFeatureLayer;
     console.log('change shapefile:', shapefile);
     this.layers[LAYER_SELECTED_REGIONS].getSource().clear();
     this.map.removeLayer(this.layers[LAYER_REGIONS]);
@@ -545,7 +545,7 @@ class OLComponent extends React.Component {
     if (this.props.visualize.selectedBasemap !== prevProps.visualize.selectedBasemap) {
       this.setBasemap(prevProps);
     }
-    if (this.props.visualize.selectedShapefile !== prevProps.visualize.selectedShapefile) {
+    if (this.props.visualize.selectedFeatureLayer !== prevProps.visualize.selectedFeatureLayer) {
       this.setShapefile(prevProps);
     }
     const newDataset = this.props.visualize.currentDisplayedDataset;

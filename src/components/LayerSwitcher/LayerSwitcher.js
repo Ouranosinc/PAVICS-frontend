@@ -68,21 +68,21 @@ export default class LayerSwitcher extends React.Component {
   }
 
   componentDidUpdate (prevProps, prevState, snapshot) {
-    if (this.props.visualize.publicShapeFiles !== prevProps.visualize.publicShapeFiles) {
-      this.filterLayers();
+    if (this.props.visualize.featureLayers !== prevProps.visualize.featureLayers) {
+      this.filterFeatureLayers();
     }
   }
 
   setTextFilter = event => {
     this.setState({
       textFilter: event.target.value
-    }, this.filterLayers);
+    }, this.filterFeatureLayers);
   };
 
-  filterLayers = () => {
+  filterFeatureLayers = () => {
     let layers = {};
-    Object.keys(this.props.visualize.publicShapeFiles).map(workspaceName => {
-      const theseLayers = this.props.visualize.publicShapeFiles[workspaceName].filter(layer => {
+    Object.keys(this.props.visualize.featureLayers).map(workspaceName => {
+      const theseLayers = this.props.visualize.featureLayers[workspaceName].filter(layer => {
         return layer.title.indexOf(this.state.textFilter) !== -1;
       });
       if (theseLayers.length > 0) {
@@ -94,12 +94,12 @@ export default class LayerSwitcher extends React.Component {
     });
   };
 
-  setSelectedShapefile = (event, value) => {
+  setSelectedFeatureLayer = (event, value) => {
     this.props.visualizeActions.resetSelectedRegions();
-    Object.keys(this.props.visualize.publicShapeFiles).map(workspaceName => {
-      this.props.visualize.publicShapeFiles[workspaceName].map(layer => {
+    Object.keys(this.props.visualize.featureLayers).map(workspaceName => {
+      this.props.visualize.featureLayers[workspaceName].map(layer => {
         if (layer.title === value) {
-          this.props.visualizeActions.selectShapefile(layer);
+          this.props.visualizeActions.selectFeatureLayer(layer);
         }
       });
     });
@@ -130,8 +130,8 @@ export default class LayerSwitcher extends React.Component {
     this.props.visualizeActions.selectColorPalette(event.target.value);
   };
 
-  resetShapefile = () => {
-    this.props.visualizeActions.selectShapefile({});
+  resetFeatureLayer = () => {
+    this.props.visualizeActions.selectFeatureLayer({});
     this.props.visualizeActions.resetSelectedRegions();
   };
 
@@ -148,7 +148,7 @@ export default class LayerSwitcher extends React.Component {
     });
   };
 
-  makeShapefileList () {
+  makeFeatureLayersList () {
     return (
       <React.Fragment>
         <div style={styles.topBar}>
@@ -156,7 +156,7 @@ export default class LayerSwitcher extends React.Component {
             variant="contained"
             color="primary"
             id="cy-reset-shapefile-btn"
-            onClick={this.resetShapefile}>
+            onClick={this.resetFeatureLayer}>
             Reset
           </Button>
           <TextField
@@ -178,16 +178,16 @@ export default class LayerSwitcher extends React.Component {
                   </ListSubheader>
                   <Collapse in={this.state.open[workspaceName]}>
                   {
-                    workspaceLayers.map((shapeFile, i) =>
+                    workspaceLayers.map((layer, i) =>
                       <ListItem
                         className="cy-layerswitcher-shapefile-item"
-                        id={`cy-shapefile-name-${shapeFile.title}`}
+                        id={`cy-shapefile-name-${layer.title}`}
                         key={i}>
                         <RadioGroup
-                          name="selectedShapeFile"
-                          value={this.props.visualize.selectedShapefile.title}
-                          onChange={this.setSelectedShapefile}>
-                          <FormControlLabel value={shapeFile.title} control={<Radio color="secondary" />} label={shapeFile.title} />
+                          name="selectedFeatureLayer"
+                          value={this.props.visualize.selectedFeatureLayer.title}
+                          onChange={this.setSelectedFeatureLayer}>
+                          <FormControlLabel value={layer.title} control={<Radio color="secondary" />} label={layer.title} />
                         </RadioGroup>
                       </ListItem>
                     )
@@ -369,7 +369,7 @@ export default class LayerSwitcher extends React.Component {
         }
         {this.state.tabValue === 1 &&
         <Paper elevation={2}>
-          {this.makeShapefileList()}
+          {this.makeFeatureLayersList()}
         </Paper>
         }
         {this.state.tabValue === 2 &&

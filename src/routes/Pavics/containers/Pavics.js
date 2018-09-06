@@ -124,7 +124,7 @@ class Pavics extends React.Component {
     this.shouldSetDefaultProject = true; // Default project can now be automatically selected
     this.props.projectAPIActions.fetchByMagpieAccessProjects();
     this.props.researchActions.fetchPavicsDatasetsAndFacets('Aggregate', 0);
-    this.props.visualizeActions.fetchShapefiles();
+    this.props.visualizeActions.fetchFeatureLayers();
   }
 
   triggerOnLogoutActions() {
