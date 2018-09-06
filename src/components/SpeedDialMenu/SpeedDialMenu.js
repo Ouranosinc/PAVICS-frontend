@@ -12,7 +12,7 @@ import ChartIcon from '@material-ui/icons/Timeline';
 import LayersIcon from '@material-ui/icons/Layers';
 import MapControlsIcon from '@material-ui/icons/MyLocation';
 import InfoIcon from '@material-ui/icons/Description';
-import DrawIcon from '@material-ui/icons/EditLocation'
+import DrawIcon from '@material-ui/icons/Edit'
 
 const styles = theme => {
   // console.log(theme)

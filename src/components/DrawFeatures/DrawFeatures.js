@@ -1,24 +1,42 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import * as constants from './../../constants';
+import { withStyles } from '@material-ui/core/styles';
+import { connect } from 'react-redux';
+import { bindActionCreators, compose } from 'redux';
+import { VISUALIZE_DRAW_MODES } from './../../constants';
 import Divider from'@material-ui/core/Divider';
-import Radio from'@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
 import Button from'@material-ui/core/Button';
-import FullScreenIcon from '@material-ui/icons/Fullscreen';
-import ExitFullScreenIcon from '@material-ui/icons/FullscreenExit';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
+import { GeoJSON } from 'ol/format';
+import { actions as customFeatureActions } from './../../redux/modules/CustomFeature';
 
-export default class DrawFeatures extends React.Component {
+const styles = theme => ({
+  root: {
+
+  }
+});
+
+const mapStateToProps = (state) => {
+  return {
+    customFeature: state.customFeature
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    customFeatureActions: bindActionCreators({...customFeatureActions}, dispatch),
+  };
+};
+
+class DrawFeatures extends React.Component {
   static propTypes = {
-    visualize: PropTypes.object.isRequired,
-    visualizeActions: PropTypes.object.isRequired
+    customFeature: PropTypes.object.isRequired,
+    customFeatureActions: PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -30,23 +48,37 @@ export default class DrawFeatures extends React.Component {
   }
 
   onSelectedDrawingTool = (event) => {
-    this.props.visualizeActions.setCurrentDrawingTool(event.target.value);
+    this.props.customFeatureActions.setCurrentDrawingTool(event.target.value);
   };
 
   onResetDrawingLayer = () => {
-    this.props.visualizeActions.setDrawnCustomFeatures([]);
+    this.props.customFeatureActions.setDrawnCustomFeatures([]);
   };
 
   onSaveDrawnLayer = () => {
-    this.props.visualizeActions.saveDrawnCustomFeatures([]);
+    const geoJSONriter= new GeoJSON();
+    const geoJSONString = geoJSONriter.writeFeatures(this.props.customFeature.drawnCustomFeatures);
+    this.props.customFeatureActions.setGeoJSONDrawnFeatures(geoJSONString);
   };
 
-  handleTextFieldChange = (event) => {
-    // name or description has changed
-    // this.props.handleChange(event.target.value, this.props.uniqueIdentifier);
+  onNameChanged = (event) => {
+    this.setState({
+      name: event.target.value
+    }, () => {
+      // Notify redux
+    })
+  };
+
+  onDescriptionChanged = (event) => {
+    this.setState({
+      description: event.target.value
+    }, () => {
+      // Notify redux
+    })
   };
 
   render () {
+    const { currentDrawingTool, currentSelectedDrawnFeature } = this.props.customFeature;
     return (
       <div className="container">
         <FormControl fullWidth>
@@ -55,11 +87,11 @@ export default class DrawFeatures extends React.Component {
             inputProps={{
               name: 'cy-drawing-tool'
             }}
-            value={this.props.visualize.currentDrawingTool}
+            value={currentDrawingTool}
             onChange={this.onSelectedDrawingTool}>
             <MenuItem value="">None</MenuItem>
             {
-              Object.values(constants.VISUALIZE_DRAW_MODES).map((mode, i) =>
+              Object.values(VISUALIZE_DRAW_MODES).map((mode, i) =>
                 <MenuItem key={i} value={mode.value}>{mode.label}</MenuItem>
               )
             }
@@ -70,28 +102,38 @@ export default class DrawFeatures extends React.Component {
                 onClick={this.onResetDrawingLayer}>
           Reset
         </Button>
-        <Button variant="contained"
+        <Button style={{marginLeft: '15px'}}
+                variant="contained"
                 color="secondary"
                 onClick={this.onSaveDrawnLayer}>
           Save and upload
         </Button>
-        { /*this.props.visualize.geoJSONDrawnFeature*/ }
-        <Divider style={{marginBottom: '5px'}} />
-        { (this.props.visualize.currentSelectedDrawnFeature) ?
-          <React.Fragment>
-            <Typography variant="subheading">
-              Currently selected polygon
-            </Typography>
-            <TextField
-              fullWidth
-              value={this.props.visualize.currentSelectedDrawnFeature.name}
-              onChange={this.handleTextFieldChange}
-              helperText="Selected feature name"
-              label="Feature name" />
-            <Divider style={{marginBottom: '5px'}} />
-          </React.Fragment>
-          : null }
+        { /*this.props.customFeature.geoJSONDrawnFeature*/ }
+        <Divider style={{margin: '15px 0'}} />
+        <Typography variant="subheading">
+          Currently selected custom region
+        </Typography>
+        <TextField
+          fullWidth
+          disabled={!currentSelectedDrawnFeature}
+          value={(currentSelectedDrawnFeature)?currentSelectedDrawnFeature.name: ''}
+          onChange={this.onNameChanged}
+          label="Selected feature name" />
+        <TextField
+          fullWidth
+          disabled={!currentSelectedDrawnFeature}
+          value={(currentSelectedDrawnFeature)?currentSelectedDrawnFeature.description: ''}
+          onChange={this.onDescriptionChanged}
+          label="Selected feature description" />
       </div>
     );
   }
 }
+
+export default compose(
+  withStyles(styles, {name: 'DrawFeatures'}),
+  connect(mapStateToProps, mapDispatchToProps),
+)(DrawFeatures);
+
+// export default connect(mapStateToProps, mapDispatchToProps)(DrawFeatures);
+

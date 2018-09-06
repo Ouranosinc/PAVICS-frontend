@@ -6,6 +6,8 @@ import { VISUALIZE_DRAW_MODES, VISUALIZE_SET_MAP_MANIPULATION_MODE, VISUALIZE_MO
 // Constants
 export const constants = {
   // SYNC
+  ADD_FEATURE_TO_SELECTED_REGIONS: 'Visualize.ADD_FEATURE_TO_SELECTED_REGIONS',
+  REMOVE_FEATURE_FROM_SELECTED_REGIONS: 'Visualize.REMOVE_FEATURE_FROM_SELECTED_REGIONS',
   RESET_VISUALIZE_STATE: 'Visualize.RESET_VISUALIZE_STATE',
   SET_WMS_LAYER: 'Visualize.SET_WMS_LAYER',
   SET_SHAPEFILES: 'Visualize.SET_SHAPEFILES',
@@ -16,17 +18,10 @@ export const constants = {
   SET_SELECTED_DATASET_CAPABILITIES: 'Visualize.SET_SELECTED_DATASET_CAPABILITIES',
   ADD_DATASETS_TO_VISUALIZE: 'Visualize.ADD_DATASETS_TO_VISUALIZE',
   ADD_SEARCH_CRITERIAS_TO_PROJECTS: 'Visualize.ADD_SEARCH_CRITERIAS_TO_PROJECTS',
-  ADD_FEATURE_TO_SELECTED_REGIONS: 'Visualize.ADD_FEATURE_TO_SELECTED_REGIONS',
-  REMOVE_FEATURE_FROM_SELECTED_REGIONS: 'Visualize.REMOVE_FEATURE_FROM_SELECTED_REGIONS',
-  RESET_SELECTED_REGIONS: 'Visualize.RESET_SELECTED_REGIONS',
-  SET_DRAWN_CUSTOM_FEATURES: 'Visualize.SET_DRAWN_CUSTOM_FEATURES',
   REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS: 'Visualize.REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS',
   ADD_DATASETS_TO_PROJECTS: 'Visualize.ADD_DATASETS_TO_PROJECTS',
   CLICK_TOGGLE_PANEL: 'Visualize.CLICK_TOGGLE_PANEL',
   SET_CURRENT_TIME_ISO: 'Visualize.SET_CURRENT_TIME_ISO',
-  SET_CURRENT_DRAWING_TOOL: 'Visualize.SET_CURRENT_DRAWING_TOOL',
-  SET_CURRENT_SELECTED_DRAWN_FEATURE: 'Visualize.SET_CURRENT_SELECTED_DRAWN_FEATURE',
-  SAVE_TO_GEO_JSON_DRAWN_FEATURE: 'Visualize.SAVE_TO_GEO_JSON_DRAWN_FEATURE',
   VISUALIZE_SET_VARIABLE_BOUNDARY_VALUES: 'Visualize.VISUALIZE_SET_VARIABLE_BOUNDARY_VALUE',
   // ASYNC
   FETCH_PLOTLY_DATA_REQUEST: 'Visualize.FETCH_PLOTLY_DATA_REQUEST',
@@ -60,23 +55,6 @@ function setCurrentDateTime (datetime) {
   return {
     type: constants.SET_CURRENT_TIME_ISO,
     currentDateTime: datetime
-  };
-}
-function setCurrentDrawingTool (tool) {
-  return {
-    type: constants.SET_CURRENT_DRAWING_TOOL,
-    currentDrawingTool: tool
-  };
-}
-function setCurrentSelectedDrawnFeature (feature) {
-  return {
-    type: constants.SET_CURRENT_SELECTED_DRAWN_FEATURE,
-    currentSelectedDrawnFeature: feature
-  };
-}
-function saveDrawnCustomFeatures () {
-  return {
-    type: constants.SAVE_TO_GEO_JSON_DRAWN_FEATURE,
   };
 }
 function requestPlotlyData () {
@@ -214,12 +192,6 @@ function restoreInitialSelectedRegions () {
     type: constants.RESET_SELECTED_REGIONS
   };
 }
-function setDrawnCustomFeatures (features) {
-  return {
-    type: constants.SET_DRAWN_CUSTOM_FEATURES,
-    drawnCustomFeatures: features
-  };
-}
 function addFeatureIdToSelectedRegions (featureId) {
   console.log('about to return the actual action handler');
   return {
@@ -263,10 +235,6 @@ export const actions = {
   resetVisualizeState: resetVisualizeState,
   addDatasetsToVisualize: addDatasetsToVisualize,
   setCurrentDateTime: setCurrentDateTime,
-  setCurrentDrawingTool: setCurrentDrawingTool,
-  setDrawnCustomFeatures: setDrawnCustomFeatures,
-  saveDrawnCustomFeatures: saveDrawnCustomFeatures,
-  setCurrentSelectedDrawnFeature: setCurrentSelectedDrawnFeature,
   setLayer: setLayer,
   setSelectedDatasetCapabilities: setSelectedDatasetCapabilities,
   fetchScalarValue: function (opendapUrl, lat, lon, time, variable) {
@@ -476,9 +444,6 @@ const HANDLERS = {
   [constants.RESET_SELECTED_REGIONS]: (state) => {
     return {...state, selectedRegions: []};
   },
-  [constants.SET_DRAWN_CUSTOM_FEATURES]: (state, action) => {
-    return {...state, drawnCustomFeatures: action.drawnCustomFeatures.slice()};
-  },
   [constants.SET_WMS_LAYER]: (state, action) => {
     return {...state, layer: action.layer};
   },
@@ -588,17 +553,6 @@ const HANDLERS = {
   [constants.SET_CURRENT_TIME_ISO]: (state, action) => {
     return ({...state, currentDateTime: action.currentDateTime});
   },
-  [constants.SET_CURRENT_DRAWING_TOOL]: (state, action) => {
-    return ({...state, currentDrawingTool: action.currentDrawingTool});
-  },
-  [constants.SET_CURRENT_SELECTED_DRAWN_FEATURE]: (state, action) => {
-    return ({...state, currentSelectedDrawnFeature: Object.assign({}, action.currentSelectedDrawnFeature)});
-  },
-  [constants.SAVE_TO_GEO_JSON_DRAWN_FEATURE]: (state) => {
-    const geoJSONriter= new GeoJSON();
-    const geoJSONString = geoJSONriter.writeFeatures(state.drawnCustomFeatures);
-    return ({...state, geoJSONDrawnFeature: geoJSONString});
-  },
   [constants.FETCH_PLOTLY_DATA_REQUEST]: (state, action) => {
     return ({...state, plotlyData: Object.assign({}, state.plotlyData, action.plotlyData)});
   },
@@ -654,13 +608,9 @@ export const initialState = {
     'AerialWithLabels'
   ],
   layer: {},
-  drawnCustomFeatures: [],
   selectedFacets: [],
   selectedRegions: [],
   currentDateTime: '1900-01-01T00:00:00.000Z',
-  currentDrawingTool: VISUALIZE_DRAW_MODES.BBOX.value,
-  currentSelectedDrawnFeature: null,
-  geoJSONDrawnFeature: '',
   shouldFlushDrawnFeatures: false,
   currentProjectSearchCriterias: [],
   currentProjectDatasets: [],

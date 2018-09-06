@@ -7,7 +7,7 @@ import InformationPanel from '../InformationPanel';
 import LayerSwitcher from '../LayerSwitcher';
 import TimeSeriesChart from './../TimeSeriesChart';
 import MapControls from './../MapControls';
-import DrawFeatures from './../DrawFeatures';
+import WidgetDrawFeaturesContainer from './../../containers/WidgetDrawFeatures';
 import { constants } from './../../redux/modules/Widgets';
 import * as labels from './../../constants';
 import BigColorPalette from '../BigColorPalette/BigColorPalette';
@@ -17,7 +17,7 @@ import LayersIcon from '@material-ui/icons/Layers';
 import MapControlsIcon from '@material-ui/icons/MyLocation';
 import InfoIcon from '@material-ui/icons/Description';
 import ChartIcon from '@material-ui/icons/Timeline';
-import DrawIcon from '@material-ui/icons/EditLocation';
+import DrawIcon from '@material-ui/icons/Edit';
 
 const OPACITY = 0.9;
 const styles = {
@@ -197,9 +197,7 @@ class Visualize extends React.Component {
                   icon={<DrawIcon />}
                   rootStyle={styles.customRegions}
                   onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_CUSTOM_REGIONS_KEY)}>
-                  <DrawFeatures
-                    visualize={this.props.visualize}
-                    visualizeActions={this.props.visualizeActions} />
+                  <WidgetDrawFeaturesContainer />
                 </VisualizeWidget>
                 </div>
                 : null

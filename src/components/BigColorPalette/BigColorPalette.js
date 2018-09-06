@@ -6,7 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import TextField from'@material-ui/core/TextField';
 import * as constants from '../../constants';
-import {NotificationManager} from 'react-notifications';
+import { NotificationManager } from 'react-notifications';
 import { actions as visualizeActions } from './../../redux/modules/Visualize';
 
 const ARBITRARY_MAX_DECIMAL_QUANTITY = 15;
