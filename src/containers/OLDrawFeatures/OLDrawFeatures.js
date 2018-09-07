@@ -6,7 +6,7 @@ import { VISUALIZE_DRAW_MODES } from './../../constants';
 import { Draw, Modify, Select, Snap } from 'ol/interaction';
 import { GeoJSON, WMSCapabilities } from 'ol/format';
 import { createRegularPolygon, createBox } from 'ol/interaction/Draw';
-import { platformModifierKeyOnly, shiftKeyOnly, singleClick, doubleClick } from 'ol/events/condition';
+import { platformModifierKeyOnly, altKeyOnly, shiftKeyOnly, singleClick, doubleClick } from 'ol/events/condition';
 import { Vector as VectorSource } from 'ol/source';
 import { Vector as VectorLayer } from 'ol/layer';
 import { Circle, Fill, Text, Stroke, Style, RegularShape } from 'ol/style';
@@ -107,6 +107,10 @@ class OLDrawFeatures extends React.Component {
     this.source = new VectorSource();
     this.layer = this.createDrawnFeaturesLayer(map);
     this.select = new Select({
+      features: this.source.getFeatures(), // Prevent public regions from being selected and edited
+      condition: function(mapBrowserEvent) {
+        return singleClick(mapBrowserEvent) && altKeyOnly(mapBrowserEvent);
+      },
       style: (feature, resolution) => {
         return [
           new Style({
@@ -122,6 +126,7 @@ class OLDrawFeatures extends React.Component {
     });
 
     // Activate hand cursor when underlying event
+    // FIXME: Interfer with public regions layer selections
     map.on('pointermove', function(e) {
       if (e.dragging) return;
       let hit = map.hasFeatureAtPixel(map.getEventPixel(e.originalEvent));

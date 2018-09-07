@@ -251,28 +251,6 @@ export class OLBBoxSelector extends React.Component {
     }
   }
 
-  initBBoxRegionSelector (nextProps) {
-    const { map } = nextProps;
-    // a DragBox interaction used to select features by drawing boxes
-    let dragBox = new DragBox({
-      condition: platformModifierKeyOnly,
-      style: new Style({
-        stroke: new Stroke({ color: 'rgba(255,255,255,0.7)' }),
-        fill: new Fill({ color: 'rgba(255,255,255,0.3)' })
-      })
-    });
-    map.addInteraction(dragBox);
-    dragBox.on('boxend', () => this.onDragBoxEnd(dragBox));
-    // clear selection when drawing a new box and when clicking on the map
-    dragBox.on('boxstart', () => {}/*selectedFeatures.clear()*/);
-  }
-
-  onDragBoxEnd(dragBox) {
-    let extent = dragBox.getGeometry().getExtent();
-    this.props.queryGeoserverFeatures(extent);
-  };
-
-
   render () {
     return null;
   }
