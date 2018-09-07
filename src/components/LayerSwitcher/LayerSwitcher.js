@@ -33,6 +33,8 @@ const styles = {
 
 export default class LayerSwitcher extends React.Component {
   static propTypes = {
+    region: PropTypes.object.isRequired,
+    regionActions: PropTypes.object.isRequired,
     visualize: PropTypes.object.isRequired,
     visualizeActions: PropTypes.object.isRequired
   };
@@ -46,12 +48,12 @@ export default class LayerSwitcher extends React.Component {
   }
 
   componentDidMount () {
-    this.props.visualizeActions.fetchShapefiles();
+    this.props.regionActions.fetchShapefiles();
   }
 
   setSelectedShapefile = (event, value) => {
-    this.props.visualizeActions.resetSelectedRegions();
-    this.props.visualizeActions.selectShapefile(this.props.visualize.publicShapeFiles.find(f => f.title === value));
+    this.props.regionActions.resetSelectedRegions();
+    this.props.regionActions.selectShapefile(this.props.region.publicShapeFiles.find(f => f.title === value));
   };
 
   setSelectedBaseMap = (event, value) => {
@@ -80,8 +82,8 @@ export default class LayerSwitcher extends React.Component {
   };
 
   resetShapefile = () => {
-    this.props.visualizeActions.selectShapefile({});
-    this.props.visualizeActions.resetSelectedRegions();
+    this.props.regionActions.selectShapefile({});
+    this.props.regionActions.resetSelectedRegions();
   };
 
   resetDatasetLayer = () => {
@@ -105,14 +107,14 @@ export default class LayerSwitcher extends React.Component {
         </ListSubheader>
         <List>
           {
-            this.props.visualize.publicShapeFiles.map( (shapeFile, i) =>
+            this.props.region.publicShapeFiles.map( (shapeFile, i) =>
               <ListItem
                 className="cy-layerswitcher-shapefile-item"
                 id={`cy-shapefile-name-${shapeFile.title}`}// `
                 key={i}>
                 <RadioGroup
                   name="selectedShapeFile"
-                  value={this.props.visualize.selectedShapefile.title}
+                  value={this.props.region.selectedShapefile.title}
                   onChange={this.setSelectedShapefile}>
                   <FormControlLabel value={shapeFile.title} control={<Radio color="secondary" />} label={shapeFile.title} />
                 </RadioGroup>

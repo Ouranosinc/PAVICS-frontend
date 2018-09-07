@@ -1,16 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import * as labels from './../../constants';
+import { constants } from './../../redux/modules/Widgets';
 import OLComponent from '../OLComponent';
 import SpeedDialMenu from '../SpeedDialMenu'
 import TimeSlider from '../TimeSlider';
 import InformationPanel from '../InformationPanel';
-import LayerSwitcher from '../LayerSwitcher';
 import TimeSeriesChart from './../TimeSeriesChart';
 import MapControls from './../MapControls';
-import WidgetDrawFeaturesContainer from './../../containers/WidgetDrawFeatures';
-import SectionalPanel from './../../containers/SectionalPanel';
-import { constants } from './../../redux/modules/Widgets';
-import * as labels from './../../constants';
 import BigColorPalette from '../BigColorPalette/BigColorPalette';
 import VisualizeWidget from './VisualizeWidget';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
@@ -20,6 +17,10 @@ import InfoIcon from '@material-ui/icons/Description';
 import ChartIcon from '@material-ui/icons/Timeline';
 import DrawIcon from '@material-ui/icons/Edit';
 import classes from './Visualize.scss';
+// FIXME: Widgets to containers
+import WidgetDrawFeaturesContainer from './../../containers/WidgetDrawFeatures';
+import WidgetLayerSwitcherContainer from './../../containers/WidgetLayerSwitcher';
+import SectionalPanel from './../../containers/SectionalPanel';
 
 const OPACITY = 0.9;
 const styles = {
@@ -145,9 +146,7 @@ class Visualize extends React.Component {
                     icon={<LayersIcon />}
                     rootStyle={styles.widget}
                     onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_LAYER_SWITCHER_KEY)}>
-                    <LayerSwitcher
-                      visualize={this.props.visualize}
-                      visualizeActions={this.props.visualizeActions} />
+                    <WidgetLayerSwitcherContainer />
                   </VisualizeWidget>
                 </div>
                 : null
