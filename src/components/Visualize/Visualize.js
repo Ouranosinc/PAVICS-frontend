@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import * as labels from './../../constants';
+import { constants } from './../../redux/modules/Widgets';
 import OLComponent from '../OLComponent';
 import SpeedDialMenu from '../SpeedDialMenu'
 import TimeSlider from '../TimeSlider';
 import InformationPanel from '../InformationPanel';
-import LayerSwitcher from '../LayerSwitcher';
 import TimeSeriesChart from './../TimeSeriesChart';
 import MapControls from './../MapControls';
-import WidgetDrawFeaturesContainer from './../../containers/WidgetDrawFeatures';
 import { constants } from './../../redux/modules/Widgets';
 import * as labels from './../../constants';
 import BigColorPalette from '../BigColorPalette/BigColorPalette';
@@ -18,6 +18,9 @@ import MapControlsIcon from '@material-ui/icons/MyLocation';
 import InfoIcon from '@material-ui/icons/Description';
 import ChartIcon from '@material-ui/icons/Timeline';
 import DrawIcon from '@material-ui/icons/Edit';
+// FIXME: Widgets to containers
+import WidgetDrawFeaturesContainer from './../../containers/WidgetDrawFeatures';
+import WidgetLayerSwitcherContainer from './../../containers/WidgetLayerSwitcher';
 
 const OPACITY = 0.9;
 const styles = {
@@ -182,9 +185,7 @@ class Visualize extends React.Component {
                     icon={<LayersIcon />}
                     rootStyle={styles.layerSwitcher}
                     onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_LAYER_SWITCHER_KEY)}>
-                    <LayerSwitcher
-                      visualize={this.props.visualize}
-                      visualizeActions={this.props.visualizeActions} />
+                    <WidgetLayerSwitcherContainer />
                   </VisualizeWidget>
                 </div>
                 : null

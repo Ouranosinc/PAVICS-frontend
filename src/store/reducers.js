@@ -6,6 +6,7 @@ import { reducers as jobAPIReducer } from '../redux/modules/JobAPI';
 import monitorReducer from './../redux/modules/Monitor';
 import projectReducer from './../redux/modules/Project';
 import { reducers as projectAPIReducer } from '../redux/modules/ProjectAPI';
+import regionReducer from './../redux/modules/Region';
 import researchReducer from './../redux/modules/Research';
 import { reducers as ResearchAPIReducer } from '../redux/modules/ResearchAPI';
 import researcherReducer from './../redux/modules/Researcher';
@@ -27,6 +28,7 @@ export const makeRootReducer = (asyncReducers) => {
     'monitor': monitorReducer,
     'project': projectReducer,
     'projectAPI': projectAPIReducer,
+    'region': regionReducer,
     'research': researchReducer,
     'researchAPI': ResearchAPIReducer,
     'researcher': researcherReducer,

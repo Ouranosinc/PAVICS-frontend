@@ -8,16 +8,6 @@ import { actions as visualizeActions } from '../../redux/modules/Visualize';
 import { actions as widgetsActions } from '../../redux/modules/Widgets';
 import Visualize from './../../components/Visualize';
 
-class VisualizeContainer extends React.Component {
-  static propTypes = {};
-
-  render () {
-    return (
-      <Visualize {...this.props} />
-    );
-  }
-}
-
 const mapStateToProps = (state) => {
   return {
     project: state.project,
@@ -38,4 +28,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(VisualizeContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(Visualize);

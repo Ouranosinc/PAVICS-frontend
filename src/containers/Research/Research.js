@@ -12,21 +12,6 @@ import { actions as sessionActions } from '../../redux/modules/Session';
 import { actions as visualizeActions } from '../../redux/modules/Visualize';
 import SearchCatalog from './../../components/SearchCatalog';
 
-export class ResearchContainer extends React.Component {
-  static propTypes = {};
-
-  constructor(props) {
-    super(props);
-  }
-
-
-  render () {
-    return (
-      <SearchCatalog {...this.props} />
-    )
-  }
-}
-
 const mapStateToProps = (state) => {
   return {
     datasetAPI: state.datasetAPI,
@@ -53,4 +38,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ResearchContainer)
+)(SearchCatalog)

@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ProjectManagement from './../../components/ProjectManagement';
@@ -10,21 +9,6 @@ import { actions as researchActions } from './../../redux/modules/Research';
 import { actions as researchAPIActions } from '../../redux/modules/ResearchAPI';
 import { actions as sectionActions } from '../../redux/modules/Section';
 import { actions as visualizeActions } from '../../redux/modules/Visualize';
-
-export class ProjectManagementContainer extends React.Component {
-  static propTypes = {};
-
-  constructor(props) {
-    super(props);
-  }
-
-
-  render () {
-    return (
-      <ProjectManagement {...this.props} />
-    )
-  }
-}
 
 const mapStateToProps = (state) => {
   return {
@@ -49,7 +33,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ProjectManagementContainer)
+export default connect(mapStateToProps, mapDispatchToProps)(ProjectManagement)

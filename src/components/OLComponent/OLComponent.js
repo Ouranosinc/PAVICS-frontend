@@ -18,6 +18,8 @@ import { add, createStringXY } from 'ol/coordinate';
 import { transform } from 'ol/proj';
 
 import OLBBoxSelector from './../OLBBoxSelector';
+import OLRegionsRenderer from './../../containers/OLRegionsRenderer';
+import OLRegionsSelector from './../../containers/OLRegionsSelector';
 import OLDrawFeatures from './../../containers/OLDrawFeatures';
 // Cesium
 import Cesium from 'cesium/Cesium';
@@ -38,7 +40,7 @@ import { NotificationManager } from 'react-notifications';
 let G_BING_API_KEY = 'AtXX65CBBfZXBxm6oMyf_5idMAMI7W6a5GuZ5acVcrYi6lCQayiiBz7_aMHB7JR7';
 const INDEX_BASE_MAP = -10;
 const INDEX_DATASET_LAYER = 1;
-const INDEX_SHAPEFILE = 10;
+const INDEX_REGIONS = 10;
 const INDEX_SELECTED_REGIONS = 100;
 const LAYER_SELECTED_REGIONS = 'LAYER_SELECTED_REGIONS';
 const LAYER_REGIONS = 'LAYER_REGIONS';
@@ -50,15 +52,6 @@ function datasetHasWmsUrls (dataset) {
   return !!(dataset.wms_url && dataset.wms_url.length > 0);
 }
 
-function getMaxPoly (polys) {
-  const polyObj = [];
-  for (let b = 0; b < polys.length; b++) {
-    polyObj.push({ poly: polys[b], area: polys[b].getArea() });
-  }
-  polyObj.sort(function (a, b) { return a.area - b.area });
-  return polyObj[polyObj.length - 1].poly;
-}
-
 const MapContext = React.createContext({
   map: null,
 });
@@ -67,24 +60,6 @@ class OLComponent extends React.Component {
   static propTypes = {
     visualize: PropTypes.object.isRequired,
     visualizeActions: PropTypes.object.isRequired
-  };
-
-  config = {
-    polygons: {
-      text: 'normal',
-      align: 'center',
-      baseline: 'middle',
-      rotation: 0,
-      font: 'inherit',
-      weight: 'bold',
-      size: '10px',
-      offsetX: 0,
-      offsetY: 0,
-      color: 'blue',
-      outline: 'white',
-      outlineWidth: 3,
-      maxreso: 1200
-    }
   };
 
   constructor (props) {
@@ -98,10 +73,7 @@ class OLComponent extends React.Component {
       dialogContent: '',
       dialogOpened: false
     };
-    this.handleMapClick = this.handleMapClick.bind(this);
     this.handleClose = this.handleClose.bind(this);
-    this.createPolygonStyleFunction = this.createPolygonStyleFunction.bind(this);
-    this.createTextStyle = this.createTextStyle.bind(this);
     this.bboxSelector = React.createRef();
     this.drawFeatures = React.createRef();
   }
@@ -178,10 +150,6 @@ class OLComponent extends React.Component {
       maxZoom: maxZoom,
       slider: true
     });*/
-    var vectorSource = new VectorSource({
-      url: 'https://openlayers.org/en/latest/examples/data/geojson/countries.geojson',
-      format: new GeoJSON()
-    });
 
     this.map = new Map(
       {
@@ -216,92 +184,6 @@ class OLComponent extends React.Component {
     // this.bboxSelector.current.initBBoxSelector(this.map);
   }
 
-  createVectorLayer (nameId) {
-    let source = new VectorSource(
-      {
-        format: new GeoJSON()
-      }
-    );
-    let layer = new VectorLayer(
-      {
-        source: source,
-        style: this.createPolygonStyleFunction(),
-        opacity: 1
-      }
-    );
-    layer.set('nameId', nameId);
-    return layer;
-  }
-
-  queryGeoserverFeatures = (extent, projection = 'EPSG:3857')  => {
-    if(this.props.visualize.selectedShapefile && this.props.visualize.selectedShapefile.wmsParams) {
-      const url = `${__PAVICS_GEOSERVER_PATH__}/wfs?service=WFS&version=1.1.0&request=GetFeature&typename=${this.props.visualize.selectedShapefile.wmsParams.LAYERS}&outputFormat=application/json&srsname=${projection}&bbox=${extent},${projection}`;
-      myHttp.get(url)
-        .then(
-          response => response.json(),
-          err => console.log(err))
-        .then(
-          response => this.selectFeaturesCallback(response),
-          err => console.log(err)
-        )
-    }
-  };
-
-  selectFeaturesCallback(response) {
-    console.log('selected regions before click:', this.props.visualize.selectedRegions);
-    response.features.forEach((feature) => {
-      const id = feature.id;
-      if (this.props.visualize.selectedRegions.indexOf(id) !== -1) {
-        console.log('removing feature', id);
-        // WPs form liste to visualize.selectedRegions value
-        this.props.visualizeActions.unselectRegion(id);
-        let feature = this.layers[LAYER_SELECTED_REGIONS].getSource().getFeatures().find(elem => elem.id_ === id);
-        this.layers[LAYER_SELECTED_REGIONS].getSource().removeFeature(feature);
-      } else {
-        console.log('adding feature', id);
-        this.props.visualizeActions.selectRegion(id);
-        let format = new GeoJSON();
-        let features = format.readFeatures(response, {featureProjection: 'EPSG:3857'});
-        console.log('adding feature named', features[0].name);
-        console.log('received response:', response);
-        console.log('received feature:', features);
-        this.layers[LAYER_SELECTED_REGIONS].getSource().addFeatures(features);
-      }
-    });
-  }
-
-
-  calculateClickPositionExtent(pixel) {
-    let coordinates = this.map.getCoordinateFromPixel(pixel);
-    let tl = add(coordinates, [-10e-6, -10e-6]);
-    let br = add(coordinates, [10e-6, 10e-6]);
-    let minX;
-    let maxX;
-    if (tl[0] < br[0]) {
-      minX = tl[0];
-      maxX = br[0];
-    } else {
-      minX = br[0];
-      maxX = tl[0];
-    }
-    let minY;
-    let maxY;
-    if (tl[1] < br[1]) {
-      minY = tl[1];
-      maxY = br[1];
-    } else {
-      minY = br[1];
-      maxY = tl[1];
-    }
-    return [minX, minY, maxX, maxY];
-  }
-
-
-  handleSelectRegionClick (event) {
-    let extent = this.calculateClickPositionExtent(event.pixel);
-    this.queryGeoserverFeatures(extent);
-  }
-
   stringDivider (str, lineLength, addedCharacter) {
     let result = '';
     while (str.length > 0) {
@@ -309,70 +191,6 @@ class OLComponent extends React.Component {
       str = str.substring(lineLength);
     }
     return result;
-  }
-
-  getText (feature, resolution, dom) {
-    let type = dom.text.value;
-    let maxResolution = dom.maxreso.value;
-    let text = feature.id_;
-
-    if (resolution > maxResolution) {
-      text = '';
-    } else if (type === 'hide') {
-      text = '';
-    } else if (type === 'shorten') {
-      text = text.trunc(12);
-    } else if (type === 'wrap') {
-      text = this.stringDivider(text, 16, '\n');
-    }
-    return text;
-  }
-
-  createTextStyle (feature, resolution, dom) {
-    let align = dom.align;
-    let baseline = dom.baseline;
-    let size = dom.size;
-    let offsetX = parseInt(dom.offsetX, 10);
-    let offsetY = parseInt(dom.offsetY, 10);
-    let weight = dom.weight;
-    let rotation = parseFloat(dom.rotation);
-    let font = weight + ' ' + size + ' ' + dom.font;
-    let fillColor = dom.color;
-    let outlineColor = dom.outline;
-    let outlineWidth = parseInt(dom.outlineWidth, 10);
-    return new Text({
-      textAlign: align,
-      textBaseline: baseline,
-      font: font,
-      text: this.getText(feature, resolution, dom),
-      fill: new Fill({color: fillColor}),
-      stroke: new Stroke({color: outlineColor, width: outlineWidth}),
-      offsetX: offsetX,
-      offsetY: offsetY,
-      rotation: rotation
-    });
-  }
-
-  createPolygonStyleFunction () {
-    return (feature, resolution) => {
-      // first style is the actual filling of the region
-      // second is the label with added hack to work around multi polygons having multiple labels
-      return [
-        new Style({
-          stroke: new Stroke({ color: 'rgba(255,255,255,0.5)' }),
-          fill: new Fill({ color: 'rgba(0,255,255,0.5)' })
-        }),
-        new Style({
-          text: this.createTextStyle(feature, resolution, this.config.polygons),
-          geometry: feature => {
-            if (feature.getGeometry().getType() === 'MultiPolygon') {
-              return getMaxPoly(feature.getGeometry().getPolygons()).getInteriorPoint();
-            }
-            return feature.getGeometry().getInteriorPoint();
-          }
-        })
-      ];
-    };
   }
 
   getScalarValue (event) {
@@ -388,33 +206,10 @@ class OLComponent extends React.Component {
     this.props.visualizeActions.fetchScalarValue(opendapUrl, lat, lon, time, variable);
   }
 
-  handleMapClick (event) {
-    console.log('handling map click:', event);
-    switch (this.props.visualize.mapManipulationMode) {
-      case constants.VISUALIZE_MODE_REGION_SELECTION:
-        if (this.props.visualize.selectedShapefile.title) {
-          console.log('selected shapefile:', this.props.visualize.selectedShapefile);
-          return this.handleSelectRegionClick(event);
-        }
-        console.log('choose a shapefile first');
-        return;
-      case constants.VISUALIZE_MODE_GRID_VALUES:
-        if (this.props.visualize.currentDisplayedDataset['dataset_id']) {
-          console.log('selected dataset:', this.props.visualize.currentDisplayedDataset);
-          return this.getScalarValue(event);
-        }
-        console.log('choose a dataset first');
-        return;
-    }
-  }
-
   componentDidMount () {
     this.initMap();
     // REFACTOR THIS PLEASE USING INTERACTION API
     // this.map.addEventListener('click', this.handleMapClick);
-    let layer = this.createVectorLayer(LAYER_SELECTED_REGIONS);
-    this.map.getLayers().insertAt(INDEX_SELECTED_REGIONS, layer);
-    this.layers[LAYER_SELECTED_REGIONS] = layer;
   }
 
   componentWillUnmount () {
@@ -447,29 +242,6 @@ class OLComponent extends React.Component {
   setBasemap (prevProps) {
     this.removeBasemap(prevProps)
     this.addBingLayer(this.props.visualize.selectedBasemap, this.props.visualize.selectedBasemap);
-  }
-
-  /*
-  this depends on the previous props because of the way we keep track of the ol layers
-  they are stored as a "map" built from their title
-   */
-  setShapefile (prevProps) {
-    let shapefile = this.props.visualize.selectedShapefile;
-    console.log('change shapefile:', shapefile);
-    this.layers[LAYER_SELECTED_REGIONS].getSource().clear();
-    this.map.removeLayer(this.layers[LAYER_REGIONS]);
-    let source = new TileWMS(
-      {
-        url: shapefile.wmsUrl,
-        params: shapefile.wmsParams
-      }
-    );
-    this.addTileWMSLayer(
-      INDEX_SHAPEFILE,
-      LAYER_REGIONS,
-      source,
-      0.4
-    );
   }
 
   findDimension (dimensions, dimensionName) {
@@ -701,11 +473,9 @@ class OLComponent extends React.Component {
                 queryGeoserverFeatures={this.queryGeoserverFeatures} />
             </MapContext.Provider>*/
           }
-          {
-            <MapContext.Provider value={this.map}>
-             <OLDrawFeatures ref={this.drawFeatures} map={this.map} />
-            </MapContext.Provider>
-          }
+          <OLDrawFeatures map={this.map} />
+          <OLRegionsRenderer layerName={LAYER_REGIONS} layerIndex={INDEX_REGIONS} map={this.map} />
+          <OLRegionsSelector layerName={LAYER_SELECTED_REGIONS} layerIndex={INDEX_SELECTED_REGIONS} map={this.map} />
         </div>
         <Dialog
           onClose={this.handleClose}

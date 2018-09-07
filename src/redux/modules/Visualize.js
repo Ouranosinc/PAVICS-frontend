@@ -6,13 +6,9 @@ import { VISUALIZE_DRAW_MODES, VISUALIZE_SET_MAP_MANIPULATION_MODE, VISUALIZE_MO
 // Constants
 export const constants = {
   // SYNC
-  ADD_FEATURE_TO_SELECTED_REGIONS: 'Visualize.ADD_FEATURE_TO_SELECTED_REGIONS',
-  REMOVE_FEATURE_FROM_SELECTED_REGIONS: 'Visualize.REMOVE_FEATURE_FROM_SELECTED_REGIONS',
   RESET_VISUALIZE_STATE: 'Visualize.RESET_VISUALIZE_STATE',
   SET_WMS_LAYER: 'Visualize.SET_WMS_LAYER',
-  SET_SHAPEFILES: 'Visualize.SET_SHAPEFILES',
   SET_SELECTED_COLOR_PALETTE: 'Visualize.SET_SELECTED_COLOR_PALETTE',
-  SET_SELECTED_SHAPEFILE: 'Visualize.SET_SELECTED_SHAPEFILE',
   SET_SELECTED_BASEMAP: 'Visualize.SET_SELECTED_BASEMAP',
   SET_SELECTED_DATASET_LAYER: 'Visualize.SET_SELECTED_DATASET_LAYER',
   SET_SELECTED_DATASET_CAPABILITIES: 'Visualize.SET_SELECTED_DATASET_CAPABILITIES',
@@ -187,34 +183,10 @@ function receiveWMSLayerTimesteps (data) {
     }
   };
 }
-function restoreInitialSelectedRegions () {
-  return {
-    type: constants.RESET_SELECTED_REGIONS
-  };
-}
-function addFeatureIdToSelectedRegions (featureId) {
-  console.log('about to return the actual action handler');
-  return {
-    type: constants.ADD_FEATURE_TO_SELECTED_REGIONS,
-    featureId: featureId
-  };
-}
-function removeFeatureIdFromSelectedRegions (featureId) {
-  return {
-    type: constants.REMOVE_FEATURE_FROM_SELECTED_REGIONS,
-    featureId: featureId
-  };
-}
 function setSelectedDatasetCapabilities (capabilities) {
   return {
     type: constants.SET_SELECTED_DATASET_CAPABILITIES,
     capabilities: capabilities
-  };
-}
-function setShapefiles (shapefiles) {
-  return {
-    type: constants.SET_SHAPEFILES,
-    publicShapeFiles: shapefiles
   };
 }
 function setLayer (layer) {
@@ -347,12 +319,6 @@ export const actions = {
         .catch(error => NotificationManager.error(`Method GetMap failed at being fetched from the NcWMS2 server: ${error}`, 'Error', 10000));
     };
   },
-  selectShapefile: function (shapefile) {
-    return {
-      type: constants.SET_SELECTED_SHAPEFILE,
-      shapefile: shapefile
-    };
-  },
   selectMapManipulationMode: function (mode) {
     return {
       type: VISUALIZE_SET_MAP_MANIPULATION_MODE,
@@ -377,47 +343,6 @@ export const actions = {
       palette: palette
     };
   },
-  fetchShapefiles: function () {
-    const parser = new WMSCapabilities();
-    return dispatch => {
-      return myHttp.get(`${__PAVICS_GEOSERVER_PATH__}/wms?request=GetCapabilities`)
-        .then(response => response.text())
-        .then(text => {
-          return parser.read(text);
-        })
-        .then(json => {
-          let shapefiles = [];
-          json.Capability.Layer.Layer.map(layer => {
-            shapefiles.push({
-              title: layer.Title,
-              wmsUrl: `${__PAVICS_GEOSERVER_PATH__}/wms`,
-              wmsParams: {
-                LAYERS: layer.Name,
-                TILED: true,
-                FORMAT: 'image/png'
-              }
-            });
-          });
-          dispatch(setShapefiles(shapefiles));
-        });
-    };
-  },
-  selectRegion: function (featureId) {
-    return dispatch => {
-      console.log('about to dispatch select region');
-      dispatch(addFeatureIdToSelectedRegions(featureId));
-    };
-  },
-  unselectRegion: function(featureId) {
-    return dispatch => {
-      dispatch(removeFeatureIdFromSelectedRegions(featureId));
-    };
-  },
-  resetSelectedRegions: function() {
-    return dispatch => {
-      dispatch(restoreInitialSelectedRegions());
-    };
-  },
   setVariablePreferenceBoundaries: function (min, max) {
     return dispatch => dispatch(updateVariablePreferenceBoundaries(min, max));
   }
@@ -431,24 +356,8 @@ const HANDLERS = {
   [VISUALIZE_SET_MAP_MANIPULATION_MODE]: (state, action) => {
     return {...state, mapManipulationMode: action.mode};
   },
-  [constants.ADD_FEATURE_TO_SELECTED_REGIONS]: (state, action) => {
-    const copy = state.selectedRegions.concat([action.featureId]);
-    return {...state, selectedRegions: state.selectedRegions.concat([action.featureId])};
-  },
-  [constants.REMOVE_FEATURE_FROM_SELECTED_REGIONS]: (state, action) => {
-    let copy = state.selectedRegions.slice();
-    copy.splice(copy.indexOf(action.featureId), 1);
-    console.log('after removing feature:', copy);
-    return {...state, selectedRegions: copy};
-  },
-  [constants.RESET_SELECTED_REGIONS]: (state) => {
-    return {...state, selectedRegions: []};
-  },
   [constants.SET_WMS_LAYER]: (state, action) => {
     return {...state, layer: action.layer};
-  },
-  [constants.SET_SHAPEFILES]: (state, action) => {
-    return {...state, publicShapeFiles: action.publicShapeFiles};
   },
   [constants.SET_SELECTED_COLOR_PALETTE]: (state, action) => {
     if (state.currentDisplayedDataset.variable && state.variablePreferences[state.currentDisplayedDataset.variable]) {
@@ -465,9 +374,6 @@ const HANDLERS = {
       };
     }
     return {...state, selectedColorPalette: action.palette};
-  },
-  [constants.SET_SELECTED_SHAPEFILE]: (state, action) => {
-    return {...state, selectedShapefile: action.shapefile};
   },
   [constants.VISUALIZE_SET_VARIABLE_BOUNDARY_VALUES]: (state, action) => {
     return {
@@ -596,12 +502,10 @@ export const initialState = {
   variablePreferences: {},
   mapManipulationMode: VISUALIZE_MODE_GRID_VALUES,
   selectedColorPalette: '',
-  selectedShapefile: {},
   selectedBasemap: '',
   currentDisplayedDataset: {
     opacity: 0.8
   },
-  publicShapeFiles: [],
   baseMaps: [
     'Aerial',
     'Road',
@@ -609,7 +513,6 @@ export const initialState = {
   ],
   layer: {},
   selectedFacets: [],
-  selectedRegions: [],
   currentDateTime: '1900-01-01T00:00:00.000Z',
   shouldFlushDrawnFeatures: false,
   currentProjectSearchCriterias: [],
