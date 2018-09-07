@@ -2,23 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { VISUALIZE_MODE_REGION_SELECTION } from './../../constants';
 import myHttp from '../../util/http';
 import { actions as regionActions } from './../../redux/modules/Region';
+import OLRegionsClickSelector from './../OLRegionsClickSelector';
+import OLRegionsBBoxSelector from './../OLRegionsBBoxSelector';
 import Map from 'ol/Map';
-import View from 'ol/View';
-import MousePosition from 'ol/control/MousePosition';
-import { defaults as ControlDefaults, ScaleLine, ZoomSlider } from 'ol/control';
-import TileLayer from 'ol/layer/Tile';
-import BingMaps from 'ol/source/BingMaps';
-import OSM from 'ol/source/OSM';
-import { GeoJSON, WMSCapabilities } from 'ol/format';
+import { GeoJSON } from 'ol/format';
 import { Fill, Text, Stroke, Style } from 'ol/style';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
-import TileWMS from 'ol/source/TileWMS';
-import { add, createStringXY } from 'ol/coordinate';
-import { transform } from 'ol/proj';
 
 const POLYGON_CONFIG = {
   text: 'normal',
@@ -36,32 +28,17 @@ const POLYGON_CONFIG = {
   maxreso: 1200
 };
 
-// FIXME
-function getMaxPoly (polys) {
-  const polyObj = [];
-  for (let b = 0; b < polys.length; b++) {
-    polyObj.push({ poly: polys[b], area: polys[b].getArea() });
-  }
-  polyObj.sort(function (a, b) { return a.area - b.area });
-  return polyObj[polyObj.length - 1].poly;
-}
-
 export class OLRegionsSelector extends React.Component {
   static propTypes = {
     layerIndex: PropTypes.number.isRequired,
     layerName: PropTypes.string.isRequired,
-    map: PropTypes.object.isRequired, // FIXME: Type ol/Map
+    map: PropTypes.instanceOf(Map),
     region: PropTypes.object.isRequired,
     regionActions: PropTypes.object.isRequired,
-    visualize: PropTypes.object.isRequired,
   };
 
   constructor(props) {
     super(props);
-    // FIXME
-    this.createPolygonStyleFunction = this.createPolygonStyleFunction.bind(this);
-    this.createTextStyle = this.createTextStyle.bind(this);
-    this.handleMapClick = this.handleMapClick.bind(this);
   }
 
   componentWillReceiveProps (nextProps) {
@@ -69,10 +46,12 @@ export class OLRegionsSelector extends React.Component {
     if (map !== this.props.map) {
       this.init(map); // Once, when map has been initialised
     }
+    if (nextProps.region.selectedShapefile !== this.props.region.selectedShapefile) {
+      this.source.clear();
+    }
   }
 
   init(map) {
-    map.addEventListener('click', this.handleMapClick);
     this.source = new VectorSource({
       format: new GeoJSON()
     });
@@ -90,7 +69,7 @@ export class OLRegionsSelector extends React.Component {
     return layer;
   }
 
-  createPolygonStyleFunction () {
+  createPolygonStyleFunction = () => {
     return (feature, resolution) => {
       // first style is the actual filling of the region
       // second is the label with added hack to work around multi polygons having multiple labels
@@ -103,16 +82,22 @@ export class OLRegionsSelector extends React.Component {
           text: this.createTextStyle(feature, resolution, POLYGON_CONFIG),
           geometry: feature => {
             if (feature.getGeometry().getType() === 'MultiPolygon') {
-              return getMaxPoly(feature.getGeometry().getPolygons()).getInteriorPoint();
+              const polygons = feature.getGeometry().getPolygons();
+              const polyObj = [];
+              for (let b = 0; b < polygons.length; b++) {
+                polyObj.push({ poly: polygons[b], area: polygons[b].getArea() });
+              }
+              polyObj.sort(function (a, b) { return a.area - b.area });
+              return polyObj[polyObj.length - 1].poly.getInteriorPoint();
             }
             return feature.getGeometry().getInteriorPoint();
           }
         })
       ];
     };
-  }
+  };
 
-  createTextStyle (feature, resolution, dom) {
+  createTextStyle = (feature, resolution, dom) => {
     let align = dom.align;
     let baseline = dom.baseline;
     let size = dom.size;
@@ -135,7 +120,7 @@ export class OLRegionsSelector extends React.Component {
       offsetY: offsetY,
       rotation: rotation
     });
-  }
+  };
 
   getText (feature, resolution, dom) {
     let type = dom.text.value;
@@ -152,57 +137,6 @@ export class OLRegionsSelector extends React.Component {
       text = this.stringDivider(text, 16, '\n');
     }
     return text;
-  }
-
-  handleSelectRegionClick (event) {
-    let extent = this.calculateClickPositionExtent(event.pixel);
-    this.queryGeoserverFeatures(extent);
-  }
-
-  handleMapClick (event) {
-    // FIXME: INTERFACTION API
-    console.log('handling map click:', event);
-    if(this.props.visualize.mapManipulationMode === VISUALIZE_MODE_REGION_SELECTION) {
-      if (this.props.region.selectedShapefile.title) {
-        console.log('selected shapefile:', this.props.region.selectedShapefile);
-        return this.handleSelectRegionClick(event);
-      }
-      console.log('choose a shapefile first');
-      return;
-    }else {
-      // FIXME: NOT MY RESPONSABILITY
-      /*if (this.props.visualize.currentDisplayedDataset['dataset_id']) {
-        console.log('selected dataset:', this.props.visualize.currentDisplayedDataset);
-        return this.getScalarValue(event);
-      }
-      console.log('choose a dataset first');
-      return;*/
-    }
-  }
-
-  calculateClickPositionExtent(pixel) {
-    let coordinates = this.props.map.getCoordinateFromPixel(pixel);
-    let tl = add(coordinates, [-10e-6, -10e-6]);
-    let br = add(coordinates, [10e-6, 10e-6]);
-    let minX;
-    let maxX;
-    if (tl[0] < br[0]) {
-      minX = tl[0];
-      maxX = br[0];
-    } else {
-      minX = br[0];
-      maxX = tl[0];
-    }
-    let minY;
-    let maxY;
-    if (tl[1] < br[1]) {
-      minY = tl[1];
-      maxY = br[1];
-    } else {
-      minY = br[1];
-      maxY = tl[1];
-    }
-    return [minX, minY, maxX, maxY];
   }
 
   queryGeoserverFeatures = (extent, projection = 'EPSG:3857')  => {
@@ -238,14 +172,18 @@ export class OLRegionsSelector extends React.Component {
   }
 
   render () {
-    return null;
+    return (
+      <React.Fragment>
+        <OLRegionsClickSelector map={this.props.map} queryGeoserverFeatures={this.queryGeoserverFeatures}/>
+        <OLRegionsBBoxSelector map={this.props.map} queryGeoserverFeatures={this.queryGeoserverFeatures} />
+      </React.Fragment>
+    );
   }
 }
 
 const mapStateToProps = (state) => {
   return {
     region: state.region,
-    visualize: state.visualize
   };
 };
 
