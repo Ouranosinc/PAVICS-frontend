@@ -2,8 +2,9 @@ import { combineReducers } from 'redux';
 import { routerReducer as router } from 'react-router-redux';
 import { reducers as datasetAPIReducer } from '../redux/modules/DatasetAPI';
 import { reducers as jobAPIReducer } from '../redux/modules/JobAPI';
-import layerDatasetReducer from '../redux/modules/LayerDataset';
+import layerBasemapReducer from '../redux/modules/LayerBasemap';
 import layerCustomFeatureReducer from '../redux/modules/LayerCustomFeature';
+import layerDatasetReducer from '../redux/modules/LayerDataset';
 import layerRegionReducer from '../redux/modules/LayerRegion';
 import monitorReducer from './../redux/modules/Monitor';
 import projectReducer from './../redux/modules/Project';
@@ -25,6 +26,7 @@ export const makeRootReducer = (asyncReducers) => {
     'router': router,
     'datasetAPI': datasetAPIReducer,
     'jobAPI': jobAPIReducer,
+    'layerBasemap': layerBasemapReducer,
     'layerCustomFeature': layerCustomFeatureReducer,
     'layerDataset': layerDatasetReducer,
     'layerRegion': layerRegionReducer,

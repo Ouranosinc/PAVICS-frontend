@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { actions as layerBasemapActions } from '../../redux/modules/LayerBasemap';
 import { actions as projectActions } from '../../redux/modules/Project';
 import { actions as projectAPIActions } from '../../redux/modules/ProjectAPI';
 import { actions as researchActions } from '../../redux/modules/Research';
@@ -20,6 +21,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    layerBasemapActions: bindActionCreators({...layerBasemapActions}, dispatch),
     projectActions: bindActionCreators({...projectActions}, dispatch),
     projectAPIActions: bindActionCreators({...projectAPIActions}, dispatch),
     researchActions: bindActionCreators({...researchActions}, dispatch),

@@ -1,43 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classes from './OLComponent.scss';
 
 // OpenLayers 5
 import Map from 'ol/Map';
 import View from 'ol/View';
 import MousePosition from 'ol/control/MousePosition';
 import { defaults as ControlDefaults, ScaleLine, ZoomSlider } from 'ol/control';
-import TileLayer from 'ol/layer/Tile';
-import BingMaps from 'ol/source/BingMaps';
-import OSM from 'ol/source/OSM';
-import { GeoJSON, WMSCapabilities } from 'ol/format';
-import { Fill, Text, Stroke, Style } from 'ol/style';
-import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
-import TileWMS from 'ol/source/TileWMS';
-import { add, createStringXY } from 'ol/coordinate';
-import { transform } from 'ol/proj';
+import { createStringXY } from 'ol/coordinate';
 
+import OLBasemapRenderer from './../../containers/OLBasemapRenderer';
 import OLDatasetRenderer from './../../containers/OLDatasetRenderer';
 import OLRegionsRenderer from './../../containers/OLRegionsRenderer';
 import OLRegionsSelector from './../../containers/OLRegionsSelector';
 import OLDrawFeatures from './../../containers/OLDrawFeatures';
-// Cesium
-import Cesium from 'cesium/Cesium';
-window.Cesium = Cesium; // expose Cesium to the OL-Cesium library
-require('cesium/Widgets/widgets.css');
-import OLCesium from 'ol-cesium';
 
-import classes from './OLComponent.scss';
-import Dialog from'@material-ui/core/Dialog';
-import DialogContent from'@material-ui/core/DialogContent';
-import DialogTitle from'@material-ui/core/DialogTitle';
-import Typography from '@material-ui/core/Typography';
-import * as constants from './../../constants';
-import myHttp from '../../util/http';
-import { NotificationManager } from 'react-notifications';
 
-// Couldn't figure out the bug when importing inner component css file but it works from node_modules
-let G_BING_API_KEY = 'AtXX65CBBfZXBxm6oMyf_5idMAMI7W6a5GuZ5acVcrYi6lCQayiiBz7_aMHB7JR7';
 const INDEX_BASE_MAP = -10;
 const INDEX_DATASET_LAYER = 1;
 const INDEX_REGIONS = 10;
@@ -48,10 +26,6 @@ const LAYER_DATASET = 'LAYER_DATASET';
 // not exactly sure if the selected regions index is working
 // when base map is at 1 it shadows the selected regions
 
-const MapContext = React.createContext({
-  map: null,
-});
-
 class OLComponent extends React.Component {
   static propTypes = {
     visualize: PropTypes.object.isRequired,
@@ -60,74 +34,13 @@ class OLComponent extends React.Component {
 
   constructor (props) {
     super(props);
-    this.layers = [];
     this.map = null;
     this.view = null;
-    this.state = {
-      dialogTitle: '',
-      dialogContent: '',
-      dialogOpened: false
-    };
-    this.handleClose = this.handleClose.bind(this);
-  }
-
-  addTileWMSLayer (position, title, source, opacity, extent, visible = true) {
-    let layer = new TileLayer(
-      {
-        visible: visible,
-        title: title,
-        opacity: opacity,
-        source: source,
-        extent: extent
-      }
-    );
-    layer.set('nameId', title);
-    this.layers[title] = layer;
-    this.map.getLayers().insertAt(position, layer);
-    console.log('addTileWMSLayer:', layer);
-  }
-
-  addCesiumTileLayer(title) {
-    let layer = new TileLayer({
-      source: new OSM()
-    });
-    this.map.getLayers().insertAt(INDEX_BASE_MAP, layer);
-    layer.set('nameId', title);
-    this.layers[title] = layer;
-  }
-
-  addBingLayer (title, bingStyle) {
-    let layer = new TileLayer(
-      {
-        visible: true,
-        preload: Infinity,
-        source: new BingMaps(
-          {
-            key: G_BING_API_KEY,
-            imagerySet: bingStyle
-            // use maxZoom 19 to see stretched tiles instead of the BingMaps
-            // "no photos at this zoom level" tiles
-            // maxZoom: 19
-          }
-        )
-      }
-    );
-    this.map.getLayers().insertAt(INDEX_BASE_MAP, layer);
-    layer.set('nameId', title);
-    this.layers[title] = layer;
-
-  }
-
-  getLayer (title) {
-    if (this.layers[title] !== undefined) {
-      return this.layers[title];
-    }
-    return null;
   }
 
   initMap () {
     let minZoom = 2;
-    let maxZoom = 20/*13*/;
+    let maxZoom = 19/*13*/;
 
     this.view = new View(
       {
@@ -146,14 +59,7 @@ class OLComponent extends React.Component {
 
     this.map = new Map(
       {
-        layers: [
-          /*new VectorLayer({
-            source: vectorSource
-          })*/
-          /*new TileLayer({
-            source: new OSM()
-          })*/
-        ],
+        layers: [],
         target: 'map',
         renderer: 'canvas',
         view: this.view
@@ -161,8 +67,6 @@ class OLComponent extends React.Component {
     );
     this.map.addControl(new ScaleLine());
     window.cyCurrentMap = this.map;
-    this.ol3d = new OLCesium({map: this.map});
-    this.ol3d.setEnabled(false);
 
     let mousePosition = new MousePosition({
       coordinateFormat: createStringXY(6),
@@ -172,18 +76,6 @@ class OLComponent extends React.Component {
     // let zoomSlider = new ol.control.ZoomSlider();
     this.map.addControl(mousePosition);
     // this.map.addControl(zoomSlider);
-
-    // this.bboxSelector.current.initBBoxRegionSelector(this.map, this.layers[LAYER_REGIONS], this.layers[LAYER_SELECTED_REGIONS]);
-    // this.bboxSelector.current.initBBoxSelector(this.map);
-  }
-
-  stringDivider (str, lineLength, addedCharacter) {
-    let result = '';
-    while (str.length > 0) {
-      result += str.substring(0, lineLength) + addedCharacter;
-      str = str.substring(lineLength);
-    }
-    return result;
   }
 
   /*getScalarValue (event) {
@@ -203,74 +95,17 @@ class OLComponent extends React.Component {
     this.initMap();
   }
 
-  removeBasemap(prevProps) {
-    console.log('remove base map:', this.props.visualize.selectedBasemap);
-    let layer = this.getLayer(prevProps.visualize.selectedBasemap);
-    this.map.removeLayer(layer);
-  }
-
-  setBasemap (prevProps) {
-    this.removeBasemap(prevProps)
-    this.addBingLayer(this.props.visualize.selectedBasemap, this.props.visualize.selectedBasemap);
-  }
-
-  /*
-  the open layers map and our internal layer repository are two different things
-  ol map is what is being displayed, layer repository is how we keep track of what is displayed and manage changes
-   */
-  removeLayer (layer) {
-    this.map.removeLayer(this.layers[layer]);
-    delete this.layers[layer];
-  }
-
-  componentDidUpdate (prevProps, prevState) {
-    console.log('OLComponent did update. prev props: %o vs current props: %o. prev state: %o vs current state: %o.', prevProps, this.props, prevState, this.state);
-    if (this.props.visualize.selectedBasemap !== prevProps.visualize.selectedBasemap) {
-      if(this.props.visualize.selectedBasemap === 'Cesium') {
-        this.removeBasemap(prevProps);
-        this.addCesiumTileLayer(this.props.visualize.selectedBasemap);
-        let scene = this.ol3d.getCesiumScene();
-        scene.terrainProvider = Cesium.createWorldTerrain();
-        this.ol3d.setEnabled(true);
-      } else {
-        this.ol3d.setEnabled(false);
-        this.setBasemap(prevProps);
-      }
-    }
-  }
-
-  handleClose () {
-    this.setState(
-      {
-        ...this.state,
-        dialogContent: '',
-        dialogOpened: false
-      }
-    );
-  }
-
   render () {
     return (
       <div className={classes['OLComponent']}>
         <div id="map" className="map" style={{'width': '100%', 'height': '100%', 'position': 'fixed'}}>
           <div id="popup" className="ol-popup"></div>
-          <OLDatasetRenderer layerName={LAYER_DATASET} layerIndex={INDEX_DATASET_LAYER} map={this.map} />
+          <OLBasemapRenderer map={this.map} layerIndex={INDEX_BASE_MAP} />
+          <OLDatasetRenderer map={this.map} layerName={LAYER_DATASET} layerIndex={INDEX_DATASET_LAYER} />
           <OLDrawFeatures map={this.map} />
-          <OLRegionsRenderer layerName={LAYER_REGIONS} layerIndex={INDEX_REGIONS} map={this.map} />
-          <OLRegionsSelector layerName={LAYER_SELECTED_REGIONS} layerIndex={INDEX_SELECTED_REGIONS} map={this.map} />
+          <OLRegionsRenderer map={this.map} layerName={LAYER_REGIONS} layerIndex={INDEX_REGIONS} />
+          <OLRegionsSelector map={this.map} layerName={LAYER_SELECTED_REGIONS} layerIndex={INDEX_SELECTED_REGIONS} />
         </div>
-        <Dialog
-          onClose={this.handleClose}
-          open={this.state.dialogOpened}>
-          <DialogTitle>
-            {this.state.dialogTitle}
-          </DialogTitle>
-          <DialogContent>
-            <Typography>
-              {this.state.dialogContent}
-            </Typography>
-          </DialogContent>
-        </Dialog>
       </div>
     );
   }

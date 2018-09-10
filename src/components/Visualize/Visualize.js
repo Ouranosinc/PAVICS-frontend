@@ -46,6 +46,7 @@ const styles = {
 
 class Visualize extends React.Component {
   static propTypes = {
+    layerBasemapActions: PropTypes.object.isRequired,
     sectionActions: PropTypes.object.isRequired,
     project: PropTypes.object.isRequired,
     visualize: PropTypes.object.isRequired,
@@ -59,7 +60,7 @@ class Visualize extends React.Component {
   }
 
   componentDidMount() {
-    this.props.visualizeActions.selectBasemap('Aerial');
+    this.props.layerBasemapActions.selectBasemap('Aerial');
   }
 
   render () {

@@ -7,7 +7,6 @@ import { VISUALIZE_DRAW_MODES, VISUALIZE_SET_MAP_MANIPULATION_MODE, VISUALIZE_MO
 export const constants = {
   // SYNC
   RESET_VISUALIZE_STATE: 'Visualize.RESET_VISUALIZE_STATE',
-  SET_SELECTED_BASEMAP: 'Visualize.SET_SELECTED_BASEMAP',
   ADD_SEARCH_CRITERIAS_TO_PROJECTS: 'Visualize.ADD_SEARCH_CRITERIAS_TO_PROJECTS',
   REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS: 'Visualize.REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS',
   ADD_DATASETS_TO_PROJECTS: 'Visualize.ADD_DATASETS_TO_PROJECTS',
@@ -142,13 +141,7 @@ export const actions = {
       type: VISUALIZE_SET_MAP_MANIPULATION_MODE,
       mode: mode
     };
-  },
-  selectBasemap: function (basemap) {
-    return {
-      type: constants.SET_SELECTED_BASEMAP,
-      basemap: basemap
-    };
-  },
+  }
 };
 
 // Handlers
@@ -158,9 +151,6 @@ const HANDLERS = {
   },
   [VISUALIZE_SET_MAP_MANIPULATION_MODE]: (state, action) => {
     return {...state, mapManipulationMode: action.mode};
-  },
-  [constants.SET_SELECTED_BASEMAP]: (state, action) => {
-    return {...state, selectedBasemap: action.basemap};
   },
   [constants.ADD_SEARCH_CRITERIAS_TO_PROJECTS]: (state, action) => {
     let newSearchCriterias = state.currentProjectSearchCriterias.concat(action.searchCriterias);
@@ -193,12 +183,6 @@ const HANDLERS = {
 // Reducer
 export const initialState = {
   mapManipulationMode: VISUALIZE_MODE_GRID_VALUES,
-  selectedBasemap: '',
-  baseMaps: [
-    'Aerial',
-    'Road',
-    'AerialWithLabels'
-  ],
   selectedFacets: [],
   currentProjectSearchCriterias: [],
   currentProjectDatasets: [],
