@@ -7,28 +7,15 @@ import { VISUALIZE_DRAW_MODES, VISUALIZE_SET_MAP_MANIPULATION_MODE, VISUALIZE_MO
 export const constants = {
   // SYNC
   RESET_VISUALIZE_STATE: 'Visualize.RESET_VISUALIZE_STATE',
-  SET_WMS_LAYER: 'Visualize.SET_WMS_LAYER',
-  SET_SELECTED_COLOR_PALETTE: 'Visualize.SET_SELECTED_COLOR_PALETTE',
   SET_SELECTED_BASEMAP: 'Visualize.SET_SELECTED_BASEMAP',
-  SET_SELECTED_DATASET_LAYER: 'Visualize.SET_SELECTED_DATASET_LAYER',
-  SET_SELECTED_DATASET_CAPABILITIES: 'Visualize.SET_SELECTED_DATASET_CAPABILITIES',
-  ADD_DATASETS_TO_VISUALIZE: 'Visualize.ADD_DATASETS_TO_VISUALIZE',
   ADD_SEARCH_CRITERIAS_TO_PROJECTS: 'Visualize.ADD_SEARCH_CRITERIAS_TO_PROJECTS',
   REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS: 'Visualize.REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS',
   ADD_DATASETS_TO_PROJECTS: 'Visualize.ADD_DATASETS_TO_PROJECTS',
   CLICK_TOGGLE_PANEL: 'Visualize.CLICK_TOGGLE_PANEL',
-  SET_CURRENT_TIME_ISO: 'Visualize.SET_CURRENT_TIME_ISO',
-  VISUALIZE_SET_VARIABLE_BOUNDARY_VALUES: 'Visualize.VISUALIZE_SET_VARIABLE_BOUNDARY_VALUE',
   // ASYNC
   FETCH_PLOTLY_DATA_REQUEST: 'Visualize.FETCH_PLOTLY_DATA_REQUEST',
   FETCH_PLOTLY_DATA_FAILURE: 'Visualize.FETCH_PLOTLY_DATA_FAILURE',
   FETCH_PLOTLY_DATA_SUCCESS: 'Visualize.FETCH_PLOTLY_DATA_SUCCESS',
-  FETCH_WMS_LAYER_DETAILS_REQUEST: 'Visualize.FETCH_WMS_LAYER_DETAILS_REQUEST',
-  FETCH_WMS_LAYER_DETAILS_FAILURE: 'Visualize.FETCH_WMS_LAYER_DETAILS_FAILURE',
-  FETCH_WMS_LAYER_DETAILS_SUCCESS: 'Visualize.FETCH_WMS_LAYER_DETAILS_SUCCESS',
-  FETCH_WMS_LAYER_TIMESTEPS_REQUEST: 'Visualize.FETCH_WMS_LAYER_TIMESTEPS_REQUEST',
-  FETCH_WMS_LAYER_TIMESTEPS_FAILURE: 'Visualize.FETCH_WMS_LAYER_TIMESTEPS_FAILURE',
-  FETCH_WMS_LAYER_TIMESTEPS_SUCCESS: 'Visualize.FETCH_WMS_LAYER_TIMESTEPS_SUCCESS',
   FETCH_SCALAR_VALUE_REQUEST: 'Visualize.FETCH_SCALAR_VALUE_REQUEST',
   FETCH_SCALAR_VALUE_FAILURE: 'Visualize.FETCH_SCALAR_VALUE_FAILURE',
   FETCH_SCALAR_VALUE_SUCCESS: 'Visualize.FETCH_SCALAR_VALUE_SUCCESS'
@@ -39,18 +26,6 @@ function resetVisualizeState() {
   return {
     type: constants.RESET_VISUALIZE_STATE,
     visualizeInitialState: initialState
-  };
-}
-function addDatasetsToVisualize (datasets) {
-  return {
-    type: constants.ADD_DATASETS_TO_VISUALIZE,
-    datasets: datasets
-  };
-}
-function setCurrentDateTime (datetime) {
-  return {
-    type: constants.SET_CURRENT_TIME_ISO,
-    currentDateTime: datetime
   };
 }
 function requestPlotlyData () {
@@ -114,101 +89,9 @@ function receiveScalarValue (data) {
     }
   };
 }
-function requestWMSLayerDetails (layer, url) {
-  return {
-    type: constants.FETCH_WMS_LAYER_DETAILS_REQUEST,
-    selectedWMSLayerDetails: {
-      requestedAt: Date.now(),
-      layer: layer,
-      wmsUrl: url,
-      isFetching: true,
-      data: {}
-    }
-  };
-}
-function receiveWMSLayerDetailsFailure (error) {
-  return {
-    type: constants.FETCH_WMS_LAYER_DETAILS_FAILURE,
-    selectedWMSLayerDetails: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      data: {},
-      error: error
-    }
-  };
-}
-function receiveWMSLayerDetails (data) {
-  return {
-    type: constants.FETCH_WMS_LAYER_DETAILS_SUCCESS,
-    selectedWMSLayerDetails: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      data: data,
-      error: null
-    }
-  };
-}
-function requestWMSLayerTimesteps (layer, url, day) {
-  return {
-    type: constants.FETCH_WMS_LAYER_TIMESTEPS_REQUEST,
-    selectedWMSLayerTimesteps: {
-      requestedAt: Date.now(),
-      layer: layer,
-      wmsUrl: url,
-      day: day,
-      isFetching: true,
-      data: {}
-    }
-  };
-}
-function receiveWMSLayerTimestepsFailure (error) {
-  return {
-    type: constants.FETCH_WMS_LAYER_TIMESTEPS_FAILURE,
-    selectedWMSLayerTimesteps: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      data: {},
-      error: error
-    }
-  };
-}
-function receiveWMSLayerTimesteps (data) {
-  return {
-    type: constants.FETCH_WMS_LAYER_TIMESTEPS_SUCCESS,
-    selectedWMSLayerTimesteps: {
-      receivedAt: Date.now(),
-      isFetching: false,
-      data: data,
-      error: null
-    }
-  };
-}
-function setSelectedDatasetCapabilities (capabilities) {
-  return {
-    type: constants.SET_SELECTED_DATASET_CAPABILITIES,
-    capabilities: capabilities
-  };
-}
-function setLayer (layer) {
-  return {
-    type: constants.SET_WMS_LAYER,
-    layer: layer
-  };
-}
-function updateVariablePreferenceBoundaries (min, max) {
-  return {
-    type: constants.VISUALIZE_SET_VARIABLE_BOUNDARY_VALUES,
-    min: min,
-    max: max
-  };
-}
 
 export const actions = {
   resetVisualizeState: resetVisualizeState,
-  addDatasetsToVisualize: addDatasetsToVisualize,
-  setCurrentDateTime: setCurrentDateTime,
-  setLayer: setLayer,
-  setSelectedDatasetCapabilities: setSelectedDatasetCapabilities,
   fetchScalarValue: function (opendapUrl, lat, lon, time, variable) {
     return function (dispatch) {
       dispatch(requestScalarValue());
@@ -254,71 +137,6 @@ export const actions = {
         );
     };
   },
-  fetchWMSLayerDetails: function (url, layer) {
-    return function (dispatch) {
-      dispatch(requestWMSLayerDetails());
-      return myHttp.get(`${url}?request=GetMetadata&item=layerDetails&layerName=${layer}`)
-        .then(response => {
-          if(response.status !== 200) {
-            throw new Error(`${response.status} ${response.statusText}`);
-          }
-          try {
-            return response.json()
-          } catch(err) {
-            throw new Error('Failed at parsing JSON response');
-          }
-        })
-        .then(json =>
-          dispatch(receiveWMSLayerDetails(json))
-        )
-        .catch(error => {
-          NotificationManager.error(`Method GetMetadata LayerDetails failed at being fetched from the NcWMS2 server: ${error}`, 'Error', 10000);
-          dispatch(receiveWMSLayerDetailsFailure(error))
-        });
-    };
-  },
-  fetchWMSLayerTimesteps: function (url, layer, day) {
-    return function (dispatch) {
-      dispatch(requestWMSLayerTimesteps());
-      return myHttp.get(`${url}?request=GetMetadata&item=timesteps&day=${day}&layerName=${layer}`)
-        .then(response => {
-          if(response.status !== 200) {
-            throw new Error(`${response.status} ${response.statusText}`);
-          }
-          try {
-            return response.json()
-          } catch(err) {
-            throw new Error('Failed at parsing JSON response');
-          }
-        })
-        .then(json =>
-          dispatch(receiveWMSLayerTimesteps(json))
-        )
-        .catch(error => {
-          NotificationManager.error(`Method GetMetadata TimeSteps failed at being fetched from the NcWMS2 server: ${error}`, 'Error', 10000);
-          dispatch(receiveWMSLayerTimestepsFailure(error))
-        });
-    };
-  },
-  testWMSGetMapPermission: function (url, layer) {
-    // Removed dispatch events since this route does not return any useful data
-    return function (dispatch) {
-      return myHttp.get(`${url}?REQUEST=GetMap&LAYERS=${layer}`)
-        .then(response => {
-          if(response.status !== 200) {
-            throw new Error(`${response.status} ${response.statusText}`);
-          }
-          try {
-            //text.contains('Must provide a value for VERSION')
-            return response.text()
-          } catch(err) {
-            throw new Error('Failed at parsing XML response');
-          }
-        })
-        .then(text => {/*console.log(text)*/})
-        .catch(error => NotificationManager.error(`Method GetMap failed at being fetched from the NcWMS2 server: ${error}`, 'Error', 10000));
-    };
-  },
   selectMapManipulationMode: function (mode) {
     return {
       type: VISUALIZE_SET_MAP_MANIPULATION_MODE,
@@ -331,21 +149,6 @@ export const actions = {
       basemap: basemap
     };
   },
-  selectCurrentDisplayedDataset: function (layer) {
-    return {
-      type: constants.SET_SELECTED_DATASET_LAYER,
-      layer: layer
-    };
-  },
-  selectColorPalette: function (palette) {
-    return {
-      type: constants.SET_SELECTED_COLOR_PALETTE,
-      palette: palette
-    };
-  },
-  setVariablePreferenceBoundaries: function (min, max) {
-    return dispatch => dispatch(updateVariablePreferenceBoundaries(min, max));
-  }
 };
 
 // Handlers
@@ -356,43 +159,6 @@ const HANDLERS = {
   [VISUALIZE_SET_MAP_MANIPULATION_MODE]: (state, action) => {
     return {...state, mapManipulationMode: action.mode};
   },
-  [constants.SET_WMS_LAYER]: (state, action) => {
-    return {...state, layer: action.layer};
-  },
-  [constants.SET_SELECTED_COLOR_PALETTE]: (state, action) => {
-    if (state.currentDisplayedDataset.variable && state.variablePreferences[state.currentDisplayedDataset.variable]) {
-      return {
-        ...state,
-        selectedColorPalette: action.palette,
-        variablePreferences: {
-          ...state.variablePreferences,
-          [state.currentDisplayedDataset.variable]: {
-            ...state.variablePreferences[state.currentDisplayedDataset.variable],
-            colorPalette: action.palette
-          }
-        }
-      };
-    }
-    return {...state, selectedColorPalette: action.palette};
-  },
-  [constants.VISUALIZE_SET_VARIABLE_BOUNDARY_VALUES]: (state, action) => {
-    return {
-      ...state,
-      variablePreferences: {
-        ...state.variablePreferences,
-        [state.currentDisplayedDataset.variable]: {
-          ...state.variablePreferences[state.currentDisplayedDataset.variable],
-          min: action.min,
-          max: action.max
-        }
-      },
-      currentDisplayedDataset: {
-        ...state.currentDisplayedDataset,
-        variable_min: action.min,
-        variable_max: action.max
-      }
-    };
-  },
   [constants.SET_SELECTED_BASEMAP]: (state, action) => {
     return {...state, selectedBasemap: action.basemap};
   },
@@ -400,64 +166,9 @@ const HANDLERS = {
     let newSearchCriterias = state.currentProjectSearchCriterias.concat(action.searchCriterias);
     return ({...state, currentProjectSearchCriterias: newSearchCriterias});
   },
-  [constants.REMOVE_SEARCH_CRITERIAS_FROM_PROJECTS]: (state, action) => {
-    let newSearchCriterias = state.currentProjectSearchCriterias.slice();
-    let index = state.currentProjectSearchCriterias.findIndex(x => x === action.searchCriteria);
-    newSearchCriterias.splice(index, 1);
-    return ({...state, currentProjectSearchCriterias: newSearchCriterias});
-  },
-  /*
-   this handler must receive a dataset
-   verify if preferences has been set for the selected variable
-   if variable is set
-   update dataset informations with it
-   else
-   initialize preferences for the variable
-   */
-  [constants.SET_SELECTED_DATASET_LAYER]: (state, action) => {
-    let variablePreference;
-    if (state.variablePreferences[action.layer.variable]) {
-      variablePreference = state.variablePreferences[action.layer.variable];
-      action.layer.variable_min = variablePreference.min;
-      action.layer.variable_max = variablePreference.max;
-      action.layer.variable_palette = variablePreference.colorPalette;
-    } else {
-      variablePreference = {
-        min: action.layer.variable_min,
-        max: action.layer.variable_max,
-        colorPalette: action.layer.variable_palette
-      };
-    }
-    return {
-      ...state,
-      currentDisplayedDataset: action.layer,
-      variablePreferences: {...state.variablePreferences, [action.layer.variable]: variablePreference},
-      selectedColorPalette: variablePreference.colorPalette
-    };
-  },
-  [constants.SET_SELECTED_DATASET_CAPABILITIES]: (state, action) => {
-    return {...state, selectedDatasetCapabilities: action.capabilities};
-  },
   [constants.ADD_DATASETS_TO_PROJECTS]: (state, action) => {
     let newDatasets = state.currentProjectDatasets.concat(action.datasets);
     return ({...state, currentProjectDatasets: newDatasets});
-  },
-  [constants.ADD_DATASETS_TO_VISUALIZE]: (state, action) => {
-    function uuidv4() {
-      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-      });
-    }
-    action.datasets.map( x => {
-      x.uniqueLayerSwitcherId = uuidv4();
-      return x;
-    });
-    let newDatasetLayers = state.currentVisualizedDatasets.concat(action.datasets);
-    return ({...state, currentVisualizedDatasets: newDatasetLayers});
-  },
-  [constants.SET_CURRENT_TIME_ISO]: (state, action) => {
-    return ({...state, currentDateTime: action.currentDateTime});
   },
   [constants.FETCH_PLOTLY_DATA_REQUEST]: (state, action) => {
     return ({...state, plotlyData: Object.assign({}, state.plotlyData, action.plotlyData)});
@@ -476,64 +187,22 @@ const HANDLERS = {
   },
   [constants.FETCH_SCALAR_VALUE_SUCCESS]: (state, action) => {
     return ({...state, currentScalarValue: action.currentScalarValue});
-  },
-  [constants.FETCH_WMS_LAYER_DETAILS_REQUEST]: (state, action) => {
-    return ({...state, selectedWMSLayerDetails: action.selectedWMSLayerDetails});
-  },
-  [constants.FETCH_WMS_LAYER_DETAILS_FAILURE]: (state, action) => {
-    return ({...state, selectedWMSLayerDetails: action.selectedWMSLayerDetails});
-  },
-  [constants.FETCH_WMS_LAYER_DETAILS_SUCCESS]: (state, action) => {
-    return ({...state, selectedWMSLayerDetails: action.selectedWMSLayerDetails});
-  },
-  [constants.FETCH_WMS_LAYER_TIMESTEPS_REQUEST]: (state, action) => {
-    return ({...state, selectedWMSLayerTimesteps: action.selectedWMSLayerTimesteps});
-  },
-  [constants.FETCH_WMS_LAYER_TIMESTEPS_FAILURE]: (state, action) => {
-    return ({...state, selectedWMSLayerTimesteps: action.selectedWMSLayerTimesteps});
-  },
-  [constants.FETCH_WMS_LAYER_TIMESTEPS_SUCCESS]: (state, action) => {
-    return ({...state, selectedWMSLayerTimesteps: action.selectedWMSLayerTimesteps});
   }
 };
 
 // Reducer
 export const initialState = {
-  variablePreferences: {},
   mapManipulationMode: VISUALIZE_MODE_GRID_VALUES,
-  selectedColorPalette: '',
   selectedBasemap: '',
-  currentDisplayedDataset: {
-    opacity: 0.8
-  },
   baseMaps: [
     'Aerial',
     'Road',
     'AerialWithLabels'
   ],
-  layer: {},
   selectedFacets: [],
-  currentDateTime: '1900-01-01T00:00:00.000Z',
-  shouldFlushDrawnFeatures: false,
   currentProjectSearchCriterias: [],
   currentProjectDatasets: [],
   currentScalarValue: {
-    requestedAt: null,
-    receivedAt: null,
-    isFetching: false,
-    data: {},
-    error: null
-  },
-  currentVisualizedDatasets: [],
-  selectedDatasetCapabilities: {},
-  selectedWMSLayerDetails: {
-    requestedAt: null,
-    receivedAt: null,
-    isFetching: false,
-    data: {},
-    error: null
-  },
-  selectedWMSLayerTimesteps: {
     requestedAt: null,
     receivedAt: null,
     isFetching: false,

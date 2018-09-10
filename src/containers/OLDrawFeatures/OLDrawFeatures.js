@@ -4,13 +4,14 @@ import { bindActionCreators, compose } from 'redux';
 import { connect } from 'react-redux';
 import { VISUALIZE_DRAW_MODES } from './../../constants';
 import { Draw, Modify, Select, Snap } from 'ol/interaction';
+import Map from 'ol/Map';
 import { GeoJSON, WMSCapabilities } from 'ol/format';
 import { createRegularPolygon, createBox } from 'ol/interaction/Draw';
 import { platformModifierKeyOnly, altKeyOnly, shiftKeyOnly, singleClick, doubleClick } from 'ol/events/condition';
 import { Vector as VectorSource } from 'ol/source';
 import { Vector as VectorLayer } from 'ol/layer';
 import { Circle, Fill, Text, Stroke, Style, RegularShape } from 'ol/style';
-import { actions as customFeatureActions } from './../../redux/modules/CustomFeature';
+import { actions as layerCustomFeatureActions } from '../../redux/modules/LayerCustomFeature';
 
 const INDEX_BOUNDING_BOX = 101;
 const LAYER_BOUNDING_BOX = 'LAYER_BOUNDING_BOX';
@@ -35,9 +36,9 @@ const styles = theme => ({
 
 class OLDrawFeatures extends React.Component {
   static propTypes = {
-    customFeature: PropTypes.object, // self-provided
-    customFeatureActions: PropTypes.object, //self-provided
-    map: PropTypes.object, // parent
+    layerCustomFeature: PropTypes.object.isRequired,
+    layerCustomFeatureActions: PropTypes.object.isRequired,
+    map: PropTypes.instanceOf(Map)
   };
 
   constructor(props) {
@@ -59,27 +60,27 @@ class OLDrawFeatures extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { map, currentDrawingTool, customFeature } = nextProps;
+    const { map, currentDrawingTool, layerCustomFeature } = nextProps;
     if (nextProps.map !== this.props.map) {
       this.init(nextProps); // Once, when map has been initialised
       this.initDraw(nextProps);
-    }else if(customFeature.drawnCustomFeatures !== this.props.customFeature.drawnCustomFeatures){
-      if (customFeature.drawnCustomFeatures.length === 0){
+    }else if(layerCustomFeature.drawnCustomFeatures !== this.props.layerCustomFeature.drawnCustomFeatures){
+      if (layerCustomFeature.drawnCustomFeatures.length === 0){
         // Triggered when Reset button is clicked in WidgetDrawFeatures
         this.select.getFeatures().clear();
         this.source.clear();
       }
-    } else if (customFeature.currentSelectedDrawnFeatureProperties !== this.props.customFeature.currentSelectedDrawnFeatureProperties) {
+    } else if (layerCustomFeature.currentSelectedDrawnFeatureProperties !== this.props.layerCustomFeature.currentSelectedDrawnFeatureProperties) {
       // Triggered when text inputs are modified in WidgetDrawFeatures
       let features = this.select.getFeatures();
       if(features.item(0)) {
         features.item(0).setProperties({
-          name: customFeature.currentSelectedDrawnFeatureProperties.name,
-          description: customFeature.currentSelectedDrawnFeatureProperties.description
+          name: layerCustomFeature.currentSelectedDrawnFeatureProperties.name,
+          description: layerCustomFeature.currentSelectedDrawnFeatureProperties.description
         })
       }
     }
-    else if(currentDrawingTool !== this.props.customFeature.currentDrawingTool){
+    else if(currentDrawingTool !== this.props.layerCustomFeature.currentDrawingTool){
       // Reset Draw instance with the right draw tool
       // Triggered when currentDrawingTool Select field has changed in WidgetDrawFeatures
       if (map) {
@@ -141,11 +142,11 @@ class OLDrawFeatures extends React.Component {
         // So if feature is being drawn, ignore selection
         const properties = e.selected[0].getProperties();
         if(properties.name && properties.name.length) {
-          this.props.customFeatureActions.setCurrentSelectedDrawnFeature(properties);
+          this.props.layerCustomFeatureActions.setCurrentSelectedDrawnFeature(properties);
         }
       }else {
         // No feature selected mean no properties to be edited in the widget
-        this.props.customFeatureActions.setCurrentSelectedDrawnFeature(null);
+        this.props.layerCustomFeatureActions.setCurrentSelectedDrawnFeature(null);
       }
     });
 
@@ -166,15 +167,15 @@ class OLDrawFeatures extends React.Component {
   }
 
   initDraw(nextProps) {
-    const { map, customFeature } = nextProps;
+    const { map, layerCustomFeature } = nextProps;
     if (this.draw || this.snap) {
       map.removeInteraction(this.draw);
       map.removeInteraction(this.snap);
     }
 
-    if (customFeature.currentDrawingTool.length){
+    if (layerCustomFeature.currentDrawingTool.length){
       var geometryFunction, drawType, condition;
-      switch(customFeature.currentDrawingTool) {
+      switch(layerCustomFeature.currentDrawingTool) {
         case VISUALIZE_DRAW_MODES.BBOX.value:
           geometryFunction = createBox();
           drawType = 'Circle';
@@ -240,7 +241,7 @@ class OLDrawFeatures extends React.Component {
 
       // A MUST: Snapping help limiting multiple features overlapping
       // Snap is not a friend of polygonal freehand drawing somehow
-      if (customFeature.currentDrawingTool !== VISUALIZE_DRAW_MODES.POLYGON.value) {
+      if (layerCustomFeature.currentDrawingTool !== VISUALIZE_DRAW_MODES.POLYGON.value) {
         this.snap = new Snap({source: this.source});
         map.addInteraction(this.snap); // The snap interaction must be added last, as it needs to be the first to handle the pointermove event.
       }
@@ -249,9 +250,9 @@ class OLDrawFeatures extends React.Component {
       this.draw.on('drawend', (e) => {
         let feature = e.feature;
         feature.setProperties({
-          name: `feature_${customFeature.drawnCustomFeatures.length + 1}`,
+          name: `feature_${layerCustomFeature.drawnCustomFeatures.length + 1}`,
           description: '',
-          type: customFeature.currentDrawingTool
+          type: layerCustomFeature.currentDrawingTool
         });
         map.removeInteraction(this.draw);
         map.removeInteraction(this.snap);
@@ -259,10 +260,10 @@ class OLDrawFeatures extends React.Component {
         // Only one selected feature at a time
         this.select.getFeatures().clear();
         this.select.getFeatures().push(feature);
-        this.props.customFeatureActions.setCurrentSelectedDrawnFeature(feature.getProperties());
+        this.props.layerCustomFeatureActions.setCurrentSelectedDrawnFeature(feature.getProperties());
 
         // The action isn't super useful ATM, essentially used to notify when the array becomes empty
-        this.props.customFeatureActions.setDrawnCustomFeatures(customFeature.drawnCustomFeatures.concat([feature]));
+        this.props.layerCustomFeatureActions.setDrawnCustomFeatures(layerCustomFeature.drawnCustomFeatures.concat([feature]));
       });
     }
   }
@@ -274,13 +275,13 @@ class OLDrawFeatures extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    customFeature: state.customFeature
+    layerCustomFeature: state.layerCustomFeature
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    customFeatureActions: bindActionCreators({...customFeatureActions}, dispatch),
+    layerCustomFeatureActions: bindActionCreators({...layerCustomFeatureActions}, dispatch),
   };
 };
 

@@ -17,7 +17,7 @@ import TileWMS from 'ol/source/TileWMS';
 import { add, createStringXY } from 'ol/coordinate';
 import { transform } from 'ol/proj';
 
-import OLBBoxSelector from './../OLBBoxSelector';
+import OLDatasetRenderer from './../../containers/OLDatasetRenderer';
 import OLRegionsRenderer from './../../containers/OLRegionsRenderer';
 import OLRegionsSelector from './../../containers/OLRegionsSelector';
 import OLDrawFeatures from './../../containers/OLDrawFeatures';
@@ -48,10 +48,6 @@ const LAYER_DATASET = 'LAYER_DATASET';
 // not exactly sure if the selected regions index is working
 // when base map is at 1 it shadows the selected regions
 
-function datasetHasWmsUrls (dataset) {
-  return !!(dataset.wms_url && dataset.wms_url.length > 0);
-}
-
 const MapContext = React.createContext({
   map: null,
 });
@@ -65,7 +61,6 @@ class OLComponent extends React.Component {
   constructor (props) {
     super(props);
     this.layers = [];
-    this.datasetSource = null;
     this.map = null;
     this.view = null;
     this.state = {
@@ -74,8 +69,6 @@ class OLComponent extends React.Component {
       dialogOpened: false
     };
     this.handleClose = this.handleClose.bind(this);
-    this.bboxSelector = React.createRef();
-    this.drawFeatures = React.createRef();
   }
 
   addTileWMSLayer (position, title, source, opacity, extent, visible = true) {
@@ -193,44 +186,21 @@ class OLComponent extends React.Component {
     return result;
   }
 
-  getScalarValue (event) {
+  /*getScalarValue (event) {
     let coordinates = this.map.getCoordinateFromPixel(event.pixel);
     let converted = transform(coordinates, 'EPSG:3857', 'EPSG:4326');
     console.log('scalar value from coosrindates', converted);
-    console.log('selected dataset:', this.props.visualize.currentDisplayedDataset);
-    const opendapUrl = this.props.visualize.currentDisplayedDataset['opendap_url'][0];
+    console.log('selected dataset:', this.props.layerDataset.currentDisplayedDataset);
+    const opendapUrl = this.props.layerDataset.currentDisplayedDataset['opendap_url'][0];
     const lon = converted[0];
     const lat = converted[1];
-    const time = this.props.visualize.currentDateTime.substr(0, this.props.visualize.currentDateTime.length - 5);
-    const variable = this.props.visualize.currentDisplayedDataset['variable'];
+    const time = this.props.layerDataset.currentDateTime.substr(0, this.props.layerDataset.currentDateTime.length - 5);
+    const variable = this.props.layerDataset.currentDisplayedDataset['variable'];
     this.props.visualizeActions.fetchScalarValue(opendapUrl, lat, lon, time, variable);
-  }
+  }*/
 
   componentDidMount () {
     this.initMap();
-    // REFACTOR THIS PLEASE USING INTERACTION API
-    // this.map.addEventListener('click', this.handleMapClick);
-  }
-
-  componentWillUnmount () {
-    // TODO: Verify if usefull
-    // this.map.setTarget(null)
-    // this.map = null//
-  }
-
-  componentWillReceiveProps (nextProps) {
-    if (nextProps.visualize.currentDateTime && nextProps.visualize.currentDateTime !== this.props.visualize.currentDateTime) {
-      if (this.datasetSource) {
-        this.datasetSource.updateParams(
-          {
-            TIME: nextProps.visualize.currentDateTime
-          }
-        );
-        console.log('Openlayers time changed ' + nextProps.visualize.currentDateTime);
-        this.datasetSource.setTileLoadFunction(this.datasetSource.getTileLoadFunction());
-        this.datasetSource.changed();
-      }
-    }
   }
 
   removeBasemap(prevProps) {
@@ -244,134 +214,6 @@ class OLComponent extends React.Component {
     this.addBingLayer(this.props.visualize.selectedBasemap, this.props.visualize.selectedBasemap);
   }
 
-  findDimension (dimensions, dimensionName) {
-    for (let i = 0; i < dimensions.length; i++) {
-      if (dimensions[i]['name'] === dimensionName) {
-        return dimensions[i];
-      }
-    }
-  }
-
-  /*
-  routine creates a wms layer and adds it to the map layer repositories
-   */
-  setDatasetLayer (minMaxBracket, layerName, resourceUrl, opacity, colorPalette) {
-    const wmsParams = {
-      'COLORSCALERANGE': minMaxBracket,
-      'ABOVEMAXCOLOR': 'extend',
-      'TRANSPARENT': 'TRUE',
-      'STYLES': colorPalette,
-      'LAYERS': layerName,
-      'EPSG': '4326',
-      'LOGSCALE': false,
-      'crossOrigin': 'anonymous',
-      'BGCOLOR': 'transparent',
-      'SRS': 'EPSG:4326',
-      'TIME': ''
-    };
-    this.map.removeLayer(this.layers[LAYER_DATASET]);
-    this.datasetSource = new TileWMS({
-      url: resourceUrl,
-      params: wmsParams
-    });
-    this.addTileWMSLayer(INDEX_DATASET_LAYER, LAYER_DATASET, this.datasetSource, opacity);
-  }
-
-  /*
-  routine fetches capabilities from a wms url, then creates a layer from it
-  it expects the dataset to have informations about its wms_urls
-  at this point in time, the informations stored in the dataset are assumed to be valid
-
-  TODO we refetch the capabilities every time we make a modification to the dataset, but this is inefficient
-  we could only fetch these when we change dataset, no need to reload only if we change the min max or opacity
-   */
-  updateDatasetWmsLayer (dataset) {
-    console.log('setting new dataset layer', dataset);
-    const currentWmsCapabilitiesUrl = dataset.wms_url[dataset.currentFileIndex];
-    NotificationManager.info(`Dataset is being loaded on the map, it may take a few seconds...`, 'Information', 3000);
-
-    if(currentWmsCapabilitiesUrl && currentWmsCapabilitiesUrl.length) {
-      myHttp.get(currentWmsCapabilitiesUrl)
-        .then(response => {
-          if(response.status === 200) {
-            return response.text();
-          } else {
-            // Typically: 401 Unauthorized
-            throw new Error(`${response.status} ${response.statusText}`)
-          }
-        })
-        .then(text => {
-          const parser = new WMSCapabilities();
-          let capabilities = "";
-          try {
-            capabilities = parser.read(text);
-            console.log('fetched capabilities %o for wms url %s', capabilities, currentWmsCapabilitiesUrl);
-          } catch(err){
-            // The server might still return a code 200 containing an error
-            // Might be an Apache error returning HTML containing H1 tag, Else just return everything
-            let h1 = '';
-            text.replace(/<h1>(.*?)<\/h1>/g, (match, g1) => h1 = g1);
-            throw new Error((h1.length)? h1: text)
-          }
-          const index = currentWmsCapabilitiesUrl.indexOf('?');
-          if(index < 0) {
-            throw new Error('Could not find exact WMS Server URL needed for following GetMetadata requests');
-          }
-          const wmsServerUrl = currentWmsCapabilitiesUrl.substring(0, index);
-          // We cannot trust anymore what's returned by GetCapabilities: capabilities['Service']['OnlineResource'];
-
-          /*
-           here we assume that the layer that actually contains the information we want to display is the first one of the dataset
-           for instance, there could be layers containing lat or lon in the return values of the capabilities
-           hopefully the relevant variable will always be the first one
-           */
-          const layer = capabilities['Capability']['Layer']['Layer'][0]['Layer'][0];
-          const layerName = layer['Name'];
-          const minMaxBracket = `${dataset['variable_min']},${dataset['variable_max']}`;
-          console.log('current dataset min max bracket: %s', minMaxBracket);
-          this.setDatasetLayer(minMaxBracket, layerName, wmsServerUrl, dataset.opacity, `default-scalar/${dataset.variable_palette}`);
-
-          if (layer['Dimension']) {
-            const timeDimension = this.findDimension(layer['Dimension'], 'time');
-            const date = timeDimension.values.substring(0, 24);
-            this.props.visualizeActions.fetchWMSLayerTimesteps(wmsServerUrl, layerName, date);
-            // this.props.visualizeActions.setCurrentDateTime(date);
-          }
-
-          this.props.visualizeActions.setSelectedDatasetCapabilities(capabilities);
-          this.props.visualizeActions.fetchWMSLayerDetails(wmsServerUrl, layerName);
-          // Normally fetched entirely by OpenLayers, but we want to an error when returning an error: ex. 401 Unauthorized
-          this.props.visualizeActions.testWMSGetMapPermission(wmsServerUrl, layerName);
-        })
-        .catch(err => {
-          console.log(err);
-          NotificationManager.error(`Method GetCapabilities failed at being fetched from the NcWMS2 server: ${err}`, 'Error', 10000);
-        });
-    }
-  }
-
-  updateColorPalette () {
-    // TODO there is something that feels somewhat wrong about having the datasetLayer in a prop
-    // it might be totally ok, but be bit careful ot
-    if (this.layers[LAYER_DATASET]) {
-      console.log('changing color palette:', this.props.visualize.selectedColorPalette);
-      this.datasetSource.updateParams({
-        'STYLES': `default-scalar/${this.props.visualize.selectedColorPalette}`
-      });
-    } else {
-      console.log('select a dataset first');
-    }
-  }
-
-  /*
-  OpenLayers inner workings are somewhat obfuscated. The layer object only has one or two letter properties that don't really express what they're for
-  Here I assume that for open layers to display something, it needs this "H" property, that contains opacity, layer title, it's visibility, and a few other things
-  This is a bit critical, as it decides wether or not the app considers that there is a displayed dataset
-   */
-  hasCurrentlyDisplayedDataset () {
-    return !!(this.layers[LAYER_DATASET] && this.layers[LAYER_DATASET].H);
-  }
-
   /*
   the open layers map and our internal layer repository are two different things
   ol map is what is being displayed, layer repository is how we keep track of what is displayed and manage changes
@@ -383,9 +225,6 @@ class OLComponent extends React.Component {
 
   componentDidUpdate (prevProps, prevState) {
     console.log('OLComponent did update. prev props: %o vs current props: %o. prev state: %o vs current state: %o.', prevProps, this.props, prevState, this.state);
-    if (this.props.visualize.selectedColorPalette !== prevProps.visualize.selectedColorPalette) {
-      this.updateColorPalette();
-    }
     if (this.props.visualize.selectedBasemap !== prevProps.visualize.selectedBasemap) {
       if(this.props.visualize.selectedBasemap === 'Cesium') {
         this.removeBasemap(prevProps);
@@ -396,53 +235,6 @@ class OLComponent extends React.Component {
       } else {
         this.ol3d.setEnabled(false);
         this.setBasemap(prevProps);
-      }
-    }
-    if (this.props.visualize.selectedShapefile !== prevProps.visualize.selectedShapefile) {
-      this.setShapefile(prevProps);
-    }
-    const newDataset = this.props.visualize.currentDisplayedDataset;
-    const oldDataset = prevProps.visualize.currentDisplayedDataset;
-    const hasDisplayedDataset = this.hasCurrentlyDisplayedDataset();
-    console.log('current displayed dataset: %o, this should be a boolean indicating it exists: %o', this.layers[LAYER_DATASET], hasDisplayedDataset);
-
-    // if there is a displayed dataset and the new one can't be shown on the map (ie having wmsUrls), remove the layer
-    if ( hasDisplayedDataset && !datasetHasWmsUrls(newDataset) ) {
-      this.removeLayer(LAYER_DATASET);
-      return;
-    }
-
-    // If new data can be shown on the map (ie having wmsUrls), verify something has really changed
-    if(datasetHasWmsUrls(newDataset)) {
-      // if the opacity has changed, just change opacity
-      if ( newDataset.opacity !== oldDataset.opacity ) {
-        this.layers[LAYER_DATASET].setOpacity(newDataset.opacity);
-      }
-
-      /*
-       We want to update the selected dataset when
-       - there is actually a change of the selected dataset (dataset_id/uniqueLayerSwitcherId
-       - the time has changed so much that a new file is needed (currentFileIndex changed)
-       - FIXME: when the min/max has changed
-       */
-      if ( (newDataset.currentFileIndex !== oldDataset.currentFileIndex) ) {
-        // if the new dataset currentFileIndex has changed, reload the layer
-        console.log('currentFileIndex has changed and we update the wms layer. new: %s, old: %s', newDataset.currentFileIndex, oldDataset.currentFileIndex);
-        this.updateDatasetWmsLayer(newDataset);
-      } else if ( (newDataset['dataset_id'] !== oldDataset['dataset_id'])) {
-        // if the dataset_id has changed, reload the layer
-        console.log('dataset id has changed and we update the wms layer. new: %s, old: %s', newDataset['dataset_id'], oldDataset['dataset_id']);
-        this.updateDatasetWmsLayer(newDataset);
-      } else if((newDataset['uniqueLayerSwitcherId'] !== oldDataset['uniqueLayerSwitcherId'])) {
-        // Could be the same dataset_id but different files in the layer switcher
-        // We could compare newDataset.fileserver_url[newDataset.currentFileIndex] and oldDataset.fileserver_url[oldDataset.currentFileIndex]
-        console.log('uniqueLayerSwitcherId has changed and we update the wms layer. new: %s, old: %s', newDataset['uniqueLayerSwitcherId'], oldDataset['uniqueLayerSwitcherId']);
-        this.updateDatasetWmsLayer(newDataset);
-      } else if ( newDataset['variable_min'] !== oldDataset['variable_min'] || newDataset['variable_max'] !== oldDataset['variable_max']) {
-        // if min max values have changed, reload the layer
-        // FIXME: Shouldn't have to recall GetCapabilities()  when min/max changes
-        console.log('min max values have changed so we reload the dataset');
-        this.updateDatasetWmsLayer(newDataset);
       }
     }
   }
@@ -462,17 +254,7 @@ class OLComponent extends React.Component {
       <div className={classes['OLComponent']}>
         <div id="map" className="map" style={{'width': '100%', 'height': '100%', 'position': 'fixed'}}>
           <div id="popup" className="ol-popup"></div>
-          {
-            /*<MapContext.Provider value={this.map}>
-              <<OLBBoxSelector
-                ref={this.bboxSelector}
-                visualize={this.props.visualize}
-                visualizeActions={this.props.visualizeActions}
-                map={this.map}
-                layers={this.layers}
-                queryGeoserverFeatures={this.queryGeoserverFeatures} />
-            </MapContext.Provider>*/
-          }
+          <OLDatasetRenderer layerName={LAYER_DATASET} layerIndex={INDEX_DATASET_LAYER} map={this.map} />
           <OLDrawFeatures map={this.map} />
           <OLRegionsRenderer layerName={LAYER_REGIONS} layerIndex={INDEX_REGIONS} map={this.map} />
           <OLRegionsSelector layerName={LAYER_SELECTED_REGIONS} layerIndex={INDEX_SELECTED_REGIONS} map={this.map} />

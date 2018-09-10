@@ -1,20 +1,23 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { actions as regionActions } from './../../redux/modules/Region';
+import { actions as layerDatasetActions } from './../../redux/modules/LayerDataset';
+import { actions as layerRegionActions } from '../../redux/modules/LayerRegion';
 import { actions as visualizeActions } from './../../redux/modules/Visualize';
-import LayerSwitcher from './../../components/LayerSwitcher';
+import WidgetLayerSwitcher from './../../components/WidgetLayerSwitcher';
 
 const mapStateToProps = (state) => {
   return {
-    region: state.region,
+    layerDataset: state.layerDataset,
+    layerRegion: state.layerRegion,
     visualize: state.visualize
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    regionActions: bindActionCreators({...regionActions}, dispatch),
+    layerDatasetActions: bindActionCreators({...layerDatasetActions}, dispatch),
+    layerRegionActions: bindActionCreators({...layerRegionActions}, dispatch),
     visualizeActions: bindActionCreators({...visualizeActions}, dispatch)
   };
 };
@@ -22,4 +25,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(LayerSwitcher)
+)(WidgetLayerSwitcher)

@@ -4,13 +4,11 @@ import * as labels from './../../constants';
 import { constants } from './../../redux/modules/Widgets';
 import OLComponent from '../OLComponent';
 import SpeedDialMenu from '../SpeedDialMenu'
-import TimeSlider from '../TimeSlider';
 import InformationPanel from '../InformationPanel';
 import TimeSeriesChart from './../TimeSeriesChart';
 import MapControls from './../MapControls';
 import { constants } from './../../redux/modules/Widgets';
 import * as labels from './../../constants';
-import BigColorPalette from '../BigColorPalette/BigColorPalette';
 import VisualizeWidget from './VisualizeWidget';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import LayersIcon from '@material-ui/icons/Layers';
@@ -19,8 +17,10 @@ import InfoIcon from '@material-ui/icons/Description';
 import ChartIcon from '@material-ui/icons/Timeline';
 import DrawIcon from '@material-ui/icons/Edit';
 // FIXME: Widgets to containers
+import BigColorPaletteContainer from './../../containers/BigColorPalette';
 import WidgetDrawFeaturesContainer from './../../containers/WidgetDrawFeatures';
 import WidgetLayerSwitcherContainer from './../../containers/WidgetLayerSwitcher';
+import WidgetTimeSliderContainer from './../../containers/WidgetTimeSlider';
 
 const OPACITY = 0.9;
 const styles = {
@@ -110,7 +110,7 @@ class Visualize extends React.Component {
             visualize={this.props.visualize}
             visualizeActions={this.props.visualizeActions} />
         </div>
-        <BigColorPalette />
+        <BigColorPaletteContainer />
         <SpeedDialMenu widgets={this.props.widgets}
                        widgetsActions={this.props.widgetsActions} />
 
@@ -153,7 +153,7 @@ class Visualize extends React.Component {
                     icon={<AccessTimeIcon />}
                     rootStyle={styles.timeSlider}
                     onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_TIME_SLIDER_KEY)}>
-                    <TimeSlider
+                    <WidgetTimeSliderContainer
                       monthsRange={false}
                       yearsRange={false}
                       visualize={this.props.visualize}

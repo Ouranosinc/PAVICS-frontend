@@ -41,8 +41,9 @@ export default class WpsProcessForm extends React.Component {
   static propTypes = {
     executeProcess: PropTypes.func.isRequired,
     formId: PropTypes.string.isRequired,
+    layerDataset: PropTypes.object.isRequired,
+    layerRegion: PropTypes.object.isRequired,
     sectionActions: PropTypes.object.isRequired,
-    visualize: PropTypes.object.isRequired,
     workflow: PropTypes.object.isRequired,
     workflowActions: PropTypes.object.isRequired
   };
@@ -112,8 +113,8 @@ export default class WpsProcessForm extends React.Component {
     // If not, fields will be loaded with workflow default values if defined
     for(let inputName in this.state.formData) {
       if (inputName.startsWith(constants.LABEL_NETCDF.split('.')[0]) && inputName.endsWith(constants.LABEL_NETCDF.split('.')[1])) {
-        if (props.visualize.currentDisplayedDataset['url']) {
-          changedState[inputName] = props.visualize.currentDisplayedDataset['url'];
+        if (props.layerDataset.currentDisplayedDataset['url']) {
+          changedState[inputName] = props.layerDataset.currentDisplayedDataset['url'];
         } else {
           // If dataset unselected => reset value, else value might be the workflow default value (so do nothing)
           if (oldProps.currentDisplayedDataset && oldProps.currentDisplayedDataset['url']) {
@@ -123,11 +124,11 @@ export default class WpsProcessForm extends React.Component {
       }
 
       if (inputName.startsWith(constants.LABEL_OPENDAP.split('.')[0]) && inputName.endsWith(constants.LABEL_OPENDAP.split('.')[1])) {
-        if (props.visualize.currentDisplayedDataset['opendap_url']) {
-          changedState[inputName] = props.visualize.currentDisplayedDataset['opendap_url'];
+        if (props.layerDataset.currentDisplayedDataset['opendap_url']) {
+          changedState[inputName] = props.layerDataset.currentDisplayedDataset['opendap_url'];
         } else {
           // If dataset unselected => reset value, else value might be the workflow default value (so do nothing)
-          if (oldProps.visualize && oldProps.visualize.currentDisplayedDataset && oldProps.visualize.currentDisplayedDataset['opendap_url']) {
+          if (oldProps.visualize && oldProps.layerDataset.currentDisplayedDataset && oldProps.layerDataset.currentDisplayedDataset['opendap_url']) {
             changedState[inputName] = '';
           }
         }
@@ -135,12 +136,12 @@ export default class WpsProcessForm extends React.Component {
 
       // TODO Support for thredds catalog url autofill based on dataset selection: string.url update state with catalog_urls
       if (inputName.startsWith(constants.LABEL_SHAPEFILE.split('.')[0]) && inputName.endsWith(constants.LABEL_SHAPEFILE.split('.')[1])) {
-        if (props.visualize.selectedShapefile['wmsParams'] && props.visualize.selectedShapefile['wmsParams']['LAYERS']) {
-          changedState[inputName] = props.visualize.selectedShapefile['wmsParams']['LAYERS'];
+        if (props.layerRegion.selectedShapefile['wmsParams'] && props.layerRegion.selectedShapefile['wmsParams']['LAYERS']) {
+          changedState[inputName] = props.layerRegion.selectedShapefile['wmsParams']['LAYERS'];
         } else {
           // If shapefile unselected => reset value, else value might be the workflow default value (so do nothing)
-          if (oldProps.visualize && oldProps.visualize.selectedShapefile && oldProps.visualize.selectedShapefile['wmsParams'] &&
-            oldProps.visualize.selectedShapefile['wmsParams']['LAYERS']) {
+          if (oldProps.visualize && oldProps.layerRegion.selectedShapefile && oldProps.layerRegion.selectedShapefile['wmsParams'] &&
+            oldProps.layerRegion.selectedShapefile['wmsParams']['LAYERS']) {
             changedState[inputName] = '';
             // FIXME: empty selectedRegions array since value won't fit anymore
           }
@@ -148,11 +149,11 @@ export default class WpsProcessForm extends React.Component {
       }
 
       if (inputName.startsWith(constants.LABEL_FEATURE_IDS.split('.')[0]) && inputName.endsWith(constants.LABEL_FEATURE_IDS.split('.')[1])) {
-        if (props.visualize.selectedRegions && props.visualize.selectedRegions.length) {
-          changedState[inputName] = props.visualize.selectedRegions;
+        if (props.layerRegion.selectedRegions && props.layerRegion.selectedRegions.length) {
+          changedState[inputName] = props.layerRegion.selectedRegions;
         } else {
           // If region unselected => reset value, else value might be the workflow default value (so do nothing)
-          if (oldProps.visualize && oldProps.visualize.selectedRegions && oldProps.visualize.selectedRegions.length) {
+          if (oldProps.visualize && oldProps.layerRegion.selectedRegions && oldProps.layerRegion.selectedRegions.length) {
             changedState[inputName] = []
           }
         }

@@ -56,9 +56,9 @@ const DEFAULT_STATE = {
   disabled: true,
   maxDatetime: '2020-12-31T00:00:00.000Z',
   minDatetime: '1900-01-01T00:00:00.000Z',
-  currentDate: '1900-01-01', // props.visualize.currentDateTime.substring(0, 10),
-  currentMonthDay: '01-01', // props.visualize.currentDateTime.substring(5, 10),
-  currentTime: '00:00:00.000Z', // props.visualize.currentDateTime.substring(11, 24),
+  currentDate: '1900-01-01', // props.currentDateTime.substring(0, 10),
+  currentMonthDay: '01-01', // props.currentDateTime.substring(5, 10),
+  currentTime: '00:00:00.000Z', // props.currentDateTime.substring(11, 24),
   currentYear: 1900,
   firstDay: 1,
   firstMonth: 1,
@@ -80,15 +80,19 @@ const DEFAULT_STATE = {
   timesteps: ['00:00:00.000Z']
 };
 
-export class TimeSlider extends React.Component {
+export class WidgetTimeSlider extends React.Component {
   state = DEFAULT_STATE;
 
   static propTypes = {
     // monthsRange and yearsRange are present for future range selection
+    currentDateTime: PropTypes.string.isRequired,
+    currentDisplayedDataset: PropTypes.object.isRequired,
+    selectedWMSLayerTimesteps: PropTypes.object.isRequired,
+    selectedWMSLayerDetails: PropTypes.object.isRequired,
     monthsRange: PropTypes.bool.isRequired,
     yearsRange: PropTypes.bool.isRequired,
-    visualize: PropTypes.object.isRequired,
-    visualizeActions: PropTypes.object.isRequired
+    setCurrentDateTime: PropTypes.func.isRequired,
+    selectCurrentDisplayedDataset: PropTypes.func.isRequired,
   };
 
   constructor (props) {
@@ -99,7 +103,7 @@ export class TimeSlider extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     const { nextCurrentDateTime, nextCurrentDisplayedDataset} = nextProps.visualize;
-    if (nextCurrentDateTime && nextCurrentDateTime !== this.props.visualize.currentDateTime) {
+    if (nextCurrentDateTime && nextCurrentDateTime !== this.props.currentDateTime) {
       this.setState(
         {
           currentDate: nextCurrentDateTime.substring(0, 10),
@@ -109,11 +113,11 @@ export class TimeSlider extends React.Component {
         }
       );
     }
-    if(nextCurrentDisplayedDataset && nextCurrentDisplayedDataset !== this.props.visualize.currentDisplayedDataset ) {
+    if(nextCurrentDisplayedDataset && nextCurrentDisplayedDataset !== this.props.currentDisplayedDataset ) {
       if (!nextCurrentDisplayedDataset['dataset_id']) {
         this.setState(DEFAULT_STATE);
       }
-      if (nextCurrentDisplayedDataset['uniqueLayerSwitcherId'] !== this.props.visualize.currentDisplayedDataset['uniqueLayerSwitcherId']) {
+      if (nextCurrentDisplayedDataset['uniqueLayerSwitcherId'] !== this.props.currentDisplayedDataset['uniqueLayerSwitcherId']) {
         this.hasDatasetChanged = true;
       }
     }
@@ -128,8 +132,8 @@ export class TimeSlider extends React.Component {
   }
 
   init() {
-    if (!this.props.visualize.selectedWMSLayerDetails.isFetching && !this.props.visualize.selectedWMSLayerTimesteps.isFetching) {
-      if (this.props.visualize.selectedWMSLayerDetails.data.datesWithData) {
+    if (!this.props.selectedWMSLayerDetails.isFetching && !this.props.selectedWMSLayerTimesteps.isFetching) {
+      if (this.props.selectedWMSLayerDetails.data.datesWithData) {
         this.setState({disabled: false});
         if(this.hasDatasetChanged){
           this.changeGlobalRange(); // This will also triggers -­> this.dispatchCurrentDateTime (this.state.minDatetime);
@@ -146,13 +150,13 @@ export class TimeSlider extends React.Component {
   componentDidUpdate (prevProps, prevState) {
     // Context: We have two async fetch requests and we have no idea which one will be proceeded first
     // And we need both values to be fetched to calculate ranges and steps
-    if (this.props.visualize.selectedWMSLayerDetails && this.props.visualize.selectedWMSLayerDetails.data &&
-      (this.props.visualize.selectedWMSLayerDetails.data !== prevProps.visualize.selectedWMSLayerDetails.data)) {
+    if (this.props.selectedWMSLayerDetails && this.props.selectedWMSLayerDetails.data &&
+      (this.props.selectedWMSLayerDetails.data !== prevProps.selectedWMSLayerDetails.data)) {
       this.init();
     }
 
-    if (this.props.visualize.selectedWMSLayerTimesteps && this.props.visualize.selectedWMSLayerTimesteps.data &&
-      (this.props.visualize.selectedWMSLayerTimesteps.data !== prevProps.visualize.selectedWMSLayerTimesteps.data)) {
+    if (this.props.selectedWMSLayerTimesteps && this.props.selectedWMSLayerTimesteps.data &&
+      (this.props.selectedWMSLayerTimesteps.data !== prevProps.selectedWMSLayerTimesteps.data)) {
       this.init();
     }
   }
@@ -176,10 +180,10 @@ export class TimeSlider extends React.Component {
   }
 
   changeGlobalRange () {
-    let layerDetails = this.props.visualize.selectedWMSLayerDetails.data;
-    let timeSteps = this.props.visualize.selectedWMSLayerTimesteps.data.timesteps;
-    let minDatetime = this.props.visualize.currentDisplayedDataset.datetime_min[0];
-    let maxDatetime = this.props.visualize.currentDisplayedDataset.datetime_max[this.props.visualize.currentDisplayedDataset.datetime_max.length - 1];
+    let layerDetails = this.props.selectedWMSLayerDetails.data;
+    let timeSteps = this.props.selectedWMSLayerTimesteps.data.timesteps;
+    let minDatetime = this.props.currentDisplayedDataset.datetime_min[0];
+    let maxDatetime = this.props.currentDisplayedDataset.datetime_max[this.props.currentDisplayedDataset.datetime_max.length - 1];
 
     // Define MIN and MAX dataset datetime values
     /*this.setState({
@@ -205,9 +209,9 @@ export class TimeSlider extends React.Component {
       let yearBegin = moment.parseZone(`${year}-01-01`/*T00:00:00Z*/);
       let yearEnd = moment.parseZone(`${year}-12-31`/*T24:00:00Z*/);
       let found = false;
-      for (let i = 0; i < this.props.visualize.currentDisplayedDataset.datetime_min.length && !found; ++i) {
-        let currentFileMomentMin = moment.parseZone(this.props.visualize.currentDisplayedDataset.datetime_min[i]);
-        let currentFileMomentMax = moment.parseZone(this.props.visualize.currentDisplayedDataset.datetime_max[i]);
+      for (let i = 0; i < this.props.currentDisplayedDataset.datetime_min.length && !found; ++i) {
+        let currentFileMomentMin = moment.parseZone(this.props.currentDisplayedDataset.datetime_min[i]);
+        let currentFileMomentMax = moment.parseZone(this.props.currentDisplayedDataset.datetime_max[i]);
         if ((yearBegin.isSameOrBefore(currentFileMomentMax) && yearBegin.isSameOrAfter(currentFileMomentMin)) ||
           (yearEnd.isSameOrBefore(currentFileMomentMax) && yearEnd.isSameOrAfter(currentFileMomentMin))) {
           console.log('Found data for year ' + year);
@@ -286,8 +290,8 @@ export class TimeSlider extends React.Component {
   changeTimesteps () {
     // NOTE: Calculated timestep is based on one file datesWithData + timesteps values
     // Aggregated files should always have same timesteps
-    let datesWithData = this.props.visualize.selectedWMSLayerDetails.data.datesWithData;
-    let timeSteps = this.props.visualize.selectedWMSLayerTimesteps.data.timesteps;
+    let datesWithData = this.props.selectedWMSLayerDetails.data.datesWithData;
+    let timeSteps = this.props.selectedWMSLayerTimesteps.data.timesteps;
     let stepLength = 1;
     let stepGranularity = DAY_VALUE;
 
@@ -342,18 +346,18 @@ export class TimeSlider extends React.Component {
 
   changeCurrentDateTime () {
     let newDateTime = `${this.state.currentYear}-${this.state.currentMonthDay}T${this.state.currentTime}`;
-    if (this.props.visualize.currentDateTime !== newDateTime) {
-      // console.log("New datetime provided by TimeSlider: %s", newDateTime);
-      this.props.visualizeActions.setCurrentDateTime(newDateTime);
-      let currentFileMomentMin = moment.parseZone(this.props.visualize.currentDisplayedDataset.datetime_min[this.props.visualize.currentDisplayedDataset.currentFileIndex]);
-      let currentFileMomentMax = moment.parseZone(this.props.visualize.currentDisplayedDataset.datetime_max[this.props.visualize.currentDisplayedDataset.currentFileIndex]);
+    if (this.props.currentDateTime !== newDateTime) {
+      // console.log("New datetime provided by WidgetTimeSlider: %s", newDateTime);
+      this.props.setCurrentDateTime(newDateTime);
+      let currentFileMomentMin = moment.parseZone(this.props.currentDisplayedDataset.datetime_min[this.props.currentDisplayedDataset.currentFileIndex]);
+      let currentFileMomentMax = moment.parseZone(this.props.currentDisplayedDataset.datetime_max[this.props.currentDisplayedDataset.currentFileIndex]);
       let currentMoment = moment.parseZone(newDateTime);
       let newCurrentFileIndex = -1;
       if(currentMoment.isAfter(currentFileMomentMax) || currentMoment.isBefore(currentFileMomentMin)){
         // Search for new matching fileIndex
-        for(let i = 0; i < this.props.visualize.currentDisplayedDataset.datetime_min.length; ++i){
-          currentFileMomentMin = moment.parseZone(this.props.visualize.currentDisplayedDataset.datetime_min[i]);
-          currentFileMomentMax = moment.parseZone(this.props.visualize.currentDisplayedDataset.datetime_max[i]);
+        for(let i = 0; i < this.props.currentDisplayedDataset.datetime_min.length; ++i){
+          currentFileMomentMin = moment.parseZone(this.props.currentDisplayedDataset.datetime_min[i]);
+          currentFileMomentMax = moment.parseZone(this.props.currentDisplayedDataset.datetime_max[i]);
           if (currentMoment.isSameOrBefore(currentFileMomentMax) && currentMoment.isSameOrAfter(currentFileMomentMin)) {
             newCurrentFileIndex = i;
           }
@@ -378,9 +382,9 @@ export class TimeSlider extends React.Component {
           //     nearestDayDiff = Number.MAX_SAFE_INTEGER,
           //     isMax = false;
 
-          // for(let i = 0; i < this.props.visualize.currentDisplayedDataset.datetime_min.length; ++i){
-          //   let currentFileMinDiff = Math.abs(newMomentDatetime.diff(moment.parseZone(this.props.visualize.currentDisplayedDataset.datetime_min[i]))),
-          //       currentFileMaxDiff = Math.abs(newMomentDatetime.diff(moment.parseZone(this.props.visualize.currentDisplayedDataset.datetime_max[i])));
+          // for(let i = 0; i < this.props.currentDisplayedDataset.datetime_min.length; ++i){
+          //   let currentFileMinDiff = Math.abs(newMomentDatetime.diff(moment.parseZone(this.props.currentDisplayedDataset.datetime_min[i]))),
+          //       currentFileMaxDiff = Math.abs(newMomentDatetime.diff(moment.parseZone(this.props.currentDisplayedDataset.datetime_max[i])));
           //   if(currentFileMinDiff < nearestDayDiff) {
           //     isMax = false;
           //     nearestIndex = i;
@@ -394,20 +398,20 @@ export class TimeSlider extends React.Component {
           // }
           // if(nearestIndex > -1) {
           //   let propertyName = (isMax)? 'datetime_max': 'datetime_min';
-          //   newDateTime = this.props.visualize.currentDisplayedDataset[propertyName][nearestIndex];
+          //   newDateTime = this.props.currentDisplayedDataset[propertyName][nearestIndex];
           //   newCurrentFileIndex = nearestIndex;
           //   console.log('Data hole, Best match is with file index %i for date %s', nearestIndex, newDateTime);
-          //   this.props.visualizeActions.setCurrentDateTime(newDateTime);
+          //   this.props.setCurrentDateTime(newDateTime);
           //
         }
-        this.props.visualizeActions.selectCurrentDisplayedDataset({
-          ...this.props.visualize.currentDisplayedDataset,
+        this.props.selectCurrentDisplayedDataset({
+          ...this.props.currentDisplayedDataset,
           currentFileIndex: newCurrentFileIndex,
           opacity: 0.8
         });
       }else{
         // newDateTime fits current file, everything is fine just propagate newDateTime
-        // console.log("New datetime provided by TimeSlider: %s", newDateTime);
+        // console.log("New datetime provided by WidgetTimeSlider: %s", newDateTime);
         // this.props.setCurrentDateTime(newDateTime);
       }
     }
@@ -567,7 +571,7 @@ export class TimeSlider extends React.Component {
   }
 
   moveOneStep (forward = true) {
-    let date = new Date(this.props.visualize.currentDateTime);
+    let date = new Date(this.props.currentDateTime);
     let stepLength = parseInt(this.state.stepLength);
     switch (this.state.stepGranularity) {
       case MINUTE_VALUE:
@@ -639,7 +643,7 @@ export class TimeSlider extends React.Component {
     marksMonths[new Date(this.state.currentYear, 12, 1).valueOf() / DIVIDER] = 'Dec';
     return (
       <Grid container className="container" id="cy-timeslider" data-cy-enabled={!this.state.disabled}>
-        <Grid item md={4}>
+        <Grid item sm={4}>
           <TextField
             disabled={this.state.disabled}
             value={this.state.currentDate}
@@ -672,7 +676,7 @@ export class TimeSlider extends React.Component {
           {/*helperText="Format 9999-99-99 00:00:00"*/}
           <TextField
             disabled={true}
-            value={this.props.visualize.currentDateTime.substring(0, 10) + ' ' + this.props.visualize.currentDateTime.substring(11, 19)}
+            value={this.props.currentDateTime.substring(0, 10) + ' ' + this.props.currentDateTime.substring(11, 19)}
             fullWidth
             label="Current Datetime" />
         </Grid>
@@ -775,7 +779,7 @@ export class TimeSlider extends React.Component {
 
         <Grid item md={2}>
           <Button variant="contained"
-                  disabled={(this.state.minDatetime === this.props.visualize.currentDateTime) || this.state.disabled || this.state.isPlaying}
+                  disabled={(this.state.minDatetime === this.props.currentDateTime) || this.state.disabled || this.state.isPlaying}
                   onClick={() => this.onClickedStepControls(FAST_BACKWARD_ACTION)}
                   style={styles.button}
                   color="primary">
@@ -785,7 +789,7 @@ export class TimeSlider extends React.Component {
 
         <Grid item md={2}>
           <Button variant="contained"
-                  disabled={(this.state.minDatetime === this.props.visualize.currentDateTime) || this.state.disabled || this.state.isPlaying}
+                  disabled={(this.state.minDatetime === this.props.currentDateTime) || this.state.disabled || this.state.isPlaying}
                   color="primary"
                   style={styles.button}
                   onClick={() => this.onClickedStepControls(STEP_BACKWARD_ACTION)}>
@@ -815,7 +819,7 @@ export class TimeSlider extends React.Component {
 
         <Grid item md={2}>
           <Button variant="contained"
-                  disabled={(this.state.maxDatetime === this.props.visualize.currentDateTime) || this.state.disabled || this.state.isPlaying}
+                  disabled={(this.state.maxDatetime === this.props.currentDateTime) || this.state.disabled || this.state.isPlaying}
                   color="primary"
                   style={styles.button}
                   onClick={() => this.onClickedStepControls(STEP_FORWARD_ACTION)}>
@@ -825,7 +829,7 @@ export class TimeSlider extends React.Component {
 
         <Grid item md={2}>
           <Button variant="contained"
-                  disabled={(this.state.maxDatetime === this.props.visualize.currentDateTime) || this.state.disabled || this.state.isPlaying}
+                  disabled={(this.state.maxDatetime === this.props.currentDateTime) || this.state.disabled || this.state.isPlaying}
                   color="primary"
                   style={styles.button}
                   onClick={() => this.onClickedStepControls(FAST_FORWARD_ACTION)}>
@@ -837,4 +841,4 @@ export class TimeSlider extends React.Component {
   }
 }
 
-export default TimeSlider
+export default WidgetTimeSlider
