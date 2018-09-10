@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import classes from './OLComponent.scss';
 import Map from 'ol/Map';
 import View from 'ol/View';
-import { defaults as ControlDefaults } from 'ol/control';
 import OLBasemapRenderer from './../../containers/OLBasemapRenderer';
 import OLDatasetRenderer from './../../containers/OLDatasetRenderer';
 import OLDrawFeatures from './../../containers/OLDrawFeatures';
@@ -13,6 +12,8 @@ import OLMouseCoordinates from './../../containers/OLMouseCoordinates';
 import OLScaleLine from './../../containers/OLScaleLine';
 import OLZoomSlider from './../../containers/OLZoomSlider';
 
+// not exactly sure if the selected regions index is working
+// when base map is at 1 it shadows the selected regions
 const INDEX_BASE_MAP = -10;
 const INDEX_DATASET_LAYER = 1;
 const INDEX_REGIONS = 10;
@@ -20,8 +21,8 @@ const INDEX_SELECTED_REGIONS = 100;
 const LAYER_SELECTED_REGIONS = 'LAYER_SELECTED_REGIONS';
 const LAYER_REGIONS = 'LAYER_REGIONS';
 const LAYER_DATASET = 'LAYER_DATASET';
-// not exactly sure if the selected regions index is working
-// when base map is at 1 it shadows the selected regions
+const MIN_ZOOM = 2;
+const MAX_ZOOM = 13;
 
 class OLComponent extends React.Component {
   static propTypes = {
@@ -36,29 +37,20 @@ class OLComponent extends React.Component {
   }
 
   initMap () {
-    let minZoom = 2;
-    let maxZoom = 13;
+    this.view = new View({
+      center: [-10997148, 8569099],
+      zoom: 4,
+      minZoom: MIN_ZOOM,
+      maxZoom: MAX_ZOOM
+    });
 
-    this.view = new View(
-      {
-        center: [-10997148, 8569099],
-        zoom: 4,
-        minZoom: minZoom,
-        maxZoom: maxZoom
-      }
-    );
+    this.map = new Map({
+      layers: [],
+      target: 'map',
+      renderer: 'canvas',
+      view: this.view
+    });
 
-    this.map = new Map(
-      {
-        /*controls: new ControlDefaults({
-          zoom: false
-        }),*/
-        layers: [],
-        target: 'map',
-        renderer: 'canvas',
-        view: this.view
-      }
-    );
     // Cypress needs a global cyCurrentMap for some tests
     window.cyCurrentMap = this.map;
   }

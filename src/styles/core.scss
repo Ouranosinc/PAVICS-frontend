@@ -86,18 +86,8 @@
     list-style-type: none;
   }
 
-  /* Openlayers overwrite, TODO: Shouldn't be here */
-  /*.ol-zoom {
-    top: auto !important;
-    bottom: .5em !important;
-  }*/
-
   .ol-control {
     opacity: 1 !important;
-    /*padding: 0 !important;
-    background-color: #FFF !important;
-    border: 1px solid #ddd !important;
-    border-radius: 4px !important;*/
   }
 
   #map .ol-attribution{
@@ -127,7 +117,7 @@
   }
 
   #map .ol-zoom .ol-zoom-out {
-    margin-top: 204px;
+    margin-top: 214px;
     width: 1em;
     background-color: rgba(63,81,181,0.4);
     box-shadow: 0 0 5px rgb(63,81,181);
@@ -140,7 +130,7 @@
     box-shadow: 0 0 5px rgb(63,81,181);
     border-radius: 0;
     top: auto;
-    bottom: 65px;
+    bottom: 42px;
     margin-left: 4px;
     width: 1em;
   }
