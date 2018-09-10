@@ -5,16 +5,15 @@ import classes from './OLComponent.scss';
 // OpenLayers 5
 import Map from 'ol/Map';
 import View from 'ol/View';
-import MousePosition from 'ol/control/MousePosition';
 import { defaults as ControlDefaults, ScaleLine, ZoomSlider } from 'ol/control';
-import { createStringXY } from 'ol/coordinate';
 
 import OLBasemapRenderer from './../../containers/OLBasemapRenderer';
 import OLDatasetRenderer from './../../containers/OLDatasetRenderer';
+import OLDrawFeatures from './../../containers/OLDrawFeatures';
 import OLRegionsRenderer from './../../containers/OLRegionsRenderer';
 import OLRegionsSelector from './../../containers/OLRegionsSelector';
-import OLDrawFeatures from './../../containers/OLDrawFeatures';
-
+import OLMouseCoordinates from './../../containers/OLMouseCoordinates';
+import OLScaleLine from './../../containers/OLScaleLine';
 
 const INDEX_BASE_MAP = -10;
 const INDEX_DATASET_LAYER = 1;
@@ -50,31 +49,28 @@ class OLComponent extends React.Component {
         maxZoom: maxZoom
       }
     );
-    /*let panZoom = new ol.control.PanZoom({
-      imgPath: 'lib/ol3-panzoom/zoombar_black',
-      minZoom: minZoom,
-      maxZoom: maxZoom,
-      slider: true
-    });*/
 
     this.map = new Map(
       {
+        controls: new ControlDefaults({
+          zoom: false
+        }),
         layers: [],
         target: 'map',
         renderer: 'canvas',
         view: this.view
       }
     );
-    this.map.addControl(new ScaleLine());
+    // Cypress needs a global cyCurrentMap for some tests
     window.cyCurrentMap = this.map;
 
-    let mousePosition = new MousePosition({
-      coordinateFormat: createStringXY(6),
-      projection: 'EPSG:4326',
-      target: document.getElementById('mouseCoordinates')
-    });
+    /*let panZoom = new ol.control.PanZoom({
+     imgPath: 'lib/ol3-panzoom/zoombar_black',
+     minZoom: minZoom,
+     maxZoom: maxZoom,
+     slider: true
+     });*/
     // let zoomSlider = new ol.control.ZoomSlider();
-    this.map.addControl(mousePosition);
     // this.map.addControl(zoomSlider);
   }
 
@@ -105,6 +101,8 @@ class OLComponent extends React.Component {
           <OLDrawFeatures map={this.map} />
           <OLRegionsRenderer map={this.map} layerName={LAYER_REGIONS} layerIndex={INDEX_REGIONS} />
           <OLRegionsSelector map={this.map} layerName={LAYER_SELECTED_REGIONS} layerIndex={INDEX_SELECTED_REGIONS} />
+          <OLMouseCoordinates map={this.map} />
+          <OLScaleLine map={this.map} />
         </div>
       </div>
     );
