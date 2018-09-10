@@ -1,0 +1,40 @@
+.container {
+  overflow: hidden;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr minmax(min-content, auto);
+  grid-template-rows: 1fr;
+}
+.widgets {
+  padding: 6px;
+  grid-column: 1/2;
+  display: grid;
+  grid-gap: 6px;
+  grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
+  grid-auto-rows: 100px;
+  grid-auto-flow: dense;
+}
+.sectionalPanel {
+  grid-column: 2/3;
+  z-index: 1000;
+}
+.timeSlider {
+  grid-column: span 6;
+  grid-row: span 3;
+}
+.mapControls {
+  grid-column: span 3;
+  grid-row: span 3;
+}
+.layerSwitcher {
+  grid-column: span 4;
+  grid-row: span 4;
+}
+.info {
+  grid-column: span 4;
+  grid-row: span 3;
+}
+.chart {
+  grid-column: span 4;
+  grid-row: span 3;
+}
