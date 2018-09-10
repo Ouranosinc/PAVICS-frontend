@@ -35,12 +35,12 @@ const styles = {
 
 export default class WidgetLayerSwitcher extends React.Component {
   static propTypes = {
+    layerBasemap: PropTypes.object.isRequired,
+    layerBasemapActions: PropTypes.object.isRequired,
     layerDataset: PropTypes.object.isRequired,
     layerDatasetActions: PropTypes.object.isRequired,
     layerRegion: PropTypes.object.isRequired,
     layerRegionActions: PropTypes.object.isRequired,
-    visualize: PropTypes.object.isRequired,
-    visualizeActions: PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -61,7 +61,7 @@ export default class WidgetLayerSwitcher extends React.Component {
   };
 
   setSelectedBaseMap = (event, value) => {
-    this.props.visualizeActions.selectBasemap(value);
+    this.props.layerBasemapActions.selectBasemap(value);
   };
 
   setCurrentDisplayedDataset = (event, value) => {
@@ -137,13 +137,13 @@ export default class WidgetLayerSwitcher extends React.Component {
         style={styles.list}>
         <ListSubheader disableSticky>2D EPSG:4326</ListSubheader>
         {
-          this.props.visualize.baseMaps.map((map, i) =>
+          this.props.layerBasemap.baseMaps.map((map, i) =>
             <ListItem
             className="cy-WidgetLayerSwitcher-basemap-item"
             key={i}>
               <RadioGroup
                 name="selectedBaseMap"
-                value={this.props.visualize.selectedBasemap}
+                value={this.props.layerBasemap.selectedBasemap}
                 onChange={this.setSelectedBaseMap}>
                 <FormControlLabel value={map} control={<Radio color="secondary" />} label={map} />
               </RadioGroup>
@@ -154,7 +154,7 @@ export default class WidgetLayerSwitcher extends React.Component {
         <ListItem className="cy-WidgetLayerSwitcher-basemap-item">
           <RadioGroup
             name="selectedBaseMap"
-            value={this.props.visualize.selectedBasemap}
+            value={this.props.layerBasemap.selectedBasemap}
             onChange={this.setSelectedBaseMap}>
             <FormControlLabel value="Cesium" control={<Radio color="secondary" />} label="Cesium (prototype)" />
           </RadioGroup>
