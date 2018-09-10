@@ -49,7 +49,7 @@ export class DatasetMenuActions extends React.Component {
     isFile: PropTypes.bool,
     isRemoveFromProjectEnabled: PropTypes.bool.isRequired,
     project: PropTypes.object.isRequired,
-    visualizeActions: PropTypes.object.isRequired,
+    layerDatasetActions: PropTypes.object.isRequired,
   };
 
   constructor(props) {
@@ -78,8 +78,8 @@ export class DatasetMenuActions extends React.Component {
       if(index > -1) {
         copy = this.setFileAsAggregateArrayFields(copy, index);
       }
-      this.props.visualizeActions.addDatasetsToVisualize([copy]);
-      this.props.visualizeActions.selectCurrentDisplayedDataset({
+      this.props.layerDatasetActions.addDatasetsToVisualize([copy]);
+      this.props.layerDatasetActions.selectCurrentDisplayedDataset({
         ...copy,
         currentFileIndex: 0,
         opacity: 0.8
@@ -91,8 +91,8 @@ export class DatasetMenuActions extends React.Component {
         let copy = JSON.parse(JSON.stringify(this.props.dataset));
         splittedDatasets.push(this.setFileAsAggregateArrayFields(copy, index));
       });
-      this.props.visualizeActions.addDatasetsToVisualize(splittedDatasets);
-      this.props.visualizeActions.selectCurrentDisplayedDataset({
+      this.props.layerDatasetActions.addDatasetsToVisualize(splittedDatasets);
+      this.props.layerDatasetActions.selectCurrentDisplayedDataset({
         ...splittedDatasets[0],
         currentFileIndex: 0,
         opacity: 0.8

@@ -1,12 +1,13 @@
 import { combineReducers } from 'redux';
 import { routerReducer as router } from 'react-router-redux';
-import customFeatureReducer from './../redux/modules/CustomFeature';
 import { reducers as datasetAPIReducer } from '../redux/modules/DatasetAPI';
 import { reducers as jobAPIReducer } from '../redux/modules/JobAPI';
+import layerDatasetReducer from '../redux/modules/LayerDataset';
+import layerCustomFeatureReducer from '../redux/modules/LayerCustomFeature';
+import layerRegionReducer from '../redux/modules/LayerRegion';
 import monitorReducer from './../redux/modules/Monitor';
 import projectReducer from './../redux/modules/Project';
 import { reducers as projectAPIReducer } from '../redux/modules/ProjectAPI';
-import regionReducer from './../redux/modules/Region';
 import researchReducer from './../redux/modules/Research';
 import { reducers as ResearchAPIReducer } from '../redux/modules/ResearchAPI';
 import researcherReducer from './../redux/modules/Researcher';
@@ -22,13 +23,14 @@ export const makeRootReducer = (asyncReducers) => {
   return combineReducers({
     // Add sync reducers here
     'router': router,
-    'customFeature': customFeatureReducer,
     'datasetAPI': datasetAPIReducer,
     'jobAPI': jobAPIReducer,
+    'layerCustomFeature': layerCustomFeatureReducer,
+    'layerDataset': layerDatasetReducer,
+    'layerRegion': layerRegionReducer,
     'monitor': monitorReducer,
     'project': projectReducer,
     'projectAPI': projectAPIReducer,
-    'region': regionReducer,
     'research': researchReducer,
     'researchAPI': ResearchAPIReducer,
     'researcher': researcherReducer,

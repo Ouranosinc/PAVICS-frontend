@@ -20,7 +20,7 @@ export class SearchCatalogResults extends React.Component {
     projectAPIActions: PropTypes.object.isRequired,
     research: PropTypes.object.isRequired,
     datasetAPIActions: PropTypes.object.isRequired,
-    visualizeActions: PropTypes.object.isRequired
+    layerDatasetActions: PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -136,7 +136,7 @@ export class SearchCatalogResults extends React.Component {
                         </span>
                       }/>
                     <DatasetMenuActions
-                      visualizeActions={this.props.visualizeActions}
+                      layerDatasetActions={this.props.layerDatasetActions}
                       isRemoveFromProjectEnabled={false}
                       dataset={x}
                       disabledVisualize={false}

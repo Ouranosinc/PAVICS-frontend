@@ -20,8 +20,8 @@ const styles = theme => ({
 
 class WidgetDrawFeatures extends React.Component {
   static propTypes = {
-    customFeature: PropTypes.object.isRequired,
-    customFeatureActions: PropTypes.object.isRequired
+    layerCustomFeature: PropTypes.object.isRequired,
+    layerCustomFeatureActions: PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -34,7 +34,7 @@ class WidgetDrawFeatures extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     const { currentSelectedDrawnFeatureProperties } = nextProps.customFeature;
-    if(currentSelectedDrawnFeatureProperties && currentSelectedDrawnFeatureProperties !== this.props.customFeature.currentSelectedDrawnFeatureProperties) {
+    if(currentSelectedDrawnFeatureProperties && currentSelectedDrawnFeatureProperties !== this.props.layerCustomFeature.currentSelectedDrawnFeatureProperties) {
       this.setState({
         name: currentSelectedDrawnFeatureProperties.name,
         description: currentSelectedDrawnFeatureProperties.description
@@ -43,23 +43,23 @@ class WidgetDrawFeatures extends React.Component {
   }
 
   onSelectedDrawingTool = (event) => {
-    this.props.customFeatureActions.setCurrentDrawingTool(event.target.value);
+    this.props.layerCustomFeatureActions.setCurrentDrawingTool(event.target.value);
   };
 
   onResetDrawingLayer = () => {
-    this.props.customFeatureActions.setDrawnCustomFeatures([]);
+    this.props.layerCustomFeatureActions.setDrawnCustomFeatures([]);
   };
 
   onSaveDrawnLayer = () => {
     const geoJSONriter= new GeoJSON();
-    const geoJSONString = geoJSONriter.writeFeatures(this.props.customFeature.drawnCustomFeatures);
-    this.props.customFeatureActions.setGeoJSONDrawnFeatures(geoJSONString);
+    const geoJSONString = geoJSONriter.writeFeatures(this.props.layerCustomFeature.drawnCustomFeatures);
+    this.props.layerCustomFeatureActions.setGeoJSONDrawnFeatures(geoJSONString);
   };
 
   onHandleTextChanged = field => event => {
-    let cpy = Object.assign({}, this.props.customFeature.currentSelectedDrawnFeatureProperties);
+    let cpy = Object.assign({}, this.props.layerCustomFeature.currentSelectedDrawnFeatureProperties);
     cpy[field] = event.target.value;
-    this.props.customFeatureActions.setCurrentSelectedDrawnFeature(cpy);
+    this.props.layerCustomFeatureActions.setCurrentSelectedDrawnFeature(cpy);
   };
 
   onUploadFromDisk = event => {

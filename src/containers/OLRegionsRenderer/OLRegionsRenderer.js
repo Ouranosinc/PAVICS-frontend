@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { actions as regionActions } from './../../redux/modules/Region';
+import { actions as layerRegionActions } from '../../redux/modules/LayerRegion';
 import Map from 'ol/Map';
 import TileLayer from 'ol/layer/Tile';
 import TileWMS from 'ol/source/TileWMS';
@@ -12,8 +12,8 @@ export class OLRegionsRenderer extends React.Component {
     layerIndex: PropTypes.number.isRequired,
     layerName: PropTypes.string.isRequired,
     map: PropTypes.instanceOf(Map),
-    region: PropTypes.object.isRequired,
-    regionActions: PropTypes.object.isRequired,
+    layerRegion: PropTypes.object.isRequired,
+    layerRegionActions: PropTypes.object.isRequired,
   };
 
   constructor(props) {
@@ -26,7 +26,7 @@ export class OLRegionsRenderer extends React.Component {
     const { map } = nextProps;
     if (map !== this.props.map) {
       this.init(map);
-    } else if (nextProps.region.selectedShapefile !== this.props.region.selectedShapefile) {
+    } else if (nextProps.layerRegion.selectedShapefile !== this.props.layerRegion.selectedShapefile) {
       this.resetRegions(nextProps)
     }
   }
@@ -37,7 +37,7 @@ export class OLRegionsRenderer extends React.Component {
 
   resetRegions (nextProps) {
     const { map } = nextProps;
-    const { selectedShapefile } = nextProps.region;
+    const { selectedShapefile } = nextProps.layerRegion;
     const params = {
       url: selectedShapefile.wmsUrl,
       params: selectedShapefile.wmsParams
@@ -72,12 +72,12 @@ export class OLRegionsRenderer extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    region: state.region
+    layerRegion: state.layerRegion
   };
 };
 const mapDispatchToProps = (dispatch) => {
   return {
-    regionActions: bindActionCreators({...regionActions}, dispatch),
+    layerRegionActions: bindActionCreators({...layerRegionActions}, dispatch),
   };
 };
 

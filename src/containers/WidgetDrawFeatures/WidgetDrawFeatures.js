@@ -1,18 +1,18 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { actions as customFeatureActions } from './../../redux/modules/CustomFeature';
+import { actions as layerCustomFeatureActions } from '../../redux/modules/LayerCustomFeature';
 import WidgetDrawFeatures from './../../components/WidgetDrawFeatures';
 
 const mapStateToProps = (state) => {
   return {
-    customFeature: state.customFeature
+    layerCustomFeature: state.customFeature
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    customFeatureActions: bindActionCreators({...customFeatureActions}, dispatch),
+    layerCustomFeatureActions: bindActionCreators({...layerCustomFeatureActions}, dispatch),
   };
 };
 

@@ -5,14 +5,14 @@ import { bindActionCreators } from 'redux';
 import Map from 'ol/Map';
 import { add } from 'ol/coordinate';
 import { VISUALIZE_MODE_REGION_SELECTION } from './../../constants';
-import { actions as regionActions } from './../../redux/modules/Region';
+import { actions as layerRegionActions } from '../../redux/modules/LayerRegion';
 
 export class OLRegionsClickSelector extends React.Component {
   static propTypes = {
     map: PropTypes.instanceOf(Map),
     queryGeoserverFeatures: PropTypes.func.isRequired,
-    region: PropTypes.object.isRequired,
-    regionActions: PropTypes.object.isRequired,
+    layerRegion: PropTypes.object.isRequired,
+    layerRegionActions: PropTypes.object.isRequired,
     visualize: PropTypes.object.isRequired,
   };
 
@@ -39,14 +39,14 @@ export class OLRegionsClickSelector extends React.Component {
   handleMapClick = (event) => {
     // FIXME: INTERFACTION API?
     if (this.props.visualize.mapManipulationMode === VISUALIZE_MODE_REGION_SELECTION) {
-      if (this.props.region.selectedShapefile.title) {
+      if (this.props.layerRegion.selectedShapefile.title) {
         return this.handleSelectRegionClick(event);
       }
       return;
     }else {
       // FIXME: NOT MY RESPONSABILITY
-      /*if (this.props.visualize.currentDisplayedDataset['dataset_id']) {
-       console.log('selected dataset:', this.props.visualize.currentDisplayedDataset);
+      /*if (this.props.layerDataset.currentDisplayedDataset['dataset_id']) {
+       console.log('selected dataset:', this.props.layerDataset.currentDisplayedDataset);
        return this.getScalarValue(event);
        }
        console.log('choose a dataset first');
@@ -86,14 +86,14 @@ export class OLRegionsClickSelector extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    region: state.region,
+    layerRegion: state.layerRegion,
     visualize: state.visualize
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    regionActions: bindActionCreators({...regionActions}, dispatch),
+    layerRegionActions: bindActionCreators({...layerRegionActions}, dispatch),
   };
 };
 

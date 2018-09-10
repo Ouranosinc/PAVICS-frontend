@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import myHttp from '../../util/http';
-import { actions as regionActions } from './../../redux/modules/Region';
+import { actions as layerRegionActions } from '../../redux/modules/LayerRegion';
 import OLRegionsClickSelector from './../OLRegionsClickSelector';
 import OLRegionsBBoxSelector from './../OLRegionsBBoxSelector';
 import Map from 'ol/Map';
@@ -33,8 +33,8 @@ export class OLRegionsSelector extends React.Component {
     layerIndex: PropTypes.number.isRequired,
     layerName: PropTypes.string.isRequired,
     map: PropTypes.instanceOf(Map),
-    region: PropTypes.object.isRequired,
-    regionActions: PropTypes.object.isRequired,
+    layerRegion: PropTypes.object.isRequired,
+    layerRegionActions: PropTypes.object.isRequired,
   };
 
   constructor(props) {
@@ -46,7 +46,7 @@ export class OLRegionsSelector extends React.Component {
     if (map !== this.props.map) {
       this.init(map); // Once, when map has been initialised
     }
-    if (nextProps.region.selectedShapefile !== this.props.region.selectedShapefile) {
+    if (nextProps.layerRegion.selectedShapefile !== this.props.layerRegion.selectedShapefile) {
       this.source.clear();
     }
   }
@@ -140,8 +140,8 @@ export class OLRegionsSelector extends React.Component {
   }
 
   queryGeoserverFeatures = (extent, projection = 'EPSG:3857')  => {
-    if(this.props.region.selectedShapefile && this.props.region.selectedShapefile.wmsParams) {
-      const url = `${__PAVICS_GEOSERVER_PATH__}/wfs?service=WFS&version=1.1.0&request=GetFeature&typename=${this.props.region.selectedShapefile.wmsParams.LAYERS}&outputFormat=application/json&srsname=${projection}&bbox=${extent},${projection}`;
+    if(this.props.layerRegion.selectedShapefile && this.props.layerRegion.selectedShapefile.wmsParams) {
+      const url = `${__PAVICS_GEOSERVER_PATH__}/wfs?service=WFS&version=1.1.0&request=GetFeature&typename=${this.props.layerRegion.selectedShapefile.wmsParams.LAYERS}&outputFormat=application/json&srsname=${projection}&bbox=${extent},${projection}`;
       // FIXME: Move call to redux region Duck
       myHttp.get(url)
         .then(
@@ -157,13 +157,13 @@ export class OLRegionsSelector extends React.Component {
   selectFeaturesCallback(response) {
     response.features.forEach((feature) => {
       const id = feature.id;
-      if (this.props.region.selectedRegions.indexOf(id) !== -1) {
+      if (this.props.layerRegion.selectedRegions.indexOf(id) !== -1) {
         // WPS form list to visualize.selectedRegions value
-        this.props.regionActions.unselectRegion(id);
+        this.props.layerRegionActions.unselectRegion(id);
         let feature = this.source.getFeatures().find(elem => elem.id_ === id);
         this.source.removeFeature(feature);
       } else {
-        this.props.regionActions.selectRegion(id);
+        this.props.layerRegionActions.selectRegion(id);
         let format = new GeoJSON();
         let features = format.readFeatures(response, {featureProjection: 'EPSG:3857'});
         this.source.addFeatures(features);
@@ -183,13 +183,13 @@ export class OLRegionsSelector extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    region: state.region,
+    layerRegion: state.layerRegion,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    regionActions: bindActionCreators({...regionActions}, dispatch),
+    layerRegionActions: bindActionCreators({...layerRegionActions}, dispatch),
   };
 };
 

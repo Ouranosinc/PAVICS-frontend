@@ -31,29 +31,31 @@ const styles = {
   overflowY: 'auto'
 };
 
-export default class LayerSwitcher extends React.Component {
+export default class WidgetLayerSwitcher extends React.Component {
   static propTypes = {
-    region: PropTypes.object.isRequired,
-    regionActions: PropTypes.object.isRequired,
+    layerDataset: PropTypes.object.isRequired,
+    layerDatasetActions: PropTypes.object.isRequired,
+    layerRegion: PropTypes.object.isRequired,
+    layerRegionActions: PropTypes.object.isRequired,
     visualize: PropTypes.object.isRequired,
     visualizeActions: PropTypes.object.isRequired
   };
 
   constructor (props) {
     super(props);
-    this.props.visualizeActions.selectColorPalette(AVAILABLE_COLOR_PALETTES[0]);
+    this.props.layerDatasetActions.selectColorPalette(AVAILABLE_COLOR_PALETTES[0]);
     this.state = {
       tabValue: 0
     }
   }
 
   componentDidMount () {
-    this.props.regionActions.fetchShapefiles();
+    this.props.layerRegionActions.fetchShapefiles();
   }
 
   setSelectedShapefile = (event, value) => {
-    this.props.regionActions.resetSelectedRegions();
-    this.props.regionActions.selectShapefile(this.props.region.publicShapeFiles.find(f => f.title === value));
+    this.props.layerRegionActions.resetSelectedRegions();
+    this.props.layerRegionActions.selectShapefile(this.props.layerRegion.publicShapeFiles.find(f => f.title === value));
   };
 
   setSelectedBaseMap = (event, value) => {
@@ -61,33 +63,33 @@ export default class LayerSwitcher extends React.Component {
   };
 
   setCurrentDisplayedDataset = (event, value) => {
-    let selectedDataset = this.props.visualize.currentVisualizedDatasets.find(dataset => dataset.uniqueLayerSwitcherId === value);
-    this.props.visualizeActions.selectCurrentDisplayedDataset({
+    let selectedDataset = this.props.layerDataset.currentVisualizedDatasets.find(dataset => dataset.uniqueWidgetLayerSwitcherId === value);
+    this.props.layerDatasetActions.selectCurrentDisplayedDataset({
       ...selectedDataset,
       currentFileIndex: 0,
-      opacity: this.props.visualize.currentDisplayedDataset.opacity
+      opacity: this.props.layerDataset.currentDisplayedDataset.opacity
     });
   };
 
   setDatasetLayerOpacity = (event, value) => {
-    this.props.visualizeActions.selectCurrentDisplayedDataset({
-      ...this.props.visualize.currentDisplayedDataset,
+    this.props.layerDatasetActions.selectCurrentDisplayedDataset({
+      ...this.props.layerDataset.currentDisplayedDataset,
       currentFileIndex: 0,
       opacity: value
     });
   };
 
   setSelectedColorPalette = (event) => {
-    this.props.visualizeActions.selectColorPalette(event.target.value);
+    this.props.layerDatasetActions.selectColorPalette(event.target.value);
   };
 
   resetShapefile = () => {
-    this.props.regionActions.selectShapefile({});
-    this.props.regionActions.resetSelectedRegions();
+    this.props.layerRegionActions.selectShapefile({});
+    this.props.layerRegionActions.resetSelectedRegions();
   };
 
   resetDatasetLayer = () => {
-    this.props.visualizeActions.selectCurrentDisplayedDataset({});
+    this.props.layerDatasetActions.selectCurrentDisplayedDataset({});
   };
 
   /*
@@ -107,14 +109,14 @@ export default class LayerSwitcher extends React.Component {
         </ListSubheader>
         <List>
           {
-            this.props.region.publicShapeFiles.map( (shapeFile, i) =>
+            this.props.layerRegion.publicShapeFiles.map( (shapeFile, i) =>
               <ListItem
-                className="cy-layerswitcher-shapefile-item"
+                className="cy-WidgetLayerSwitcher-shapefile-item"
                 id={`cy-shapefile-name-${shapeFile.title}`}// `
                 key={i}>
                 <RadioGroup
                   name="selectedShapeFile"
-                  value={this.props.region.selectedShapefile.title}
+                  value={this.props.layerRegion.selectedShapefile.title}
                   onChange={this.setSelectedShapefile}>
                   <FormControlLabel value={shapeFile.title} control={<Radio color="secondary" />} label={shapeFile.title} />
                 </RadioGroup>
@@ -132,7 +134,7 @@ export default class LayerSwitcher extends React.Component {
         {
           this.props.visualize.baseMaps.map((map, i) =>
             <ListItem
-            className="cy-layerswitcher-basemap-item"
+            className="cy-WidgetLayerSwitcher-basemap-item"
             key={i}>
               <RadioGroup
                 name="selectedBaseMap"
@@ -144,7 +146,7 @@ export default class LayerSwitcher extends React.Component {
           )
         }
         <ListSubheader disableSticky>3D</ListSubheader>
-        <ListItem className="cy-layerswitcher-basemap-item">
+        <ListItem className="cy-WidgetLayerSwitcher-basemap-item">
           <RadioGroup
             name="selectedBaseMap"
             value={this.props.visualize.selectedBasemap}
@@ -175,7 +177,7 @@ export default class LayerSwitcher extends React.Component {
         </ListSubheader>
         <List>
           {
-            this.props.visualize.currentVisualizedDatasets.map((dataset, i) => {
+            this.props.layerDataset.currentVisualizedDatasets.map((dataset, i) => {
               let secondaryText = '';
               if (dataset.wms_url.length === 1) {
                 const SEARCH_VALUE = '/';
@@ -187,20 +189,20 @@ export default class LayerSwitcher extends React.Component {
               return (
                 <ListItem
                   key={i}
-                  className="cy-layerswitcher-dataset-item">
+                  className="cy-WidgetLayerSwitcher-dataset-item">
                   <RadioGroup
                     name="currentDisplayedDataset"
-                    value={this.props.visualize.currentDisplayedDataset.uniqueLayerSwitcherId}
+                    value={this.props.layerDataset.currentDisplayedDataset.uniqueWidgetLayerSwitcherId}
                     onChange={this.setCurrentDisplayedDataset}>
                     <FormControlLabel
-                      value={dataset.uniqueLayerSwitcherId}
+                      value={dataset.uniqueWidgetLayerSwitcherId}
                       label={<ListItemText inset
                                            primary={dataset['aggregate_title']}
                                            secondary={<span>{secondaryText}</span>} />}
                       control={
                         <Radio
                           color="secondary"
-                          data-cy-selected={this.props.visualize.currentDisplayedDataset.uniqueLayerSwitcherId === dataset.uniqueLayerSwitcherId}/>} />
+                          data-cy-selected={this.props.layerDataset.currentDisplayedDataset.uniqueWidgetLayerSwitcherId === dataset.uniqueWidgetLayerSwitcherId}/>} />
                   </RadioGroup>
                 </ListItem>
               );
@@ -214,16 +216,16 @@ export default class LayerSwitcher extends React.Component {
   makeSlider () {
     // not so clever trick so that opacity is not undefined when resetting layer
     // should stay aligned with initialState's opacity
-    if (isNaN(this.props.visualize.currentDisplayedDataset.opacity)) {
+    if (isNaN(this.props.layerDataset.currentDisplayedDataset.opacity)) {
       this.setDatasetLayerOpacity(null, 0.8);
     }
     return (
       <Slider
-         disabled={!this.props.visualize.currentDisplayedDataset.uniqueLayerSwitcherId}
+         disabled={!this.props.layerDataset.currentDisplayedDataset.uniqueWidgetLayerSwitcherId}
          min={0}
          max={1}
          step={0.05}
-         value={this.props.visualize.currentDisplayedDataset.opacity}
+         value={this.props.layerDataset.currentDisplayedDataset.opacity}
          onChange={this.setDatasetLayerOpacity}/>
     );
   }
@@ -237,10 +239,10 @@ export default class LayerSwitcher extends React.Component {
             width: '80%',
             textAlign: 'center',
             textShadow: '1px 1px 2px white, 0 0 25px white, 0 0 5px white',
-            background: `url(${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=${this.props.visualize.selectedColorPalette}&COLORBARONLY=true&WIDTH=200&HEIGHT=20&VERTICAL=false) center no-repeat`/*`*/,
+            background: `url(${__PAVICS_NCWMS_PATH__}?REQUEST=GetLegendGraphic&PALETTE=${this.props.layerDataset.selectedColorPalette}&COLORBARONLY=true&WIDTH=200&HEIGHT=20&VERTICAL=false) center no-repeat`/*`*/,
             padding: '0 0 0 10px'
           }}
-          value={this.props.visualize.selectedColorPalette}
+          value={this.props.layerDataset.selectedColorPalette}
           onChange={this.setSelectedColorPalette}
           inputProps={{
             name: 'palette',
@@ -274,17 +276,17 @@ export default class LayerSwitcher extends React.Component {
             textColor="primary"
             onChange={(event, value) => this.setState({ tabValue: value })}>
             <Tab
-              id="cy-layerswitcher-datasets-tab"
+              id="cy-WidgetLayerSwitcher-datasets-tab"
               icon={<Satellite />}
               label="Datasets">
             </Tab>
             <Tab
-              id="cy-layerswitcher-regions-tab"
+              id="cy-WidgetLayerSwitcher-regions-tab"
               icon={<LocalLibrary />}
               label="Regions">
             </Tab>
             <Tab
-              id="cy-layerswitcher-basemaps-tab"
+              id="cy-WidgetLayerSwitcher-basemaps-tab"
               icon={<Map />}
               label="Base Maps">
             </Tab>
