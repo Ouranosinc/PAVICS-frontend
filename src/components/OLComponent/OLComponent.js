@@ -1,12 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classes from './OLComponent.scss';
-
-// OpenLayers 5
 import Map from 'ol/Map';
 import View from 'ol/View';
-import { defaults as ControlDefaults, ScaleLine, ZoomSlider } from 'ol/control';
-
+import { defaults as ControlDefaults } from 'ol/control';
 import OLBasemapRenderer from './../../containers/OLBasemapRenderer';
 import OLDatasetRenderer from './../../containers/OLDatasetRenderer';
 import OLDrawFeatures from './../../containers/OLDrawFeatures';
@@ -14,6 +11,7 @@ import OLRegionsRenderer from './../../containers/OLRegionsRenderer';
 import OLRegionsSelector from './../../containers/OLRegionsSelector';
 import OLMouseCoordinates from './../../containers/OLMouseCoordinates';
 import OLScaleLine from './../../containers/OLScaleLine';
+import OLZoomSlider from './../../containers/OLZoomSlider';
 
 const INDEX_BASE_MAP = -10;
 const INDEX_DATASET_LAYER = 1;
@@ -39,7 +37,7 @@ class OLComponent extends React.Component {
 
   initMap () {
     let minZoom = 2;
-    let maxZoom = 19/*13*/;
+    let maxZoom = 13;
 
     this.view = new View(
       {
@@ -52,9 +50,9 @@ class OLComponent extends React.Component {
 
     this.map = new Map(
       {
-        controls: new ControlDefaults({
+        /*controls: new ControlDefaults({
           zoom: false
-        }),
+        }),*/
         layers: [],
         target: 'map',
         renderer: 'canvas',
@@ -63,15 +61,6 @@ class OLComponent extends React.Component {
     );
     // Cypress needs a global cyCurrentMap for some tests
     window.cyCurrentMap = this.map;
-
-    /*let panZoom = new ol.control.PanZoom({
-     imgPath: 'lib/ol3-panzoom/zoombar_black',
-     minZoom: minZoom,
-     maxZoom: maxZoom,
-     slider: true
-     });*/
-    // let zoomSlider = new ol.control.ZoomSlider();
-    // this.map.addControl(zoomSlider);
   }
 
   /*getScalarValue (event) {
@@ -103,6 +92,7 @@ class OLComponent extends React.Component {
           <OLRegionsSelector map={this.map} layerName={LAYER_SELECTED_REGIONS} layerIndex={INDEX_SELECTED_REGIONS} />
           <OLMouseCoordinates map={this.map} />
           <OLScaleLine map={this.map} />
+          <OLZoomSlider map={this.map} />
         </div>
       </div>
     );

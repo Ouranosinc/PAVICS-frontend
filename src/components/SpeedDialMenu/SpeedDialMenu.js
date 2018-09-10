@@ -19,7 +19,7 @@ const styles = theme => {
   return ({
     speedDial: {
       position: 'fixed',
-      bottom: theme.spacing.unit * 5,
+      bottom: theme.spacing.unit * 4,
       left: theme.spacing.unit * 5,
     },
     white: {
