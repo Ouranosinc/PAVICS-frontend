@@ -109,9 +109,9 @@ class OLDrawFeatures extends React.Component {
     this.layer = this.createDrawnFeaturesLayer(map);
     this.select = new Select({
       features: this.source.getFeatures(), // Prevent public regions from being selected and edited
-      condition: function(mapBrowserEvent) {
+      /*condition: function(mapBrowserEvent) {
         return singleClick(mapBrowserEvent) && altKeyOnly(mapBrowserEvent);
-      },
+      },*/
       style: (feature, resolution) => {
         return [
           new Style({

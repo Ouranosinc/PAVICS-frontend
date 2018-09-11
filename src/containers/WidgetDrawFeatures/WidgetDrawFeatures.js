@@ -6,7 +6,7 @@ import WidgetDrawFeatures from './../../components/WidgetDrawFeatures';
 
 const mapStateToProps = (state) => {
   return {
-    layerCustomFeature: state.customFeature
+    layerCustomFeature: state.layerCustomFeature
   };
 };
 
