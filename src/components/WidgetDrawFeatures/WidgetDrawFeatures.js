@@ -33,7 +33,7 @@ class WidgetDrawFeatures extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { currentSelectedDrawnFeatureProperties } = nextProps.customFeature;
+    const { currentSelectedDrawnFeatureProperties } = nextProps.layerCustomFeature;
     if(currentSelectedDrawnFeatureProperties && currentSelectedDrawnFeatureProperties !== this.props.layerCustomFeature.currentSelectedDrawnFeatureProperties) {
       this.setState({
         name: currentSelectedDrawnFeatureProperties.name,
@@ -67,7 +67,7 @@ class WidgetDrawFeatures extends React.Component {
   };
 
   render () {
-    const { currentDrawingTool, currentSelectedDrawnFeatureProperties, drawnCustomFeatures } = this.props.customFeature;
+    const { currentDrawingTool, currentSelectedDrawnFeatureProperties, drawnCustomFeatures } = this.props.layerCustomFeature;
     const { name, description } = this.state;
     return (
       <div className="container">

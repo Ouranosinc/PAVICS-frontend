@@ -7,10 +7,13 @@ import OLBasemapRenderer from './../../containers/OLBasemapRenderer';
 import OLDatasetRenderer from './../../containers/OLDatasetRenderer';
 import OLDrawFeatures from './../../containers/OLDrawFeatures';
 import OLRegionsRenderer from './../../containers/OLRegionsRenderer';
+import OLRegionsBBoxSelector from './../../containers/OLRegionsBBoxSelector';
+import OLRegionsClickSelector from './../../containers/OLRegionsClickSelector';
 import OLRegionsSelector from './../../containers/OLRegionsSelector';
 import OLMouseCoordinates from './../../containers/OLMouseCoordinates';
 import OLScaleLine from './../../containers/OLScaleLine';
 import OLZoomSlider from './../../containers/OLZoomSlider';
+import OLRegionsClickSelectorWrapper from './../OLRegionClickSelectorWrapper';
 
 // not exactly sure if the selected regions index is working
 // when base map is at 1 it shadows the selected regions
@@ -23,6 +26,8 @@ const LAYER_REGIONS = 'LAYER_REGIONS';
 const LAYER_DATASET = 'LAYER_DATASET';
 const MIN_ZOOM = 2;
 const MAX_ZOOM = 13;
+const MapContext = React.createContext();
+const { Provider: MapProvider} = React.createContext();
 
 class OLComponent extends React.Component {
   static propTypes = {
@@ -81,7 +86,9 @@ class OLComponent extends React.Component {
           <OLDatasetRenderer map={this.map} layerName={LAYER_DATASET} layerIndex={INDEX_DATASET_LAYER} />
           <OLDrawFeatures map={this.map} />
           <OLRegionsRenderer map={this.map} layerName={LAYER_REGIONS} layerIndex={INDEX_REGIONS} />
-          <OLRegionsSelector map={this.map} layerName={LAYER_SELECTED_REGIONS} layerIndex={INDEX_SELECTED_REGIONS} />
+          <OLRegionsSelector map={this.map} layerName={LAYER_SELECTED_REGIONS} layerIndex={INDEX_SELECTED_REGIONS}>
+            <OLRegionsClickSelectorWrapper />
+          </OLRegionsSelector>
           <OLMouseCoordinates map={this.map} />
           <OLScaleLine map={this.map} />
           <OLZoomSlider map={this.map} />
