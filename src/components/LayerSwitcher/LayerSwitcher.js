@@ -27,7 +27,8 @@ const AVAILABLE_COLOR_PALETTES = [
   'default'
 ];
 const styles = {
-    height: '100%',
+  list: {
+    height: '300px',
     overflowY: 'auto'
   }
 };
@@ -104,7 +105,7 @@ export default class LayerSwitcher extends React.Component {
             Reset
           </Button>
         </ListSubheader>
-        <List>
+        <List style={styles.list}>
           {
             this.props.visualize.publicShapeFiles.map( (shapeFile, i) =>
               <ListItem
@@ -127,14 +128,10 @@ export default class LayerSwitcher extends React.Component {
 
   makeBaseMapsList () {
     return (
-<<<<<<< HEAD
       <List
         component="nav"
         style={styles.list}>
         <ListSubheader disableSticky>2D EPSG:4326</ListSubheader>
-=======
-      <List component="nav">
->>>>>>> widget-grid-layout
         {
           this.props.visualize.baseMaps.map((map, i) =>
             <ListItem
@@ -179,7 +176,7 @@ export default class LayerSwitcher extends React.Component {
           </div>
           {this.makeSlider()}
         </ListSubheader>
-        <List>
+        <List style={styles.list}>
           {
             this.props.visualize.currentVisualizedDatasets.map((dataset, i) => {
               let secondaryText = '';
@@ -280,16 +277,19 @@ export default class LayerSwitcher extends React.Component {
             textColor="primary"
             onChange={(event, value) => this.setState({ tabValue: value })}>
             <Tab
+              style={{minWidth: '130px'}}
               id="cy-layerswitcher-datasets-tab"
               icon={<Satellite />}
               label="Datasets">
             </Tab>
             <Tab
+              style={{minWidth: '130px'}}
               id="cy-layerswitcher-regions-tab"
               icon={<LocalLibrary />}
               label="Regions">
             </Tab>
             <Tab
+              style={{minWidth: '130px'}}
               id="cy-layerswitcher-basemaps-tab"
               icon={<Map />}
               label="Base Maps">
@@ -297,17 +297,17 @@ export default class LayerSwitcher extends React.Component {
           </Tabs>
         </AppBar>
         {this.state.tabValue === 0 &&
-        <Paper elevation={2} style={styles.paper}>
+        <Paper elevation={2}>
           {this.makeDatasetsList()}
         </Paper>
         }
         {this.state.tabValue === 1 &&
-        <Paper elevation={2} style={styles.paper}>
+        <Paper elevation={2}>
           {this.makeShapefileList()}
         </Paper>
         }
         {this.state.tabValue === 2 &&
-        <Paper elevation={2} style={styles.paper}>
+        <Paper elevation={2}>
           {this.makeBaseMapsList()}
         </Paper>
         }

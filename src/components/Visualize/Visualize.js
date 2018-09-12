@@ -8,7 +8,6 @@ import LayerSwitcher from '../LayerSwitcher';
 import TimeSeriesChart from './../TimeSeriesChart';
 import MapControls from './../MapControls';
 import DrawFeatures from './../DrawFeatures';
-import SectionalPanel from './../../containers/SectionalPanel';
 import { constants } from './../../redux/modules/Widgets';
 import * as labels from './../../constants';
 import BigColorPalette from '../BigColorPalette/BigColorPalette';
@@ -36,46 +35,49 @@ const styles = {
     maxWidth: '65%',
     float: 'left'
   },
-  container: {
-    // width: '50%',
-    display: 'grid',
-    gridColumnGap: '2px',
-    gridGap: '2px',
-    justifyItems: 'stretch',
-    gridAutoFlow: 'dense',
-    // This way, there's always minimum of 6 columns + 5(4+1+n)(min 110px) + 1(40%)
-    gridTemplateColumns: 'repeat(4, minmax(115px, 1fr)) repeat(auto-fit, minmax(115px, 1fr)) [last-col] minmax(45px, 40%) [end-col]', // TODO: 40% -> auto
-    gridTemplateRows: 'repeat(auto-fit, 100px) [last-row] 200px [end-row]',
-  },
-  widget: {
-    height: '100%',
-    width: '100%',
-    opacity: OPACITY
-  },
-  info: {
-    gridArea: 'span 3 / span 4'
-  },
-  chart: {
-    gridArea: 'span 3 / span 4'
-  },
-  timeSlider: {
-    gridArea: 'span 3 / span 5'
+  panel: {
+    margin: '3px 0 0 3px',
+    float: 'left',
+    /*display: 'contents'*/
   },
   mapControls: {
-    gridArea: 'span 3 / span 2'
+    textAlign: 'left',
+    opacity: OPACITY,
+    overflow: 'hidden',
+    height: '310px',
+    width: '250px'
+  },
+  timeSlider: {
+    height: '310px',
+    width: '620px',
+    bottom: 0,
+    textAlign: 'left',
+    opacity: OPACITY,
   },
   layerSwitcher: {
-    gridArea: 'span 3 / span 4'
+    width: '400px',
+    bottom: 0,
+    textAlign: 'left',
+    opacity: OPACITY,
+    height: '436px'
   },
   customRegions: {
-    gridArea: 'span 3 / span 3'
+    opacity: OPACITY,
+    overflow: 'hidden',
+    height: '400px',
+    width: '400px'
   },
-  sectionalPanel: {
-
-    gridColumn: 'last-col / span 1',
-    gridRow: 'span 16 / end-row', // 16 rows should be enough (max 3x5+1)
-    // gridRowStart: 'span 9000',
-    // gridArea: '1 / last-col/ last-line / span 1'
+  chart: {
+    opacity: OPACITY,
+    overflow: 'hidden',
+    height: '310px',
+    width: '500px'
+  },
+  info: {
+    height: '310px',
+    overflow: 'auto',
+    width: '500px',
+    opacity: OPACITY
   }
 };
 
@@ -109,101 +111,99 @@ class Visualize extends React.Component {
         <SpeedDialMenu widgets={this.props.widgets}
                        widgetsActions={this.props.widgetsActions} />
 
-        <div style={styles.container}>
-          {
-            (this.props.widgets.info) ?
-              <div style={styles.info}>
-                <VisualizeWidget
-                  title={labels.INFO_WIDGET_TITLE}
-                  icon={<InfoIcon />}
-                  rootStyle={styles.widget}
-                  onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_INFO_KEY)}>
-                  <InformationPanel
-                    visualize={this.props.visualize} />
-                </VisualizeWidget>
-              </div>
-              : null
-          }
-          {
-            (this.props.widgets.chart) ?
-              <div style={styles.chart}>
-                <VisualizeWidget
-                  title={labels.CHART_WIDGET_TITLE}
-                  icon={<ChartIcon />}
-                  rootStyle={styles.widget}
-                  onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_CHART_KEY)}>
-                  <TimeSeriesChart
-                    style={{overflow: 'auto'}}
-                    visualize={this.props.visualize}
-                    visualizeActions={this.props.visualizeActions}/>
-                </VisualizeWidget>
-              </div>
-              : null
-          }
-          {
-            (this.props.widgets.timeSlider)?
-              <div style={styles.timeSlider}>
-                <VisualizeWidget
-                  title={labels.TIME_SLIDER_WIDGET_TITLE}
-                  icon={<AccessTimeIcon />}
-                  rootStyle={styles.widget}
-                  onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_TIME_SLIDER_KEY)}>
-                  <TimeSlider
-                    monthsRange={false}
-                    yearsRange={false}
-                    visualize={this.props.visualize}
-                    visualizeActions={this.props.visualizeActions} />
-                </VisualizeWidget>
-              </div>
-              : null
-          }
-          {
-            (this.props.widgets.mapControls)?
-              <div style={styles.mapControls}>
-                <VisualizeWidget
-                  title={labels.MAP_CONTROLS_WIDGET_TITLE}
-                  icon={<MapControlsIcon />}
-                  rootStyle={styles.widget}
-                  onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_MAP_CONTROLS_KEY)}>
-                  <MapControls
-                    visualize={this.props.visualize}
-                    visualizeActions={this.props.visualizeActions} />
-                </VisualizeWidget>
-              </div>
-              : null
-          }
-          {
-            (this.props.widgets.layerSwitcher)?
-              <div style={styles.layerSwitcher}>
-                <VisualizeWidget
-                  title={labels.LAYER_SWITCHER_WIDGET_TITLE}
-                  icon={<LayersIcon />}
-                  rootStyle={styles.widget}
-                  onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_LAYER_SWITCHER_KEY)}>
-                  <LayerSwitcher
-                    visualize={this.props.visualize}
-                    visualizeActions={this.props.visualizeActions} />
-                </VisualizeWidget>
-              </div>
-              : null
-          }
-          {
-            (this.props.widgets.customRegions)?
-              <div style={styles.customRegions}>
-                <VisualizeWidget
-                  title={labels.CUSTOM_REGIONS_WIDGET_TITLE}
-                  icon={<DrawIcon />}
-                  rootStyle={styles.widget}
-                  onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_CUSTOM_REGIONS_KEY)}>
-                  <DrawFeatures
-                    visualize={this.props.visualize}
-                    visualizeActions={this.props.visualizeActions} />
-                </VisualizeWidget>
-              </div>
-              : null
-          }
-          <div style={styles.sectionalPanel}>
-            <SectionalPanel />
+        <div style={styles.left}>
+          <div style={{display: 'contents'}}>
+            {
+              (this.props.widgets.info) ?
+                <div style={styles.panel}>
+                  <VisualizeWidget
+                    title={labels.INFO_WIDGET_TITLE}
+                    icon={<InfoIcon />}
+                    rootStyle={styles.info}
+                    onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_INFO_KEY)}>
+                    <InformationPanel
+                      visualize={this.props.visualize} />
+                  </VisualizeWidget>
+                </div>
+                : null
+            }
+            {
+              (this.props.widgets.chart) ?
+                <div style={styles.panel}>
+                  <VisualizeWidget
+                    title={labels.CHART_WIDGET_TITLE}
+                    icon={<ChartIcon />}
+                    rootStyle={styles.chart}
+                    onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_CHART_KEY)}>
+                    <TimeSeriesChart
+                      visualize={this.props.visualize}
+                      visualizeActions={this.props.visualizeActions}/>
+                  </VisualizeWidget>
+                </div>
+                : null
+            }
+            {
+              (this.props.widgets.timeSlider)?
+                <div style={styles.panel}>
+                  <VisualizeWidget
+                    title={labels.TIME_SLIDER_WIDGET_TITLE}
+                    icon={<AccessTimeIcon />}
+                    rootStyle={styles.timeSlider}
+                    onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_TIME_SLIDER_KEY)}>
+                    <TimeSlider
+                      monthsRange={false}
+                      yearsRange={false}
+                      visualize={this.props.visualize}
+                      visualizeActions={this.props.visualizeActions} />
+                  </VisualizeWidget>
+                </div>
+                : null
+            }
+            {
+              (this.props.widgets.mapControls)?
+                <div style={styles.panel}>
+                  <VisualizeWidget
+                    title={labels.MAP_CONTROLS_WIDGET_TITLE}
+                    icon={<MapControlsIcon />}
+                    rootStyle={styles.mapControls}
+                    onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_MAP_CONTROLS_KEY)}>
+                    <MapControls
+                      visualize={this.props.visualize}
+                      visualizeActions={this.props.visualizeActions} />
+                  </VisualizeWidget>
+                </div>
+                : null
+            }
+            {
+              (this.props.widgets.layerSwitcher)?
+                <div style={styles.panel}>
+                  <VisualizeWidget
+                    title={labels.LAYER_SWITCHER_WIDGET_TITLE}
+                    icon={<LayersIcon />}
+                    rootStyle={styles.layerSwitcher}
+                    onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_LAYER_SWITCHER_KEY)}>
+                    <LayerSwitcher
+                      visualize={this.props.visualize}
+                      visualizeActions={this.props.visualizeActions} />
+                  </VisualizeWidget>
+                </div>
+                : null
+            }
+            {
+              (this.props.widgets.customRegions)?
+                <div style={styles.panel}>
+                  <VisualizeWidget
+                    title={labels.CUSTOM_REGIONS_WIDGET_TITLE}
+                    icon={<DrawIcon />}
+                    rootStyle={styles.customRegions}
+                    onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_CUSTOM_REGIONS_KEY)}>
+                    <DrawFeatures
+                      visualize={this.props.visualize}
+                      visualizeActions={this.props.visualizeActions} />
+                  </VisualizeWidget>
+                </div>
+                : null
+            }
           </div>
         </div>
       </React.Fragment>
