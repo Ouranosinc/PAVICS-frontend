@@ -27,8 +27,9 @@ const AVAILABLE_COLOR_PALETTES = [
   'default'
 ];
 const styles = {
-  height: '100%',
-  overflowY: 'auto'
+    height: '100%',
+    overflowY: 'auto'
+  }
 };
 
 export default class LayerSwitcher extends React.Component {
@@ -126,7 +127,14 @@ export default class LayerSwitcher extends React.Component {
 
   makeBaseMapsList () {
     return (
+<<<<<<< HEAD
+      <List
+        component="nav"
+        style={styles.list}>
+        <ListSubheader disableSticky>2D EPSG:4326</ListSubheader>
+=======
       <List component="nav">
+>>>>>>> widget-grid-layout
         {
           this.props.visualize.baseMaps.map((map, i) =>
             <ListItem
