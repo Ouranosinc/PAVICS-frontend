@@ -190,15 +190,19 @@ class Visualize extends React.Component {
                 : null
             }
             {
-              <VisualizeWidget
-                title={labels.CUSTOM_REGIONS_WIDGET_TITLE}
-                icon={<DrawIcon />}
-                rootStyle={styles.customRegions}
-                onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_CUSTOM_REGIONS_KEY)}>
-                <DrawFeatures
-                  visualize={this.props.visualize}
-                  visualizeActions={this.props.visualizeActions} />
-              </VisualizeWidget>
+              (this.props.widgets.customRegions)?
+                <div style={styles.panel}>
+                <VisualizeWidget
+                  title={labels.CUSTOM_REGIONS_WIDGET_TITLE}
+                  icon={<DrawIcon />}
+                  rootStyle={styles.customRegions}
+                  onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_CUSTOM_REGIONS_KEY)}>
+                  <DrawFeatures
+                    visualize={this.props.visualize}
+                    visualizeActions={this.props.visualizeActions} />
+                </VisualizeWidget>
+                </div>
+                : null
             }
           </div>
         </div>
