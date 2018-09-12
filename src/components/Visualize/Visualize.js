@@ -1,7 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import * as labels from './../../constants';
-import { constants } from './../../redux/modules/Widgets';
 import OLComponent from '../OLComponent';
 import SpeedDialMenu from '../SpeedDialMenu'
 import InformationPanel from '../InformationPanel';
@@ -77,7 +75,7 @@ const styles = {
     opacity: OPACITY
   },
   customRegions: {
-    height: '400px',
+    height: '420px',
     overflow: 'auto',
     width: '400px',
     opacity: OPACITY
