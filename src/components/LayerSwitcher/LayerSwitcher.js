@@ -127,11 +127,21 @@ export default class LayerSwitcher extends React.Component {
 
   makeBaseMapsList () {
     return (
+<<<<<<< HEAD
+      <List
+        component="nav"
+        style={styles.list}>
+        <ListSubheader disableSticky>2D EPSG:4326</ListSubheader>
+=======
       <List component="nav">
+<<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> 2e3e6f1... Use Grid Layout for Widgets disposition
 =======
 >>>>>>> 6163f43... Merged with widget css grid layout
+=======
+>>>>>>> widget-grid-layout
+>>>>>>> 5419b8d... Revert "Merged with widget css grid layout"
         {
           this.props.visualize.baseMaps.map((map, i) =>
             <ListItem
