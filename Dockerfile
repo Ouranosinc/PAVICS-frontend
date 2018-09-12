@@ -1,9 +1,9 @@
 # PAVICS-Platform
 #
-# VERSION 1.1.2
+# VERSION 1.1.3
 FROM node:8.2.1
 MAINTAINER Renaud Hébert-Legault <renaud.hebert-legault@crim.ca>
-LABEL Description="PAVICS Platform - Based on Node.js, React, Redux, Webpack, OpenLayers, Koa and MaterialUI" Vendor="CRIM" Version="1.1.1"
+LABEL Description="PAVICS Platform - Based on Node.js, React, Redux, Webpack, OpenLayers, Koa and MaterialUI" Vendor="CRIM" Version="1.1.3"
 WORKDIR /frontend
 
 ENV NODE_ENV=development
