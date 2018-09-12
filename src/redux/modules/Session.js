@@ -146,7 +146,12 @@ function checkLogin() {
         dispatch(checkLoginSuccess());
         if (session.authenticated === true) {
           NotificationManager.success('You have been logged in to the platform.', 'Success', 10000);
-          dispatch(setSessionInformations(session['user_name'], session['authenticated'], session['user_email'], session['group_names']));
+          dispatch(setSessionInformations(
+            session['user']['user_name'],
+            session['authenticated'],
+            session['user']['user_email'],
+            session['user']['group_names']
+          ));
         }
       })
       .catch(err => {

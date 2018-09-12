@@ -97,8 +97,8 @@ class Pavics extends React.Component {
    */
   componentWillReceiveProps (nextProps) {
     if (nextProps.session.sessionStatus &&
-        this.props.session.sessionStatus !== nextProps.session.sessionStatus &&
-        nextProps.session.sessionStatus.user && nextProps.session.sessionStatus.user.username.length) {
+        this.props.session.sessionStatus !== nextProps.session.sessionStatus && nextProps.session.sessionStatus.user &&
+        nextProps.session.sessionStatus.user.username && nextProps.session.sessionStatus.user.username.length) {
       // After user logged in fetch user projects and catalogs facets
       this.triggerOnLoginActions();
     }else if( nextProps.session.sessionStatus &&
