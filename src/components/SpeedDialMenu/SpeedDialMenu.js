@@ -12,6 +12,7 @@ import ChartIcon from '@material-ui/icons/Timeline';
 import LayersIcon from '@material-ui/icons/Layers';
 import MapControlsIcon from '@material-ui/icons/MyLocation';
 import InfoIcon from '@material-ui/icons/Description';
+import DrawIcon from '@material-ui/icons/EditLocation'
 
 const styles = theme => {
   // console.log(theme)
@@ -118,6 +119,14 @@ class SpeedDialMenu extends React.Component {
             ButtonProps={{
               id: "cy-menu-point-info-toggle-btn",
               color: this.props.widgets.info? 'primary': 'secondary'
+            }} />
+          <SpeedDialAction
+            icon={<DrawIcon className={classes.white}/>}
+            tooltipTitle={labels.CUSTOM_REGIONS_WIDGET_TITLE}
+            onClick={(event) => this.props.widgetsActions.toggleWidget(constants.WIDGET_CUSTOM_REGIONS_KEY)}
+            ButtonProps={{
+              id: "cy-menu-custom-regions-toggle-btn",
+              color: this.props.widgets.customRegions? 'primary': 'secondary'
             }} />
         </SpeedDial>
       </div>

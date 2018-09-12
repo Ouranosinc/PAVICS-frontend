@@ -43,7 +43,7 @@ export default class MapControls extends React.Component {
     });
   };
 
-  onSelectMapManipulationMode = (event, value) => {
+  onSelectedMapManipulationMode = (event, value) => {
     this.props.visualizeActions.selectMapManipulationMode(value);
   };
 
@@ -55,7 +55,7 @@ export default class MapControls extends React.Component {
         </Typography>
         <RadioGroup
           style={{marginTop: '10px'}}
-          onChange={this.onSelectMapManipulationMode}
+          onChange={this.onSelectedMapManipulationMode}
           name="map-manipulation-mode"
           value={this.props.visualize.mapManipulationMode}>
           <FormControlLabel
