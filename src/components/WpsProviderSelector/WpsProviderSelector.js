@@ -27,15 +27,15 @@ export default class WpsProviderSelector extends React.Component {
               return (
               <ListItem
                 button
-                onClick={this.makeChangeProviderCallback(provider.identifier)}
+                onClick={this.makeChangeProviderCallback(provider.id)}
                 key={i}>
                 <ListItemIcon>
                   <ProviderIcon />
                 </ListItemIcon>
                 <ListItemText
                   inset
-                  primary={provider.title}
-                  secondary={provider.description} />
+                  primary={`${provider.id} - ${provider.title}`}
+                  secondary={provider.abstract} />
               </ListItem>
               );
             })

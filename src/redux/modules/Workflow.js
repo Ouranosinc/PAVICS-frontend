@@ -23,19 +23,6 @@ export const constants = {
 
 // Actions
 function setSelectedProcess (process) {
-  // TODO remove the boilerplate when api provides the identifier
-  // TODO uplicated in WpsProviderSelector to make executing easier
-  let processIdentifier;
-  if (process.identifier) {
-    processIdentifier = process.identifier;
-  } else {
-    let param = process.url.slice('process=');
-    let bits = param.split('=');
-    processIdentifier = bits.slice(-1)[0];
-  }
-  process = Object.assign(process, {
-    identifier: processIdentifier
-  });
   return {
     type: constants.WORKFLOW_CHOOSE_PROCESS,
     process: process
@@ -50,9 +37,6 @@ function setProcesses (processes) {
 }
 
 function setProviders (providers) {
-  providers.map(provider => {
-    provider.identifier = provider.url.replace('/processes/list?wps=', '');
-  });
   return {
     type: constants.WORKFLOW_SET_PROVIDERS,
     items: providers
@@ -114,16 +98,16 @@ function handleSelectedProcessValueChange (key, value) {
 
 function fetchProcessInputs (provider, process) {
   return dispatch => {
-    return myHttp.get(`/phoenix/inputs?provider=${provider}&process=${process}`)
+    return myHttp.get(`${__PAVICS_TWITCHER_API_PATH__}/providers/${provider}/processes/${process}`)
       .then(response => response.json())
       .then(json => {
         let inputDefinitions = [];
         json.inputs.map((input) => {
           inputDefinitions.push(new InputDefinition(
-            input.name,
+            input.id,
             input.dataType,
             input.title,
-            input.description,
+            input.abstract,
             input.minOccurs,
             input.maxOccurs,
             input.defaultValue,
@@ -154,9 +138,9 @@ function chooseProcess (process) {
 
 function fetchProcesses (provider) {
   return (dispatch) => {
-    return myHttp.get(`/phoenix/processesList?provider=${provider}`)
+    return myHttp.get(`${__PAVICS_TWITCHER_API_PATH__}/providers/${provider}/processes`)
       .then(response => response.json())
-      .then(json => dispatch(setProcesses(json.items)))
+      .then(json => dispatch(setProcesses(json)))
       .catch(err => {
         console.log(err);
       });
@@ -165,9 +149,9 @@ function fetchProcesses (provider) {
 
 function fetchProviders () {
   return (dispatch) => {
-    return myHttp.get('/phoenix/processes')
+    return myHttp.get(`${__PAVICS_TWITCHER_API_PATH__}/providers`)
       .then(response => response.json())
-      .then(json => dispatch(setProviders(json.items)))
+      .then(json => dispatch(setProviders(json)))
       .catch(err => {
         console.log(err);
       });

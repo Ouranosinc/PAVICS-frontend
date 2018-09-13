@@ -21,7 +21,7 @@ class WpsProcessDetails extends React.Component {
       <Card className={this.props.classes.marginated}>
         <CardHeader
           title={this.props.workflow.selectedProcess.title}
-          subheader={this.props.workflow.selectedProcess.description} />
+          subheader={this.props.workflow.selectedProcess.abstract} />
       </Card>
     );
   }

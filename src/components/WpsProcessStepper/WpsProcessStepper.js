@@ -59,7 +59,7 @@ class WpsProcessStepper extends React.Component {
     // ugly hack to workaround making one extra trip to the backend
     // we already have had to put strange __start__ and __end__ inputs to work nicely with phoenix
     let formData = new FormData(document.querySelector(`#${FORM_PROCESS_ID}`));
-    let url = `/phoenix/processes/execute?wps=${this.props.workflow.selectedProvider}&process=${this.props.workflow.selectedProcess.identifier}`;
+    let url = `/phoenix/processes/execute?wps=${this.props.workflow.selectedProvider}&process=${this.props.workflow.selectedProcess.id}`;
     const additionalHeaders = {
       'accept': 'application/json'
     };

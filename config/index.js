@@ -15,6 +15,7 @@ let birdhouseHost = process.env.BIRDHOUSE_HOST || 'outarde.crim.ca';
 let ncwmsHost = process.env.NCWMS_HOST || `https://${birdhouseHost}/twitcher/ows/proxy/ncWMS2/wms`;
 let catalogHost = process.env.CATALOG_HOST || `https://${birdhouseHost}/twitcher/ows/proxy/catalog/pywps`;
 let malleefowlHost = process.env.MALLEEFOWL_HOST || `https://${birdhouseHost}/twitcher/ows/proxy/malleefowl/wps`;
+let twitcherHost = process.env.TWITCHER_HOST || `https://${birdhouseHost}/twitcher`;
 let PAVICS_WORKFLOW_PROVIDER = process.env.PAVICS_WORKFLOW_PROVIDER || 'malleefowl';
 let PAVICS_RUN_WORKFLOW_IDENTIFIER = process.env.PAVICS_RUN_WORKFLOW_IDENTIFIER || 'custom_workflow';
 let PAVICS_VISUALIZE_IDENTIFIER = process.env.PAVICS_VISUALIZE_IDENTIFIER || 'TODO';
@@ -40,6 +41,7 @@ const config = {
   pavics_geoserver_path: `https://${birdhouseHost}/geoserver`,
   pavics_ncwms_path: ncwmsHost,
   pavics_catalog_path: catalogHost,
+  pavics_twitcher_path: twitcherHost,
   pavics_project_api_path: process.env.PAVICS_PROJECT_API_URL || `https://${birdhouseHost}/project-api/api`,
   // pavics_project_api_internal_url is needed in dev mode since centos vm etc/hosts hasn't its value modified but windows host has (pluvier -­> dev IP)
   pavics_project_api_internal_url: process.env.PAVICS_PROJECT_API_INTERNAL_URL || `https://${birdhouseHost}/project-api/api`, // DEV
@@ -116,7 +118,8 @@ config.globals = {
   '__PAVICS_PHOENIX_PATH__': JSON.stringify(config.pavics_phoenix_path),
   '__PAVICS_GEOSERVER_PATH__': JSON.stringify(config.pavics_geoserver_path),
   '__PAVICS_PROJECT_API_PATH__': JSON.stringify(config.pavics_project_api_path),
-  '__MAGPIE_HOST__': JSON.stringify(config.pavics_magpie_host),
+  '__PAVICS_MAGPIE_API_PATH__': JSON.stringify(config.pavics_magpie_host),
+  '__PAVICS_TWITCHER_API_PATH__': JSON.stringify(config.  pavics_twitcher_path),
   '__PAVICS_WORKFLOW_PROVIDER__': JSON.stringify(config.PAVICS_WORKFLOW_PROVIDER),
   '__PAVICS_RUN_WORKFLOW_IDENTIFIER__': JSON.stringify(config.PAVICS_RUN_WORKFLOW_IDENTIFIER),
   '__PAVICS_VISUALIZE_IDENTIFIER__': JSON.stringify(config.PAVICS_VISUALIZE_IDENTIFIER),

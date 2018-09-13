@@ -41,7 +41,7 @@ class WpsProcessSelector extends React.Component {
   makeChooseProcessCallback (process) {
     return () => {
       this.props.workflowActions.chooseProcess(process);
-      this.props.workflowActions.fetchProcessInputs(this.props.workflow.selectedProvider, process.identifier);
+      this.props.workflowActions.fetchProcessInputs(this.props.workflow.selectedProvider, process.id);
     };
   }
 
@@ -50,9 +50,9 @@ class WpsProcessSelector extends React.Component {
     let filteredProcesses = this.props.workflow.processes;
     if (this.props.searchKeyword.length) {
       filteredProcesses = this.props.workflow.processes.filter((process) => {
-        return process.identifier.toUpperCase().includes(this.props.searchKeyword.toUpperCase()) ||
+        return process.id.toUpperCase().includes(this.props.searchKeyword.toUpperCase()) ||
           process.title.toUpperCase().includes(this.props.searchKeyword.toUpperCase()) ||
-          process.description.toUpperCase().includes(this.props.searchKeyword.toUpperCase());
+          process.abstract.toUpperCase().includes(this.props.searchKeyword.toUpperCase());
       });
     }
     return (
@@ -74,7 +74,7 @@ class WpsProcessSelector extends React.Component {
                 <Card className={classes.card} key={i}>
                   <CardHeader
                     title={process.title}
-                    subheader={process.description} />
+                    subheader={process.abstract} />
                   <CardContent className={classes.content}>
                     <Button
                       className={classes.button}

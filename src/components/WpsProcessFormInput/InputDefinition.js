@@ -2,29 +2,29 @@ import * as constants from './../../constants';
 
 export class InputDefinition {
 
-  name;
+  id;
   dataType;
   title;
-  description;
+  abstract;
   minOccurs;
   maxOccurs;
   defaultValue;
   allowedValues;
 
   constructor (
-    name,
+    id,
     dataType,
     title,
-    description,
+    abstract,
     minOccurs,
     maxOccurs,
     defaultValue,
     allowedValues
   ) {
-    this.name = name || '';
+    this.id = id || '';
     this.dataType = dataType || constants.STRING;
     this.title = title || '';
-    this.description = description || '';
+    this.abstract = abstract || '';
     this.minOccurs = minOccurs || 1;
     this.maxOccurs = maxOccurs || 1;
     this.defaultValue = defaultValue || '';

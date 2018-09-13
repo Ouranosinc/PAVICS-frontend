@@ -79,7 +79,7 @@ class ScientificWorkflowStepper extends Component {
         });
       }
       let validProviders = [];
-      this.props.workflow.providers.items.map(elem => validProviders.push(elem.identifier));
+      this.props.workflow.providers.items.map(elem => validProviders.push(elem.id));
       // validate that each task has a valid provider
       for (let i = 0, nbTasks = tasks.length; i !== nbTasks; i++) {
         let thisTask = tasks[i];
@@ -88,29 +88,31 @@ class ScientificWorkflowStepper extends Component {
         if (validProviders.indexOf(thisTaskProvider) === -1) {
           NotificationManager.warning(`The provider ${thisTaskProvider} is not a valid provider. Please edit the workflow accordingly.`, 'Warning', 10000);
         }
-        let providerDescription = await this.request(`/phoenix/processesList?provider=${thisTaskProvider}`);
+        // FIXME: Reuse workflow.fetchProcesses() ?
+        let processes = await this.request(`${__PAVICS_TWITCHER_API_PATH__}/providers/${thisTaskProvider}/processes`);
         // we want only the part before the ?
         // also we use tasks[i] because we want the original array to be modified
         // not the local thisTask
-        tasks[i]['url'] = providerDescription.url.substring(0, providerDescription.url.indexOf('?'));
-        delete tasks[i]['provider'];
-        let validProcessIdentifiers = [];
-        providerDescription.items.map(elem => validProcessIdentifiers.push(elem.identifier));
+        // tasks[i]['url'] = providerDescription.url.substring(0, providerDescription.url.indexOf('?'));
+        // delete tasks[i]['provider']; // why ?
+        // let validProcessIdentifiers = [];
+        // FIXME: bad use of map()
+        // // providerDescription.items.map(elem => validProcessIdentifiers.push(elem.id));
         // validate that this task has a valid identifier (that is, the provider provides that identifier)
-        if (validProcessIdentifiers.indexOf(thisTaskProcessIdentifier) === -1) {
+        if (!processes.find(p => p.id === thisTaskProcessIdentifier)) {
           NotificationManager.error(`The identifier ${thisTaskProcessIdentifier} is not a valid process identifier of the provider ${thisTaskProvider}. Please provide valid process identifiers`, 'Warning', 10000);
         }
         // if the task has inputs (a task can have only linked_inputs, that are provided by other tasks. those tasks need nothing from the user)
         // here, we validate that all inputs actually exist in the process
         if (thisTask.inputs) {
-          let processDescription = await this.request(`/phoenix/inputs?provider=${thisTaskProvider}&process=${thisTaskProcessIdentifier}`);
-          let validInputNames = [];
-          processDescription.inputs.map(elem => validInputNames.push(elem.name));
+          // FIXME: Reuse workflow.fetchProcessInputs() ?
+          let processDescription = await this.request(`${__PAVICS_TWITCHER_API_PATH__}/providers/${thisTaskProvider}/processes/${thisTaskProcessIdentifier}`);
+          let validInputIds = processDescription.inputs.map(elem => elem.id);
           for (let inputName in thisTask.inputs) {
             if (thisTask.inputs.hasOwnProperty(inputName)) {
-              let validInputIndex = validInputNames.indexOf(inputName);
+              let validInputIndex = validInputIds.indexOf(inputName);
               if (validInputIndex === -1) {
-                NotificationManager.warning(`The input ${inputName} is not a valid input for the process ${thisTaskProcessIdentifier}, it should be one of ${validInputNames.join(', ')}.`, 'Warning', 10000);
+                NotificationManager.warning(`The input ${inputName} is not a valid input for the process ${thisTaskProcessIdentifier}, it should be one of ${validInputIds.join(', ')}.`, 'Warning', 10000);
               }
               console.log('process description:', processDescription);
               inputsThatShouldBeProvided.push(new InputDefinition(
@@ -153,7 +155,7 @@ class ScientificWorkflowStepper extends Component {
   execute (formData) {
     // ugly hack to workaround making one extra trip to the backend
     // we already have had to put strange __start__ and __end__ inputs to work nicely with phoenix
-    let url = `/phoenix/processes/execute?wps=${this.props.selectedProvider}&process=${this.props.selectedProcess.identifier}`;
+    let url = `/phoenix/processes/execute?wps=${this.props.selectedProvider}&process=${this.props.selectedProcess.id}`;
     myHttp.postFormData(url, formData, {'accept': 'application/json'})
       .then(res => res.json())
       .then(response => {
