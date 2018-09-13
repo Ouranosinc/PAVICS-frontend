@@ -4,8 +4,10 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { actions as layerRegionActions } from '../../redux/modules/LayerRegion';
 import Map from 'ol/Map';
-import TileLayer from 'ol/layer/Tile';
-import TileWMS from 'ol/source/TileWMS';
+// import TileLayer from 'ol/layer/Tile';
+// import TileWMS from 'ol/source/TileWMS';
+import {Image as ImageLayer} from 'ol/layer';
+import ImageWMS from 'ol/source/ImageWMS';
 
 export class OLRegionsRenderer extends React.Component {
   static propTypes = {
@@ -13,7 +15,7 @@ export class OLRegionsRenderer extends React.Component {
     layerName: PropTypes.string.isRequired,
     map: PropTypes.instanceOf(Map),
     layerRegion: PropTypes.object.isRequired,
-    layerRegionActions: PropTypes.object.isRequired,
+    layerRegionActions: PropTypes.object.isRequired
   };
 
   constructor(props) {
@@ -40,7 +42,9 @@ export class OLRegionsRenderer extends React.Component {
     const { selectedShapefile } = nextProps.layerRegion;
     const params = {
       url: selectedShapefile.wmsUrl,
-      params: selectedShapefile.wmsParams
+      params: selectedShapefile.wmsParams,
+      ratio: 1,
+      serverType: 'geoserver'
     };
 
     if(this.source) {
@@ -48,13 +52,17 @@ export class OLRegionsRenderer extends React.Component {
       // this.source.updateParams(params);
       map.removeLayer(this.layer);
     }
-    this.source = new TileWMS(params);
+    // Single Image Tile WMS Prototype
+    // https://stackoverflow.com/questions/2883122/openlayers-layers-tiled-vs-single-tile
+    // this.source = new TileWMS(params);
+    this.source = new ImageWMS(params);
     this.layer = this.createRegionLayer(map);
 
   }
 
   createRegionLayer (map) {
-    let layer = new TileLayer({
+    let layer = new ImageLayer({
+    // let layer = new TileLayer({
       visible: true,
       title: this.props.layerName,
       opacity: 0.4,
