@@ -199,7 +199,7 @@ export class OLDatasetRenderer extends React.Component {
         'STYLES': `default-scalar/${palette}`
       });
     } else {
-      NotificationManager.warning('Please display a dataset before changing the color palette.', 'Warning', 10000);
+      // NotificationManager.warning('Please display a dataset before changing the color palette.', 'Warning', 10000);
     }
   }
 
