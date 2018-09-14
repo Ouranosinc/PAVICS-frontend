@@ -259,6 +259,8 @@ const HANDLERS = {
     return {
       ...state,
       currentDisplayedDataset: action.layer,
+      // When resetting datasets, it results in adding to variablePreferences:
+      // 'undefined': {colorPalette:undefined, max:  undefined, min:undefined}
       variablePreferences: {...state.variablePreferences, [action.layer.variable]: variablePreference},
       selectedColorPalette: variablePreference.colorPalette
     };
