@@ -65,7 +65,7 @@ export default class WidgetLayerSwitcher extends React.Component {
   };
 
   setCurrentDisplayedDataset = (event, value) => {
-    let selectedDataset = this.props.layerDataset.currentVisualizedDatasets.find(dataset => dataset.uniqueWidgetLayerSwitcherId === value);
+    let selectedDataset = this.props.layerDataset.currentVisualizedDatasets.find(dataset => dataset.uniqueLayerSwitcherId === value);
     this.props.layerDatasetActions.selectCurrentDisplayedDataset({
       ...selectedDataset,
       currentFileIndex: 0,
@@ -197,17 +197,17 @@ export default class WidgetLayerSwitcher extends React.Component {
                   className="cy-WidgetLayerSwitcher-dataset-item">
                   <RadioGroup
                     name="currentDisplayedDataset"
-                    value={this.props.layerDataset.currentDisplayedDataset.uniqueWidgetLayerSwitcherId}
+                    value={this.props.layerDataset.currentDisplayedDataset.uniqueLayerSwitcherId}
                     onChange={this.setCurrentDisplayedDataset}>
                     <FormControlLabel
-                      value={dataset.uniqueWidgetLayerSwitcherId}
+                      value={dataset.uniqueLayerSwitcherId}
                       label={<ListItemText inset
                                            primary={dataset['aggregate_title']}
                                            secondary={<span>{secondaryText}</span>} />}
                       control={
                         <Radio
                           color="secondary"
-                          data-cy-selected={this.props.layerDataset.currentDisplayedDataset.uniqueWidgetLayerSwitcherId === dataset.uniqueWidgetLayerSwitcherId}/>} />
+                          data-cy-selected={this.props.layerDataset.currentDisplayedDataset.uniqueLayerSwitcherId === dataset.uniqueLayerSwitcherId}/>} />
                   </RadioGroup>
                 </ListItem>
               );
@@ -226,7 +226,7 @@ export default class WidgetLayerSwitcher extends React.Component {
     }
     return (
       <Slider
-         disabled={!this.props.layerDataset.currentDisplayedDataset.uniqueWidgetLayerSwitcherId}
+         disabled={!this.props.layerDataset.currentDisplayedDataset.uniqueLayerSwitcherId}
          min={0}
          max={1}
          step={0.05}
