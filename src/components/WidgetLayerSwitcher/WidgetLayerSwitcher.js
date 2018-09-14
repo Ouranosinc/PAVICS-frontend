@@ -17,9 +17,10 @@ import RadioGroup from'@material-ui/core/RadioGroup';
 import Satellite from '@material-ui/icons/Satellite';
 import LocalLibrary from '@material-ui/icons/LocalLibrary';
 import Map from '@material-ui/icons/Map';
-import Paper from'@material-ui/core/Paper';
-import Button from'@material-ui/core/Button';
-import AppBar from'@material-ui/core/AppBar';
+import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
+import AppBar from '@material-ui/core/AppBar';
+import Grid from '@material-ui/core/Grid';
 
 const AVAILABLE_COLOR_PALETTES = [
   'seq-Blues',
@@ -167,17 +168,19 @@ export default class WidgetLayerSwitcher extends React.Component {
     return (
       <React.Fragment>
         <ListSubheader disableSticky>
-          <div style={{width: '25%', display: 'inline-block'}}>
-            <Button variant="contained"
-                    color="primary"
-                    id="cy-reset-dataset-btn"
-                    onClick={this.resetDatasetLayer}>
-              Reset
-            </Button>
-          </div>
-          <div style={{width: '75%', display: 'inline-block', padding: '0 15px'}}>
-            {this.makeColorPalettesSelect()}
-          </div>
+          <Grid container>
+            <Grid item sm={12} md={4}>
+              <Button variant="contained"
+                      color="primary"
+                      id="cy-reset-dataset-btn"
+                      onClick={this.resetDatasetLayer}>
+                Reset
+              </Button>
+            </Grid>
+            <Grid item sm={12} md={8}>
+              {this.makeColorPalettesSelect()}
+            </Grid>
+          </Grid>
           {this.makeSlider()}
         </ListSubheader>
         <List style={styles.list}>

@@ -36,32 +36,27 @@ export class OLDatasetRenderer extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     const { map, layerDataset } = nextProps;
+    const newDataset = layerDataset.currentDisplayedDataset;
+    const oldDataset = this.props.layerDataset.currentDisplayedDataset;
+    const hasDisplayedDataset = this.hasCurrentlyDisplayedDataset();
+
     if (map !== this.props.map) {
       this.init(map); // Once, when map has been initialised
     }
     if (layerDataset.currentDateTime && layerDataset.currentDateTime !== this.props.layerDataset.currentDateTime) {
       if (this.source) {
-        this.source.updateParams({TIME: nextProps.layerDataset.currentDateTime});
+        this.source.updateParams({TIME: layerDataset.currentDateTime});
         this.source.setTileLoadFunction(this.source.getTileLoadFunction());
         this.source.changed();
       }
     }
-  }
-
-  componentDidUpdate (prevProps, prevState) {
-    const { map } = this.props;
-    const newDataset = this.props.layerDataset.currentDisplayedDataset;
-    const oldDataset = prevProps.layerDataset.currentDisplayedDataset;
-    const hasDisplayedDataset = this.hasCurrentlyDisplayedDataset();
-
-    if (this.props.layerDataset.selectedColorPalette !== prevProps.layerDataset.selectedColorPalette) {
+    if (layerDataset.selectedColorPalette && layerDataset.selectedColorPalette !== this.props.layerDataset.selectedColorPalette) {
       this.updateColorPalette();
     }
-
     // if there is a displayed dataset and the new one can't be shown on the map (ie having wmsUrls), remove the layer
     if ( hasDisplayedDataset && !this.datasetHasWmsUrls(newDataset) ) {
       map.removeLayer(this.layer);
-      return;
+      this.layer = null;
     }
 
     // If new data can be shown on the map (ie having wmsUrls), verify something has really changed
@@ -84,6 +79,7 @@ export class OLDatasetRenderer extends React.Component {
         this.updateDatasetWmsLayer(newDataset);
       }
     }
+
   }
 
   init(map) {
@@ -106,6 +102,8 @@ export class OLDatasetRenderer extends React.Component {
     };
 
     this.props.map.removeLayer(this.layer);
+    // delete this.layer;
+
     this.source = new TileWMS({
       url: resourceUrl,
       params: wmsParams
@@ -221,12 +219,13 @@ export class OLDatasetRenderer extends React.Component {
   }
 
   /*
-   OpenLayers inner workings are somewhat obfuscated. The layer object only has one or two letter properties that don't really express what they're for
-   Here I assume that for open layers to display something, it needs this "H" property, that contains opacity, layer title, it's visibility, and a few other things
-   This is a bit critical, as it decides wether or not the app considers that there is a displayed dataset
+   OpenLayers inner workings are somewhat obfuscated.
+   Here I assume that for open layers to display something, it needs this "state_" property,
+   that contains opacity, layer title, it's visibility, and a few other things
+   This is a bit critical, as it decides whether or not the app considers that there is a displayed dataset
    */
   hasCurrentlyDisplayedDataset () {
-    return !!(this.layer && this.layer.H);
+    return this.layer && this.layer.hasOwnProperty('state_');
   }
 
   render () {
