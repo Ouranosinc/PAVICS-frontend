@@ -51,7 +51,7 @@ export class OLDatasetRenderer extends React.Component {
       }
     }
     if (layerDataset.selectedColorPalette && layerDataset.selectedColorPalette !== this.props.layerDataset.selectedColorPalette) {
-      this.updateColorPalette();
+      this.updateColorPalette(layerDataset.selectedColorPalette);
     }
     // if there is a displayed dataset and the new one can't be shown on the map (ie having wmsUrls), remove the layer
     if ( hasDisplayedDataset && !this.datasetHasWmsUrls(newDataset) ) {
@@ -193,16 +193,13 @@ export class OLDatasetRenderer extends React.Component {
     }
   }
 
-  updateColorPalette () {
-    // TODO there is something that feels somewhat wrong about having the datasetLayer in a prop
-    // it might be totally ok, but be bit careful ot
+  updateColorPalette (palette) {
     if (this.layer) {
-      console.log('changing color palette:', this.props.layerDataset.selectedColorPalette);
       this.source.updateParams({
-        'STYLES': `default-scalar/${this.props.layerDataset.selectedColorPalette}`
+        'STYLES': `default-scalar/${palette}`
       });
     } else {
-      console.log('select a dataset first');
+      NotificationManager.warning('Please display a dataset before changing the color palette.', 'Warning', 10000);
     }
   }
 
