@@ -2,12 +2,24 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import * as constants from './../../constants';
 import { WpsProcessFormInput } from '../WpsProcessFormInput';
-import DeformWrapper from '../DeformWrapper';
+import Typography from'@material-ui/core/Typography';
+import Paper from'@material-ui/core/Paper';
+import Button from'@material-ui/core/Button';
+import ExecuteIcon from '@material-ui/icons/Done';
+
+const styles = {
+  paper: {
+    'max-height': '450px',
+    'overflowY': 'auto',
+    'margin': '10px 0',
+    'overflowX': 'hidden'
+  }
+};
 
 /*
 Wps Process Form
 this module builds and updates the values of the inputs of a simple wps process
-it uses the custom routes of phoenix "api" to fetch the inputs of a specified provider and process
+it uses the custom routes of twitcher api to fetch the inputs of a specified provider and process or multiple of them (for workflows)
 
 the inputs of the selected process are available in props.workflow.selectedProcessInputs
 
@@ -62,7 +74,6 @@ export default class WpsProcessForm extends React.Component {
     this.state = {
       formData: {}
     };
-    this.handleChange = this.handleChange.bind(this);
   }
 
   componentWillMount () {
@@ -178,18 +189,18 @@ export default class WpsProcessForm extends React.Component {
     }
   }
 
-  handleChange (value, uniqueIdentifier) {
-    // TODO eventually this will probably go in the global state
+  handleChange  = (value, uniqueIdentifier) => {
+    // TODO eventually this will probably go in the redux store
     this.setState({
       formData: {
         ...this.state.formData,
         [uniqueIdentifier]: value
       }
     });
-  }
+  };
 
-  handleArrayChange (value, uniqueIdentifier, index) {
-    // TODO eventually this will probably go in the global state
+  handleArrayChange = (value, uniqueIdentifier, index) => {
+    // TODO eventually this will probably go in the redux store
     let wholeArray = this.state.formData[uniqueIdentifier];
     wholeArray[index] = value;
     this.setState({
@@ -198,40 +209,44 @@ export default class WpsProcessForm extends React.Component {
         [uniqueIdentifier]: wholeArray
       }
     });
-  }
+  };
 
-  /*
-  deform is a library used by phoenix to manage it's different variable forms
-  this routine should be creating an html form adapted to the specific ways in which deform creates forms,
-  the less intuitive being the interesting __start__ and __end__ inputs around similarly named inputs
-  to create a sequence of values. the order is important.
-   */
-
-  // foreach inputs
-  //   if minOccurs = 0 mark as optional
-  //   if maxOccurs > 1 trigger rendering with start and end inputs
-  //   create html
   render () {
     console.log('creating deform wrapper for inputs %o, current state: %o', this.props.workflow.selectedProcessInputs, this.state);
     return (
-      <DeformWrapper
-        id="cy-process-form"
-        formId={this.props.formId}
-        execute={this.props.executeProcess}>
-        {this.props.workflow.selectedProcessInputs.map((inputDefinition, i) => {
-          const uniqueIdentifier = makeUniqueIdentifier(inputDefinition);
-          return (
-            <div key={i} className="cy-process-form-field">
-              <WpsProcessFormInput
-                inputDefinition={inputDefinition}
-                uniqueIdentifier={uniqueIdentifier}
-                value={this.state.formData[uniqueIdentifier]}
-                handleArrayChange={this.handleArrayChange}
-                handleChange={this.handleChange} />
-            </div>
-          );
-        })}
-      </DeformWrapper>
+      <React.Fragment>
+        <Paper elevation={2} style={styles.paper}>
+        <div className="container">
+          <Typography variant="headline">
+            Required inputs
+          </Typography>
+          <form id="cy-process-form">
+            {
+              this.props.workflow.selectedProcessInputs.map((inputDefinition, i) => {
+                const uniqueIdentifier = makeUniqueIdentifier(inputDefinition);
+                return (
+                  <div key={i} className="cy-process-form-field">
+                    <WpsProcessFormInput
+                      inputDefinition={inputDefinition}
+                      uniqueIdentifier={uniqueIdentifier}
+                      value={this.state.formData[uniqueIdentifier]}
+                      handleArrayChange={this.handleArrayChange}
+                      handleChange={this.handleChange} />
+                  </div>
+                );
+              })
+            }
+          </form>
+        </div>
+        </Paper>
+        <Button
+          color="primary"
+          variant="contained"
+          id="cy-execute-process-btn"
+          onClick={this.props.executeProcess}>
+          <ExecuteIcon />Execute process
+        </Button>
+      </React.Fragment>
     );
   }
 }
