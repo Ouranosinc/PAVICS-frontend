@@ -17,6 +17,9 @@ export const INFO_WIDGET_TITLE = 'Point Informations';
 export const MAP_CONTROLS_WIDGET_TITLE = 'Controls';
 export const TIME_SLIDER_WIDGET_TITLE = 'Temporal Slider';
 
+export const JOB_PROJECT_PREFIX = 'project-';
+export const JOB_PLATFORM_TAG = 'platform-pavics';
+
 // Not exported as expected
 // import { Mode } from 'ol/interaction/Draw'
 export const VISUALIZE_DRAW_MODES = {

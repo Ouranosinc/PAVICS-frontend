@@ -1,5 +1,6 @@
 import { NotificationManager } from 'react-notifications';
 import myHttp from '../../util/http';
+import { JOB_PROJECT_PREFIX } from './../../constants';
 
 // Constants
 export const constants = {
@@ -24,7 +25,6 @@ function requestWPSJobs () {
       isFetching: true,
       items: [],
       count: 0
-
     }
   };
 }
@@ -135,6 +135,9 @@ function receiveVisualizeTemporaryResult (datasets) {
 
 function fetchWPSJobs (projectId, limit = 5, page = 1, sort = 'created') {
   // Error handling as intended EXAMPLE !!
+  // TODO: Complete with twitcher
+  // const projectId = getState().project.currentProject.id;
+  // const tags = `${JOB_PROJECT_PREFIX}${projectId}`;
   return (dispatch) => {
     dispatch(requestWPSJobs());
     return myHttp.get(`/phoenix/jobs?projectId=${projectId}&limit=${limit}&page=${page}&sort=${sort}`)

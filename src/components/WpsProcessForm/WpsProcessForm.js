@@ -37,21 +37,11 @@ We need to be able to automatically fill some of the fields as well as represent
 Of interest here, is that we need to keep track of each inputs in the form, and arbitrarily set their values both from user input and map interaction
 we use material's usual controlled inputs linked to the state of the component
 we have to do this dynamically because we don't know beforehand the actual quantity or names the inputs will have
-
-we have to find a unique identifier for each inputs a form can have,
-we should be able to expect that  the combination of datatype and name will be unique, except in the case of deform's sequence
-where there can be more than one input with the name "resource" with the type ComplexData
-for all intent and purposes however, that should be left for the input renderer to manage
-at this level, the form data should be a flat array or dataType.name values
- */
-
-const makeUniqueIdentifier = input => {
-  return `${input.dataType}.${input.name}`;
-};
+*/
 
 export default class WpsProcessForm extends React.Component {
   static propTypes = {
-    executeProcess: PropTypes.func.isRequired,
+    execute: PropTypes.func.isRequired,
     formId: PropTypes.string.isRequired,
     layerDataset: PropTypes.object.isRequired,
     layerRegion: PropTypes.object.isRequired,
@@ -59,15 +49,6 @@ export default class WpsProcessForm extends React.Component {
     workflow: PropTypes.object.isRequired,
     workflowActions: PropTypes.object.isRequired
   };
-
-  /*
-  ATTENTION
-
-  while it does seem like there is data handling and stuff
-  it's all lies
-  actually, the data is captured in the workflow wizard stepper, with a FormData built directly from a document.querySelector
-  likewise, the handleSelectedProcessValueChange was never fully implemented
-   */
 
   constructor (props) {
     super(props);
@@ -80,13 +61,25 @@ export default class WpsProcessForm extends React.Component {
     this.buildFormData(this.props);
   }
 
+  /*
+    we have to find a unique identifier for each inputs a form can have,
+    we should be able to expect that  the combination of datatype and name will be unique, except in the case of deform's sequence
+    where there can be more than one input with the name "resource" with the type ComplexData
+    for all intent and purposes however, that should be left for the input renderer to manage
+    at this level, the form data should be a flat array or dataType.name values
+  */
+
+  makeUniqueIdentifier (input) {
+    return `${input.dataType}.${input.id}`;
+  };
+
   buildFormData (props) {
     let formData = {};
     props.workflow.selectedProcessInputs.forEach((input) => {
       if (input.selectable) {
-        formData[makeUniqueIdentifier(input)] = input.defaultValue ? [input.defaultValue] : [];
+        formData[this.makeUniqueIdentifier(input)] = input.defaultValue ? [input.defaultValue] : [];
       } else {
-        formData[makeUniqueIdentifier(input)] = input.defaultValue || '';
+        formData[this.makeUniqueIdentifier(input)] = input.defaultValue || '';
       }
     });
     this.setState({
@@ -189,6 +182,14 @@ export default class WpsProcessForm extends React.Component {
     }
   }
 
+  /*
+   ATTENTION
+
+   while it does seem like there is data handling and stuff
+   it's all lies
+   actually, the data is captured in the workflow wizard stepper, with a FormData built directly from a document.querySelector
+   likewise, the handleSelectedProcessValueChange was never fully implemented
+   */
   handleChange  = (value, uniqueIdentifier) => {
     // TODO eventually this will probably go in the redux store
     this.setState({
@@ -212,7 +213,6 @@ export default class WpsProcessForm extends React.Component {
   };
 
   render () {
-    console.log('creating deform wrapper for inputs %o, current state: %o', this.props.workflow.selectedProcessInputs, this.state);
     return (
       <React.Fragment>
         <Paper elevation={2} style={styles.paper}>
@@ -223,7 +223,7 @@ export default class WpsProcessForm extends React.Component {
           <form id="cy-process-form">
             {
               this.props.workflow.selectedProcessInputs.map((inputDefinition, i) => {
-                const uniqueIdentifier = makeUniqueIdentifier(inputDefinition);
+                const uniqueIdentifier = this.makeUniqueIdentifier(inputDefinition);
                 return (
                   <div key={i} className="cy-process-form-field">
                     <WpsProcessFormInput
@@ -243,7 +243,7 @@ export default class WpsProcessForm extends React.Component {
           color="primary"
           variant="contained"
           id="cy-execute-process-btn"
-          onClick={this.props.executeProcess}>
+          onClick={(event) => this.props.execute(this.state.formData)}>
           <ExecuteIcon />Execute process
         </Button>
       </React.Fragment>

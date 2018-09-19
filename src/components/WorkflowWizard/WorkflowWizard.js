@@ -108,8 +108,6 @@ class WorkflowWizard extends React.Component {
             <ScientificWorkflowStepper
               jobAPIActions={this.props.jobAPIActions}
               project={this.props.project}
-              selectedProvider={__PAVICS_WORKFLOW_PROVIDER__}
-              selectedProcess={{identifier: __PAVICS_RUN_WORKFLOW_IDENTIFIER__}}
               showDialog={this.showDialog}
               workflow={this.props.workflow}
               workflowActions={this.props.workflowActions}

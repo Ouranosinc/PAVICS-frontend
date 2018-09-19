@@ -1,65 +1,68 @@
-
 import myHttp from '../../util/http';
-import {InputDefinition} from '../../components/WpsProcessFormInput/InputDefinition';
+import { NotificationManager } from 'react-notifications';
+import { InputDefinition } from '../../data-models/InputDefinition';
+import { actions as jobAPIActions } from './JobAPI';
+import { JOB_PROJECT_PREFIX } from './../../constants';
+
 // Constants
 export const constants = {
-  WORKFLOW_CHANGE_STEP: 'WORKFLOW_CHANGE_STEP',
-  WORKFLOW_SET_PROCESSES: 'WORKFLOW_SET_PROCESSES',
-  WORKFLOW_SET_PROVIDERS: 'WORKFLOW_SET_PROVIDERS',
-  WORKFLOW_CHOOSE_PROCESS: 'WORKFLOW_CHOOSE_PROCESS',
-  WORKFLOW_GET_FIRST_STEP: 'WORKFLOW_GET_FIRST_STEP',
-  WORKFLOW_GET_LAST_STEP: 'WORKFLOW_GET_LAST_STEP',
-  WORKFLOW_GET_NEXT_STEP: 'WORKFLOW_GET_NEXT_STEP',
-  WORKFLOW_STEP_PROCESS: 'WORKFLOW_STEP_PROCESS',
-  WORKFLOW_STEP_INPUTS: 'WORKFLOW_STEP_INPUTS',
-  WORKFLOW_STEP_RUN: 'WORKFLOW_STEP_RUN',
-  WORKFLOW_SET_WPS_PROVIDER: 'WORKFLOW_SET_WPS_PROVIDER',
-  WORKFLOW_SET_ACTIVE_PROCESS_INPUTS: 'WORKFLOW_SET_ACTIVE_PROCESS_INPUTS',
-  WORKFLOW_SET_ACTIVE_PROCESS_VALUES: 'WORKFLOW_SET_ACTIVE_PROCESS_VALUES',
-  WORKFLOW_FETCH_WPS_JOBS_REQUEST: 'WORKFLOW_FETCH_WPS_JOBS_REQUEST',
-  WORKFLOW_FETCH_WPS_JOBS_FAILURE: 'WORKFLOW_FETCH_WPS_JOBS_FAILURE',
-  WORKFLOW_FETCH_WPS_JOBS_SUCCESS: 'WORKFLOW_FETCH_WPS_JOBS_SUCCESS'
+  CHANGE_STEP: 'CHANGE_STEP',
+  SET_PROCESSES: 'WORKFLOW.SET_PROCESSES',
+  SET_PROVIDERS: 'WORKFLOW.SET_PROVIDERS',
+  CHOOSE_PROCESS: 'WORKFLOW.CHOOSE_PROCESS',
+  GET_FIRST_STEP: 'WORKFLOW.GET_FIRST_STEP',
+  GET_LAST_STEP: 'WORKFLOW.GET_LAST_STEP',
+  GET_NEXT_STEP: 'WORKFLOW.GET_NEXT_STEP',
+  STEP_PROCESS: 'WORKFLOW.STEP_PROCESS',
+  STEP_INPUTS: 'WORKFLOW.STEP_INPUTS',
+  STEP_RUN: 'WORKFLOW.STEP_RUN',
+  EXECUTE_JOB_REQUEST: 'WORKFLOW.EXECUTE_JOB_REQUEST',
+  EXECUTE_JOB_FAILURE: 'WORKFLOW.EXECUTE_JOB_FAILURE',
+  EXECUTE_JOB_SUCCESS: 'WORKFLOW.EXECUTE_JOB_SUCCESS',
+  SET_WPS_PROVIDER: 'WORKFLOW.SET_WPS_PROVIDER',
+  SET_ACTIVE_PROCESS_INPUTS: 'WORKFLOW.SET_ACTIVE_PROCESS_INPUTS',
+  SET_ACTIVE_PROCESS_VALUES: 'WORKFLOW.SET_ACTIVE_PROCESS_VALUES',
 };
 
 // Actions
 function setSelectedProcess (process) {
   return {
-    type: constants.WORKFLOW_CHOOSE_PROCESS,
+    type: constants.CHOOSE_PROCESS,
     process: process
   };
 }
 
 function setProcesses (processes) {
   return {
-    type: constants.WORKFLOW_SET_PROCESSES,
+    type: constants.SET_PROCESSES,
     processes: processes
   };
 }
 
 function setProviders (providers) {
   return {
-    type: constants.WORKFLOW_SET_PROVIDERS,
+    type: constants.SET_PROVIDERS,
     items: providers
   };
 }
 
 function setWpsProvider (provider) {
   return {
-    type: constants.WORKFLOW_SET_WPS_PROVIDER,
+    type: constants.SET_WPS_PROVIDER,
     provider: provider
   };
 }
 
 function setProcessInputs (inputs) {
   return {
-    type: constants.WORKFLOW_SET_ACTIVE_PROCESS_INPUTS,
+    type: constants.SET_ACTIVE_PROCESS_INPUTS,
     inputs: inputs
   };
 }
 
 function setSelectedProcessValues (key, value) {
   return {
-    type: constants.WORKFLOW_SET_ACTIVE_PROCESS_VALUES,
+    type: constants.SET_ACTIVE_PROCESS_VALUES,
     key: key,
     value: value
   };
@@ -67,26 +70,26 @@ function setSelectedProcessValues (key, value) {
 
 function chooseStep (step) {
   return {
-    type: constants.WORKFLOW_CHANGE_STEP,
+    type: constants.CHANGE_STEP,
     step: step
   };
 }
 
 function getFirstStep () {
   return {
-    type: constants.WORKFLOW_GET_FIRST_STEP
+    type: constants.GET_FIRST_STEP
   };
 }
 
 function getLastStep () {
   return {
-    type: constants.WORKFLOW_GET_LAST_STEP
+    type: constants.GET_LAST_STEP
   };
 }
 
 function getNextStep () {
   return {
-    type: constants.WORKFLOW_GET_NEXT_STEP
+    type: constants.GET_NEXT_STEP
   };
 }
 
@@ -121,6 +124,7 @@ function fetchProcessInputs (provider, process) {
       });
   };
 }
+
 function selectWpsProvider (provider) {
   return dispatch => {
     dispatch(setWpsProvider(provider));
@@ -136,6 +140,7 @@ function chooseProcess (process) {
   };
 }
 
+// FIXME: 1 ASYNC ACTION => 3 SYNC ACTIONS
 function fetchProcesses (provider) {
   return (dispatch) => {
     return myHttp.get(`${__PAVICS_TWITCHER_API_PATH__}/providers/${provider}/processes`)
@@ -147,6 +152,7 @@ function fetchProcesses (provider) {
   };
 }
 
+// FIXME: 1 ASYNC ACTION => 3 SYNC ACTIONS
 function fetchProviders () {
   return (dispatch) => {
     return myHttp.get(`${__PAVICS_TWITCHER_API_PATH__}/providers`)
@@ -158,22 +164,122 @@ function fetchProviders () {
   };
 }
 
-function executeProcess (provider, process, inputValues) {
-  return () => {
-    console.log(inputValues);
-    let array = [];
-    for (let key in inputValues) {
-      if (inputValues.hasOwnProperty(key)) {
-        array.push(encodeURIComponent(key) + '=' + encodeURIComponent(inputValues[key]));
-      }
+function requestExecuteJob () {
+  return {
+    type: constants.EXECUTE_JOB_REQUEST,
+    executedJob: {
+      requestedAt: Date.now(),
+      isFetching: true,
+      data: {},
+      error: null
     }
-    let string = array.join(';');
-    return myHttp.get(`/phoenix/execute?wps=${provider}&process=${process}&inputs=${string}`)
+  };
+}
+
+function receiveExecuteJobFailure (error) {
+  return {
+    type: constants.EXECUTE_JOB_FAILURE,
+    executedJob: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      data: {},
+      error: error
+    }
+  };
+}
+
+function receiveExecuteJobSuccess (data) {
+  return {
+    type: constants.EXECUTE_JOB_SUCCESS,
+    executedJob: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      data: data,
+      error: null
+    }
+  };
+}
+
+function executeWorkflow (workflowName, inputs) {
+  return (dispatch, getState) => {
+    const provider = __PAVICS_WORKFLOW_PROVIDER__;
+    const process = __PAVICS_RUN_WORKFLOW_IDENTIFIER__;
+    const projectId = getState().project.currentProject.id;
+    const tags = `${JOB_PROJECT_PREFIX}${projectId}`;
+
+    dispatch(requestExecuteJob());
+    return myHttp.postJson(`${__PAVICS_TWITCHER_API_PATH__}/providers/${provider}/processes/${process}/jobs?tags=${tags}`, inputs)
       .then(response => {
-        console.log('received:', response);
+        if (!response.ok) {
+          NotificationManager.error(`Failed at executing the workflow at address ${response.url}. Returned Status ${response.status}: ${response.statusText}`, 'Error', 10000);
+          dispatch(receiveExecuteJobFailure({
+            status: response.status,
+            message: response.statusText,
+            url: response.url
+          }));
+        } else {
+          return response.json();
+        }
       })
-      .catch(error => {
-        console.log('problem', error);
+      .then(json => {
+        if (json) {
+          NotificationManager.success('Workflow has be launched with success');
+          dispatch(receiveExecuteJobSuccess(json));
+          dispatch(jobAPIActions.createJob({
+            projectId: projectId,
+            phoenixTaskId: json.jobID,
+            name: workflowName
+          }));
+        }
+      }, err => {
+        // Not an HTTP error, failed at parsing json or something else
+        NotificationManager.error(`Failed at executing the workflow. ${err.message} ${err.stack}`, 'Error', 10000);
+        dispatch(receiveExecuteJobFailure({
+          status: 200,
+          message: err.message,
+          stack: err.stack
+        }));
+      });
+  };
+
+}
+
+function executeProcess (provider, process, inputs) {
+  return (dispatch, getState) => {
+    const projectId = getState().project.currentProject.id;
+    const tags = `project-${projectId}`;
+
+    dispatch(requestExecuteJob());
+    return myHttp.postJson(`${__PAVICS_TWITCHER_API_PATH__}/providers/${provider}/processes/${process}/jobs?tags=${tags}`, inputs)
+      .then(response => {
+        if (!response.ok) {
+          NotificationManager.error(`Failed at executing the process at address ${response.url}. Returned Status ${response.status}: ${response.statusText}`, 'Error', 10000);
+          dispatch(receiveExecuteJobFailure({
+            status: response.status,
+            message: response.statusText,
+            url: response.url
+          }));
+        } else {
+          return response.json();
+        }
+      })
+      .then(json => {
+        if (json) {
+          NotificationManager.success('Process has been launched with success');
+          dispatch(receiveExecuteJobSuccess(json));
+          dispatch(jobAPIActions.createJob({
+            projectId: projectId,
+            phoenixTaskId: json.jobID
+          }));
+        }
+      }, err => {
+        // Not an HTTP error, failed at parsing json or something else
+        NotificationManager.error(`Failed at executing the process. ${err.message} ${err.stack}`, 'Error', 10000);
+        dispatch(receiveExecuteJobFailure({
+          status: 200,
+          message: err.message,
+          stack: err.stack
+        }));
       });
   };
 }
@@ -196,51 +302,68 @@ export const actions = {
   chooseProcess: chooseProcess,
   fetchProcesses: fetchProcesses,
   fetchProviders: fetchProviders,
-  executeProcess : executeProcess
+  executeProcess : executeProcess,
+  executeWorkflow: executeWorkflow
 };
 
 // Handlers
-const WORKFLOW_HANDLERS = {
-  [constants.WORKFLOW_SET_WPS_PROVIDER]: (state, action) => {
+const HANDLERS = {
+  [constants.SET_WPS_PROVIDER]: (state, action) => {
     return {...state, selectedProvider: action.provider};
   },
-  [constants.WORKFLOW_CHOOSE_PROCESS]: (state, action) => {
+  [constants.CHOOSE_PROCESS]: (state, action) => {
     return {...state, selectedProcess: action.process};
   },
-  [constants.WORKFLOW_SET_ACTIVE_PROCESS_INPUTS]: (state, action) => {
+  [constants.SET_ACTIVE_PROCESS_INPUTS]: (state, action) => {
     return {...state, selectedProcessInputs: action.inputs};
   },
-  [constants.WORKFLOW_SET_ACTIVE_PROCESS_VALUES]: (state, action) => {
+  [constants.SET_ACTIVE_PROCESS_VALUES]: (state, action) => {
     return Object.assign({}, state, {
       selectedProcessValues: Object.assign({}, state.selectedProcessValues, {
         [action.key]: action.value
       })
     });
   },
-  [constants.WORKFLOW_CHANGE_STEP]: (state, action) => {
+  [constants.CHANGE_STEP]: (state, action) => {
     return {...state, currentStep: action.step};
   },
-  [constants.WORKFLOW_GET_FIRST_STEP]: (state) => {
+  [constants.GET_FIRST_STEP]: (state) => {
     return {...state, stepIndex: 0};
   },
-  [constants.WORKFLOW_GET_LAST_STEP]: (state) => {
+  [constants.GET_LAST_STEP]: (state) => {
     return {...state, stepIndex: (state.stepIndex - 1)};
   },
-  [constants.WORKFLOW_GET_NEXT_STEP]: (state) => {
+  [constants.GET_NEXT_STEP]: (state) => {
     return {...state, stepIndex: (state.stepIndex + 1)};
   },
-  [constants.WORKFLOW_SET_PROCESSES]: (state, action) => {
+  [constants.SET_PROCESSES]: (state, action) => {
     return {...state, processes: action.processes};
   },
-  [constants.WORKFLOW_SET_PROVIDERS]: (state, action) => {
+  [constants.SET_PROVIDERS]: (state, action) => {
     return Object.assign({}, state, {
       providers: {...state.providers, items: action.items}
     });
-  }
+  },
+  [constants.EXECUTE_JOB_REQUEST]: (state, action) => {
+    return ({...state, executedJob: action.executedJob});
+  },
+  [constants.EXECUTE_JOB_SUCCESS]: (state, action) => {
+    return ({...state, executedJob: action.executedJob});
+  },
+  [constants.EXECUTE_JOB_FAILURE]: (state, action) => {
+    return ({...state, executedJob: action.executedJob});
+  },
 };
 
 // Reducer
 export const initialState = {
+  executedJob: {
+    requestedAt: null,
+    receivedAt: null,
+    isFetching: false,
+    data: {},
+    error: null
+  },
   selectedProcess: {
     url: '',
     identifier: '',
@@ -250,7 +373,7 @@ export const initialState = {
   stepIndex: 0,
   selectedProcessInputs: [],
   selectedProcessValues: {},
-  currentStep: constants.WORKFLOW_STEP_PROCESS,
+  currentStep: constants.STEP_PROCESS,
   processes: [],
   providers: {
     items: []
@@ -258,6 +381,6 @@ export const initialState = {
   selectedProvider: ''
 };
 export default function (state = initialState, action) {
-  const handler = WORKFLOW_HANDLERS[action.type];
+  const handler = HANDLERS[action.type];
   return handler ? handler(state, action) : state;
 }

@@ -15,7 +15,7 @@ import CircularProgress from'@material-ui/core/CircularProgress';
 import Paper from'@material-ui/core/Paper';
 import WpsProcessFormContainer from './../../containers/WpsProcessForm';
 import myHttp from '../../util/http';
-import {InputDefinition} from "../WpsProcessFormInput/InputDefinition";
+import {InputDefinition} from "../../data-models/InputDefinition";
 
 const styles = theme => ({
   white: {
@@ -34,10 +34,7 @@ class ScientificWorkflowStepper extends Component {
     classes: PropTypes.object.isRequired,
     jobAPIActions: PropTypes.object.isRequired,
     project: PropTypes.object.isRequired,
-    selectedProcess: PropTypes.object.isRequired,
-    selectedProvider: PropTypes.string.isRequired,
     showDialog: PropTypes.func.isRequired,
-    workflow: PropTypes.object.isRequired,
     workflowActions: PropTypes.object.isRequired,
     workflowAPI: PropTypes.object.isRequired,
     workflowAPIActions: PropTypes.object.isRequired
@@ -45,7 +42,6 @@ class ScientificWorkflowStepper extends Component {
 
   constructor (props) {
     super(props);
-    this.catchAndWrapExecuteProcess = this.catchAndWrapExecuteProcess.bind(this);
     this.goToConfigureAndRunStep = this.goToConfigureAndRunStep.bind(this);
     this.handleNext = this.handleNext.bind(this);
     this.handlePrev = this.handlePrev.bind(this);
@@ -148,96 +144,72 @@ class ScientificWorkflowStepper extends Component {
     });
   }
 
-  /*
-  mostly duplicated in WpsProcessStepper, but this one receives the data
-  TODO both should be the same, the execute function should receive a form data, or something like that
-   */
-  execute (formData) {
-    // ugly hack to workaround making one extra trip to the backend
-    // we already have had to put strange __start__ and __end__ inputs to work nicely with phoenix
-    let url = `/phoenix/processes/execute?wps=${this.props.selectedProvider}&process=${this.props.selectedProcess.id}`;
-    myHttp.postFormData(url, formData, {'accept': 'application/json'})
-      .then(res => res.json())
-      .then(response => {
-        // status is always 200
-        // if(xhr.responseURL.indexOf('/processes/loading') !== -1){ // Deprecated but workek well with phoenix execute() Accept text/html
-        try {
-          if (response.status === 200) {
-            this.props.jobAPIActions.createJob({
-              projectId: this.props.project.currentProject.id,
-              phoenixTaskId: response.task_id,
-              name: this.state.workflow.name
-            });
-            NotificationManager.success('Workflow has been launched with success, you can now monitor workflow execution in the monitoring panel', 'Success', 10000);
-          } else {
-            NotificationManager.error('Workflow hasn\'t been launched as intended. Make sure the workflow and required inputs are defined properly', 'Error', 10000);
-          }
-        } catch (error) {
-          NotificationManager.error('Workflow hasn\'t been launched as intended. Make sure the workflow and required inputs are defined properly', 'Error', 10000);
-        }
-      })
-      .catch(err => console.log(err));
-  }
+  injectInputsInWorkflow(formData, workflow) {
+    let filledWorkflow = JSON.parse(JSON.stringify(workflow));
+    for (let uniqueInputName in formData) {
+      let keys = uniqueInputName.split('.'); // [0] = type, [1] = task.identifier, [2] = input id
+      let tasks = filledWorkflow.tasks;
 
-  /*
-   this horrible nested loop loops over each field of the form and populates the values in the workflow template
-   I manually name the inputs that expect user input processIdentifier.inputName when building the form
-   so that when filling the workflow, I can validate processIdentifier and inputName and have some kind of insurance that I am filling the right value
-   */
-  catchAndWrapExecuteProcess () {
-    let data = new FormData(document.querySelector(`#${FORM_WORKFLOW_ID}`));
-    let toSendData = new FormData();
-    let toFillWorkflow = this.state.workflow.json;
-
-    // If mosaic unchecked, no key will be in FormData, TODO same exception for every boolean/checkbox values I guess
-    if (!data.get('subset_WFS.mosaic')) {
-      data.append('subset_WFS.mosaic', 'False');
-    }
-    for (let pair of data) {
-      // if there is no dot, the input is deform related, leave it as is
-      // but put it in the to be sent data
-      if (pair[0].indexOf('.') === -1) {
-        toSendData.append(pair[0], pair[1]);
-        continue;
-      }
-      console.log('this pair', pair);
-      let keys = pair[0].split('.');
-      let tasks = toFillWorkflow.tasks;
-      if(toFillWorkflow.parallel_groups) {
-        toFillWorkflow.parallel_groups.forEach((group) => {
-          tasks = tasks.concat(group.tasks);
-        });
-      }
-      for (let i = 0, nb = tasks.length; i !== nb; i++) {
-        // if the process identifier is not the same, we know it's not the right input
-        if (tasks[i].inputs && tasks[i].identifier === keys[0]) {
-          for (let inputName in tasks[i].inputs) {
-            if (tasks[i].inputs.hasOwnProperty(inputName)) {
-              if (inputName === keys[1]) {
+      function injectWhenMatching(task, taskId, inputId, value) {
+        if (task.inputs && task.identifier === taskId) {
+          for (let inputName in task.inputs) {
+            if (task.inputs.hasOwnProperty(inputName)) {
+              if (inputName === inputId) {
+                // Exception: mosaic value must always be a "True" of "False" string
                 if (inputName === 'mosaic') {
-                  // mosaic value must always be a "True" of "False" string
-                  if (typeof (tasks[i].inputs[inputName]) === 'boolean') {
-                    tasks[i].inputs[inputName] = (pair[1] === true) ? 'True' : 'False';
-                  } else if (typeof (tasks[i].inputs[inputName]) === 'string') {
-                    tasks[i].inputs[inputName] = (pair[1] === 'True') ? 'True' : 'False';
+                  // How can it be both types?
+                  if (typeof (task.inputs[inputName]) === 'boolean') {
+                    task.inputs['mosaic'] = (value === true) ? 'True' : 'False';
+                  } else if (typeof (task.inputs[inputName]) === 'string') {
+                    task.inputs['mosaic'] = (value === 'True') ? 'True' : 'False';
                   }
                 } else {
-                  tasks[i].inputs[inputName] = pair[1];
+                  task.inputs[inputName] = value;
                 }
               }
             }
           }
         }
       }
+
+      if (filledWorkflow.parallel_groups) {
+        filledWorkflow.parallel_groups.forEach((group) => {
+          group.tasks.forEach(task => {
+            injectWhenMatching(task, keys[1], keys[2], formData[uniqueInputName])
+          });
+        });
+      }
+
+      tasks.forEach(task => {
+        injectWhenMatching(task, keys[1], keys[2], formData[uniqueInputName])
+      });
     }
-    let stringified = JSON.stringify(toFillWorkflow);
-    toSendData.append('workflow_string', stringified);
-    localStorage.setItem('executed_workflow', stringified);
-    console.log('workflow json:', stringified);
-    this.execute(toSendData);
+    return filledWorkflow;
   }
 
-  // TODO this will be going in the global store
+  wrapWorkflowAsProcessInputsArray(workflow) {
+    let stringifiedWorkflow = JSON.stringify(workflow);
+    localStorage.setItem('executed_workflow', stringifiedWorkflow);
+    return {
+      "inputs": [
+        {
+          type: 'string',
+          id: __PAVICS_RUN_WORKFLOW_INPUT_ID__,
+          value: stringifiedWorkflow
+        }
+      ]
+    };
+  }
+
+  executeWorkflow = (formData) => {
+    const filledWorkflow = this.injectInputsInWorkflow(formData, this.state.workflow.json);
+    this.props.workflowActions.executeWorkflow(
+      this.state.workflow.name,
+      this.wrapWorkflowAsProcessInputsArray(filledWorkflow)
+    );
+  };
+
+  // TODO: this will be going in the redux store. When?
   // we're manually setting the parsing to true so that the loader is seen, then manually setting it off
   // there is definitely a more elegant way to do this
   goToConfigureAndRunStep (workflow) {
@@ -310,9 +282,7 @@ class ScientificWorkflowStepper extends Component {
                     onClick={this.handlePrev}>
                     <BackIcon />Back
                   </Button>
-                  <WpsProcessFormContainer
-                    executeProcess={this.catchAndWrapExecuteProcess}
-                    formId={FORM_WORKFLOW_ID} />
+                  <WpsProcessFormContainer execute={this.executeWorkflow} />
                 </StepContent>
               )
           }

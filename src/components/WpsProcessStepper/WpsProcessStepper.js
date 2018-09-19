@@ -1,22 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { NotificationManager } from 'react-notifications';
 import Step from'@material-ui/core/Step';
 import Stepper from'@material-ui/core/Stepper';
-import StepConnector from'@material-ui/core/StepConnector';
 import StepContent from'@material-ui/core/StepContent';
 import StepLabel from'@material-ui/core/StepLabel';
 import Typography from'@material-ui/core/Typography';
 import WpsProviderSelector from '..//WpsProviderSelector';
 import WpsProcessSelector from '..//WpsProcessSelector';
-import WpsProcessDetails from '../WpsProcessDetails';
 import WpsProcessFormContainer from './../../containers/WpsProcessForm';
 import Button from'@material-ui/core/Button';
 import BackIcon from '@material-ui/icons/ArrowBack';
-import myHttp from '../../util/http';
 
-const FORM_PROCESS_ID = 'form-individual-process';
 const styles = theme => ({
   white: {
     color: theme.palette.primary.contrastText
@@ -39,7 +34,6 @@ class WpsProcessStepper extends React.Component {
     };
     this.onProcessSelectionBackButtonClicked = this.onProcessSelectionBackButtonClicked.bind(this);
     this.onSearchKeywordChanged = this.onSearchKeywordChanged.bind(this);
-    this.execute = this.execute.bind(this);
   }
 
   onProcessSelectionBackButtonClicked() {
@@ -55,33 +49,41 @@ class WpsProcessStepper extends React.Component {
     })
   }
 
-  execute () {
-    // ugly hack to workaround making one extra trip to the backend
-    // we already have had to put strange __start__ and __end__ inputs to work nicely with phoenix
-    let formData = new FormData(document.querySelector(`#${FORM_PROCESS_ID}`));
-    let url = `/phoenix/processes/execute?wps=${this.props.workflow.selectedProvider}&process=${this.props.workflow.selectedProcess.id}`;
-    const additionalHeaders = {
-      'accept': 'application/json'
-    };
-    myHttp.postFormData(url, formData, additionalHeaders)
-      .then(res => res.json())
-      .then(response => {
-        // status is always 200
-        // if(xhr.responseURL.indexOf('/processes/loading') !== -1){ // Deprecated but workek well with phoenix execute() Accept text/html
-        console.log('received response from phoenix: %o', response);
-        try {
-          if (response.status === 200) {
-            this.props.jobAPIActions.createJob({ projectId: this.props.project.currentProject.id, phoenixTaskId: response.task_id });
-            NotificationManager.success('Process has been launched with success, you can now monitor process execution in the monitoring panel', 'Success', 4000);
-          } else {
-            NotificationManager.error('Process hasn\'t been launched as intended. Make sure the process and required inputs are defined properly', 'Error', 10000);
-          }
-        } catch (error) {
-          NotificationManager.error('Process hasn\'t been launched as intended. Make sure the process and required inputs are defined properly', 'Error', 10000);
+  wrapInputsArray(formData){
+    let inputs = [];
+    for (let inputName in formData) {
+      if (formData.hasOwnProperty(inputName)) {
+        let splitted = inputName.split('.');
+        // We need to change arrays into independent inputs
+        if(Array.isArray(formData[inputName])) {
+          formData[inputName].forEach(value => {
+            inputs.push({
+              id: splitted[1],
+              type: splitted[0],
+              value: value
+            })
+          })
+        } else {
+          inputs.push({
+            id: splitted[1],
+            type: splitted[0],
+            value: formData[inputName]
+          })
         }
-      })
-      .catch(err => console.log(err));
+      }
+    }
+    return {
+      "inputs": inputs
+    };
   }
+
+  executeProcess = (formData) => {
+    this.props.workflowActions.executeProcess(
+      this.props.workflow.selectedProvider,
+      this.props.workflow.selectedProcess.id,
+      this.wrapInputsArray(formData)
+    );
+  };
 
   render () {
     const { classes } = this.props;
@@ -144,11 +146,8 @@ class WpsProcessStepper extends React.Component {
                 <BackIcon />Back
               </Button>
               {
-                this.props.workflow.selectedProcessInputs.length === 0
-                  ? null
-                  : <WpsProcessFormContainer
-                  executeProcess={this.execute}
-                  formId={FORM_PROCESS_ID} />
+                this.props.workflow.selectedProcessInputs.length ?
+                <WpsProcessFormContainer execute={this.executeProcess} />: null
               }
             </React.Fragment>
           </StepContent>

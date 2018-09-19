@@ -102,7 +102,7 @@ class WpsProcessFormInput extends Component {
             }>
           </FormControlLabel>
           <FormHelperText style={{marginTop: '-12px'}}>
-            {this.props.inputDefinition.description}
+            {this.props.inputDefinition.abstract}
           </FormHelperText>
         </FormControl >
       );
@@ -117,19 +117,19 @@ class WpsProcessFormInput extends Component {
                 value={this.state.dateTimeValues.date}
                 onChange={this.handleDateChange}
                 style={{ width: '100%' }}
-                helperText={`${this.props.inputDefinition.description} - date`}
+                helperText={`${this.props.inputDefinition.abstract} - date`}
                 container="inline" />
             </div>
             <div className="col-sm-6">
               <TimePicker
                 autoOk
                 value={this.state.dateTimeValues.time}
-                helperText={`${this.props.inputDefinition.description} - time`}
+                helperText={`${this.props.inputDefinition.abstract} - time`}
                 onChange={this.handleTimeChange}
                 textFieldStyle={{ width: '100%' }}
                 format="24hr" />
             </div>*/}
-            <input value={this.props.value} name={this.props.inputDefinition.name} title={this.props.inputDefinition.title} type="hidden" />
+            <input value={this.props.value} name={this.props.inputDefinition.id} title={this.props.inputDefinition.title} type="hidden" />
           </div>
         </div>
       );
@@ -160,10 +160,10 @@ class WpsProcessFormInput extends Component {
               );
             })}
           </Select>
-          <FormHelperText>{this.props.inputDefinition.description}</FormHelperText>
+          <FormHelperText>{this.props.inputDefinition.abstract}</FormHelperText>
           { this.props.value
             ? this.props.value.map(
-              (selectedRegion, i) => <input key={i} type="hidden" name={this.props.inputDefinition.name} value={selectedRegion} />
+              (selectedRegion, i) => <input key={i} type="hidden" name={this.props.inputDefinition.id} value={selectedRegion} />
             ) : null
           }
         </FormControl>
@@ -175,32 +175,30 @@ class WpsProcessFormInput extends Component {
         return (
           <TextField
             key={i}
-            name={this.props.inputDefinition.name}
+            name={this.props.inputDefinition.id}
             fullWidth
             value={this.props.value[i]}
             onChange={(event) => this.createHandleTextFieldArrayChangeCallback(event, i)}
-            helperText={this.props.inputDefinition.description}
+            helperText={this.props.inputDefinition.abstract}
             label={this.props.inputDefinition.title} />
         );
       });
     }
     return (
       <TextField
-        name={this.props.inputDefinition.name}
+        name={this.props.inputDefinition.id}
         fullWidth
         value={this.props.value}
         onChange={this.handleTextFieldChange}
-        helperText={this.props.inputDefinition.description}
+        helperText={this.props.inputDefinition.abstract}
         label={this.props.inputDefinition.title} />
     );
   }
 
   render () {
     return (
-      <div data-cy-name={this.props.inputDefinition.name}>
-        {this.props.inputDefinition.maxOccurs > 1 ? <input type="hidden" name="__start__" value={this.props.inputDefinition.name + ':sequence'} /> : ''}
+      <div data-cy-name={this.props.inputDefinition.id}>
         {this.createMarkup()}
-        {this.props.inputDefinition.maxOccurs > 1 ? <input type="hidden" name="__end__" value={this.props.inputDefinition.name + ':sequence'} /> : ''}
       </div>
     );
   }
