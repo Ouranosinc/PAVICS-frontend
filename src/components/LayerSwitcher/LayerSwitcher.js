@@ -81,8 +81,9 @@ export default class LayerSwitcher extends React.Component {
 
   filterFeatureLayers = () => {
     let layers = {};
-    Object.keys(this.props.visualize.featureLayers).map(workspaceName => {
-      const theseLayers = this.props.visualize.featureLayers[workspaceName].filter(layer => {
+    const data = this.props.visualize.featureLayers.data;
+    Object.keys(data).map(workspaceName => {
+      const theseLayers = data[workspaceName].filter(layer => {
         return layer.title.indexOf(this.state.textFilter) !== -1;
       });
       if (theseLayers.length > 0) {
@@ -96,8 +97,9 @@ export default class LayerSwitcher extends React.Component {
 
   setSelectedFeatureLayer = (event, value) => {
     this.props.visualizeActions.resetSelectedRegions();
-    Object.keys(this.props.visualize.featureLayers).map(workspaceName => {
-      this.props.visualize.featureLayers[workspaceName].map(layer => {
+    const data = this.props.visualize.featureLayers.data;
+    Object.keys(data).map(workspaceName => {
+      data[workspaceName].map(layer => {
         if (layer.title === value) {
           this.props.visualizeActions.selectFeatureLayer(layer);
         }

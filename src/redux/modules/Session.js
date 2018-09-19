@@ -90,7 +90,7 @@ function resetSessionInformation () {
 function logout () {
   return dispatch => {
     dispatch(sessionLogoutRequest());
-    myHttp.get('/magpie/signout')
+    myHttp.get(`${__PAVICS_MAGPIE_PATH__}/signout`)
       .then(() => {
         NotificationManager.success('You have been logged out of the platform.', 'Success', 10000);
         dispatch(sessionLogoutSuccess());
@@ -107,7 +107,7 @@ function logout () {
 function sendCredentialsToZiggurat (username, password) {
   return dispatch => {
     dispatch(zigguratLoginRequest());
-    myHttp.postUrlEncodedForm('/magpie/signin', {
+    myHttp.postUrlEncodedForm(`${__PAVICS_MAGPIE_PATH__}/signin`, {
       'user_name': username,
       password: password,
       'provider_name': 'ziggurat',
@@ -134,7 +134,7 @@ function checkLogin () {
   return (dispatch) => {
     console.log('in actual checking login');
     dispatch(checkLoginRequest());
-    myHttp.get('/magpie/session')
+    myHttp.get(`${__PAVICS_MAGPIE_PATH__}/session`)
       .then(res => res.json())
       .then(session => {
         console.log('received session status: %o', session);

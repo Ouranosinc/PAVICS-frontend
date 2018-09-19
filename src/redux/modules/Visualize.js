@@ -6,8 +6,6 @@ import { VISUALIZE_SET_MAP_MANIPULATION_MODE, VISUALIZE_MODE_GRID_VALUES } from 
 export const constants = {
   // SYNC
   RESET_VISUALIZE_STATE: 'Visualize.RESET_VISUALIZE_STATE',
-  SET_WMS_LAYER: 'Visualize.SET_WMS_LAYER',
-  SET_FEATURE_LAYERS: 'Visualize.SET_FEATURE_LAYERS',
   SET_SELECTED_COLOR_PALETTE: 'Visualize.SET_SELECTED_COLOR_PALETTE',
   SET_SELECTED_FEATURE_LAYER: 'Visualize.SET_SELECTED_FEATURE_LAYER',
   SET_SELECTED_BASEMAP: 'Visualize.SET_SELECTED_BASEMAP',
@@ -24,6 +22,12 @@ export const constants = {
   SET_CURRENT_TIME_ISO: 'Visualize.SET_CURRENT_TIME_ISO',
   VISUALIZE_SET_VARIABLE_BOUNDARY_VALUES: 'Visualize.VISUALIZE_SET_VARIABLE_BOUNDARY_VALUE',
   // ASYNC
+  FETCH_WORKSPACES_REQUEST: 'Visualize.FETCH_WORKSPACES_REQUEST',
+  FETCH_WORKSPACES_FAILURE: 'Visualize.FETCH_WORKSPACES_FAILURE',
+  FETCH_WORKSPACES_SUCCESS: 'Visualize.FETCH_WORKSPACES_SUCCESS',
+  FETCH_WORKSPACES_LAYERS_REQUEST: 'Visualize.FETCH_WORKSPACES_LAYERS_REQUEST',
+  FETCH_WORKSPACES_LAYERS_FAILURE: 'Visualize.FETCH_WORKSPACES_LAYERS_FAILURE',
+  FETCH_WORKSPACES_LAYERS_SUCCESS: 'Visualize.FETCH_WORKSPACES_LAYERS_SUCCESS',
   FETCH_PLOTLY_DATA_REQUEST: 'Visualize.FETCH_PLOTLY_DATA_REQUEST',
   FETCH_PLOTLY_DATA_FAILURE: 'Visualize.FETCH_PLOTLY_DATA_FAILURE',
   FETCH_PLOTLY_DATA_SUCCESS: 'Visualize.FETCH_PLOTLY_DATA_SUCCESS',
@@ -39,7 +43,7 @@ export const constants = {
 };
 
 // Action Creators
-function resetVisualizeState() {
+function resetVisualizeState () {
   return {
     type: constants.RESET_VISUALIZE_STATE,
     visualizeInitialState: initialState
@@ -152,6 +156,68 @@ function receiveWMSLayerDetails (data) {
     }
   };
 }
+function requestVisibleWorkspaces () {
+  return {
+    type: constants.FETCH_WORKSPACES_REQUEST,
+    visibleWorkspaces: {
+      requestedAt: Date.now(),
+      isFetching: true,
+      data: {},
+      error: null
+    }
+  };
+}
+function receiveVisibleWorkspacesSuccess (workspaces) {
+  return {
+    type: constants.FETCH_WORKSPACES_SUCCESS,
+    visibleWorkspaces: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      data: workspaces
+    }
+  };
+}
+function receiveVisibleWorkspacesFailure (error) {
+  return {
+    type: constants.FETCH_WORKSPACES_FAILURE,
+    visibleWorkspaces: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      error: error
+    }
+  };
+}
+function requestVisibleWorkspacesLayers () {
+  return {
+    type: constants.FETCH_WORKSPACES_LAYERS_REQUEST,
+    featureLayers: {
+      requestedAt: Date.now(),
+      isFetching: true,
+      data: {},
+      error: null
+    }
+  };
+}
+function receiveVisibleWorkspacesLayersSuccess (layers) {
+  return {
+    type: constants.FETCH_WORKSPACES_LAYERS_SUCCESS,
+    featureLayers: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      data: layers
+    }
+  };
+}
+function receiveVisibleWorkspacesLayersFailure (error) {
+  return {
+    type: constants.FETCH_WORKSPACES_LAYERS_FAILURE,
+    featureLayers: {
+      receivedAt: Date.now(),
+      isFetching: false,
+      error: error
+    }
+  };
+}
 function requestWMSLayerTimesteps (layer, url, day) {
   return {
     type: constants.FETCH_WMS_LAYER_TIMESTEPS_REQUEST,
@@ -211,18 +277,6 @@ function setSelectedDatasetCapabilities (capabilities) {
     capabilities: capabilities
   };
 }
-function setFeatureLayers (layers) {
-  return {
-    type: constants.SET_FEATURE_LAYERS,
-    featureLayers: layers
-  };
-}
-function setDatasetLayer (layer) {
-  return {
-    type: constants.SET_WMS_LAYER,
-    layer: layer
-  };
-}
 function updateVariablePreferenceBoundaries (min, max) {
   return {
     type: constants.VISUALIZE_SET_VARIABLE_BOUNDARY_VALUES,
@@ -235,7 +289,6 @@ export const actions = {
   resetVisualizeState: resetVisualizeState,
   addDatasetsToVisualize: addDatasetsToVisualize,
   setCurrentDateTime: setCurrentDateTime,
-  setLayer: setDatasetLayer,
   setSelectedDatasetCapabilities: setSelectedDatasetCapabilities,
   fetchScalarValue: function (opendapUrl, lat, lon, time, variable) {
     return function (dispatch) {
@@ -287,12 +340,12 @@ export const actions = {
       dispatch(requestWMSLayerDetails());
       return myHttp.get(`${url}?request=GetMetadata&item=layerDetails&layerName=${layer}`)
         .then(response => {
-          if(response.status !== 200) {
+          if (response.status !== 200) {
             throw new Error(`${response.status} ${response.statusText}`);
           }
           try {
-            return response.json()
-          } catch(err) {
+            return response.json();
+          } catch (err) {
             throw new Error('Failed at parsing JSON response');
           }
         })
@@ -301,7 +354,7 @@ export const actions = {
         )
         .catch(error => {
           NotificationManager.error(`Method GetMetadata LayerDetails failed at being fetched from the NcWMS2 server: ${error}`, 'Error', 10000);
-          dispatch(receiveWMSLayerDetailsFailure(error))
+          dispatch(receiveWMSLayerDetailsFailure(error));
         });
     };
   },
@@ -310,12 +363,12 @@ export const actions = {
       dispatch(requestWMSLayerTimesteps());
       return myHttp.get(`${url}?request=GetMetadata&item=timesteps&day=${day}&layerName=${layer}`)
         .then(response => {
-          if(response.status !== 200) {
+          if (response.status !== 200) {
             throw new Error(`${response.status} ${response.statusText}`);
           }
           try {
-            return response.json()
-          } catch(err) {
+            return response.json();
+          } catch (err) {
             throw new Error('Failed at parsing JSON response');
           }
         })
@@ -324,7 +377,7 @@ export const actions = {
         )
         .catch(error => {
           NotificationManager.error(`Method GetMetadata TimeSteps failed at being fetched from the NcWMS2 server: ${error}`, 'Error', 10000);
-          dispatch(receiveWMSLayerTimestepsFailure(error))
+          dispatch(receiveWMSLayerTimestepsFailure(error));
         });
     };
   },
@@ -333,17 +386,17 @@ export const actions = {
     return function (dispatch) {
       return myHttp.get(`${url}?REQUEST=GetMap&LAYERS=${layer}`)
         .then(response => {
-          if(response.status !== 200) {
+          if (response.status !== 200) {
             throw new Error(`${response.status} ${response.statusText}`);
           }
           try {
-            //text.contains('Must provide a value for VERSION')
-            return response.text()
-          } catch(err) {
+            // text.contains('Must provide a value for VERSION')
+            return response.text();
+          } catch (err) {
             throw new Error('Failed at parsing XML response');
           }
         })
-        .then(text => {/*console.log(text)*/})
+        .then(text => { /* console.log(text) */ })
         .catch(error => NotificationManager.error(`Method GetMap failed at being fetched from the NcWMS2 server: ${error}`, 'Error', 10000));
     };
   },
@@ -377,27 +430,20 @@ export const actions = {
       palette: palette
     };
   },
-  fetchFeatureLayers: function () {
-    return dispatch => {
-      const workspaceNames = [];
-      return myHttp.get(`${__PAVICS_MAGPIE_PATH__}/users/current/services/geoserver-api/inherited_resources`)
-        .then(response => response.json())
-        .then(json => {
-          const promises = [];
-          Object.keys(json.service.resources).map(serviceId => {
-            const resource = json.service.resources[serviceId];
-            if (resource.resource_name === 'workspaces') {
-              const workspaces = resource.children;
-              Object.keys(workspaces).map(resourceId => {
-                const workspace = workspaces[resourceId];
-                workspaceNames.push(workspace.resource_name);
-                const url = `${__PAVICS_GEOSERVER_API_PATH__}/workspaces/${workspace.resource_name}/layers.json`;
-                promises.push(myHttp.get(url));
-              });
-            }
-          });
-          return Promise.all(promises);
-        })
+  aggregateFetchWorkspacesLayersRequests: function (workspaces) {
+    const promises = [];
+    workspaces.map(workspace => {
+      const url = `${__PAVICS_GEOSERVER_API_PATH__}/workspaces/${workspace.resource_name}/layers.json`;
+      promises.push(myHttp.get(url));
+    });
+    return Promise.all(promises);
+  },
+  fetchLayersFromWorkspaces: function () {
+    return (dispatch, getState) => {
+      dispatch(requestVisibleWorkspacesLayers());
+      const state = getState();
+      const workspaces = state.visualize.visibleWorkspaces.data;
+      actions.aggregateFetchWorkspacesLayersRequests(workspaces)
         .then(allResponses => {
           const allTransformToJson = [];
           allResponses.map(res => {
@@ -411,7 +457,7 @@ export const actions = {
             if (!oneRequestLayers.layers || !oneRequestLayers.layers.layer) {
               return;
             }
-            const workspaceName = workspaceNames[i];
+            const workspaceName = workspaces[i].resource_name;
             oneRequestLayers.layers.layer.map(layer => {
               const layerName = layer.name;
               layers[workspaceName] = layers[workspaceName] || [];
@@ -426,7 +472,33 @@ export const actions = {
               });
             });
           });
-          dispatch(setFeatureLayers(layers));
+          dispatch(receiveVisibleWorkspacesLayersSuccess(layers));
+        })
+        .catch(err => dispatch(receiveVisibleWorkspacesLayersFailure(err)));
+    };
+  },
+  fetchFeatureLayers: function () {
+    return dispatch => {
+      dispatch(requestVisibleWorkspaces());
+      return myHttp
+        .get(`${__PAVICS_MAGPIE_PATH__}/users/current/services/geoserver-api/inherited_resources`)
+        .then(response => response.json())
+        .then(json => {
+          Object.keys(json.service.resources).map(serviceId => {
+            const resource = json.service.resources[serviceId];
+            if (resource.resource_name === 'workspaces') {
+              const workspaces = [];
+              Object.keys(resource.children).map(resourceId => {
+                const workspace = resource.children[resourceId];
+                workspaces.push(workspace);
+              });
+              dispatch(receiveVisibleWorkspacesSuccess(workspaces));
+              return dispatch(actions.fetchLayersFromWorkspaces());
+            }
+          });
+        })
+        .catch(err => {
+          dispatch(receiveVisibleWorkspacesFailure(err));
         });
     };
   },
@@ -436,12 +508,12 @@ export const actions = {
       dispatch(addFeatureIdToSelectedRegions(featureId));
     };
   },
-  unselectRegion: function(featureId) {
+  unselectRegion: function (featureId) {
     return dispatch => {
       dispatch(removeFeatureIdFromSelectedRegions(featureId));
     };
   },
-  resetSelectedRegions: function() {
+  resetSelectedRegions: function () {
     return dispatch => {
       dispatch(restoreInitialSelectedRegions());
     };
@@ -471,12 +543,6 @@ const HANDLERS = {
   },
   [constants.RESET_SELECTED_REGIONS]: (state) => {
     return {...state, selectedRegions: []};
-  },
-  [constants.SET_WMS_LAYER]: (state, action) => {
-    return {...state, layer: action.layer};
-  },
-  [constants.SET_FEATURE_LAYERS]: (state, action) => {
-    return {...state, featureLayers: action.featureLayers};
   },
   [constants.SET_SELECTED_COLOR_PALETTE]: (state, action) => {
     if (state.currentDisplayedDataset.variable && state.variablePreferences[state.currentDisplayedDataset.variable]) {
@@ -565,9 +631,10 @@ const HANDLERS = {
     return ({...state, currentProjectDatasets: newDatasets});
   },
   [constants.ADD_DATASETS_TO_VISUALIZE]: (state, action) => {
-    function uuidv4() {
-      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    function uuidv4 () {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
       });
     }
@@ -589,6 +656,24 @@ const HANDLERS = {
   },
   [constants.FETCH_PLOTLY_DATA_SUCCESS]: (state, action) => {
     return ({...state, plotlyData: Object.assign({}, state.plotlyData, action.plotlyData)});
+  },
+  [constants.FETCH_WORKSPACES_REQUEST]: (state, action) => {
+    return ({...state, visibleWorkspaces: Object.assign({}, state.visibleWorkspaces, action.visibleWorkspaces)});
+  },
+  [constants.FETCH_WORKSPACES_SUCCESS]: (state, action) => {
+    return ({...state, visibleWorkspaces: Object.assign({}, state.visibleWorkspaces, action.visibleWorkspaces)});
+  },
+  [constants.FETCH_WORKSPACES_FAILURE]: (state, action) => {
+    return ({...state, visibleWorkspaces: Object.assign({}, state.visibleWorkspaces, action.visibleWorkspaces)});
+  },
+  [constants.FETCH_WORKSPACES_LAYERS_REQUEST]: (state, action) => {
+    return ({...state, featureLayers: Object.assign({}, state.featureLayers, action.featureLayers)});
+  },
+  [constants.FETCH_WORKSPACES_LAYERS_SUCCESS]: (state, action) => {
+    return ({...state, featureLayers: Object.assign({}, state.featureLayers, action.featureLayers)});
+  },
+  [constants.FETCH_WORKSPACES_LAYERS_FAILURE]: (state, action) => {
+    return ({...state, featureLayers: Object.assign({}, state.featureLayers, action.featureLayers)});
   },
   [constants.FETCH_SCALAR_VALUE_REQUEST]: (state, action) => {
     return ({...state, currentScalarValue: action.currentScalarValue});
@@ -629,7 +714,20 @@ export const initialState = {
   currentDisplayedDataset: {
     opacity: 0.8
   },
-  featureLayers: [],
+  visibleWorkspaces: {
+    data: {},
+    requestedAt: null,
+    receivedAt: null,
+    isFetching: false,
+    error: null
+  },
+  featureLayers: {
+    data: {},
+    requestedAt: null,
+    receivedAt: null,
+    isFetching: false,
+    error: null
+  },
   baseMaps: [
     'Aerial',
     'Road',
