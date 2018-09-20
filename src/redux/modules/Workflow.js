@@ -114,7 +114,8 @@ function fetchProcessInputs (provider, process) {
             input.minOccurs,
             input.maxOccurs,
             input.defaultValue,
-            input.allowedValues
+            input.allowedValues,
+            input.supportedValues
           ));
         });
         dispatch(setProcessInputs(inputDefinitions));
@@ -223,7 +224,7 @@ function executeWorkflow (workflowName, inputs) {
       })
       .then(json => {
         if (json) {
-          NotificationManager.success('Workflow has be launched with success');
+          NotificationManager.success('Workflow has be launched with success', 'Success', 50000);
           dispatch(receiveExecuteJobSuccess(json));
           dispatch(jobAPIActions.createJob({
             projectId: projectId,
@@ -265,7 +266,7 @@ function executeProcess (provider, process, inputs) {
       })
       .then(json => {
         if (json) {
-          NotificationManager.success('Process has been launched with success');
+          NotificationManager.success('Process has been launched with success', 'Success', 50000);
           dispatch(receiveExecuteJobSuccess(json));
           dispatch(jobAPIActions.createJob({
             projectId: projectId,

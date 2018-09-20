@@ -10,6 +10,7 @@ export class InputDefinition {
   maxOccurs;
   defaultValue;
   allowedValues;
+  supportedValues;
 
   constructor (
     id,
@@ -19,7 +20,8 @@ export class InputDefinition {
     minOccurs,
     maxOccurs,
     defaultValue,
-    allowedValues
+    allowedValues,
+    supportedValues
   ) {
     this.id = id || '';
     this.dataType = dataType || constants.STRING;
@@ -29,6 +31,7 @@ export class InputDefinition {
     this.maxOccurs = maxOccurs || 1;
     this.defaultValue = defaultValue || '';
     this.allowedValues = allowedValues || [];
+    this.supportedValues = supportedValues || [];
   }
 
   get selectable () {

@@ -6,6 +6,7 @@ import Typography from'@material-ui/core/Typography';
 import Paper from'@material-ui/core/Paper';
 import Button from'@material-ui/core/Button';
 import ExecuteIcon from '@material-ui/icons/Done';
+import { COMPLEX_DATA } from './../../constants';
 
 const styles = {
   paper: {
@@ -116,12 +117,14 @@ export default class WpsProcessForm extends React.Component {
     // For each input, if any has the right mimetype and name, propagate new information
     // If not, fields will be loaded with workflow default values if defined
     for(let inputName in this.state.formData) {
-      if (inputName.startsWith(constants.LABEL_NETCDF.split('.')[0]) && inputName.endsWith(constants.LABEL_NETCDF.split('.')[1])) {
+      let starts = inputName.startsWith(constants.LABEL_NETCDF.split('.')[0]);
+      let ends = inputName.endsWith(constants.LABEL_NETCDF.split('.')[1])
+      if (starts && ends) {
         if (props.layerDataset.currentDisplayedDataset['url']) {
           changedState[inputName] = props.layerDataset.currentDisplayedDataset['url'];
         } else {
           // If dataset unselected => reset value, else value might be the workflow default value (so do nothing)
-          if (oldProps.currentDisplayedDataset && oldProps.currentDisplayedDataset['url']) {
+          if (oldProps.layerDataset.currentDisplayedDataset && oldProps.layerDataset.currentDisplayedDataset['url']) {
             changedState[inputName] = '';
           }
         }
@@ -224,12 +227,20 @@ export default class WpsProcessForm extends React.Component {
             {
               this.props.workflow.selectedProcessInputs.map((inputDefinition, i) => {
                 const uniqueIdentifier = this.makeUniqueIdentifier(inputDefinition);
+                let value = this.state.formData[uniqueIdentifier]
+                if (inputDefinition.dataType === COMPLEX_DATA) {
+                  // PAVICS platform support ComplexData inputs as reference only (URL)
+                  // Consider adding validation: && inputDefinition.defaultValue.mimeType === 'application/x-netcdf'
+                  // Consider validating: typeof value === 'object'
+                  // TODO: ComplexData with minOccurs > 1 = Array
+                  value = '';
+                }
                 return (
                   <div key={i} className="cy-process-form-field">
                     <WpsProcessFormInput
                       inputDefinition={inputDefinition}
                       uniqueIdentifier={uniqueIdentifier}
-                      value={this.state.formData[uniqueIdentifier]}
+                      value={value}
                       handleArrayChange={this.handleArrayChange}
                       handleChange={this.handleChange} />
                   </div>

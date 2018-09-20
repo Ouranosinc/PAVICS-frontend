@@ -119,7 +119,8 @@ class ScientificWorkflowStepper extends Component {
                 processDescription.inputs[validInputIndex].minOccurs,
                 processDescription.inputs[validInputIndex].maxOccurs,
                 thisTask.inputs[inputName],
-                processDescription.inputs[validInputIndex].allowedValues
+                processDescription.inputs[validInputIndex].allowedValues,
+                processDescription.inputs[validInputIndex].supportedValues
               ));
             }
           }

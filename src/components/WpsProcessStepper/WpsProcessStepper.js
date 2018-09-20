@@ -58,14 +58,14 @@ class WpsProcessStepper extends React.Component {
         if(Array.isArray(formData[inputName])) {
           formData[inputName].forEach(value => {
             inputs.push({
-              id: splitted[1],
+              id: splitted[splitted.length - 1], // last element will always be input id
               type: splitted[0],
               value: value
             })
           })
         } else {
           inputs.push({
-            id: splitted[1],
+            id: splitted[splitted.length - 1], // last element will always be input id
             type: splitted[0],
             value: formData[inputName]
           })

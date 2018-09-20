@@ -8,8 +8,7 @@ import MenuItem from'@material-ui/core/MenuItem';
 import FormControl from'@material-ui/core/FormControl';
 import FormControlLabel from'@material-ui/core/FormControlLabel';
 import FormHelperText from'@material-ui/core/FormHelperText';
-
-const {BOOLEAN, INPUT_DATETIME} = require('../../constants');
+import { BOOLEAN, COMPLEX_DATA, INPUT_DATETIME } from './../../constants';
 
 class WpsProcessFormInput extends Component {
   state = {
@@ -184,6 +183,7 @@ class WpsProcessFormInput extends Component {
         );
       });
     }
+
     return (
       <TextField
         name={this.props.inputDefinition.id}
