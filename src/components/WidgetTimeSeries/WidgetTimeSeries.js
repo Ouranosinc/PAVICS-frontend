@@ -22,26 +22,27 @@ const LAYOUT = {
   width: 550
 };
 
-class TimeSeriesChart extends React.Component {
+class WidgetTimeSeries extends React.Component {
   static propTypes = {
-    visualize: PropTypes.object.isRequired,
-    visualizeActions: PropTypes.object.isRequired
+    currentDisplayedDataset: PropTypes.object.isRequired,
+    currentScalarValue: PropTypes.object.isRequired,
+    fetchPlotlyData: PropTypes.func.isRequired,
+    plotlyData: PropTypes.object.isRequired,
   };
 
   constructor (props) {
     super(props);
-    this._bindRef = this._bindRef.bind(this);
   }
 
   componentWillReceiveProps (nextProps) {
-    const { nextCurrentScalarValue, nextPlotlyData } = nextProps.visualize;
-    const { currentDisplayedDataset, plotlyData } = this.props.visualize;
-    if (nextCurrentScalarValue && nextCurrentScalarValue.data && nextCurrentScalarValue.data.variable &&
-      nextCurrentScalarValue.data !== this.props.visualize.currentScalarValue.data) {
+    const { currentDisplayedDataset, currentScalarValue, fetchPlotlyData, plotlyData } = this.props;
+    if (nextProps.currentScalarValue && nextProps.currentScalarValue.data && nextProps.currentScalarValue.data.variable &&
+      nextProps.currentScalarValue.data !== currentScalarValue.data) {
       if (currentDisplayedDataset && currentDisplayedDataset['opendap_url'].length) {
+        // TODO: Use index corresponding to currentDateTime !!
         let opendapUrl = currentDisplayedDataset['opendap_url'][0];
-        let variable = nextCurrentScalarValue.data.variable;
-        this.props.visualizeActions.fetchPlotlyData(
+        let variable = nextProps.currentScalarValue.data.variable;
+        fetchPlotlyData(
           opendapUrl,
           variable['name'],
           0,
@@ -53,7 +54,7 @@ class TimeSeriesChart extends React.Component {
       }
     }
 
-    if (nextPlotlyData && nextPlotlyData.data && nextPlotlyData.data !== plotlyData.data) {
+    if (nextProps.plotlyData && nextProps.plotlyData.data && nextProps.plotlyData.data !== plotlyData.data) {
       this.container.data = nextProps.plotlyData.data;
       // We merge this.props.plotlyData.layout with predefined LAYOUT
       this.container.layout = JSON.parse(JSON.stringify(nextProps.plotlyData.layout));
@@ -68,7 +69,7 @@ class TimeSeriesChart extends React.Component {
   }
 
   componentDidMount () {
-    const { plotlyData } = this.props.visualize;
+    const { plotlyData } = this.props;
     // We merge this.props.plotlyData.layout with predefined LAYOUT
     let layout = JSON.parse(JSON.stringify(plotlyData.layout));
     for (let propName in LAYOUT) {
@@ -79,12 +80,12 @@ class TimeSeriesChart extends React.Component {
     Plotly.plot(this.container, plotlyData.data, layout, { displayModeBar: false });
   }
 
-  _bindRef (node) {
+  bindRef = (node) => {
     this.container = node;
-  }
+  };
 
   render () {
-    const { currentScalarValue, plotlyData } = this.props.visualize;
+    const { currentScalarValue, plotlyData } = this.props;
     let content = null;
     if (currentScalarValue.data && currentScalarValue.data._dimensions && plotlyData.layout && plotlyData.layout.title) {
       content =
@@ -104,10 +105,10 @@ class TimeSeriesChart extends React.Component {
         {content}
         <div className={((plotlyData.isFetching || currentScalarValue.isFetching) &&
           (!currentScalarValue.data || !currentScalarValue.data._dimensions)) ? 'hidden' : ''}>
-          <div id="plotly" ref={this._bindRef}></div>
+          <div id="plotly" ref={this.bindRef}></div>
         </div>
       </React.Fragment>
     );
   }
 }
-export default TimeSeriesChart;
+export default WidgetTimeSeries;
