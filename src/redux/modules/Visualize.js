@@ -1,4 +1,5 @@
 import myHttp from '../../util/http';
+import WMSCapabilities from 'ol/format/WMSCapabilities';
 import { NotificationManager } from 'react-notifications';
 import { VISUALIZE_SET_MAP_MANIPULATION_MODE, VISUALIZE_MODE_GRID_VALUES} from './../../constants';
 
@@ -378,7 +379,7 @@ export const actions = {
     };
   },
   fetchShapefiles: function () {
-    const parser = new ol.format.WMSCapabilities();
+    const parser = new WMSCapabilities();
     return dispatch => {
       return myHttp.get(`${__PAVICS_GEOSERVER_PATH__}/wms?request=GetCapabilities`)
         .then(response => response.text())

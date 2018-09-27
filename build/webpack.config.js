@@ -1,13 +1,17 @@
 import webpack from 'webpack';
 import cssnano from 'cssnano';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import CopyWebpackPlugin from 'copy-webpack-plugin'
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import config from '../config';
 import _debug from 'debug';
+import path from 'path';
 
 const debug = _debug('app:webpack:config');
 const paths = config.utils_paths;
 const {__DEV__, __PROD__, __TEST__} = config.globals;
+const cesiumSource = paths.base() + '/node_modules/cesium/Source';
+const cesiumWorkers = '../Build/Cesium/Workers';
 
 debug('Create configuration.');
 const webpackConfig = {
@@ -16,7 +20,11 @@ const webpackConfig = {
   devtool: config.compiler_devtool,
   resolve: {
     root: paths.client(),
-    extensions: ['', '.js', '.jsx', '.json']
+    extensions: ['', '.js', '.jsx', '.json'],
+    alias: {
+      // Cesium module name
+      cesium: cesiumSource
+    }
   },
   module: {}
 };
@@ -42,7 +50,13 @@ webpackConfig.entry = {
 webpackConfig.output = {
   filename: `[name].[${config.compiler_hash_type}].js`,
   path: paths.dist(),
+  sourcePrefix: '', // Needed by cesium
   publicPath: config.compiler_public_path
+};
+
+webpackConfig.amd =  {
+  // Enable webpack-friendly use of require in cesium
+  toUrlUndefined: true
 };
 
 // ------------------------------------
@@ -59,7 +73,22 @@ webpackConfig.plugins = [
     minify: {
       collapseWhitespace: true
     }
-  })
+  }),
+  // Cesium Assets Copy
+  new CopyWebpackPlugin([{from: path.join(cesiumSource, cesiumWorkers), to: 'Workers'}]),
+  new CopyWebpackPlugin([{from: path.join(cesiumSource, 'Assets'), to: 'Assets'}]),
+  new CopyWebpackPlugin([{from: path.join(cesiumSource, 'Widgets'), to: 'Widgets'}]),
+  new webpack.DefinePlugin({
+    // Define relative base path in cesium for loading assets
+    CESIUM_BASE_URL: JSON.stringify('')
+  }),
+  // Split cesium into a seperate bundle
+  /*new webpack.optimize.CommonsChunkPlugin({
+    name: 'cesium',
+    minChunks: function (module) {
+      return module.context && module.context.indexOf('cesium') !== -1;
+    }
+  })*/
 ];
 
 if (__DEV__) {
@@ -125,7 +154,7 @@ webpackConfig.eslint = {
 // JavaScript / JSON
 webpackConfig.module.loaders = [{
   test: /\.(js|jsx)$/,
-  exclude: /node_modules/,
+  exclude: /(node_modules.(?!ol\/))/, // Exclude all modules BUT openlayers who has published ES6 code
   loader: 'babel',
   query: {
     cacheDirectory: true,
