@@ -25,7 +25,7 @@ export class OLDatasetRenderer extends React.Component {
   static propTypes = {
     layerDataset: PropTypes.object.isRequired,
     layerDatasetActions: PropTypes.object.isRequired,
-    layerIndex: PropTypes.number.isRequired,
+    layerZIndex: PropTypes.number.isRequired,
     layerName: PropTypes.string.isRequired,
     map: PropTypes.instanceOf(Map)
   };
@@ -117,7 +117,7 @@ export class OLDatasetRenderer extends React.Component {
       // extent: extent
     });
     this.layer.set('nameId', this.props.layerName);
-    this.props.map.getLayers().insertAt(this.props.layerIndex, this.layer);
+    this.props.map.getLayers().insertAt(this.props.layerZIndex, this.layer);
   }
 
   /*

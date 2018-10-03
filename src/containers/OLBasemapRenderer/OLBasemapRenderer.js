@@ -30,8 +30,7 @@ export class OLBasemapRenderer extends React.Component {
   static propTypes = {
     layerBasemap: PropTypes.object.isRequired,
     layerBasemapActions: PropTypes.object.isRequired,
-    layerIndex: PropTypes.number.isRequired,
-    // layerName: PropTypes.string.isRequired, // layerName <= this.props.layerBasemap.selectedBasemap
+    layerZIndex: PropTypes.number.isRequired,
     map: PropTypes.instanceOf(Map)
   };
 
@@ -77,7 +76,7 @@ export class OLBasemapRenderer extends React.Component {
     let layer = new TileLayer({
       source: this.source
     });
-    map.getLayers().insertAt(this.props.layerIndex, layer);
+    map.getLayers().insertAt(this.props.layerZIndex, layer);
     layer.set('nameId', title);
     return layer;
   }
@@ -96,7 +95,7 @@ export class OLBasemapRenderer extends React.Component {
         }
       )
     });
-    map.getLayers().insertAt(this.props.layerIndex, layer);
+    map.getLayers().insertAt(this.props.layerZIndex, layer);
     layer.set('nameId', title);
     return layer;
   }

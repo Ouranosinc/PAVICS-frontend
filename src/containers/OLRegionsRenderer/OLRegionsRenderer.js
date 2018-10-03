@@ -9,7 +9,7 @@ import TileWMS from 'ol/source/TileWMS';
 
 export class OLRegionsRenderer extends React.Component {
   static propTypes = {
-    layerIndex: PropTypes.number.isRequired,
+    layerZIndex: PropTypes.number.isRequired,
     layerName: PropTypes.string.isRequired,
     map: PropTypes.instanceOf(Map),
     layerRegion: PropTypes.object.isRequired,
@@ -61,7 +61,7 @@ export class OLRegionsRenderer extends React.Component {
       source: this.source
     });
     layer.set('nameId', this.props.layerName);
-    map.getLayers().insertAt(this.props.layerIndex, layer);
+    map.getLayers().insertAt(this.props.layerZIndex, layer);
     return layer
   }
 

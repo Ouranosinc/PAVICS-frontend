@@ -30,7 +30,7 @@ const POLYGON_CONFIG = {
 
 export class OLRegionsSelector extends React.Component {
   static propTypes = {
-    layerIndex: PropTypes.number.isRequired,
+    layerZIndex: PropTypes.number.isRequired,
     layerName: PropTypes.string.isRequired,
     map: PropTypes.instanceOf(Map),
     layerRegion: PropTypes.object.isRequired,
@@ -56,7 +56,7 @@ export class OLRegionsSelector extends React.Component {
       format: new GeoJSON()
     });
     this.layer = this.createSelectedRegionLayer(this.layerName);
-    map.getLayers().insertAt(this.props.layerIndex, this.layer);
+    map.getLayers().insertAt(this.props.layerZIndex, this.layer);
   }
 
   createSelectedRegionLayer (nameId) {

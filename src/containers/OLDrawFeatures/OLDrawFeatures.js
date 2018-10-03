@@ -13,9 +13,6 @@ import { Vector as VectorLayer } from 'ol/layer';
 import { Circle, Fill, Text, Stroke, Style, RegularShape } from 'ol/style';
 import { actions as layerCustomFeatureActions } from '../../redux/modules/LayerCustomFeature';
 
-const INDEX_BOUNDING_BOX = 101;
-const LAYER_BOUNDING_BOX = 'LAYER_BOUNDING_BOX';
-
 // Interesting try/catch to avoid main thread error (on Polygon/LineString drawing with Select/Modify interactions)
 // https://github.com/openlayers/openlayers/issues/6310
 import RBush from 'ol/structs/RBush';
@@ -38,6 +35,8 @@ class OLDrawFeatures extends React.Component {
   static propTypes = {
     layerCustomFeature: PropTypes.object.isRequired,
     layerCustomFeatureActions: PropTypes.object.isRequired,
+    layerName: PropTypes.string.isRequired,
+    layerZIndex: PropTypes.number.isRequired,
     map: PropTypes.instanceOf(Map)
   };
 
@@ -93,12 +92,13 @@ class OLDrawFeatures extends React.Component {
     // A layer that will store all drawn features
     const layer = new VectorLayer({
       source: this.source,
+      title: this.props.layerName,
       style: new Style({
         stroke: new Stroke({ color: 'rgba(255,255,255,0.7)' }),
         fill: new Fill({ color: 'rgba(255,255,255,0.3)' }),
       })
     });
-    map.getLayers().insertAt(INDEX_BOUNDING_BOX, layer);
+    map.getLayers().insertAt(this.props.layerZIndex, layer);
     return layer;
   }
 
