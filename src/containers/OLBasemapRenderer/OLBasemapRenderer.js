@@ -4,26 +4,15 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { actions as layerBasemapActions } from './../../redux/modules/LayerDataset';
 import Map from 'ol/Map';
-import View from 'ol/View';
-import MousePosition from 'ol/control/MousePosition';
-import { defaults as ControlDefaults, ScaleLine, ZoomSlider } from 'ol/control';
 import TileLayer from 'ol/layer/Tile';
 import BingMaps from 'ol/source/BingMaps';
 import OSM from 'ol/source/OSM';
-import { GeoJSON, WMSCapabilities } from 'ol/format';
-import { Fill, Text, Stroke, Style } from 'ol/style';
-import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
-import TileWMS from 'ol/source/TileWMS';
-import { add, createStringXY } from 'ol/coordinate';
-import { transform } from 'ol/proj';
 
-// FIXME: Cesium shouldn't be a basemap option eventually
+// TODO: Cesium shouldn't be a basemap option eventually
 import Cesium from 'cesium/Cesium';
 window['Cesium'] = Cesium; // expose Cesium to the OL-Cesium library
 require('cesium/Widgets/widgets.css');
 import OLCesium from 'ol-cesium';
-
 const G_BING_API_KEY = 'AtXX65CBBfZXBxm6oMyf_5idMAMI7W6a5GuZ5acVcrYi6lCQayiiBz7_aMHB7JR7';
 
 export class OLBasemapRenderer extends React.Component {
@@ -63,6 +52,7 @@ export class OLBasemapRenderer extends React.Component {
       map.removeLayer(this.layer);
     }
     if (layerBasemap.selectedBasemap === 'Cesium') {
+      // TODO: Cesium shouldn't be a basemap option eventually
       this.layer = this.addCesiumTileLayer(map, layerBasemap.selectedBasemap);
       let scene = this.ol3d.getCesiumScene();
       scene.terrainProvider = Cesium.createWorldTerrain();

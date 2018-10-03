@@ -37,7 +37,7 @@ export class OLRegionsClickSelector extends React.Component {
   }
 
   handleMapClick = (event) => {
-    // FIXME: INTERFACTION API?
+    // TODO: Use OL5 Interaction API instead of EventListener
     if (this.props.visualize.mapManipulationMode === VISUALIZE_MODE_REGION_SELECTION) {
       if (this.props.layerRegion.selectedShapefile.title) {
         return this.handleSelectRegionClick(event);
