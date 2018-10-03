@@ -59,15 +59,16 @@ export class OLBasemapRenderer extends React.Component {
   }
 
   resetBasemap(map, layerBasemap) {
+    if (this.layer) {
+      map.removeLayer(this.layer);
+    }
     if (layerBasemap.selectedBasemap === 'Cesium') {
-      if(this.layer) map.removeLayer(this.layer);
       this.layer = this.addCesiumTileLayer(map, layerBasemap.selectedBasemap);
       let scene = this.ol3d.getCesiumScene();
       scene.terrainProvider = Cesium.createWorldTerrain();
       this.ol3d.setEnabled(true);
     } else {
       this.ol3d.setEnabled(false);
-      if(this.layer) map.removeLayer(this.layer);
       this.layer = this.addBingLayer(map, layerBasemap.selectedBasemap, layerBasemap.selectedBasemap);
     }
   }
