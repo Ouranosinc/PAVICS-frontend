@@ -90,7 +90,7 @@ class WpsProcessFormInput extends Component {
         }
       }
       return (
-        <FormControl >
+        <FormControl required={this.props.inputDefinition.isRequired}>
           <FormControlLabel
             label={this.props.inputDefinition.title}
             control={
@@ -138,7 +138,7 @@ class WpsProcessFormInput extends Component {
     // leave this check before the isArray one, or the fields will be rendered as text fields on next rendering
     if (this.props.inputDefinition.selectable) {
       return (
-        <FormControl fullWidth>
+        <FormControl required={this.props.inputDefinition.minOccurs > 0} fullWidth>
           <InputLabel htmlFor={this.props.inputDefinition.title}>{this.props.inputDefinition.title}</InputLabel>
           <Select
             multiple
@@ -173,6 +173,7 @@ class WpsProcessFormInput extends Component {
       return this.props.value.map((elem, i) => {
         return (
           <TextField
+            required={this.props.inputDefinition.minOccurs > 0}
             key={i}
             name={this.props.inputDefinition.id}
             fullWidth
@@ -186,6 +187,7 @@ class WpsProcessFormInput extends Component {
 
     return (
       <TextField
+        required={this.props.inputDefinition.isRequired}
         name={this.props.inputDefinition.id}
         fullWidth
         value={this.props.value}

@@ -13,32 +13,32 @@ export class InputDefinition {
   supportedValues;
 
   constructor (
-    id,
-    dataType,
-    title,
-    abstract,
-    minOccurs,
-    maxOccurs,
-    defaultValue,
-    allowedValues,
-    supportedValues
+    id = '',
+    dataType = constants.STRING,
+    title = '',
+    abstract = '',
+    minOccurs = 1,
+    maxOccurs = 1,
+    defaultValue = '',
+    allowedValues = [],
+    supportedValues = []
   ) {
-    this.id = id || '';
-    this.dataType = dataType || constants.STRING;
-    this.title = title || '';
-    this.abstract = abstract || '';
-    this.minOccurs = minOccurs || 1;
-    this.maxOccurs = maxOccurs || 1;
-    this.defaultValue = defaultValue || '';
-    this.allowedValues = allowedValues || [];
-    this.supportedValues = supportedValues || [];
+    this.id = id;
+    this.dataType = dataType;
+    this.title = title;
+    this.abstract = abstract;
+    this.minOccurs = minOccurs;
+    this.maxOccurs = maxOccurs;
+    this.defaultValue = defaultValue;
+    this.allowedValues = allowedValues;
+    this.supportedValues = supportedValues;
   }
 
   get selectable () {
     return this.allowedValues.length > 0;
   }
 
-  get required () {
+  get isRequired () {
     return this.minOccurs > 0;
   }
 }
