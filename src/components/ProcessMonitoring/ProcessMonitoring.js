@@ -33,11 +33,11 @@ import CollapseNestedList from '../CollapseNestedList';
 
 class ProcessMonitoring extends React.Component {
   static propTypes = {
+    layerDatasetActions: PropTypes.object.isRequired,
     monitor: PropTypes.object.isRequired,
     monitorActions: PropTypes.object.isRequired,
     project: PropTypes.object.isRequired,
     session: PropTypes.object.isRequired,
-    visualizeActions: PropTypes.object.isRequired,
   };
 
   state = {
@@ -75,8 +75,8 @@ class ProcessMonitoring extends React.Component {
     if(visualizedTempDatasets &&
       visualizedTempDatasets.items.length &&
       visualizedTempDatasets !== this.props.monitor.visualizedTempDatasets){
-      this.props.visualizeActions.addDatasetsToVisualize(visualizedTempDatasets.items);
-      this.props.visualizeActions.selectCurrentDisplayedDataset({
+      this.props.layerDatasetActions.addDatasetsToVisualize(visualizedTempDatasets.items);
+      this.props.layerDatasetActions.selectCurrentDisplayedDataset({
         ...visualizedTempDatasets.items[0],
         currentFileIndex: 0,
         opacity: 0.8

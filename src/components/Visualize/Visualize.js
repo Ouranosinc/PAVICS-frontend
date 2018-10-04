@@ -2,22 +2,22 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import OLComponent from '../OLComponent';
 import SpeedDialMenu from '../SpeedDialMenu'
-import TimeSlider from '../TimeSlider';
-import InformationPanel from '../InformationPanel';
-import LayerSwitcher from '../LayerSwitcher';
-import TimeSeriesChart from './../TimeSeriesChart';
-import MapControls from './../MapControls';
-import DrawFeatures from './../DrawFeatures';
 import { constants } from './../../redux/modules/Widgets';
 import * as labels from './../../constants';
-import BigColorPalette from '../BigColorPalette/BigColorPalette';
-import VisualizeWidget from './VisualizeWidget';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import LayersIcon from '@material-ui/icons/Layers';
 import MapControlsIcon from '@material-ui/icons/MyLocation';
 import InfoIcon from '@material-ui/icons/Description';
 import ChartIcon from '@material-ui/icons/Timeline';
-import DrawIcon from '@material-ui/icons/EditLocation';
+import DrawIcon from '@material-ui/icons/Edit';
+import VisualizeWidget from './../VisualizeWidget';
+import BigColorPaletteContainer from './../../containers/BigColorPalette';
+import WidgetDrawFeaturesContainer from './../../containers/WidgetDrawFeatures';
+import WidgetLayerSwitcherContainer from './../../containers/WidgetLayerSwitcher';
+import WidgetMapControlsContainer from './../../containers/WidgetMapControls';
+import WidgetPointInformationsContainer from './../../containers/WidgetPointInformations';
+import WidgetTimeSeriesContainer from './../../containers/WidgetTimeSeries';
+import WidgetTimeSliderContainer from './../../containers/WidgetTimeSlider';
 
 const OPACITY = 0.9;
 const styles = {
@@ -74,7 +74,7 @@ const styles = {
     opacity: OPACITY
   },
   customRegions: {
-    height: '400px',
+    height: '420px',
     overflow: 'auto',
     width: '400px',
     opacity: OPACITY
@@ -83,12 +83,9 @@ const styles = {
 
 class Visualize extends React.Component {
   static propTypes = {
-    sectionActions: PropTypes.object.isRequired,
-    project: PropTypes.object.isRequired,
-    visualize: PropTypes.object.isRequired,
-    visualizeActions:  PropTypes.object.isRequired,
+    selectBasemap: PropTypes.func.isRequired,
+    toggleWidget:  PropTypes.func.isRequired,
     widgets:  PropTypes.object.isRequired,
-    widgetsActions:  PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -96,7 +93,7 @@ class Visualize extends React.Component {
   }
 
   componentDidMount() {
-    this.props.visualizeActions.selectBasemap('Aerial');
+    this.props.selectBasemap('Aerial');
   }
 
   handleToggleWidget = widgetName => event => {
@@ -107,13 +104,11 @@ class Visualize extends React.Component {
     return (
       <React.Fragment>
         <div style={styles.mapContainer}>
-          <OLComponent
-            visualize={this.props.visualize}
-            visualizeActions={this.props.visualizeActions} />
+          <OLComponent />
         </div>
-        <BigColorPalette />
+        <BigColorPaletteContainer />
         <SpeedDialMenu widgets={this.props.widgets}
-                       widgetsActions={this.props.widgetsActions} />
+                       toggleWidget={this.props.toggleWidget} />
 
         <div style={styles.left}>
           <div style={{display: 'contents'}}>
@@ -125,8 +120,7 @@ class Visualize extends React.Component {
                     icon={<InfoIcon />}
                     rootStyle={styles.info}
                     onMinimizeClicked={this.handleToggleWidget(constants.WIDGET_INFO_KEY)}>
-                    <InformationPanel
-                      visualize={this.props.visualize} />
+                    <WidgetPointInformationsContainer />
                   </VisualizeWidget>
                 </div>
                 : null
@@ -139,9 +133,7 @@ class Visualize extends React.Component {
                     icon={<ChartIcon />}
                     rootStyle={styles.chart}
                     onMinimizeClicked={this.handleToggleWidget(constants.WIDGET_CHART_KEY)}>
-                    <TimeSeriesChart
-                      visualize={this.props.visualize}
-                      visualizeActions={this.props.visualizeActions}/>
+                    <WidgetTimeSeriesContainer />
                   </VisualizeWidget>
                 </div>
                 : null
@@ -154,11 +146,7 @@ class Visualize extends React.Component {
                     icon={<AccessTimeIcon />}
                     rootStyle={styles.timeSlider}
                     onMinimizeClicked={this.handleToggleWidget(constants.WIDGET_TIME_SLIDER_KEY)}>
-                    <TimeSlider
-                      monthsRange={false}
-                      yearsRange={false}
-                      visualize={this.props.visualize}
-                      visualizeActions={this.props.visualizeActions} />
+                    <WidgetTimeSliderContainer monthsRange={false} yearsRange={false} />
                   </VisualizeWidget>
                 </div>
                 : null
@@ -171,9 +159,7 @@ class Visualize extends React.Component {
                     icon={<MapControlsIcon />}
                     rootStyle={styles.mapControls}
                     onMinimizeClicked={this.handleToggleWidget(constants.WIDGET_MAP_CONTROLS_KEY)}>
-                    <MapControls
-                      visualize={this.props.visualize}
-                      visualizeActions={this.props.visualizeActions} />
+                    <WidgetMapControlsContainer />
                   </VisualizeWidget>
                 </div>
                 : null
@@ -186,9 +172,7 @@ class Visualize extends React.Component {
                     icon={<LayersIcon />}
                     rootStyle={styles.layerSwitcher}
                     onMinimizeClicked={this.handleToggleWidget(constants.WIDGET_LAYER_SWITCHER_KEY)}>
-                    <LayerSwitcher
-                      visualize={this.props.visualize}
-                      visualizeActions={this.props.visualizeActions} />
+                    <WidgetLayerSwitcherContainer />
                   </VisualizeWidget>
                 </div>
                 : null
@@ -201,9 +185,7 @@ class Visualize extends React.Component {
                   icon={<DrawIcon />}
                   rootStyle={styles.customRegions}
                   onMinimizeClicked={this.handleToggleWidget(constants.WIDGET_CUSTOM_REGIONS_KEY)}>
-                  <DrawFeatures
-                    visualize={this.props.visualize}
-                    visualizeActions={this.props.visualizeActions} />
+                  <WidgetDrawFeaturesContainer />
                 </VisualizeWidget>
                 </div>
                 : null
