@@ -30,7 +30,7 @@ export class SearchCatalog extends React.Component {
     researchActions: PropTypes.object.isRequired,
     researchAPI: PropTypes.object.isRequired,
     researchAPIActions: PropTypes.object.isRequired,
-    visualizeActions: PropTypes.object.isRequired
+    layerDatasetActions: PropTypes.object.isRequired
   };
 
   state = {
@@ -230,7 +230,7 @@ export class SearchCatalog extends React.Component {
               </Paper>)
           }
           <SearchCatalogResults
-            visualizeActions={this.props.visualizeActions}
+            layerDatasetActions={this.props.layerDatasetActions}
             datasetAPIActions={this.props.datasetAPIActions}
             research={this.props.research}
             project={this.props.project}

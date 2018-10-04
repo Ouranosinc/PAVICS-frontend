@@ -11,7 +11,7 @@ import Typography from'@material-ui/core/Typography';
 import WpsProviderSelector from '..//WpsProviderSelector';
 import WpsProcessSelector from '..//WpsProcessSelector';
 import WpsProcessDetails from '../WpsProcessDetails';
-import WpsProcessForm from '../WpsProcessForm';
+import WpsProcessFormContainer from './../../containers/WpsProcessForm';
 import Button from'@material-ui/core/Button';
 import BackIcon from '@material-ui/icons/ArrowBack';
 import myHttp from '../../util/http';
@@ -28,8 +28,6 @@ class WpsProcessStepper extends React.Component {
     classes: PropTypes.object.isRequired,
     jobAPIActions: PropTypes.object.isRequired,
     project: PropTypes.object.isRequired,
-    sectionActions: PropTypes.object.isRequired,
-    visualize: PropTypes.object.isRequired,
     workflow: PropTypes.object.isRequired,
     workflowActions: PropTypes.object.isRequired
   };
@@ -148,13 +146,9 @@ class WpsProcessStepper extends React.Component {
               {
                 this.props.workflow.selectedProcessInputs.length === 0
                   ? null
-                  : <WpsProcessForm
+                  : <WpsProcessFormContainer
                   executeProcess={this.execute}
-                  formId={FORM_PROCESS_ID}
-                  sectionActions={this.props.sectionActions}
-                  visualize={this.props.visualize}
-                  workflow={this.props.workflow}
-                  workflowActions={this.props.workflowActions} />
+                  formId={FORM_PROCESS_ID} />
               }
             </React.Fragment>
           </StepContent>

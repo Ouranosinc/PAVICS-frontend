@@ -33,12 +33,10 @@ class WorkflowWizard extends React.Component {
   static propTypes = {
     jobAPIActions: PropTypes.object.isRequired,
     project: PropTypes.object.isRequired,
-    sectionActions: PropTypes.object.isRequired,
     workflow: PropTypes.object.isRequired,
     workflowAPI: PropTypes.object.isRequired,
     workflowActions: PropTypes.object.isRequired,
-    workflowAPIActions: PropTypes.object.isRequired,
-    visualize: PropTypes.object.isRequired,
+    workflowAPIActions: PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -110,11 +108,9 @@ class WorkflowWizard extends React.Component {
             <ScientificWorkflowStepper
               jobAPIActions={this.props.jobAPIActions}
               project={this.props.project}
-              sectionActions={this.props.sectionActions}
               selectedProvider={__PAVICS_WORKFLOW_PROVIDER__}
               selectedProcess={{identifier: __PAVICS_RUN_WORKFLOW_IDENTIFIER__}}
               showDialog={this.showDialog}
-              visualize={this.props.visualize}
               workflow={this.props.workflow}
               workflowActions={this.props.workflowActions}
               workflowAPI={this.props.workflowAPI}
@@ -123,10 +119,8 @@ class WorkflowWizard extends React.Component {
         {
           (this.state.activeTab === PROCESS_TAB_VALUE) ?
             <WpsProcessStepper
-              sectionActions={this.props.sectionActions}
               jobAPIActions={this.props.jobAPIActions}
               project={this.props.project}
-              visualize={this.props.visualize}
               workflow={this.props.workflow}
               workflowActions={this.props.workflowActions}
             /> : null
