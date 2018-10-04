@@ -28,6 +28,7 @@ export class OLRegionsClickSelector extends React.Component {
   }
 
   init(map) {
+    // TODO: Use OL5 Interaction API instead of EventListener
     map.addEventListener('click', this.handleMapClick);
   }
 
@@ -37,20 +38,13 @@ export class OLRegionsClickSelector extends React.Component {
   }
 
   handleMapClick = (event) => {
-    // TODO: Use OL5 Interaction API instead of EventListener
+    const { selectedShapefile } = this.props.layerRegion;
     if (this.props.visualize.mapManipulationMode === VISUALIZE_MODE_REGION_SELECTION) {
-      if (this.props.layerRegion.selectedShapefile.title) {
-        return this.handleSelectRegionClick(event);
+      if (selectedShapefile.title && selectedShapefile.title.length) {
+        this.handleSelectRegionClick(event);
+      } else {
+        console.log('Choose and load a shapefile before trying to click on the map to select a region.');
       }
-      return;
-    }else {
-      // FIXME: NOT MY RESPONSABILITY
-      /*if (this.props.layerDataset.currentDisplayedDataset['dataset_id']) {
-       console.log('selected dataset:', this.props.layerDataset.currentDisplayedDataset);
-       return this.getScalarValue(event);
-       }
-       console.log('choose a dataset first');
-       return;*/
     }
   }
 

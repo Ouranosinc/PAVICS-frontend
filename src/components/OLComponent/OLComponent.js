@@ -4,6 +4,7 @@ import classes from './OLComponent.scss';
 import Map from 'ol/Map';
 import View from 'ol/View';
 import OLBasemapRenderer from './../../containers/OLBasemapRenderer';
+import OLDatasetClickSelector from './../../containers/OLDatasetClickSelector';
 import OLDatasetRenderer from './../../containers/OLDatasetRenderer';
 import OLDrawFeatures from './../../containers/OLDrawFeatures';
 import OLRegionsRenderer from './../../containers/OLRegionsRenderer';
@@ -57,19 +58,6 @@ class OLComponent extends React.Component {
     window.cyCurrentMap = this.map;
   }
 
-  /*getScalarValue (event) {
-    let coordinates = this.map.getCoordinateFromPixel(event.pixel);
-    let converted = transform(coordinates, 'EPSG:3857', 'EPSG:4326');
-    console.log('scalar value from coosrindates', converted);
-    console.log('selected dataset:', this.props.layerDataset.currentDisplayedDataset);
-    const opendapUrl = this.props.layerDataset.currentDisplayedDataset['opendap_url'][0];
-    const lon = converted[0];
-    const lat = converted[1];
-    const time = this.props.layerDataset.currentDateTime.substr(0, this.props.layerDataset.currentDateTime.length - 5);
-    const variable = this.props.layerDataset.currentDisplayedDataset['variable'];
-    this.props.visualizeActions.fetchScalarValue(opendapUrl, lat, lon, time, variable);
-  }*/
-
   componentDidMount () {
     this.initMap();
   }
@@ -87,6 +75,7 @@ class OLComponent extends React.Component {
           <OLMouseCoordinates map={this.map} />
           <OLScaleLine map={this.map} />
           <OLZoomSlider map={this.map} />
+          <OLDatasetClickSelector map={this.map} />
         </div>
       </div>
     );
