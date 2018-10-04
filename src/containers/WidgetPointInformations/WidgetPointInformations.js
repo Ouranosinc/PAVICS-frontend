@@ -1,11 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import WidgetPointInformations from './../../containers/WidgetPointInformations'
+import WidgetPointInformations from './../../components/WidgetPointInformations'
 
 const mapStateToProps = (state) => {
   return {
-    visualize: state.visualize
+    currentScalarValue: state.visualize.currentScalarValue
   }
 };
 const mapDispatchToProps = (dispatch) => {

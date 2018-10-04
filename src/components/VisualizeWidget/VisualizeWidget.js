@@ -10,7 +10,6 @@ import Typography from '@material-ui/core/Typography';
 
 const styles = theme => ({});
 
-
 export class VisualizeWidget extends React.Component {
   static propTypes = {
     children: PropTypes.any,

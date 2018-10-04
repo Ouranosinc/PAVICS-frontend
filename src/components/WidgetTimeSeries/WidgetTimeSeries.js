@@ -22,10 +22,12 @@ const LAYOUT = {
   width: 550
 };
 
-class TimeSeriesChart extends React.Component {
+class WidgetTimeSeries extends React.Component {
   static propTypes = {
-    visualize: PropTypes.object.isRequired,
-    visualizeActions: PropTypes.object.isRequired
+    currentScalarValue: PropTypes.object.isRequired,
+    currentDisplayedDataset: PropTypes.object.isRequired,
+    plotlyData: PropTypes.object.isRequired,
+    fetchPlotlyData: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -34,14 +36,13 @@ class TimeSeriesChart extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { nextCurrentScalarValue, nextPlotlyData } = nextProps.visualize;
-    const { currentDisplayedDataset, plotlyData } = this.props.visualize;
-    if (nextCurrentScalarValue && nextCurrentScalarValue.data && nextCurrentScalarValue.data.variable &&
-      nextCurrentScalarValue.data !== this.props.visualize.currentScalarValue.data) {
-      if (currentDisplayedDataset && currentDisplayedDataset['opendap_url'].length) {
-        let opendapUrl = currentDisplayedDataset['opendap_url'][0];
-        let variable = nextCurrentScalarValue.data.variable;
-        this.props.visualizeActions.fetchPlotlyData(
+    const { currentScalarValue, plotlyData } = nextProps;
+    if (currentScalarValue && currentScalarValue.data && currentScalarValue.data.variable &&
+      currentScalarValue.data !== this.props.currentScalarValue.data) {
+      if (this.props.currentDisplayedDataset && this.props.currentDisplayedDataset['opendap_url'].length) {
+        let opendapUrl = this.props.currentDisplayedDataset['opendap_url'][0];
+        let variable = currentScalarValue.data.variable;
+        this.props.fetchPlotlyData(
           opendapUrl,
           variable['name'],
           0,
@@ -53,10 +54,10 @@ class TimeSeriesChart extends React.Component {
       }
     }
 
-    if (nextPlotlyData && nextPlotlyData.data && nextPlotlyData.data !== plotlyData.data) {
-      this.container.data = nextProps.plotlyData.data;
+    if (plotlyData && plotlyData.data && plotlyData.data !== this.props.plotlyData.data) {
+      this.container.data = plotlyData.data;
       // We merge this.props.plotlyData.layout with predefined LAYOUT
-      this.container.layout = JSON.parse(JSON.stringify(nextProps.plotlyData.layout));
+      this.container.layout = JSON.parse(JSON.stringify(plotlyData.layout));
       for (let propName in LAYOUT) {
         if (LAYOUT.hasOwnProperty(propName)) {
           this.container.layout[propName] = LAYOUT[propName];
@@ -68,7 +69,7 @@ class TimeSeriesChart extends React.Component {
   }
 
   componentDidMount () {
-    const { plotlyData } = this.props.visualize;
+    const { plotlyData } = this.props;
     // We merge this.props.plotlyData.layout with predefined LAYOUT
     let layout = JSON.parse(JSON.stringify(plotlyData.layout));
     for (let propName in LAYOUT) {
@@ -84,7 +85,7 @@ class TimeSeriesChart extends React.Component {
   }
 
   render () {
-    const { currentScalarValue, plotlyData } = this.props.visualize;
+    const { currentScalarValue, plotlyData } = this.props;
     let content = null;
     if (currentScalarValue.data && currentScalarValue.data._dimensions && plotlyData.layout && plotlyData.layout.title) {
       content =
@@ -110,4 +111,4 @@ class TimeSeriesChart extends React.Component {
     );
   }
 }
-export default TimeSeriesChart;
+export default WidgetTimeSeries;

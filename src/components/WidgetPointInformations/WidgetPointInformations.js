@@ -13,7 +13,7 @@ const styles = {
 
 export default class WidgetPointInformations extends React.Component {
   static propTypes = {
-    visualize: PropTypes.object.isRequired
+    currentScalarValue: PropTypes.object.isRequired
   };
 
   constructor () {
@@ -21,7 +21,7 @@ export default class WidgetPointInformations extends React.Component {
   }
 
   render () {
-    const { currentScalarValue } = this.props.visualize;
+    const { currentScalarValue } = this.props;
     let content = null;
     if (currentScalarValue.isFetching) {
       content = <Loader name="informations" />;

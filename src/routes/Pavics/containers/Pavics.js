@@ -229,7 +229,7 @@ class Pavics extends React.Component {
     return (
       <MuiThemeProvider theme={theme}>
         <React.Fragment>
-          <VisualizeContainer {...this.props} />
+          <VisualizeContainer />
           {/* TODO: SectionalPanel SHOULD BE A CONTAINER AS WELL WITH ITS OWN CONNECT... */}
           <SectionalPanel
             section={this.props.section}

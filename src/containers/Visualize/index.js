@@ -1,2 +1,2 @@
-import VisualizeContainer from './Visualize'
-export default VisualizeContainer
+import Visualize from './Visualize'
+export default Visualize

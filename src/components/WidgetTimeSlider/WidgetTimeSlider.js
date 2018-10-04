@@ -102,22 +102,22 @@ export class WidgetTimeSlider extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { nextCurrentDateTime, nextCurrentDisplayedDataset} = nextProps.visualize;
-    if (nextCurrentDateTime && nextCurrentDateTime !== this.props.currentDateTime) {
+    const { currentDateTime, currentDisplayedDataset} = nextProps;
+    if (currentDateTime && currentDateTime !== this.props.currentDateTime) {
       this.setState(
         {
-          currentDate: nextCurrentDateTime.substring(0, 10),
-          currentMonthDay: nextCurrentDateTime.substring(5, 10),
-          currentTime: nextCurrentDateTime.substring(11, 24),
-          currentYear: nextCurrentDateTime.substring(0, 4)
+          currentDate: currentDateTime.substring(0, 10),
+          currentMonthDay: currentDateTime.substring(5, 10),
+          currentTime: currentDateTime.substring(11, 24),
+          currentYear: currentDateTime.substring(0, 4)
         }
       );
     }
-    if(nextCurrentDisplayedDataset && nextCurrentDisplayedDataset !== this.props.currentDisplayedDataset ) {
-      if (!nextCurrentDisplayedDataset['dataset_id']) {
+    if(currentDisplayedDataset && currentDisplayedDataset !== this.props.currentDisplayedDataset ) {
+      if (!currentDisplayedDataset['dataset_id']) {
         this.setState(DEFAULT_STATE);
       }
-      if (nextCurrentDisplayedDataset['uniqueLayerSwitcherId'] !== this.props.currentDisplayedDataset['uniqueLayerSwitcherId']) {
+      if (currentDisplayedDataset['uniqueLayerSwitcherId'] !== this.props.currentDisplayedDataset['uniqueLayerSwitcherId']) {
         this.hasDatasetChanged = true;
       }
     }

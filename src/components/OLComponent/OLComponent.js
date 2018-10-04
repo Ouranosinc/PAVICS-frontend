@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classes from './OLComponent.scss';
 import Map from 'ol/Map';
 import View from 'ol/View';
@@ -28,10 +27,7 @@ const MIN_ZOOM = 2;
 const MAX_ZOOM = 13;
 
 class OLComponent extends React.Component {
-  static propTypes = {
-    visualize: PropTypes.object.isRequired,
-    visualizeActions: PropTypes.object.isRequired
-  };
+  static propTypes = {};
 
   constructor (props) {
     super(props);
