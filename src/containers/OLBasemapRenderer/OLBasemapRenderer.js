@@ -8,7 +8,9 @@ import TileLayer from 'ol/layer/Tile';
 import BingMaps from 'ol/source/BingMaps';
 import OSM from 'ol/source/OSM';
 
-// TODO: Cesium shouldn't be a basemap option eventually
+// TODO: Cesium shouldn't be a basemap option eventually, should be switch 2d/3d with both same basemaps as options
+// TODO: Couple more basemap options could be interesting and free to implement (OSM Positron, OSM Landscape, OSM B&W, OSM Mapnik)
+// TODO: 3D Cesium visualisation also mean that multiple projection options aren't urgent anymore (https://github.com/Ouranosinc/PAVICS-frontend/issues/110)
 import Cesium from 'cesium/Cesium';
 window['Cesium'] = Cesium; // expose Cesium to the OL-Cesium library
 require('cesium/Widgets/widgets.css');
