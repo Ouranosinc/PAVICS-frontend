@@ -11,7 +11,7 @@ const styles = {
   content: {}
 };
 
-export default class InformationPanel extends React.Component {
+export default class WidgetPointInformations extends React.Component {
   static propTypes = {
     visualize: PropTypes.object.isRequired
   };

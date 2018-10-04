@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import OLComponent from '../OLComponent';
 import SpeedDialMenu from '../SpeedDialMenu'
-import InformationPanel from '../InformationPanel';
 import TimeSeriesChart from './../TimeSeriesChart';
 import MapControls from './../MapControls';
 import { constants } from './../../redux/modules/Widgets';
@@ -18,6 +17,7 @@ import DrawIcon from '@material-ui/icons/Edit';
 import BigColorPaletteContainer from './../../containers/BigColorPalette';
 import WidgetDrawFeaturesContainer from './../../containers/WidgetDrawFeatures';
 import WidgetLayerSwitcherContainer from './../../containers/WidgetLayerSwitcher';
+import WidgetPointInformationsContainer from './../../containers/WidgetPointInformations';
 import WidgetTimeSliderContainer from './../../containers/WidgetTimeSlider';
 
 const OPACITY = 0.9;
@@ -123,8 +123,7 @@ class Visualize extends React.Component {
                     icon={<InfoIcon />}
                     rootStyle={styles.info}
                     onMinimizeClicked={() => this.props.widgetsActions.toggleWidget(constants.WIDGET_INFO_KEY)}>
-                    <InformationPanel
-                      visualize={this.props.visualize} />
+                    <WidgetPointInformationsContainer />
                   </VisualizeWidget>
                 </div>
                 : null
