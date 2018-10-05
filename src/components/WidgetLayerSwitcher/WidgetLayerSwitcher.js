@@ -114,7 +114,7 @@ export default class WidgetLayerSwitcher extends React.Component {
           {
             this.props.layerRegion.publicShapeFiles.map( (shapeFile, i) =>
               <ListItem
-                className="cy-WidgetLayerSwitcher-shapefile-item"
+                className="cy-layerswitcher-shapefile-item"
                 id={`cy-shapefile-name-${shapeFile.title}`}// `
                 key={i}>
                 <RadioGroup
@@ -140,7 +140,7 @@ export default class WidgetLayerSwitcher extends React.Component {
         {
           this.props.layerBasemap.baseMaps.map((map, i) =>
             <ListItem
-            className="cy-WidgetLayerSwitcher-basemap-item"
+            className="cy-layerswitcher-basemap-item"
             key={i}>
               <RadioGroup
                 name="selectedBaseMap"
@@ -152,7 +152,7 @@ export default class WidgetLayerSwitcher extends React.Component {
           )
         }
         <ListSubheader disableSticky>3D</ListSubheader>
-        <ListItem className="cy-WidgetLayerSwitcher-basemap-item">
+        <ListItem className="cy-layerswitcher-basemap-item">
           <RadioGroup
             name="selectedBaseMap"
             value={this.props.layerBasemap.selectedBasemap}
@@ -197,7 +197,7 @@ export default class WidgetLayerSwitcher extends React.Component {
               return (
                 <ListItem
                   key={i}
-                  className="cy-WidgetLayerSwitcher-dataset-item">
+                  className="cy-layerswitcher-dataset-item">
                   <RadioGroup
                     name="currentDisplayedDataset"
                     value={this.props.layerDataset.currentDisplayedDataset.uniqueLayerSwitcherId}
