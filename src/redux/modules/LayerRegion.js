@@ -115,7 +115,7 @@ export const actions = {
     return (dispatch, getState) => {
       dispatch(requestVisibleWorkspacesLayers());
       const state = getState();
-      const workspaces = state.visualize.visibleWorkspaces.data;
+      const workspaces = state.layerRegion.visibleWorkspaces.data;
       actions.aggregateFetchWorkspacesLayersRequests(workspaces)
         .then(allResponses => {
           const allTransformToJson = [];
@@ -179,9 +179,6 @@ export const actions = {
 
 // Reducer
 const HANDLERS = {
-  [constants.SET_SHAPEFILES]: (state, action) => {
-    return {...state, publicShapeFiles: action.publicShapeFiles};
-  },
   [constants.SET_SELECTED_FEATURE_LAYER]: (state, action) => {
     return {...state, selectedFeatureLayer: action.featureLayer};
   },
@@ -220,7 +217,7 @@ const HANDLERS = {
 // Initial State
 export const initialState = {
   selectedRegions: [],
-  selectedShapefile: {},
+  selectedFeatureLayer: {},
   publicShapeFiles: [],
   featureLayers: {
     data: {},
