@@ -66,7 +66,7 @@ class SpeedDialMenu extends React.Component {
   };
 
   handleToggleWidget = widgetName => event => {
-    this.props.widgetsActions.toggleWidget(widgetName);
+    this.props.toggleWidget(widgetName);
   };
 
   render() {
