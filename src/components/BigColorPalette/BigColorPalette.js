@@ -6,8 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import TextField from'@material-ui/core/TextField';
 import * as constants from '../../constants';
-import {NotificationManager} from 'react-notifications';
-import { actions as visualizeActions } from './../../redux/modules/Visualize';
+import { NotificationManager } from 'react-notifications';
 
 const ARBITRARY_MAX_DECIMAL_QUANTITY = 15;
 
@@ -30,17 +29,6 @@ const styles = theme => ({
     backgroundColor: theme.palette.primary.contrastText
   }
 });
-
-const mapState = (state) => {
-  return {
-    currentDisplayedDataset: state.visualize.currentDisplayedDataset,
-    preference: state.visualize.variablePreferences[state.visualize.currentDisplayedDataset.variable]
-  };
-};
-
-const actions = {
-  setVariablePreferenceBoundaries: visualizeActions.setVariablePreferenceBoundaries
-};
 
 /*
 this component show the current preferences for the selected dataset's variable
@@ -178,9 +166,5 @@ class BigColorPalette extends React.Component {
     return null;
   }
 }
-export default compose(
-  withStyles(styles, {
-    name: 'BigColorPalette',
-  }),
-  connect(mapState, actions),
-)(BigColorPalette);
+
+export default withStyles(styles)(BigColorPalette)

@@ -13,7 +13,7 @@ import StepContent from'@material-ui/core/StepContent';
 import Typography from'@material-ui/core/Typography';
 import CircularProgress from'@material-ui/core/CircularProgress';
 import Paper from'@material-ui/core/Paper';
-import WpsProcessForm from '../WpsProcessForm';
+import WpsProcessFormContainer from './../../containers/WpsProcessForm';
 import myHttp from '../../util/http';
 import {InputDefinition} from "../WpsProcessFormInput/InputDefinition";
 
@@ -34,11 +34,9 @@ class ScientificWorkflowStepper extends Component {
     classes: PropTypes.object.isRequired,
     jobAPIActions: PropTypes.object.isRequired,
     project: PropTypes.object.isRequired,
-    sectionActions: PropTypes.object.isRequired,
     selectedProcess: PropTypes.object.isRequired,
     selectedProvider: PropTypes.string.isRequired,
     showDialog: PropTypes.func.isRequired,
-    visualize: PropTypes.object.isRequired,
     workflow: PropTypes.object.isRequired,
     workflowActions: PropTypes.object.isRequired,
     workflowAPI: PropTypes.object.isRequired,
@@ -310,13 +308,9 @@ class ScientificWorkflowStepper extends Component {
                     onClick={this.handlePrev}>
                     <BackIcon />Back
                   </Button>
-                  <WpsProcessForm
+                  <WpsProcessFormContainer
                     executeProcess={this.catchAndWrapExecuteProcess}
-                    formId={FORM_WORKFLOW_ID}
-                    sectionActions={this.props.sectionActions}
-                    visualize={this.props.visualize}
-                    workflowActions={this.props.workflowActions}
-                    workflow={this.props.workflow} />
+                    formId={FORM_WORKFLOW_ID} />
                 </StepContent>
               )
           }

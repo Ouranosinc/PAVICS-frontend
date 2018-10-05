@@ -40,8 +40,7 @@ export class ProjectDatasets extends React.Component {
     projectActions: PropTypes.object.isRequired,
     datasetAPI: PropTypes.object.isRequired,
     datasetAPIActions: PropTypes.object.isRequired,
-    visualize: PropTypes.object.isRequired,
-    visualizeActions: PropTypes.object.isRequired
+    layerDatasetActions: PropTypes.object.isRequired
   };
 
   constructor(props) {
@@ -104,7 +103,7 @@ export class ProjectDatasets extends React.Component {
                             <strong>Keywords: </strong>{dataset.keywords.join(', ')}
                           </span>
                         }/>
-                      <DatasetMenuActions visualizeActions={this.props.visualizeActions}
+                      <DatasetMenuActions layerDatasetActions={this.props.layerDatasetActions}
                                           datasetAPIActions={this.props.datasetAPIActions}
                                           project={this.props.project}
                                           dataset={dataset}
@@ -132,7 +131,7 @@ export class ProjectDatasets extends React.Component {
                                                     isRemoveFromProjectEnabled={true}
                                                     dataset={dataset}
                                                     disabledVisualize={false}
-                                                    visualizeActions={this.props.visualizeActions}
+                                                    layerDatasetActions={this.props.layerDatasetActions}
                                                     datasetAPIActions={this.props.datasetAPIActions}
                                                     project={this.props.project}/>
                               </ListItem>
@@ -169,7 +168,7 @@ export class ProjectDatasets extends React.Component {
                           </span>
                         }/>
                       <DatasetMenuActions
-                        visualizeActions={this.props.visualizeActions}
+                        layerDatasetActions={this.props.layerDatasetActions}
                         isRemoveFromProjectEnabled={true}
                         dataset={dataset}
                         disabledVisualize={disabledVisualize}

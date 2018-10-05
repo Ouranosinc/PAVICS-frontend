@@ -86,18 +86,8 @@
     list-style-type: none;
   }
 
-  /* Openlayers overwrite, TODO: Shouldn't be here */
-  /*.ol-zoom {
-    top: auto !important;
-    bottom: .5em !important;
-  }*/
-
   .ol-control {
     opacity: 1 !important;
-    /*padding: 0 !important;
-    background-color: #FFF !important;
-    border: 1px solid #ddd !important;
-    border-radius: 4px !important;*/
   }
 
   #map .ol-attribution{
@@ -113,25 +103,77 @@
     font-size: 15px;
   }
 
-  #map .ol-panzoom {
-    img {
-      opacity: 0.9;
-    }
-    top: auto !important;
-    bottom: 235px !important;
-    left: auto !important;
-    right: auto !important;
-    margin: auto !important;
-    background-color: transparent;
+  #map .ol-zoom{
+    top: auto;
+    bottom: 8px;
+    background-color: rgba(63,81,181,0.4);
+  }
+
+  #map .ol-zoom .ol-zoom-in {
+    width: 1em;
+    background-color: rgba(63,81,181,0.4);
+    box-shadow: 0 0 5px rgb(63,81,181);
+    border-radius: 0;
+  }
+
+  #map .ol-zoom .ol-zoom-out {
+    margin-top: 214px;
+    width: 1em;
+    background-color: rgba(63,81,181,0.4);
+    box-shadow: 0 0 5px rgb(63,81,181);
+    border-radius: 0;
+  }
+
+  #map .ol-zoomslider {
+    background-color: rgba(63,81,181,0.4);
+    padding: 0;
+    box-shadow: 0 0 5px rgb(63,81,181);
+    border-radius: 0;
+    top: auto;
+    bottom: 42px;
+    margin-left: 4px;
+    width: 1em;
+  }
+
+  #map .ol-touch .ol-zoom .ol-zoom-out {
+    margin-top: 212px;
+  }
+  #map .ol-touch .ol-zoomslider {
+    top: 2.75em;
+  }
+
+  #map .ol-zoom-in.ol-has-tooltip:hover [role=tooltip],
+  #map .ol-zoom-in.ol-has-tooltip:focus [role=tooltip] {
+    top: 3px;
+  }
+
+  #map .ol-zoom-out.ol-has-tooltip:hover [role=tooltip],
+  #map .ol-zoom-out.ol-has-tooltip:focus [role=tooltip] {
+    top: 232px;
+  }
+
+  #map .ol-zoomslider:hover {
+    background-color: rgba(63,81,181,0.6);
+  }
+
+  #map .ol-zoomslider-thumb {
+    height: 15px;
+    width: 15px;
+    margin: 0;
+    filter: none;
+    background-color: rgba(255,255,255,0.9);
+    border-radius: 20px;
+  }
+  #map a.ol-zoomslider-handle:hover {
+    background-color: rgba(255,255,255,0.9);
   }
 
   #map .ol-scale-line{
     top: auto !important;
-    /*bottom: 70px !important;*/
     left: 40px !important;
     right: auto !important;
     margin: auto !important;
-    background: rgba(0,0,0,0.7);
+    background: rgba(63,81,181,0.7);
   }
 
   /*#map .ol-zoomslider:hover {
@@ -149,5 +191,12 @@
   #map a.ol-zoomslider-handle:hover {
     background-color: rgba(255,69,0,0.7);
   }*/
+
+  //this will overwirte dragBox default style
+  #map .ol-dragbox {
+    background-color: rgba(255,255,255,0.3);
+    border-color: rgba(255,255,255,0.7);
+    border-width: 2;
+  }
 
 }

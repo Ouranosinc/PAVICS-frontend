@@ -12,13 +12,14 @@ import ChartIcon from '@material-ui/icons/Timeline';
 import LayersIcon from '@material-ui/icons/Layers';
 import MapControlsIcon from '@material-ui/icons/MyLocation';
 import InfoIcon from '@material-ui/icons/Description';
+import DrawIcon from '@material-ui/icons/Edit'
 
 const styles = theme => {
   // console.log(theme)
   return ({
     speedDial: {
       position: 'fixed',
-      bottom: theme.spacing.unit * 5,
+      bottom: theme.spacing.unit * 4,
       left: theme.spacing.unit * 5,
     },
     white: {
@@ -35,8 +36,8 @@ class SpeedDialMenu extends React.Component {
 
   static propTypes = {
     classes: PropTypes.object.isRequired,
+    toggleWidget: PropTypes.func.isRequired,
     widgets: PropTypes.object.isRequired,
-    widgetsActions: PropTypes.object.isRequired
   };
 
   componentDidMount() {
@@ -64,6 +65,10 @@ class SpeedDialMenu extends React.Component {
     this.wrapperRef = node;
   };
 
+  handleToggleWidget = widgetName => event => {
+    this.props.widgetsActions.toggleWidget(widgetName);
+  };
+
   render() {
     const { classes } = this.props;
     const { open } = this.state;
@@ -82,7 +87,7 @@ class SpeedDialMenu extends React.Component {
           <SpeedDialAction
             icon={<LayersIcon className={classes.white}/>}
             tooltipTitle={labels.LAYER_SWITCHER_WIDGET_TITLE}
-            onClick={(event) => this.props.widgetsActions.toggleWidget(constants.WIDGET_LAYER_SWITCHER_KEY)}
+            onClick={this.handleToggleWidget(constants.WIDGET_LAYER_SWITCHER_KEY)}
             ButtonProps={{
               id: "cy-menu-layer-switcher-toggle-btn",
               color: this.props.widgets.layerSwitcher? 'primary': 'secondary'
@@ -90,7 +95,7 @@ class SpeedDialMenu extends React.Component {
           <SpeedDialAction
             icon={<MapControlsIcon className={classes.white} />}
             tooltipTitle={labels.MAP_CONTROLS_WIDGET_TITLE}
-            onClick={(event) => this.props.widgetsActions.toggleWidget(constants.WIDGET_MAP_CONTROLS_KEY)}
+            onClick={this.handleToggleWidget(constants.WIDGET_MAP_CONTROLS_KEY)}
             ButtonProps={{
               id: "cy-menu-map-controls-toggle-btn",
               color: this.props.widgets.mapControls? 'primary': 'secondary'
@@ -98,7 +103,7 @@ class SpeedDialMenu extends React.Component {
           <SpeedDialAction
             icon={<AccessTimeIcon className={classes.white}/>}
             tooltipTitle={labels.TIME_SLIDER_WIDGET_TITLE}
-            onClick={(event) => this.props.widgetsActions.toggleWidget(constants.WIDGET_TIME_SLIDER_KEY)}
+            onClick={this.handleToggleWidget(constants.WIDGET_TIME_SLIDER_KEY)}
             ButtonProps={{
               id: "cy-menu-temporal-slider-toggle-btn",
               color: this.props.widgets.timeSlider? 'primary': 'secondary'
@@ -106,7 +111,7 @@ class SpeedDialMenu extends React.Component {
           <SpeedDialAction
             icon={<ChartIcon className={classes.white}/>}
             tooltipTitle={labels.CHART_WIDGET_TITLE}
-            onClick={(event) => this.props.widgetsActions.toggleWidget(constants.WIDGET_CHART_KEY)}
+            onClick={this.handleToggleWidget(constants.WIDGET_CHART_KEY)}
             ButtonProps={{
               id: "cy-menu-time-series-toggle-btn",
               color: this.props.widgets.chart? 'primary': 'secondary'
@@ -114,10 +119,18 @@ class SpeedDialMenu extends React.Component {
           <SpeedDialAction
             icon={<InfoIcon className={classes.white}/>}
             tooltipTitle={labels.INFO_WIDGET_TITLE}
-            onClick={(event) => this.props.widgetsActions.toggleWidget(constants.WIDGET_INFO_KEY)}
+            onClick={this.handleToggleWidget(constants.WIDGET_INFO_KEY)}
             ButtonProps={{
               id: "cy-menu-point-info-toggle-btn",
               color: this.props.widgets.info? 'primary': 'secondary'
+            }} />
+          <SpeedDialAction
+            icon={<DrawIcon className={classes.white}/>}
+            tooltipTitle={labels.CUSTOM_REGIONS_WIDGET_TITLE}
+            onClick={this.handleToggleWidget(constants.WIDGET_CUSTOM_REGIONS_KEY)}
+            ButtonProps={{
+              id: "cy-menu-custom-regions-toggle-btn",
+              color: this.props.widgets.customRegions? 'primary': 'secondary'
             }} />
         </SpeedDial>
       </div>

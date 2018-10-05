@@ -9,6 +9,7 @@ import { actions as researchActions } from '../../../redux/modules/Research';
 import { actions as sectionActions } from '../../../redux/modules/Section';
 import { actions as sessionActions } from '../../../redux/modules/Session';
 import { actions as visualizeActions } from '../../../redux/modules/Visualize';
+import { actions as layerRegionActions } from '../../../redux/modules/LayerRegion';
 import cookie from 'react-cookies';
 import * as constants from './../../../constants';
 import {
@@ -67,10 +68,11 @@ class Pavics extends React.Component {
     session: PropTypes.object.isRequired,
     sessionActions: PropTypes.object.isRequired,
     visualize: PropTypes.object.isRequired,
-    visualizeActions: PropTypes.object.isRequired
+    visualizeActions: PropTypes.object.isRequired,
+    layerRegionActions: PropTypes.object.isRequired
   };
 
-  constructor(props) {
+  constructor (props) {
     super(props);
     const authCookie = cookie.load(constants.AUTH_COOKIE);
     this.shouldSetDefaultProject = false; // Do not autoset until user is logged in
@@ -97,11 +99,11 @@ class Pavics extends React.Component {
    */
   componentWillReceiveProps (nextProps) {
     if (nextProps.session.sessionStatus &&
-        this.props.session.sessionStatus !== nextProps.session.sessionStatus &&
-        nextProps.session.sessionStatus.user && nextProps.session.sessionStatus.user.username.length) {
+        this.props.session.sessionStatus !== nextProps.session.sessionStatus && nextProps.session.sessionStatus.user &&
+        nextProps.session.sessionStatus.user.username && nextProps.session.sessionStatus.user.username.length) {
       // After user logged in fetch user projects and catalogs facets
       this.triggerOnLoginActions();
-    }else if( nextProps.session.sessionStatus &&
+    } else if( nextProps.session.sessionStatus &&
       this.props.session.sessionStatus !== nextProps.session.sessionStatus &&
       this.props.session.sessionStatus.user.authenticated === true &&
       nextProps.session.sessionStatus.user.authenticated === false) {
@@ -124,7 +126,7 @@ class Pavics extends React.Component {
     this.shouldSetDefaultProject = true; // Default project can now be automatically selected
     this.props.projectAPIActions.fetchByMagpieAccessProjects();
     this.props.researchActions.fetchPavicsDatasetsAndFacets('Aggregate', 0);
-    this.props.visualizeActions.fetchFeatureLayers();
+    this.props.layerRegionActions.fetchFeatureLayers();
   }
 
   triggerOnLogoutActions() {
@@ -176,7 +178,8 @@ class Pavics extends React.Component {
         }
         errorObject['stack'] = stack;
       }
-      NotificationManager.error(message, 'Error', 10000);
+      // Commented because of Cesium viewState() Error on 2018-08-24
+      // FIXME: NotificationManager.error(message, 'Error', 10000);
       return false;
     }
   }
@@ -229,7 +232,7 @@ class Pavics extends React.Component {
     return (
       <MuiThemeProvider theme={theme}>
         <React.Fragment>
-          <VisualizeContainer {...this.props} />
+          <VisualizeContainer />
           {/* TODO: SectionalPanel SHOULD BE A CONTAINER AS WELL WITH ITS OWN CONNECT... */}
           <SectionalPanel
             section={this.props.section}
@@ -264,6 +267,7 @@ const mapDispatchToProps = (dispatch) => {
     projectAPIActions: bindActionCreators({...projectAPIActions}, dispatch),
     projectActions: bindActionCreators({...projectActions}, dispatch),
     visualizeActions: bindActionCreators({...visualizeActions}, dispatch),
+    layerRegionActions: bindActionCreators({...layerRegionActions}, dispatch),
   };
 };
 
