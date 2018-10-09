@@ -175,8 +175,10 @@ class Pavics extends React.Component {
         }
         errorObject['stack'] = stack;
       }
-      // Commented because of Cesium viewState() Error on 2018-08-24
-      // FIXME: NotificationManager.error(message, 'Error', 10000);
+      // This specific error is caused by OpenLayes and Cesium integration (ol-cesium) and should be ignored at this point
+      if(message !== "Uncaught TypeError: Cannot read property 'viewState' of undefined") {
+        NotificationManager.error(message, 'Error', 10000);
+      }
       return false;
     }
   }
