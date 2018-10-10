@@ -154,7 +154,7 @@ export const actions = {
     return dispatch => {
       dispatch(requestVisibleWorkspaces());
       return myHttp
-        .get(`${__PAVICS_MAGPIE_PATH__}/users/current/services/geoserver-api/inherited_resources`)
+        .get(`${__PAVICS_MAGPIE_PATH__}/users/current/services/${__PAVICS_GEOSERVER_WORKSPACES_SERVICE_NAME__}/inherited_resources`)
         .then(response => response.json())
         .then(json => {
           Object.keys(json.service.resources).map(serviceId => {
