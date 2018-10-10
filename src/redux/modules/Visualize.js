@@ -1,7 +1,5 @@
 import myHttp from '../../util/http';
-import { GeoJSON, WMSCapabilities } from 'ol/format';
-import { NotificationManager } from 'react-notifications';
-import { VISUALIZE_DRAW_MODES, VISUALIZE_SET_MAP_MANIPULATION_MODE, VISUALIZE_MODE_GRID_VALUES} from './../../constants';
+import { VISUALIZE_SET_MAP_MANIPULATION_MODE, VISUALIZE_MODE_GRID_VALUES } from './../../constants';
 
 // Constants
 export const constants = {
@@ -21,7 +19,7 @@ export const constants = {
 };
 
 // Action Creators
-function resetVisualizeState() {
+function resetVisualizeState () {
   return {
     type: constants.RESET_VISUALIZE_STATE,
     visualizeInitialState: initialState
@@ -141,7 +139,7 @@ export const actions = {
       type: VISUALIZE_SET_MAP_MANIPULATION_MODE,
       mode: mode
     };
-  }
+  },
 };
 
 // Handlers
