@@ -218,7 +218,7 @@ export default class WidgetLayerSwitcher extends React.Component {
         {
           this.props.layerBasemap.baseMaps.map((map, i) =>
             <ListItem
-              className="cy-WidgetLayerSwitcher-basemap-item"
+              className="cy-layerswitcher-basemap-item"
               key={i}>
               <RadioGroup
                 name="selectedBaseMap"
@@ -230,7 +230,7 @@ export default class WidgetLayerSwitcher extends React.Component {
           )
         }
         <ListSubheader disableSticky>3D</ListSubheader>
-        <ListItem className="cy-WidgetLayerSwitcher-basemap-item">
+        <ListItem className="cy-layerswitcher-basemap-item">
           <RadioGroup
             name="selectedBaseMap"
             value={this.props.layerBasemap.selectedBasemap}
@@ -275,7 +275,7 @@ export default class WidgetLayerSwitcher extends React.Component {
               return (
                 <ListItem
                   key={i}
-                  className="cy-WidgetLayerSwitcher-dataset-item">
+                  className="cy-layerswitcher-dataset-item">
                   <RadioGroup
                     name="currentDisplayedDataset"
                     value={this.props.layerDataset.currentDisplayedDataset.uniqueLayerSwitcherId}
@@ -312,7 +312,7 @@ export default class WidgetLayerSwitcher extends React.Component {
         max={1}
         step={0.05}
         value={this.props.layerDataset.currentDisplayedDataset.opacity}
-        onChange={this.setDatasetLayerOpacity}/>
+        onChange={this.setDatasetLayerOpacity} />
     );
   }
 
@@ -365,20 +365,17 @@ export default class WidgetLayerSwitcher extends React.Component {
               style={{minWidth: '130px'}}
               id="cy-layerswitcher-datasets-tab"
               icon={<Satellite />}
-              label="Datasets">
-            </Tab>
+              label="Datasets" />
             <Tab
               style={{minWidth: '130px'}}
               id="cy-layerswitcher-regions-tab"
               icon={<LocalLibrary />}
-              label="Regions">
-            </Tab>
+              label="Regions" />
             <Tab
               style={{minWidth: '130px'}}
               id="cy-layerswitcher-basemaps-tab"
               icon={<Map />}
-              label="Base Maps">
-            </Tab>
+              label="Base Maps" />
           </Tabs>
         </AppBar>
         {this.state.tabValue === 0 &&

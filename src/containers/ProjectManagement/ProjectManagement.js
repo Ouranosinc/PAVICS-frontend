@@ -13,6 +13,7 @@ import { actions as sectionActions } from '../../redux/modules/Section';
 const mapStateToProps = (state) => {
   return {
     datasetAPI: state.datasetAPI,
+    layerDataset: state.layerDataset,
     research: state.research,
     researchAPI: state.researchAPI,
     project: state.project,

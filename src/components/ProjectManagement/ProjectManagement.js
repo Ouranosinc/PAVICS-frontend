@@ -33,6 +33,7 @@ export class ProjectManagement extends React.Component {
     researchActions: PropTypes.object.isRequired,
     researchAPIActions: PropTypes.object.isRequired,
     session: PropTypes.object.isRequired,
+    layerDataset: PropTypes.object.isRequired,
     layerDatasetActions: PropTypes.object.isRequired,
   };
 
@@ -77,6 +78,7 @@ export class ProjectManagement extends React.Component {
                  projectActions={this.props.projectActions}
                  datasetAPI={this.props.datasetAPI}
                  datasetAPIActions={this.props.datasetAPIActions}
+                 layerDataset={this.props.layerDataset}
                  layerDatasetActions={this.props.layerDatasetActions}/>
                <ProjectSearchCriterias
                  sectionActions={this.props.sectionActions}
