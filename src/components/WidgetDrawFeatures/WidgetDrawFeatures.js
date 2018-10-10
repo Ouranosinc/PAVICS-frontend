@@ -11,6 +11,7 @@ import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { GeoJSON } from 'ol/format';
+import shpwrite from 'shp-write';
 
 const styles = theme => ({
   root: {
@@ -51,9 +52,33 @@ class WidgetDrawFeatures extends React.Component {
   };
 
   onSaveDrawnLayer = () => {
-    const geoJSONriter= new GeoJSON();
-    const geoJSONString = geoJSONriter.writeFeatures(this.props.layerCustomFeature.drawnCustomFeatures);
+    const geoJSONWriter= new GeoJSON();
+    const geoJSONString = geoJSONWriter.writeFeatures(this.props.layerCustomFeature.drawnCustomFeatures);
     this.props.layerCustomFeatureActions.setGeoJSONDrawnFeatures(geoJSONString);
+
+    // (optional) set names for feature types and zipped folder
+    var options = {
+      folder: 'myshapes',
+      types: {
+        point: 'mypoints',
+        polygon: 'mypolygons',
+        line: 'mylines'
+      }
+    };
+    const buffer = shpwrite.zip(JSON.parse(geoJSONString), options);
+    fetch(`${__PAVICS_GEOSERVER_API_PATH__}/test/datastores/test/file.shp`, { // Your POST endpoint
+      method: 'PUT',
+      headers: {
+        "Content-Type": "application/zip"
+      },
+      body: buffer // This is your file object
+    }).then(
+      response => response.json() // if the response is a JSON object
+    ).then(
+      success => alert(success) // Handle the success response object
+    ).catch(
+      error => alert(error) // Handle the error response object
+    );
   };
 
   onHandleTextChanged = field => event => {
