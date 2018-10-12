@@ -3,6 +3,9 @@ import myHttp from '../../util/http';
 // Constants
 export const constants = {
   SET_SELECTED_FEATURE_LAYER: 'Visualize.SET_SELECTED_FEATURE_LAYER',
+  FILTER_FEATURE_LAYERS: 'Visualize.FILTER_FEATURE_LAYERS',
+  SET_TEXT_FILTER: 'Visualize.SET_TEXT_FILTER',
+  SET_FILTERED_FEATURE_LAYERS: 'Visualize.SET_FILTERED_FEATURE_LAYERS',
   RESET_SELECTED_REGIONS: 'REGION_RESET_SELECTED_REGIONS',
   ADD_FEATURE_TO_SELECTED_REGIONS: 'REGION_ADD_FEATURE_TO_SELECTED_REGIONS',
   REMOVE_FEATURE_FROM_SELECTED_REGIONS: 'REGION_REMOVE_FEATURE_FROM_SELECTED_REGIONS',
@@ -77,9 +80,47 @@ function receiveVisibleWorkspacesLayersFailure (error) {
     }
   };
 }
+function setFilteredLayers (data) {
+  return {
+    type: constants.SET_FILTERED_FEATURE_LAYERS,
+    data: data
+  };
+}
+function setTextFilter (textFilter) {
+  return {
+    type: constants.SET_TEXT_FILTER,
+    textFilter: textFilter
+  };
+}
 
 // Action Creators
 export const actions = {
+  filterFeatureLayers: function () {
+    return (dispatch, getState) => {
+      let layers = {};
+      const state = getState().layerRegion;
+      const data = state.featureLayers.data;
+      const searchString = state.textFilter;
+      if (searchString.length === 0) {
+        dispatch(setFilteredLayers(data));
+      }
+      Object.keys(data).map(workspaceName => {
+        const theseLayers = data[workspaceName].filter(layer => {
+          return layer.title.indexOf(searchString) !== -1;
+        });
+        if (theseLayers.length > 0) {
+          layers[workspaceName] = theseLayers;
+        }
+      });
+      dispatch(setFilteredLayers(layers));
+    };
+  },
+  setTextFilter: function (event) {
+    return (dispatch) => {
+      dispatch(setTextFilter(event.target.value));
+      dispatch(actions.filterFeatureLayers());
+    };
+  },
   selectRegion: function (featureId) {
     return {
       type: constants.ADD_FEATURE_TO_SELECTED_REGIONS,
@@ -146,6 +187,7 @@ export const actions = {
             });
           });
           dispatch(receiveVisibleWorkspacesLayersSuccess(layers));
+          dispatch(actions.filterFeatureLayers());
         })
         .catch(err => dispatch(receiveVisibleWorkspacesLayersFailure(err)));
     };
@@ -179,6 +221,12 @@ export const actions = {
 
 // Reducer
 const HANDLERS = {
+  [constants.SET_FILTERED_FEATURE_LAYERS]: (state, action) => {
+    return {...state, filteredFeatureLayers: action.data};
+  },
+  [constants.SET_TEXT_FILTER]: (state, action) => {
+    return {...state, textFilter: action.textFilter};
+  },
   [constants.SET_SELECTED_FEATURE_LAYER]: (state, action) => {
     return {...state, selectedFeatureLayer: action.featureLayer};
   },
@@ -218,7 +266,6 @@ const HANDLERS = {
 export const initialState = {
   selectedRegions: [],
   selectedFeatureLayer: {},
-  publicShapeFiles: [],
   featureLayers: {
     data: {},
     requestedAt: null,
@@ -226,6 +273,8 @@ export const initialState = {
     isFetching: false,
     error: null
   },
+  filteredFeatureLayers: {},
+  textFilter: ''
 };
 
 export default function (state = initialState, action) {
