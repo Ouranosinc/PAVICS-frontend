@@ -2,6 +2,7 @@ import myHttp from '../../util/http';
 
 // Constants
 export const constants = {
+  RESET_LAYER_REGION_STATE: 'Visualize.RESET_LAYER_REGION_STATE',
   SET_SELECTED_FEATURE_LAYER: 'Visualize.SET_SELECTED_FEATURE_LAYER',
   FILTER_FEATURE_LAYERS: 'Visualize.FILTER_FEATURE_LAYERS',
   SET_TEXT_FILTER: 'Visualize.SET_TEXT_FILTER',
@@ -92,9 +93,15 @@ function setTextFilter (textFilter) {
     textFilter: textFilter
   };
 }
+function reset () {
+  return {
+    type: constants.RESET_LAYER_REGION_STATE
+  };
+}
 
 // Action Creators
 export const actions = {
+  reset: reset,
   filterFeatureLayers: function () {
     return (dispatch, getState) => {
       let layers = {};
@@ -221,6 +228,9 @@ export const actions = {
 
 // Reducer
 const HANDLERS = {
+  [constants.RESET_LAYER_REGION_STATE]: (state, action) => {
+    return initialState;
+  },
   [constants.SET_FILTERED_FEATURE_LAYERS]: (state, action) => {
     return {...state, filteredFeatureLayers: action.data};
   },

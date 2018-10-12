@@ -149,6 +149,7 @@ export default class WidgetLayerSwitcher extends React.Component {
                 <React.Fragment key={j}>
                   <ListSubheader
                     className="cy-layerswitcher-workspace"
+                    id={`cy-layerswitcher-workspace-${workspaceName}`}
                     style={styles.subHeader}
                     onClick={this.toggleWorkspace(workspaceName)}>
                     {workspaceName}
