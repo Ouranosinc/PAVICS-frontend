@@ -108,6 +108,7 @@
     "ip": "^1.1.2",
     "jquery": "^3.0.0",
     "json-loader": "^0.5.4",
+    "jszip": "^2.5.0",
     "koa": "^2.0.0-alpha.3",
     "koa-connect-history-api-fallback": "^0.3.0",
     "koa-convert": "^1.2.0",

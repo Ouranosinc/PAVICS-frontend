@@ -38,7 +38,7 @@ const config = {
   // ----------------------------------
   pavics_malleefowl_path: malleefowlHost,
   pavics_phoenix_path: `${URL_BASE}:8443`,
-  pavics_geoserver_path: `${URL_BASE}/geoserver`,
+  pavics_geoserver_path: process.env.PAVICS_GEOSERVER_URL || `${URL_BASE}/geoserver`,
   pavics_geoserver_api_path: process.env.PAVICS_GEOSERVER_API || `${URL_BASE}/twitcher/ows/proxy/geoserver-api`,
   pavics_geoserver_workspaces_service_name: process.env.PAVICS_GEOSERVER_WORKSPACES_SERVICE_NAME || 'geoserver-api',
   pavics_ncwms_path: ncwmsHost,

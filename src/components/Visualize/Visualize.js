@@ -74,7 +74,7 @@ const styles = {
     opacity: OPACITY
   },
   customRegions: {
-    height: '420px',
+    height: '500px',
     overflow: 'auto',
     width: '400px',
     opacity: OPACITY
