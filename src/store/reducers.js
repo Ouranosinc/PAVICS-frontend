@@ -11,7 +11,6 @@ import projectReducer from './../redux/modules/Project';
 import { reducers as projectAPIReducer } from '../redux/modules/ProjectAPI';
 import researchReducer from './../redux/modules/Research';
 import { reducers as ResearchAPIReducer } from '../redux/modules/ResearchAPI';
-import researcherReducer from './../redux/modules/Researcher';
 import { reducers as researcherAPIReducer } from '../redux/modules/ResearcherAPI';
 import sectionReducer from '../redux/modules/Section';
 import workflowReducer from './../redux/modules/Workflow';
@@ -35,7 +34,6 @@ export const makeRootReducer = (asyncReducers) => {
     'projectAPI': projectAPIReducer,
     'research': researchReducer,
     'researchAPI': ResearchAPIReducer,
-    'researcher': researcherReducer,
     'researcherAPI': researcherAPIReducer,
     'workflow': workflowReducer,
     'workflowAPI': workflowAPIReducer,

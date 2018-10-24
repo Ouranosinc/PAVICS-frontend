@@ -11,7 +11,6 @@ export const constants = {
 
 // Actions
 
-
 // Action Creators
 export const actions = {
   toggleWidget: function (key) {
