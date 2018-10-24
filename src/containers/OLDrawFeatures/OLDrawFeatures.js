@@ -34,6 +34,10 @@ class OLDrawFeatures extends React.Component {
     map: PropTypes.instanceOf(Map)
   };
 
+  state = {
+    drawnCustomFeatures: []
+  };
+
   constructor(props) {
     super(props);
     this.layer = null;
@@ -57,8 +61,8 @@ class OLDrawFeatures extends React.Component {
     if (nextProps.map !== this.props.map) {
       this.init(nextProps); // Once, when map has been initialised
       this.initDraw(nextProps);
-    }else if(layerCustomFeature.drawnCustomFeatures !== this.props.layerCustomFeature.drawnCustomFeatures){
-      if (layerCustomFeature.drawnCustomFeatures.length === 0){
+    }else if(this.props.layerCustomFeature.geoJSONDrawnFeatures !== layerCustomFeature.geoJSONDrawnFeatures){
+      if (layerCustomFeature.geoJSONDrawnFeatures.features.length === 0){
         // Triggered when Reset button is clicked in WidgetDrawFeatures
         this.select.getFeatures().clear();
         this.source.clear();
@@ -243,21 +247,33 @@ class OLDrawFeatures extends React.Component {
       // Listener on drawend
       this.draw.on('drawend', (e) => {
         let feature = e.feature;
-        feature.setProperties({
-          name: `feature_${layerCustomFeature.drawnCustomFeatures.length + 1}`,
-          description: '',
-          type: layerCustomFeature.currentDrawingTool
-        });
-        map.removeInteraction(this.draw);
-        map.removeInteraction(this.snap);
+        console.log( 'drawended');
+        // Clear features or get a corrupted file and upload won't actually work for now
+        // feature.setProperties({
+        //   name: `feature_${this.state.drawnCustomFeatures.length + 1}`,
+        //   description: '',
+        //   type: layerCustomFeature.currentDrawingTool
+        // });
+        // map.removeInteraction(this.draw);
+        // map.removeInteraction(this.snap);
 
         // Only one selected feature at a time
         this.select.getFeatures().clear();
         this.select.getFeatures().push(feature);
+        // Not useful anymore, can't edit properties in Customize Regions widget
         this.props.layerCustomFeatureActions.setCurrentSelectedDrawnFeature(feature.getProperties());
 
         // The action isn't super useful ATM, essentially used to notify when the array becomes empty
-        this.props.layerCustomFeatureActions.setDrawnCustomFeatures(layerCustomFeature.drawnCustomFeatures.concat([feature]));
+        // Objects are way to large to be in Redux without performance impact
+        // this.props.layerCustomFeatureActions.setDrawnCustomFeatures(this.state.drawnCustomFeatures.concat([feature]));
+        const drawnCustomFeatures = this.state.drawnCustomFeatures.concat([feature]);
+        this.setState({
+          drawnCustomFeatures: drawnCustomFeatures
+        });
+
+        const geoJSONWriter = new GeoJSON();
+        const geoJSONString = geoJSONWriter.writeFeatures(drawnCustomFeatures);
+        this.props.layerCustomFeatureActions.setGeoJSONDrawnFeatures(JSON.parse(geoJSONString));
       });
     }
   }
