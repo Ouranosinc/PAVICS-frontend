@@ -1,7 +1,6 @@
 import myHttp from '../../util/http';
-import { GeoJSON } from 'ol/format';
+import {VISUALIZE_DRAW_MODES} from './../../constants';
 import { NotificationManager } from 'react-notifications';
-import { VISUALIZE_DRAW_MODES } from './../../constants';
 
 // Constants
 export const constants = {
@@ -73,28 +72,32 @@ export const actions = {
       geoJSONDrawnFeature: featuresString
     };
   },
-  uploadZipShapeFile: function (workspace, datastore, blobData){
-    return function (dispatch, getState) {
+  uploadZipShapefile: function (workspace, datastore, blobData){
+    return function (dispatch) {
       dispatch(requestUploadShapefile());
-      const url = `${__PAVICS_GEOSERVER_API_PATH__}/workspaces/${workspace}/datastore/${datastore}/file.shp`;
+      const url = `${__PAVICS_GEOSERVER_API_PATH__}/workspaces/${workspace}/datastores/${datastore}/file.shp`;
       let headers = new Headers();
       headers.append('Content-Type', 'application/zip');
       headers.append('Content-Length', blobData.size);
-      headers.append('Accept', 'application/zip')
+      headers.append('Accept', 'application/zip');
 
       fetch(url, {
         method: 'PUT',
         headers: headers,
-        body: blobData
+        body: blobData,
+        credentials: 'include'
       }).then(function (response) {
         if(response.ok) {
+          NotificationManager.success('Shapefile was uploaded on the server with success.', 'Success', 10000);
           receiveUploadShapefileSuccess(response.statusText)
+          // TODO: Select new uploaded region automatically?
         } else {
+          NotificationManager.error('An error occurred while uploading the shapefile on the server.', 'Error', 10000);
           receiveUploadShapefileFailure(response)
         }
-        console.log(result.statusText)
       })
       .catch(function (error) {
+        NotificationManager.error('An error occurred while uploading the shapefile on the server.', 'Error', 10000);
         receiveUploadShapefileFailure(error)
       });
     };
@@ -120,7 +123,7 @@ const HANDLERS = {
 // Initial State
 export const initialState = {
   drawnCustomFeatures: [],
-  currentDrawingTool: '', // Disabled by default
+  currentDrawingTool: VISUALIZE_DRAW_MODES.BBOX.value, // Enabled BBOX by default
   currentSelectedDrawnFeatureProperties: null,
   geoJSONDrawnFeature: ''
 };

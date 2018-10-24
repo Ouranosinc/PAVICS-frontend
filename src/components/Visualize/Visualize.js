@@ -9,7 +9,7 @@ import LayersIcon from '@material-ui/icons/Layers';
 import MapControlsIcon from '@material-ui/icons/MyLocation';
 import InfoIcon from '@material-ui/icons/Description';
 import ChartIcon from '@material-ui/icons/Timeline';
-import DrawIcon from '@material-ui/icons/Edit';
+import DrawIcon from '@material-ui/icons/FormatShapes';
 import VisualizeWidget from './../VisualizeWidget';
 import BigColorPaletteContainer from './../../containers/BigColorPalette';
 import WidgetDrawFeaturesContainer from './../../containers/WidgetDrawFeatures';
@@ -59,7 +59,7 @@ const styles = {
     bottom: 0,
     textAlign: 'left',
     opacity: OPACITY,
-    height: '436px'
+    height: '400px'
   },
   chart: {
     opacity: OPACITY,
@@ -74,8 +74,8 @@ const styles = {
     opacity: OPACITY
   },
   customRegions: {
-    height: '500px',
-    overflow: 'auto',
+    height: '400px',
+    // overflow: 'auto',
     width: '400px',
     opacity: OPACITY
   }

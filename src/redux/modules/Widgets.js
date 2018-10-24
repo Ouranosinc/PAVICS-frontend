@@ -34,10 +34,10 @@ const HANDLERS = {
 // Initial State
 export const initialState = {
   chart: false,
-  customRegions: false,
+  customRegions: true,
   info: false,
   mapControls: true,
-  timeSlider: true,
+  timeSlider: false,
   layerSwitcher: true
 };
 
