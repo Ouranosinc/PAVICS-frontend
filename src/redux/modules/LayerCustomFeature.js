@@ -19,10 +19,10 @@ export const constants = {
   UPLOAD_SHAPEFILE_SUCCESS: 'LAYER_CUSTOM_FEATURE.UPLOAD_SHAPEFILE_SUCCESS',
 };
 
-function createZipFileFromFeature(feature, fileName) {
+function createZipFileFromGeoJSON(geoJSON, fileName) {
   // Clear features properties or get a corrupted file and upload won't actually work for now
-  geoJSON.features.map(feature => feature.properties = {});
-  this.props.layerCustomFeatureActions.setGeoJSONDrawnFeatures(geoJSONString);
+  /*geoJSON.features.map(feature => feature.properties = {});
+  this.props.layerCustomFeatureActions.setGeoJSONDrawnFeatures(geoJSONString);*/
 
   let zip = new JSZip();
   const points = geojson.point(geoJSON);
@@ -56,12 +56,15 @@ function createZipFileFromFeature(feature, fileName) {
 // DEPRECATED: this actually triggers one download event for each drawn feature
 // Local shapefile can't contains multiple polygons as expected (shp-write limitation)
 // So this functionnality should be available for every shapefile available on geoserver instead
-function createDownloadZipShapefile (filename, workspace = 'CUSTOM_SHAPEFILES', datastore = 'CUSTOM_SHAPEFILES_DS') {
+function createDownloadZipShapefile (filename) {
   return function (dispatch, getState) {
-    const state = getState();
-    const features = getState().layerCustomFeature.geoJSONDrawnFeatures;
-    features.forEach(feature => {
-      let zip = createZipFileFromFeature(feature, filename, workspace, datastore);
+    const geoJSON = getState().layerCustomFeature.geoJSONDrawnFeatures;
+    geoJSON.features.forEach(feature => {
+      const singleGeoJSONFeature = {
+        type: "FeatureCollection",
+        features: [feature]
+      };
+      let zip = createZipFileFromGeoJSON(singleGeoJSONFeature, filename);
       const content = zip.generate({compression: 'STORE'});
       location.href = 'data:application/zip;base64,' + content;
     });
@@ -70,16 +73,18 @@ function createDownloadZipShapefile (filename, workspace = 'CUSTOM_SHAPEFILES', 
 
 function createUploadZipShapefile (filename, workspace = 'CUSTOM_SHAPEFILES', datastore = 'CUSTOM_SHAPEFILES_DS') {
   return function (dispatch, getState) {
-    const state = getState();
-    const features = getState().layerCustomFeature.geoJSONDrawnFeatures;
+    const geoJSON = getState().layerCustomFeature.geoJSONDrawnFeatures;
 
     // HTTP PUT will append shapefile feature by default if filename already exists
     // Since shp-write won't allow to push multiple at once in the shapefile, we'll delegate this functionnaly to geoserver
-    features.forEach(feature => {
-      let zip = createZipFileFromFeature(feature, filename);
+    geoJSON.features.forEach(feature => {
+      const singleGeoJSONFeature = {
+        type: "FeatureCollection",
+        features: [feature]
+      };
+      let zip = createZipFileFromGeoJSON(singleGeoJSONFeature, filename);
       const content = zip.generate({type:"blob"});
-      uploadZipShapefile(workspace, datastore, content);
-
+      dispatch(uploadZipShapefile(workspace, datastore, content));
     });
   };
 }
@@ -209,7 +214,10 @@ export const initialState = {
   drawnCustomFeatures: [],
   currentDrawingTool: VISUALIZE_DRAW_MODES.BBOX.value, // Enabled BBOX by default
   currentSelectedDrawnFeatureProperties: null,
-  geoJSONDrawnFeatures: ''
+  geoJSONDrawnFeatures: {
+    type: "FeatureCollection",
+    features: []
+  }
 };
 
 export default function (state = initialState, action) {

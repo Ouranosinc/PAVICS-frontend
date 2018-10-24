@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
+import { NotificationManager } from 'react-notifications';
 import {VISUALIZE_DRAW_MODES} from './../../constants';
 import Divider from'@material-ui/core/Divider';
 import Button from'@material-ui/core/Button';
@@ -77,7 +78,11 @@ class WidgetDrawFeatures extends React.Component {
   };
 
   onUploadDrawnLayer = () => {
-    this.props.layerCustomFeatureActions.createUploadZipShapefile(this.state.regionIdentifier);
+    if (this.state.regionIdentifier.length) {
+      this.props.layerCustomFeatureActions.createUploadZipShapefile(this.state.regionIdentifier);
+    } else {
+      NotificationManager.warning(`Region identifier is required before uploading drawn custom regions.`, 'Warning', 10000);
+    }
   };
 
   onHandleTextChangedOld = field => event => {
@@ -98,6 +103,13 @@ class WidgetDrawFeatures extends React.Component {
     const datastore = 'CUSTOM_SHAPEFILES_DS'; // '	USER_SHAPEFILES';
     var blobData = new Blob([this.state.file], {type: 'application/zip'});
     this.props.layerCustomFeatureActions.uploadZipShapefile(workspace, datastore, blobData);
+    this.setState({
+      file: null,
+      fileName: '',
+      fileType: '',
+      fileSize: 0,
+      fileLastModified: 'n/a'
+    });
   };
 
   handleFileSelect = (evt) => {
@@ -119,7 +131,7 @@ class WidgetDrawFeatures extends React.Component {
   };
 
   render() {
-    const {currentDrawingTool, currentSelectedDrawnFeatureProperties, drawnCustomFeatures} = this.props.layerCustomFeature;
+    const {currentDrawingTool, currentSelectedDrawnFeatureProperties, geoJSONDrawnFeatures} = this.props.layerCustomFeature;
     // const {name, description} = this.state;
     const {featureIdentifier, regionIdentifier} = this.state;
     return (
@@ -173,7 +185,7 @@ class WidgetDrawFeatures extends React.Component {
               value={featureIdentifier}
               onChange={this.onHandleTextChanged('featureIdentifier')}
               label="Feature's identifier"/>
-            <Typography variant="subheading">Drawn regions total: {drawnCustomFeatures.length}</Typography>
+            <Typography variant="subheading">Drawn regions total: {geoJSONDrawnFeatures.features.length}</Typography>
             <Button variant="contained"
                     color="primary"
                     onClick={this.onResetDrawingLayer}>

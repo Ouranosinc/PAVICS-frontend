@@ -106,7 +106,8 @@ class OLDrawFeatures extends React.Component {
     this.source = new VectorSource();
     this.layer = this.createDrawnFeaturesLayer(map);
     this.select = new Select({
-      features: this.source.getFeatures(), // Prevent public regions from being selected and edited
+      features: this.source.getFeatures(),
+      layers: [this.layer], // This limit current layer to be selectable
       /*condition: function(mapBrowserEvent) {
         return singleClick(mapBrowserEvent) && altKeyOnly(mapBrowserEvent);
       },*/
@@ -115,10 +116,11 @@ class OLDrawFeatures extends React.Component {
           new Style({
             stroke: new Stroke({color: [0, 153, 255, 1], width: 3}),
             fill: new Fill({ color: 'rgba(255,255,255,0.3)' }),
-            text: new Text({
+            // DEPRECATED: Name and description
+            /*text: new Text({
               font: '24px Verdana',
               text: `${feature.get('name')}\n${feature.get('description')}`
-            })
+            })*/
           })
         ];
       }
@@ -134,13 +136,15 @@ class OLDrawFeatures extends React.Component {
 
     map.addInteraction(this.select);
     this.select.on('select', (e) => {
-      //TODO: Valide current layer is the good one
+      //FIXME: Not the right place to valid current layer is the good one, but it would be possible here
       if (e.selected.length) {
-        // If name and description haven't been set it's because feature is being drawn at the moment.
-        // So if feature is being drawn, ignore selection
+        // If properties.drawn exist it's because feature is part of out layer
         const properties = e.selected[0].getProperties();
-        if(properties.name && properties.name.length) {
+        if (properties.drawn) {
           this.props.layerCustomFeatureActions.setCurrentSelectedDrawnFeature(properties);
+        } else {
+          e.stopPropagation();
+          e.selected = [];
         }
       }else {
         // No feature selected mean no properties to be edited in the widget
@@ -249,11 +253,12 @@ class OLDrawFeatures extends React.Component {
         let feature = e.feature;
         console.log( 'drawended');
         // Clear features or get a corrupted file and upload won't actually work for now
-        // feature.setProperties({
-        //   name: `feature_${this.state.drawnCustomFeatures.length + 1}`,
-        //   description: '',
-        //   type: layerCustomFeature.currentDrawingTool
-        // });
+        feature.setProperties({
+          drawn: true, // Flag to make sure feature is part of our layer
+          name: `feature_${this.state.drawnCustomFeatures.length + 1}`, // Could be editable by the user
+          description: '',  // Could be editable by the user
+          type: layerCustomFeature.currentDrawingTool
+        });
         // map.removeInteraction(this.draw);
         // map.removeInteraction(this.snap);
 
@@ -274,6 +279,7 @@ class OLDrawFeatures extends React.Component {
         const geoJSONWriter = new GeoJSON();
         const geoJSONString = geoJSONWriter.writeFeatures(drawnCustomFeatures);
         this.props.layerCustomFeatureActions.setGeoJSONDrawnFeatures(JSON.parse(geoJSONString));
+        console.log(JSON.parse(geoJSONString))
       });
     }
   }
