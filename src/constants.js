@@ -24,10 +24,11 @@ export const VISUALIZE_DRAW_MODES = {
     value: 'Bbox',
     label: 'Bounding Box (hold shift key)'
   },
-  CIRCLE: {
+  // DEPRECATED: Circle feature geometry will be empty when transformed into GeoJSON format
+  /*CIRCLE: {
     value: 'Circle',
     label: 'Circle (hold shift key)'
-  },
+  },*/
   HEXAGON: {
     value: 'Hexagon',
     label: 'Hexagon (hold shift key)'
@@ -40,7 +41,8 @@ export const VISUALIZE_DRAW_MODES = {
     value: 'Square',
     label: 'Square (hold shift key)'
   },
-  /*POINT: {
+  // TODO: Nothing appears on map after click... so disabled for now
+  /* POINT: {
     value: 'Point',
     label: 'Point'
   },*/
@@ -48,7 +50,8 @@ export const VISUALIZE_DRAW_MODES = {
     value: 'Polygon',
     label: 'Polygon (optionally hold shift for freehand)'
   }
-  //TODO: https://github.com/Ouranosinc/PAVICS-frontend/issues/134#issuecomment-416724206
+  // TODO: https://github.com/Ouranosinc/PAVICS-frontend/issues/134#issuecomment-416724206
+  // Should be able to define a zonal or meridional globe-wide with only x1/x2 or y1/y2
   /*,
   ZONAL: {
     value: 'Zonal',

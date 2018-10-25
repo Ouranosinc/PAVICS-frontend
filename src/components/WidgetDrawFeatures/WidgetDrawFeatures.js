@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
 import { NotificationManager } from 'react-notifications';
+import geojson from 'shp-write/src/geojson';
 import {VISUALIZE_DRAW_MODES} from './../../constants';
 import Divider from'@material-ui/core/Divider';
 import Button from'@material-ui/core/Button';
@@ -33,6 +34,9 @@ const styles = theme => ({
   }
 });
 
+/*
+
+ */
 class WidgetDrawFeatures extends React.Component {
   static propTypes = {
     layerCustomFeature: PropTypes.object.isRequired,
@@ -73,23 +77,45 @@ class WidgetDrawFeatures extends React.Component {
     this.props.layerCustomFeatureActions.resetGeoJSONDrawnFeatures();
   };
 
+  /*
+    FIXME: Only one geometry by shapefile at the moment
+  */
   onDownloadDrawnLayer = () => {
     this.props.layerCustomFeatureActions.createDownloadZipShapefile(this.state.regionIdentifier);
   };
 
+  /*
+    Currently used can:
+    - UPLOAD-CREATE (if filename doesn't exists or has only one polygon)
+    - UPLOAD-APPEND (if filename exists or user has currently drawn multiple polygons, next polygons will be appended)
+    We should also make sure drawn polygons have the same type than the targeted filename is such file currently exists on geoserver
+  */
   onUploadDrawnLayer = () => {
+    const { layerCustomFeature, layerCustomFeatureActions } = this.props;
     if (this.state.regionIdentifier.length) {
-      this.props.layerCustomFeatureActions.createUploadZipShapefile(this.state.regionIdentifier);
+      if (layerCustomFeature.geoJSONDrawnFeatures.features.length) {
+        const type = layerCustomFeature.geoJSONDrawnFeatures.features[0].geometry.type;
+        if (layerCustomFeature.geoJSONDrawnFeatures.features.every( f => f.geometry.type === type)) {
+          layerCustomFeatureActions.createUploadZipShapefile(this.state.regionIdentifier);
+        } else {
+          NotificationManager.warning(`All drawn features should be of the same type (Polygon or LineString or Point) before trying to upload.`, 'Warning', 10000);
+        }
+      } else {
+        NotificationManager.warning(`At least one new custom region must be drawn before trying to upload.`, 'Warning', 10000);
+      }
     } else {
       NotificationManager.warning(`Region identifier is required before uploading drawn custom regions.`, 'Warning', 10000);
     }
   };
 
+  /*
+    Old method that used to store new information in redux, so it could be retrieved by OLDrawFeatures to be shown on the map inside the polygon itself
+    Current component used to actually re-render() in componentWillReceiveProps -> setState()
+  */
   onHandleTextChangedOld = field => event => {
     let cpy = Object.assign({}, this.props.layerCustomFeature.currentSelectedDrawnFeatureProperties);
     cpy[field] = event.target.value;
     this.props.layerCustomFeatureActions.setCurrentSelectedDrawnFeature(cpy);
-    // Then retrieve values for re-rendering in componentWillReceiveProps -> setState()
   };
 
   onHandleTextChanged = field => event => {
@@ -129,6 +155,24 @@ class WidgetDrawFeatures extends React.Component {
       fileLastModified: file.lastModifiedDate ? file.lastModifiedDate.toLocaleDateString() : 'n/a'
     });
   };
+
+  displayType() {
+    const { geoJSONDrawnFeatures } = this.props.layerCustomFeature;
+    const layers = [geojson.point(geoJSONDrawnFeatures), geojson.line(geoJSONDrawnFeatures), geojson.polygon(geoJSONDrawnFeatures)];
+    let types = [];
+    layers.forEach(layer => {
+      if (layer.geometries.length && layer.geometries[0].length) {
+        types.push(layer.type);
+      }
+    });
+    if (types.length === 1) {
+      return <Typography variant="subheading">Layer type: {types[0]}</Typography>;
+    } else if (types.length > 1) {
+      return <Typography variant="subheading" color="error">Layer type: {types.join(', ')}</Typography>;
+    } else {
+      return <Typography variant="subheading">Layer type: N/A</Typography>;
+    }
+  }
 
   render() {
     const {currentDrawingTool, currentSelectedDrawnFeatureProperties, geoJSONDrawnFeatures} = this.props.layerCustomFeature;
@@ -176,16 +220,18 @@ class WidgetDrawFeatures extends React.Component {
             </FormControl>
             {/*<Typography variant="subheading">TODO: Add layer metadata fields</Typography>*/}
             <TextField
+              required
               fullWidth
               value={regionIdentifier}
               onChange={this.onHandleTextChanged('regionIdentifier')}
               label="Region's identifier"/>
-            <TextField
+            {/*<TextField
               fullWidth
               value={featureIdentifier}
               onChange={this.onHandleTextChanged('featureIdentifier')}
-              label="Feature's identifier"/>
+              label="Feature's identifier"/>*/}
             <Typography variant="subheading">Drawn regions total: {geoJSONDrawnFeatures.features.length}</Typography>
+            { this.displayType() }
             <Button variant="contained"
                     color="primary"
                     onClick={this.onResetDrawingLayer}>

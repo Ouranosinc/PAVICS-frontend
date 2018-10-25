@@ -105,7 +105,7 @@ export const actions = {
   },
   aggregateFetchWorkspacesLayersRequests: function (workspaces) {
     const promises = [];
-    workspaces.map(workspace => {
+    workspaces.forEach(workspace => {
       const url = `${__PAVICS_GEOSERVER_API_PATH__}/workspaces/${workspace.resource_name}/layers.json`;
       promises.push(myHttp.get(url));
     });
@@ -119,19 +119,19 @@ export const actions = {
       actions.aggregateFetchWorkspacesLayersRequests(workspaces)
         .then(allResponses => {
           const allTransformToJson = [];
-          allResponses.map(res => {
+          allResponses.forEach(res => {
             allTransformToJson.push(res.json());
           });
           return Promise.all(allTransformToJson);
         })
         .then(allJson => {
           let layers = {};
-          allJson.map((oneRequestLayers, i) => {
+          allJson.forEach((oneRequestLayers, i) => {
             if (!oneRequestLayers.layers || !oneRequestLayers.layers.layer) {
               return;
             }
             const workspaceName = workspaces[i].resource_name;
-            oneRequestLayers.layers.layer.map(layer => {
+            oneRequestLayers.layers.layer.forEach(layer => {
               const layerName = layer.name;
               layers[workspaceName] = layers[workspaceName] || [];
               layers[workspaceName].push({
@@ -157,11 +157,11 @@ export const actions = {
         .get(`${__PAVICS_MAGPIE_PATH__}/users/current/services/${__PAVICS_GEOSERVER_WORKSPACES_SERVICE_NAME__}/inherited_resources`)
         .then(response => response.json())
         .then(json => {
-          Object.keys(json.service.resources).map(serviceId => {
+          Object.keys(json.service.resources).forEach(serviceId => {
             const resource = json.service.resources[serviceId];
             if (resource.resource_name === 'workspaces') {
               const workspaces = [];
-              Object.keys(resource.children).map(resourceId => {
+              Object.keys(resource.children).forEach(resourceId => {
                 const workspace = resource.children[resourceId];
                 workspaces.push(workspace);
               });

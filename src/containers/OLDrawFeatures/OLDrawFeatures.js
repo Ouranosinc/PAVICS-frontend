@@ -116,7 +116,7 @@ class OLDrawFeatures extends React.Component {
           new Style({
             stroke: new Stroke({color: [0, 153, 255, 1], width: 3}),
             fill: new Fill({ color: 'rgba(255,255,255,0.3)' }),
-            // DEPRECATED: Name and description
+            // DEPRECATED: Name and description, introduces some lag
             /*text: new Text({
               font: '24px Verdana',
               text: `${feature.get('name')}\n${feature.get('description')}`
@@ -168,6 +168,9 @@ class OLDrawFeatures extends React.Component {
     });
   }
 
+  /*
+    At the moment, user can blend multiple region types together (polygon, polyline, points)
+   */
   initDraw(nextProps) {
     const { map, layerCustomFeature } = nextProps;
     if (this.draw || this.snap) {
@@ -183,11 +186,11 @@ class OLDrawFeatures extends React.Component {
           drawType = 'Circle';
           condition = shiftKeyOnly;
           break;
-        case VISUALIZE_DRAW_MODES.CIRCLE.value:
+        /*case VISUALIZE_DRAW_MODES.CIRCLE.value:
           geometryFunction = null;
           drawType = VISUALIZE_DRAW_MODES.CIRCLE.value;
           condition = shiftKeyOnly;
-          break;
+          break;*/
         case VISUALIZE_DRAW_MODES.HEXAGON.value:
           geometryFunction = createRegularPolygon(5);
           drawType = 'Circle';

@@ -55,6 +55,7 @@ const styles = {
     justifyContent: 'space-between'
   },
   subHeader: {
+    cursor: 'pointer',
     backgroundColor: 'white',
     display: 'flex',
     flexDirection: 'row',
