@@ -1,7 +1,5 @@
 import myHttp from '../../util/http';
-import cookie from 'react-cookies';
-import { NotificationManager } from 'react-notifications';
-import {AUTH_COOKIE} from '../../constants';
+import {NotificationManager} from 'react-notifications';
 
 // Constants
 export const constants = {
@@ -19,43 +17,43 @@ export const constants = {
   SESSION_LOGOUT: 'SESSION_LOGOUT',
 };
 
-function zigguratLoginRequest() {
+function zigguratLoginRequest () {
   return {
     type: constants.ZIGGURAT_LOGIN_REQUEST,
   };
 }
 
-function zigguratLoginSuccess() {
+function zigguratLoginSuccess () {
   return {
     type: constants.ZIGGURAT_LOGIN_SUCCESS,
   };
 }
 
-function zigguratLoginFailure() {
+function zigguratLoginFailure () {
   return {
     type: constants.ZIGGURAT_LOGIN_FAILURE,
   };
 }
 
-function checkLoginRequest() {
+function checkLoginRequest () {
   return {
     type: constants.SESSION_CHECK_LOGIN_REQUEST,
   };
 }
 
-function checkLoginSuccess() {
+function checkLoginSuccess () {
   return {
     type: constants.SESSION_CHECK_LOGIN_SUCCESS,
   };
 }
 
-function checkLoginFailure() {
+function checkLoginFailure () {
   return {
     type: constants.SESSION_CHECK_LOGIN_FAILURE,
   };
 }
 
-function setSessionInformations(user, authenticated, email, groups) {
+function setSessionInformations (user, authenticated, email, groups) {
   return {
     type: constants.SET_SESSION_INFORMATIONS,
     user: user,
@@ -65,39 +63,36 @@ function setSessionInformations(user, authenticated, email, groups) {
   };
 }
 
-function sessionLogoutRequest() {
+function sessionLogoutRequest () {
   return {
     type: constants.SESSION_LOGOUT_REQUEST,
   };
 }
 
-function sessionLogoutSuccess() {
+function sessionLogoutSuccess () {
   return {
     type: constants.SESSION_LOGOUT_SUCCESS,
   };
 }
 
-function sessionLogoutFailure() {
+function sessionLogoutFailure () {
   return {
     type: constants.SESSION_LOGOUT_FAILURE,
   };
 }
 
-function resetSessionInformation() {
+function resetSessionInformation () {
   return {
     type: constants.RESET_SESSION_INFORMATIONS,
   };
 }
 
-function logout() {
+function logout () {
   return dispatch => {
     dispatch(sessionLogoutRequest());
-    // while (undefined !== cookie.load(AUTH_COOKIE)) {
-      cookie.remove(AUTH_COOKIE);
-    // }
-    myHttp.get('/logout')
-      .then(res => {
-        NotificationManager.success(`You have been logged out of the platform.`, 'Success', 10000);
+    myHttp.get(`${__PAVICS_MAGPIE_PATH__}/signout`)
+      .then(() => {
+        NotificationManager.success('You have been logged out of the platform.', 'Success', 10000);
         dispatch(sessionLogoutSuccess());
         dispatch(resetSessionInformation());
       })
@@ -109,10 +104,10 @@ function logout() {
   };
 }
 
-function sendCredentialsToZiggurat(username, password) {
-  return (dispatch) => {
+function sendCredentialsToZiggurat (username, password) {
+  return dispatch => {
     dispatch(zigguratLoginRequest());
-    myHttp.postUrlEncodedForm('/login', {
+    myHttp.postUrlEncodedForm(`${__PAVICS_MAGPIE_PATH__}/signin`, {
       'user_name': username,
       password: password,
       'provider_name': 'ziggurat',
@@ -135,11 +130,11 @@ function sendCredentialsToZiggurat(username, password) {
   };
 }
 
-function checkLogin() {
+function checkLogin () {
   return (dispatch) => {
     console.log('in actual checking login');
     dispatch(checkLoginRequest());
-    myHttp.get('/session')
+    myHttp.get(`${__PAVICS_MAGPIE_PATH__}/session`)
       .then(res => res.json())
       .then(session => {
         console.log('received session status: %o', session);
@@ -178,14 +173,16 @@ const HANDLERS = {
   [constants.SESSION_CHECK_LOGIN_SUCCESS]: (state, action) => { return state; },
   [constants.SESSION_CHECK_LOGIN_FAILURE]: (state, action) => { return state; },
   [constants.SET_SESSION_INFORMATIONS]: (state, action) => {
-    return ({...state, sessionStatus: {
-      user: {
-        username: action.user,
-        authenticated: action.authenticated,
-        email: action.email,
-        groups: action.groups,
-      },
-    }});
+    return ({
+      ...state, sessionStatus: {
+        user: {
+          username: action.user,
+          authenticated: action.authenticated,
+          email: action.email,
+          groups: action.groups,
+        },
+      }
+    });
   },
   [constants.RESET_SESSION_INFORMATIONS]: (state, action) => {
     return ({...state, sessionStatus: initialState.sessionStatus});
@@ -204,7 +201,7 @@ export const initialState = {
   },
 };
 
-export default function(state = initialState, action) {
+export default function (state = initialState, action) {
   const handler = HANDLERS[action.type];
   return handler ? handler(state, action) : state;
 }

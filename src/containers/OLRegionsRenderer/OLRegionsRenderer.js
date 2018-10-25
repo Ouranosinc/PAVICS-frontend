@@ -26,8 +26,8 @@ export class OLRegionsRenderer extends React.Component {
     const { map } = nextProps;
     if (map !== this.props.map) {
       this.init(map);
-    } else if (nextProps.layerRegion.selectedShapefile !== this.props.layerRegion.selectedShapefile) {
-      this.resetRegions(nextProps)
+    } else if (nextProps.layerRegion.selectedFeatureLayer !== this.props.layerRegion.selectedFeatureLayer) {
+      this.resetRegions(nextProps);
     }
   }
 
@@ -37,23 +37,23 @@ export class OLRegionsRenderer extends React.Component {
 
   resetRegions (nextProps) {
     const { map } = nextProps;
-    const { selectedShapefile } = nextProps.layerRegion;
+    const { selectedFeatureLayer } = nextProps.layerRegion;
     const params = {
-      url: selectedShapefile.wmsUrl,
-      params: selectedShapefile.wmsParams
+      url: selectedFeatureLayer.wmsUrl,
+      params: selectedFeatureLayer.wmsParams
     };
 
-    if(this.source) {
+    if (this.source) {
       // Should but does not work
       // this.source.updateParams(params);
       map.removeLayer(this.layer);
     }
     this.source = new TileWMS(params);
-    this.layer = this.createRegionLayer(map);
+    this.layer = this.createFeatureLayer(map);
 
   }
 
-  createRegionLayer (map) {
+  createFeatureLayer (map) {
     let layer = new TileLayer({
       visible: true,
       title: this.props.layerName,
@@ -62,7 +62,7 @@ export class OLRegionsRenderer extends React.Component {
     });
     layer.set('nameId', this.props.layerName);
     map.getLayers().insertAt(this.props.layerZIndex, layer);
-    return layer
+    return layer;
   }
 
   render () {
@@ -84,4 +84,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(OLRegionsRenderer)
+)(OLRegionsRenderer);

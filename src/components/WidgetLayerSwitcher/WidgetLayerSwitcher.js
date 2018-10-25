@@ -1,25 +1,29 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import TextField from '@material-ui/core/TextField';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
-import Tab from'@material-ui/core/Tab';
+import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
-import Select from'@material-ui/core/Select';
-import MenuItem from'@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 import Slider from '@material-ui/lab/Slider';
-import Radio from'@material-ui/core/Radio';
-import RadioGroup from'@material-ui/core/RadioGroup';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
 import Satellite from '@material-ui/icons/Satellite';
 import LocalLibrary from '@material-ui/icons/LocalLibrary';
 import Map from '@material-ui/icons/Map';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
+import Collapse from '@material-ui/core/Collapse';
+import ExpendMore from '@material-ui/icons/ExpandMore';
+import ExpendLess from '@material-ui/icons/ExpandLess';
 import Grid from '@material-ui/core/Grid';
 
 const AVAILABLE_COLOR_PALETTES = [
@@ -31,6 +35,19 @@ const styles = {
   list: {
     height: '300px',
     overflowY: 'auto'
+  },
+  topBar: {
+    padding: '0 24px',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    justifyContent: 'space-between'
+  },
+  subHeader: {
+    backgroundColor: 'white',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center'
   }
 };
 
@@ -48,17 +65,21 @@ export default class WidgetLayerSwitcher extends React.Component {
     super(props);
     this.props.layerDatasetActions.selectColorPalette(AVAILABLE_COLOR_PALETTES[0]);
     this.state = {
-      tabValue: 0
-    }
+      tabValue: 0,
+      open: {},
+    };
   }
 
-  componentDidMount () {
-    this.props.layerRegionActions.fetchShapefiles();
-  }
-
-  setSelectedShapefile = (event, value) => {
+  setSelectedFeatureLayer = (event, value) => {
     this.props.layerRegionActions.resetSelectedRegions();
-    this.props.layerRegionActions.selectShapefile(this.props.layerRegion.publicShapeFiles.find(f => f.title === value));
+    const data = this.props.layerRegion.featureLayers.data;
+    Object.keys(data).map(workspaceName => {
+      data[workspaceName].map(layer => {
+        if (layer.title === value) {
+          this.props.layerRegionActions.selectFeatureLayer(layer);
+        }
+      });
+    });
   };
 
   setSelectedBaseMap = (event, value) => {
@@ -86,8 +107,8 @@ export default class WidgetLayerSwitcher extends React.Component {
     this.props.layerDatasetActions.selectColorPalette(event.target.value);
   };
 
-  resetShapefile = () => {
-    this.props.layerRegionActions.selectShapefile({});
+  resetFeatureLayer = () => {
+    this.props.layerRegionActions.selectFeatureLayer({});
     this.props.layerRegionActions.resetSelectedRegions();
   };
 
@@ -95,36 +116,65 @@ export default class WidgetLayerSwitcher extends React.Component {
     this.props.layerDatasetActions.selectCurrentDisplayedDataset({});
   };
 
-  /*
-  this routine should iterate through the different workspaces that are available to the user and show them separated by workspace name.
-  Presently, they're all flat on a single level, but should eventually be grouped by the workspace name
-   */
-  makeShapefileList () {
+  toggleWorkspace = workspaceName => () => {
+    this.setState({
+      open: {
+        ...this.state.open,
+        [workspaceName]: !this.state.open[workspaceName]
+      }
+    });
+  };
+
+  makeFeatureLayersList () {
     return (
       <React.Fragment>
-        <ListSubheader>
-          <Button variant="contained"
-                  color="primary"
-                  id="cy-reset-shapefile-btn"
-                  onClick={this.resetShapefile}>
+        <div style={styles.topBar}>
+          <Button
+            variant="contained"
+            color="primary"
+            id="cy-reset-feature-layer-btn"
+            onClick={this.resetFeatureLayer}>
             Reset
           </Button>
-        </ListSubheader>
+          <TextField
+            label="Text filter."
+            onChange={this.props.layerRegionActions.setTextFilter}
+            value={this.props.layerRegion.textFilter} />
+        </div>
         <List style={styles.list}>
           {
-            this.props.layerRegion.publicShapeFiles.map( (shapeFile, i) =>
-              <ListItem
-                className="cy-layerswitcher-shapefile-item"
-                id={`cy-shapefile-name-${shapeFile.title}`}// `
-                key={i}>
-                <RadioGroup
-                  name="selectedShapeFile"
-                  value={this.props.layerRegion.selectedShapefile.title}
-                  onChange={this.setSelectedShapefile}>
-                  <FormControlLabel value={shapeFile.title} control={<Radio color="secondary" />} label={shapeFile.title} />
-                </RadioGroup>
-              </ListItem>
-            )
+            Object.keys(this.props.layerRegion.filteredFeatureLayers).map((workspaceName, j) => {
+              const workspaceLayers = this.props.layerRegion.filteredFeatureLayers[workspaceName];
+              return (
+                <React.Fragment key={j}>
+                  <ListSubheader
+                    className="cy-layerswitcher-workspace"
+                    id={`cy-layerswitcher-workspace-${workspaceName}`}
+                    style={styles.subHeader}
+                    onClick={this.toggleWorkspace(workspaceName)}>
+                    {workspaceName}
+                    {this.state.open[workspaceName] ? <ExpendLess /> : <ExpendMore />}
+                  </ListSubheader>
+                  <Collapse in={this.state.open[workspaceName]}>
+                  {
+                    workspaceLayers.map((layer, i) =>
+                      <ListItem
+                        className="cy-layerswitcher-feature-layer"
+                        id={`cy-feature-layer-name-${layer.title}`}
+                        key={i}>
+                        <RadioGroup
+                          name="selectedFeatureLayer"
+                          value={this.props.layerRegion.selectedFeatureLayer.title}
+                          onChange={this.setSelectedFeatureLayer}>
+                          <FormControlLabel value={layer.title} control={<Radio color="secondary" />} label={layer.title} />
+                        </RadioGroup>
+                      </ListItem>
+                    )
+                  }
+                  </Collapse>
+                </React.Fragment>
+              );
+            })
           }
         </List>
       </React.Fragment>
@@ -140,8 +190,8 @@ export default class WidgetLayerSwitcher extends React.Component {
         {
           this.props.layerBasemap.baseMaps.map((map, i) =>
             <ListItem
-            className="cy-layerswitcher-basemap-item"
-            key={i}>
+              className="cy-layerswitcher-basemap-item"
+              key={i}>
               <RadioGroup
                 name="selectedBaseMap"
                 value={this.props.layerBasemap.selectedBasemap}
@@ -170,10 +220,11 @@ export default class WidgetLayerSwitcher extends React.Component {
         <ListSubheader disableSticky>
           <Grid container>
             <Grid item sm={12} md={4}>
-              <Button variant="contained"
-                      color="primary"
-                      id="cy-reset-dataset-btn"
-                      onClick={this.resetDatasetLayer}>
+              <Button
+                variant="contained"
+                color="primary"
+                id="cy-reset-dataset-btn"
+                onClick={this.resetDatasetLayer}>
                 Reset
               </Button>
             </Grid>
@@ -229,12 +280,12 @@ export default class WidgetLayerSwitcher extends React.Component {
     }
     return (
       <Slider
-         disabled={!this.props.layerDataset.currentDisplayedDataset.uniqueLayerSwitcherId}
-         min={0}
-         max={1}
-         step={0.05}
-         value={this.props.layerDataset.currentDisplayedDataset.opacity}
-         onChange={this.setDatasetLayerOpacity}/>
+        disabled={!this.props.layerDataset.currentDisplayedDataset.uniqueLayerSwitcherId}
+        min={0}
+        max={1}
+        step={0.05}
+        value={this.props.layerDataset.currentDisplayedDataset.opacity}
+        onChange={this.setDatasetLayerOpacity} />
     );
   }
 
@@ -287,20 +338,17 @@ export default class WidgetLayerSwitcher extends React.Component {
               style={{minWidth: '130px'}}
               id="cy-layerswitcher-datasets-tab"
               icon={<Satellite />}
-              label="Datasets">
-            </Tab>
+              label="Datasets" />
             <Tab
               style={{minWidth: '130px'}}
               id="cy-layerswitcher-regions-tab"
               icon={<LocalLibrary />}
-              label="Regions">
-            </Tab>
+              label="Regions" />
             <Tab
               style={{minWidth: '130px'}}
               id="cy-layerswitcher-basemaps-tab"
               icon={<Map />}
-              label="Base Maps">
-            </Tab>
+              label="Base Maps" />
           </Tabs>
         </AppBar>
         {this.state.tabValue === 0 &&
@@ -310,7 +358,7 @@ export default class WidgetLayerSwitcher extends React.Component {
         }
         {this.state.tabValue === 1 &&
         <Paper elevation={2}>
-          {this.makeShapefileList()}
+          {this.makeFeatureLayersList()}
         </Paper>
         }
         {this.state.tabValue === 2 &&
