@@ -79,38 +79,8 @@ export default class WidgetLayerSwitcher extends React.Component {
     this.state = {
       tabValue: 0,
       open: {},
-      textFilter: '',
-      filteredLayers: {}
     };
   }
-
-  componentDidUpdate (prevProps, prevState, snapshot) {
-    if (this.props.layerRegion.featureLayers !== prevProps.layerRegion.featureLayers) {
-      this.filterFeatureLayers();
-    }
-  }
-
-  setTextFilter = event => {
-    this.setState({
-      textFilter: event.target.value
-    }, this.filterFeatureLayers);
-  };
-
-  filterFeatureLayers = () => {
-    let layers = {};
-    const data = this.props.layerRegion.featureLayers.data;
-    Object.keys(data).map(workspaceName => {
-      const theseLayers = data[workspaceName].filter(layer => {
-        return layer.title.indexOf(this.state.textFilter) !== -1;
-      });
-      if (theseLayers.length > 0) {
-        layers[workspaceName] = theseLayers;
-      }
-    });
-    this.setState({
-      filteredLayers: layers
-    });
-  };
 
   setSelectedFeatureLayer = (event, value) => {
     this.props.layerRegionActions.resetSelectedRegions();
@@ -174,22 +144,24 @@ export default class WidgetLayerSwitcher extends React.Component {
           <Button
             variant="contained"
             color="primary"
-            id="cy-reset-shapefile-btn"
+            id="cy-reset-feature-layer-btn"
             onClick={this.resetFeatureLayer}>
             Reset
           </Button>
           <TextField
             label="Text filter."
-            onChange={this.setTextFilter}
-            value={this.state.textFilter} />
+            onChange={this.props.layerRegionActions.setTextFilter}
+            value={this.props.layerRegion.textFilter} />
         </div>
         <List style={styles.regionList}>
           {
-            Object.keys(this.state.filteredLayers).map((workspaceName, j) => {
-              const workspaceLayers = this.state.filteredLayers[workspaceName];
+            Object.keys(this.props.layerRegion.filteredFeatureLayers).map((workspaceName, j) => {
+              const workspaceLayers = this.props.layerRegion.filteredFeatureLayers[workspaceName];
               return (
                 <div key={j}>
                   <ListSubheader
+                    className="cy-layerswitcher-workspace"
+                    id={`cy-layerswitcher-workspace-${workspaceName}`}
                     style={styles.subHeader}
                     onClick={this.toggleWorkspace(workspaceName)}>
                     {workspaceName}
@@ -199,8 +171,8 @@ export default class WidgetLayerSwitcher extends React.Component {
                   {
                     workspaceLayers.map((layer, i) =>
                       <ListItem
-                        className="cy-layerswitcher-shapefile-item"
-                        id={`cy-shapefile-name-${layer.title}`}
+                        className="cy-layerswitcher-feature-layer"
+                        id={`cy-feature-layer-name-${layer.title}`}
                         key={i}>
                         <RadioGroup
                           name="selectedFeatureLayer"
@@ -262,10 +234,11 @@ export default class WidgetLayerSwitcher extends React.Component {
         <ListSubheader disableSticky>
           <Grid container>
             <Grid item sm={12} md={4}>
-              <Button variant="contained"
-                      color="primary"
-                      id="cy-reset-dataset-btn"
-                      onClick={this.resetDatasetLayer}>
+              <Button
+                variant="contained"
+                color="primary"
+                id="cy-reset-dataset-btn"
+                onClick={this.resetDatasetLayer}>
                 Reset
               </Button>
             </Grid>

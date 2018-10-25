@@ -131,6 +131,7 @@ class Pavics extends React.Component {
 
   triggerOnLogoutActions() {
     this.props.visualizeActions.resetVisualizeState();
+    this.props.layerRegionActions.reset();
     // TODO: Could reset all redux store modules, but following two functions are fine for now
     this.props.projectAPIActions.fetchByMagpieAccessProjects();
     this.props.projectActions.setCurrentProject({});

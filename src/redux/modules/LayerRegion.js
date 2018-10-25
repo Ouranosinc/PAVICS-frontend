@@ -3,6 +3,10 @@ import { NotificationManager } from 'react-notifications';
 
 // Constants
 export const constants = {
+  RESET_LAYER_REGION_STATE: 'LAYER_REGION.RESET_LAYER_REGION_STATE',
+  FILTER_FEATURE_LAYERS: 'LAYER_REGION.FILTER_FEATURE_LAYERS',
+  SET_TEXT_FILTER: 'LAYER_REGION.SET_TEXT_FILTER',
+  SET_FILTERED_FEATURE_LAYERS: 'LAYER_REGION.SET_FILTERED_FEATURE_LAYERS',
   SET_SELECTED_FEATURE_LAYER: 'LAYER_REGION.SET_SELECTED_FEATURE_LAYER',
   SELECT_FEATURE_LAYER_BY_WORKSPACE_LAYER: 'LAYER_REGION.SELECT_FEATURE_LAYER_BY_WORKSPACE_LAYER',
   RESET_SELECTED_REGIONS: 'LAYER_REGION.RESET_SELECTED_REGIONS',
@@ -87,9 +91,53 @@ function selectFeatureLayerByWorkspaceLayer (workspace, layer) {
     workspace, workspace
   };
 };
+function setFilteredLayers (data) {
+  return {
+    type: constants.SET_FILTERED_FEATURE_LAYERS,
+    data: data
+  };
+}
+function setTextFilter (textFilter) {
+  return {
+    type: constants.SET_TEXT_FILTER,
+    textFilter: textFilter
+  };
+}
+function reset () {
+  return {
+    type: constants.RESET_LAYER_REGION_STATE
+  };
+}
 
 // Action Creators
 export const actions = {
+  reset: reset,
+  filterFeatureLayers: function () {
+    return (dispatch, getState) => {
+      let layers = {};
+      const state = getState().layerRegion;
+      const data = state.featureLayers.data;
+      const searchString = state.textFilter;
+      if (searchString.length === 0) {
+        dispatch(setFilteredLayers(data));
+      }
+      Object.keys(data).map(workspaceName => {
+        const theseLayers = data[workspaceName].filter(layer => {
+          return layer.title.indexOf(searchString) !== -1;
+        });
+        if (theseLayers.length > 0) {
+          layers[workspaceName] = theseLayers;
+        }
+      });
+      dispatch(setFilteredLayers(layers));
+    };
+  },
+  setTextFilter: function (event) {
+    return (dispatch) => {
+      dispatch(setTextFilter(event.target.value));
+      dispatch(actions.filterFeatureLayers());
+    };
+  },
   selectRegion: function (featureId) {
     return {
       type: constants.ADD_FEATURE_TO_SELECTED_REGIONS,
@@ -160,6 +208,7 @@ export const actions = {
           if (newlyCreatedRegion.workspace.length && newlyCreatedRegion.layer.length) {
             dispatch(selectFeatureLayerByWorkspaceLayer(newlyCreatedRegion.workspace, newlyCreatedRegion.layer));
           }
+          dispatch(actions.filterFeatureLayers());
         })
         .catch(err => dispatch(receiveVisibleWorkspacesLayersFailure(err)));
     };
@@ -201,6 +250,15 @@ export const actions = {
 
 // Reducer
 const HANDLERS = {
+  [constants.RESET_LAYER_REGION_STATE]: (state, action) => {
+    return initialState;
+  },
+  [constants.SET_FILTERED_FEATURE_LAYERS]: (state, action) => {
+    return {...state, filteredFeatureLayers: action.data};
+  },
+  [constants.SET_TEXT_FILTER]: (state, action) => {
+    return {...state, textFilter: action.textFilter};
+  },
   [constants.SET_SELECTED_FEATURE_LAYER]: (state, action) => {
     return {...state, selectedFeatureLayer: action.featureLayer};
   },
@@ -247,7 +305,6 @@ const HANDLERS = {
 export const initialState = {
   selectedRegions: [],
   selectedFeatureLayer: {},
-  publicShapeFiles: [],
   featureLayers: {
     data: {},
     requestedAt: null,
@@ -265,6 +322,8 @@ export const initialState = {
     workspace: '',
     layer: ''
   },
+  filteredFeatureLayers: {},
+  textFilter: ''
 };
 
 export default function (state = initialState, action) {
