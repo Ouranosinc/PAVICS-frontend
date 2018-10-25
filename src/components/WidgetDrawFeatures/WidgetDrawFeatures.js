@@ -277,9 +277,12 @@ class WidgetDrawFeatures extends React.Component {
             }
             <Typography variant="caption" style={{marginTop: '10px'}}>
               <strong>Tips:</strong>
-              <div>Press alt and click to delete a point (when region is selected)</div>
-              <div>Hold shift to draw Bounding-Box, Hexagon and Square</div>
-              <div>Hold shift (optionally) for freehand (Polygon and Line)</div>
+              <div>Hold alt-shift keys to draw Bounding Box, Hexagon and Square</div>
+              <div>Hold alt key to draw Polygon and Line</div>
+              <div>Hold alt-shift keys to activate freehand drawing for Polygon and Line</div>
+              <div>Select a region by a single click (one at a time)</div>
+              <div>Drag region points extremities to edit a selected region</div>
+              <div>Hold alt and click a point to delete it (when region is selected)</div>
             </Typography>
           </div>
           }

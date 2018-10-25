@@ -7,7 +7,7 @@ import { Draw, Modify, Select, Snap } from 'ol/interaction';
 import Map from 'ol/Map';
 import { GeoJSON, WMSCapabilities } from 'ol/format';
 import { createRegularPolygon, createBox } from 'ol/interaction/Draw';
-import { platformModifierKeyOnly, altKeyOnly, shiftKeyOnly, singleClick, doubleClick } from 'ol/events/condition';
+import { platformModifierKeyOnly, altKeyOnly, altShiftKeysOnly, shiftKeyOnly, singleClick, doubleClick } from 'ol/events/condition';
 import { Vector as VectorSource } from 'ol/source';
 import { Vector as VectorLayer } from 'ol/layer';
 import { Circle, Fill, Text, Stroke, Style, RegularShape } from 'ol/style';
@@ -189,7 +189,7 @@ class OLDrawFeatures extends React.Component {
         /*case VISUALIZE_DRAW_MODES.CIRCLE.value:
           geometryFunction = null;
           drawType = VISUALIZE_DRAW_MODES.CIRCLE.value;
-          condition = shiftKeyOnly;
+         condition = shiftKeyOnly;
           break;*/
         case VISUALIZE_DRAW_MODES.HEXAGON.value:
           geometryFunction = createRegularPolygon(5);
@@ -199,6 +199,7 @@ class OLDrawFeatures extends React.Component {
         case VISUALIZE_DRAW_MODES.LINE_STRING.value:
           geometryFunction = null;
           drawType = VISUALIZE_DRAW_MODES.LINE_STRING.value;
+          condition = altKeyOnly;
           break;
         case VISUALIZE_DRAW_MODES.SQUARE.value:
           geometryFunction = createRegularPolygon(4);
@@ -214,7 +215,7 @@ class OLDrawFeatures extends React.Component {
         case VISUALIZE_DRAW_MODES.POLYGON.value:
           geometryFunction = null;
           drawType = VISUALIZE_DRAW_MODES.POLYGON.value;
-          // condition = platformModifierKeyOnly;
+          condition = altKeyOnly;
           break;
         default:
           // None(empty) already managed by if
@@ -239,6 +240,7 @@ class OLDrawFeatures extends React.Component {
            }),*/
         }),
         condition: condition,
+        freehandCondition: altShiftKeysOnly,
         geometryFunction: geometryFunction,
         type: drawType
       });
