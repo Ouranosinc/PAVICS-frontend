@@ -128,8 +128,8 @@ class WidgetDrawFeatures extends React.Component {
   };
 
   onUploadFromDisk = event => {
-    const workspace = "CUSTOM_SHAPEFILES";
-    const datastore = 'CUSTOM_SHAPEFILES_DS'; // '	USER_SHAPEFILES';
+    const workspace = __PAVICS_GEOSERVER_CUSTOM_WORKSPACE__;
+    const datastore = __PAVICS_GEOSERVER_CUSTOM_DATASTORE__;
     var blobData = new Blob([this.state.file], {type: 'application/zip'});
     this.props.layerCustomFeatureActions.uploadZipShapefiles(workspace, datastore, this.state.fileName, [blobData]);
     this.setState({

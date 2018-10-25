@@ -76,7 +76,7 @@ function createDownloadZipShapefile (filename) {
   };
 }
 
-function createUploadZipShapefile (fileName, workspace = 'CUSTOM_SHAPEFILES', datastore = 'CUSTOM_SHAPEFILES_DS') {
+function createUploadZipShapefile (fileName, workspace = __PAVICS_GEOSERVER_CUSTOM_WORKSPACE__, datastore = __PAVICS_GEOSERVER_CUSTOM_DATASTORE__) {
   return function (dispatch, getState) {
     const geoJSON = getState().layerCustomFeature.geoJSONDrawnFeatures;
     let blobDataArray = [];
