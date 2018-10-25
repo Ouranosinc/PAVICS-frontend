@@ -35,7 +35,10 @@ const styles = theme => ({
 });
 
 /*
-
+  TODO: User could pick workspace and datastore
+  TODO: User could chose to toggle a Multi-poly/line/point, such toggle would append information in the same geometry and shapefile client-side
+  At the moment, shp-write library automatically creates one MULTIPOLYGON if many polygons, so we have to splits polygons into multiple shapefiles.
+  Geoserver is in charge of appending such individual shapefiles into a single shapefile containing multiple polygons.
  */
 class WidgetDrawFeatures extends React.Component {
   static propTypes = {
@@ -128,7 +131,7 @@ class WidgetDrawFeatures extends React.Component {
     const workspace = "CUSTOM_SHAPEFILES";
     const datastore = 'CUSTOM_SHAPEFILES_DS'; // '	USER_SHAPEFILES';
     var blobData = new Blob([this.state.file], {type: 'application/zip'});
-    this.props.layerCustomFeatureActions.uploadZipShapefile(workspace, datastore, blobData);
+    this.props.layerCustomFeatureActions.uploadZipShapefiles(workspace, datastore, this.state.fileName, [blobData]);
     this.setState({
       file: null,
       fileName: '',
@@ -166,11 +169,11 @@ class WidgetDrawFeatures extends React.Component {
       }
     });
     if (types.length === 1) {
-      return <Typography variant="subheading">Layer type: {types[0]}</Typography>;
+      return <Typography variant="subheading">Regions type: <strong>{types[0]}</strong></Typography>;
     } else if (types.length > 1) {
-      return <Typography variant="subheading" color="error">Layer type: {types.join(', ')}</Typography>;
+      return <Typography variant="subheading" color="error">Regions type: <strong>{types.join(', ')}</strong></Typography>;
     } else {
-      return <Typography variant="subheading">Layer type: N/A</Typography>;
+      return <Typography variant="subheading">Regions type: <strong>N/A</strong></Typography>;
     }
   }
 
@@ -230,7 +233,7 @@ class WidgetDrawFeatures extends React.Component {
               value={featureIdentifier}
               onChange={this.onHandleTextChanged('featureIdentifier')}
               label="Feature's identifier"/>*/}
-            <Typography variant="subheading">Drawn regions total: {geoJSONDrawnFeatures.features.length}</Typography>
+            <Typography variant="subheading">Drawn regions total: <strong>{geoJSONDrawnFeatures.features.length}</strong></Typography>
             { this.displayType() }
             <Button variant="contained"
                     color="primary"
@@ -270,6 +273,12 @@ class WidgetDrawFeatures extends React.Component {
                   label="Region's description"/>
                 </React.Fragment> : null*/
             }
+            <Typography variant="caption" style={{marginTop: '10px'}}>
+              <strong>Tips:</strong>
+              <div>Press alt and click to delete a point (when region is selected)</div>
+              <div>Hold shift to draw Bounding-Box, Hexagon and Square</div>
+              <div>Hold shift (optionally) for freehand (Polygon and Line)</div>
+            </Typography>
           </div>
           }
           {this.state.tabValue === 1 &&

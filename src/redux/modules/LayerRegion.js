@@ -1,8 +1,10 @@
 import myHttp from '../../util/http';
+import { NotificationManager } from 'react-notifications';
 
 // Constants
 export const constants = {
   SET_SELECTED_FEATURE_LAYER: 'LAYER_REGION.SET_SELECTED_FEATURE_LAYER',
+  SELECT_FEATURE_LAYER_BY_WORKSPACE_LAYER: 'LAYER_REGION.SELECT_FEATURE_LAYER_BY_WORKSPACE_LAYER',
   RESET_SELECTED_REGIONS: 'LAYER_REGION.RESET_SELECTED_REGIONS',
   ADD_FEATURE_TO_SELECTED_REGIONS: 'LAYER_REGION.ADD_FEATURE_TO_SELECTED_REGIONS',
   REMOVE_FEATURE_FROM_SELECTED_REGIONS: 'LAYER_REGION.REMOVE_FEATURE_FROM_SELECTED_REGIONS',
@@ -12,6 +14,7 @@ export const constants = {
   FETCH_WORKSPACES_LAYERS_REQUEST: 'LAYER_REGION.FETCH_WORKSPACES_LAYERS_REQUEST',
   FETCH_WORKSPACES_LAYERS_FAILURE: 'LAYER_REGION.FETCH_WORKSPACES_LAYERS_FAILURE',
   FETCH_WORKSPACES_LAYERS_SUCCESS: 'LAYER_REGION.FETCH_WORKSPACES_LAYERS_SUCCESS',
+  SET_NEWLY_CREATED_REGION: 'LAYER_REGION.SET_NEWLY_CREATED_REGION',
 };
 
 // Actions
@@ -77,6 +80,13 @@ function receiveVisibleWorkspacesLayersFailure (error) {
     }
   };
 }
+function selectFeatureLayerByWorkspaceLayer (workspace, layer) {
+  return {
+    type: constants.SELECT_FEATURE_LAYER_BY_WORKSPACE_LAYER,
+    layer: layer,
+    workspace, workspace
+  };
+};
 
 // Action Creators
 export const actions = {
@@ -145,7 +155,11 @@ export const actions = {
               });
             });
           });
+          const { newlyCreatedRegion } = getState().layerRegion;
           dispatch(receiveVisibleWorkspacesLayersSuccess(layers));
+          if (newlyCreatedRegion.workspace.length && newlyCreatedRegion.layer.length) {
+            dispatch(selectFeatureLayerByWorkspaceLayer(newlyCreatedRegion.workspace, newlyCreatedRegion.layer));
+          }
         })
         .catch(err => dispatch(receiveVisibleWorkspacesLayersFailure(err)));
     };
@@ -175,12 +189,24 @@ export const actions = {
         });
     };
   },
+  setNewlyCreatedRegion: function (workspace, layer) {
+    NotificationManager.info('Newly uploaded region was automatically selected as current region.', 'Error', 10000);
+    return {
+      type: constants.SET_NEWLY_CREATED_REGION,
+      workspace: workspace,
+      layer: layer
+    };
+  },
 };
 
 // Reducer
 const HANDLERS = {
   [constants.SET_SELECTED_FEATURE_LAYER]: (state, action) => {
     return {...state, selectedFeatureLayer: action.featureLayer};
+  },
+  [constants.SELECT_FEATURE_LAYER_BY_WORKSPACE_LAYER]: (state, action) => {
+    const layer = Object.assign({}, state.featureLayers.data[action.workspace].find(layer => layer.title === action.layer));
+    return {...state, selectedFeatureLayer: layer, newlyCreatedRegion: { workspace: '', layer: '' },};
   },
   [constants.FETCH_WORKSPACES_REQUEST]: (state, action) => {
     return ({...state, visibleWorkspaces: Object.assign({}, state.visibleWorkspaces, action.visibleWorkspaces)});
@@ -212,6 +238,9 @@ const HANDLERS = {
   [constants.RESET_SELECTED_REGIONS]: (state) => {
     return {...state, selectedRegions: []};
   },
+  [constants.SET_NEWLY_CREATED_REGION]: (state, action) => {
+    return {...state, newlyCreatedRegion: { workspace: action.workspace, layer: action.layer }};
+  },
 };
 
 // Initial State
@@ -225,6 +254,16 @@ export const initialState = {
     receivedAt: null,
     isFetching: false,
     error: null
+  },
+  visibleWorkspaces: {
+    requestedAt: null,
+    isFetching: false,
+    data: {},
+    error: null
+  },
+  newlyCreatedRegion: {
+    workspace: '',
+    layer: ''
   },
 };
 

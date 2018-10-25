@@ -5,6 +5,7 @@ import geojson from 'shp-write/src/geojson';
 import JSZip from 'jszip';
 import {VISUALIZE_DRAW_MODES} from './../../constants';
 import { NotificationManager } from 'react-notifications';
+import { actions as layerRegionActions, constants as layerRegionConstants} from './LayerRegion';
 
 // http://epsg.io/3857.esriwkt
 const PROJ_3857 = `PROJCS["WGS_1984_Web_Mercator_Auxiliary_Sphere",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",
@@ -75,9 +76,10 @@ function createDownloadZipShapefile (filename) {
   };
 }
 
-function createUploadZipShapefile (filename, workspace = 'CUSTOM_SHAPEFILES', datastore = 'CUSTOM_SHAPEFILES_DS') {
+function createUploadZipShapefile (fileName, workspace = 'CUSTOM_SHAPEFILES', datastore = 'CUSTOM_SHAPEFILES_DS') {
   return function (dispatch, getState) {
     const geoJSON = getState().layerCustomFeature.geoJSONDrawnFeatures;
+    let blobDataArray = [];
 
     // HTTP PUT will append shapefile feature by default if filename already exists
     // Since shp-write won't allow to push multiple at once in the shapefile, we'll delegate this functionnaly to geoserver
@@ -86,40 +88,52 @@ function createUploadZipShapefile (filename, workspace = 'CUSTOM_SHAPEFILES', da
         type: "FeatureCollection",
         features: [feature]
       };
-      let zip = createZipFileFromGeoJSON(singleGeoJSONFeature, filename);
-      const content = zip.generate({type:"blob"});
-      dispatch(uploadZipShapefile(workspace, datastore, content));
+      let zip = createZipFileFromGeoJSON(singleGeoJSONFeature, fileName);
+      blobDataArray.push(zip.generate({type:"blob"}));
     });
+    dispatch(uploadZipShapefiles(workspace, datastore, fileName, blobDataArray));
   };
 }
 
 // HTTP PUT will append shapefile feature by default if filename exists
-function uploadZipShapefile (workspace, datastore, blobData){
+function uploadZipShapefiles (workspace, datastore, fileName, blobDataArray){
   return function (dispatch) {
-    dispatch(requestUploadShapefile());
+    let promises = [];
     const url = `${__PAVICS_GEOSERVER_API_PATH__}/workspaces/${workspace}/datastores/${datastore}/file.shp`;
-    let headers = new Headers();
-    headers.append('Content-Type', 'application/zip');
-    headers.append('Content-Length', blobData.size);
-    headers.append('Accept', 'application/zip');
-    fetch(url, {
-      method: 'PUT',
-      headers: headers,
-      body: blobData,
-      credentials: 'include'
-    }).then(function (response) {
-      if(response.ok) {
-        NotificationManager.success('Shapefile was uploaded on the server with success.', 'Success', 10000);
-        receiveUploadShapefileSuccess(response.statusText)
-        // TODO: Select new uploaded region automatically?
-      } else {
-        NotificationManager.error('An error occurred while uploading the shapefile on the server.', 'Error', 10000);
-        receiveUploadShapefileFailure(response)
-      }
-    })
+    blobDataArray.forEach(blobData => {
+      let headers = new Headers();
+      headers.append('Content-Type', 'application/zip');
+      headers.append('Content-Length', blobData.size);
+      headers.append('Accept', 'application/zip');
+      dispatch(requestUploadShapefile());
+      promises.push(fetch(url, {
+        method: 'PUT',
+        headers: headers,
+        body: blobData,
+        credentials: 'include'
+      }));
+    });
+    Promise.all(promises)
+      .then(responses => {
+        if (responses.every(response => response.ok)) {
+          NotificationManager.success('Shapefile was uploaded on the server with success.', 'Success', 10000);
+          dispatch(receiveUploadShapefileSuccess(responses));
+
+          // Automatic actions after successful upload
+          dispatch(layerRegionActions.setNewlyCreatedRegion(workspace, fileName));
+          dispatch(layerRegionActions.fetchFeatureLayers());
+          dispatch(layerRegionActions.resetSelectedRegions());
+          dispatch(actions.resetGeoJSONDrawnFeatures());
+        } else {
+          NotificationManager.error('An error occurred while uploading the shapefile on the server.', 'Error', 10000);
+          dispatch(receiveUploadShapefileFailure(responses));
+        }
+      })
+      // Avoid swallowing non-HTTP errors
       .catch(function (error) {
-        NotificationManager.error('An error occurred while uploading the shapefile on the server.', 'Error', 10000);
-        receiveUploadShapefileFailure(error)
+        throw new Error(error);
+        // NotificationManager.error('An error occurred while uploading the shapefile on the server.', 'Error', 10000);
+        // dispatch(receiveUploadShapefileFailure(error));
       });
   };
 }
@@ -194,7 +208,7 @@ export const actions = {
   },
   createUploadZipShapefile: createUploadZipShapefile,
   createDownloadZipShapefile: createDownloadZipShapefile,
-  uploadZipShapefile: uploadZipShapefile
+  uploadZipShapefiles: uploadZipShapefiles
 };
 
 // Reducer
