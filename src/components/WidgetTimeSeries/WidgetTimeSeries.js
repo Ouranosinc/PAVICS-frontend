@@ -35,14 +35,13 @@ class WidgetTimeSeries extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { currentDisplayedDataset, currentScalarValue, fetchPlotlyData, plotlyData } = this.props;
-    if (nextProps.currentScalarValue && nextProps.currentScalarValue.data && nextProps.currentScalarValue.data.variable &&
-      nextProps.currentScalarValue.data !== currentScalarValue.data) {
-      if (currentDisplayedDataset && currentDisplayedDataset['opendap_url'].length) {
-        // TODO: Use index corresponding to currentDateTime !!
-        let opendapUrl = currentDisplayedDataset['opendap_url'][0];
-        let variable = nextProps.currentScalarValue.data.variable;
-        fetchPlotlyData(
+    const { currentScalarValue, plotlyData } = nextProps;
+    if (currentScalarValue && currentScalarValue.data && currentScalarValue.data.variable &&
+      currentScalarValue.data !== this.props.currentScalarValue.data) {
+      if (this.props.currentDisplayedDataset && this.props.currentDisplayedDataset['opendap_url'].length) {
+        let opendapUrl = this.props.currentDisplayedDataset['opendap_url'][0];
+        let variable = currentScalarValue.data.variable;
+        this.props.fetchPlotlyData(
           opendapUrl,
           variable['name'],
           0,
@@ -54,10 +53,10 @@ class WidgetTimeSeries extends React.Component {
       }
     }
 
-    if (nextProps.plotlyData && nextProps.plotlyData.data && nextProps.plotlyData.data !== plotlyData.data) {
-      this.container.data = nextProps.plotlyData.data;
+    if (plotlyData && plotlyData.data && plotlyData.data !== this.props.plotlyData.data) {
+      this.container.data = plotlyData.data;
       // We merge this.props.plotlyData.layout with predefined LAYOUT
-      this.container.layout = JSON.parse(JSON.stringify(nextProps.plotlyData.layout));
+      this.container.layout = JSON.parse(JSON.stringify(plotlyData.layout));
       for (let propName in LAYOUT) {
         if (LAYOUT.hasOwnProperty(propName)) {
           this.container.layout[propName] = LAYOUT[propName];

@@ -96,14 +96,14 @@ export default class WpsProcessForm extends React.Component {
 
   these are the external changes that can affect the forms (to date)
    - dataset change
-   - shapefile selected
-   - region selected
+   - feature layer selected
+   - region (feature) selected
 
   if dataset change
    if exists ComplexData.resource update state with urls
    if exists string.resource update state with opendap_urls
    TODO if exists string.url update state with catalog_urls
-  if shapefile change
+  if feature layer change
    if exists string.typename update state with layer name
   if region selected
    if exists string.featureids update state with currently selected regions ids
@@ -135,7 +135,7 @@ export default class WpsProcessForm extends React.Component {
           changedState[inputName] = props.layerDataset.currentDisplayedDataset['opendap_url'];
         } else {
           // If dataset unselected => reset value, else value might be the workflow default value (so do nothing)
-          if (oldProps.visualize && oldProps.layerDataset.currentDisplayedDataset && oldProps.layerDataset.currentDisplayedDataset['opendap_url']) {
+          if (oldProps.layerDataset && oldProps.layerDataset.currentDisplayedDataset && oldProps.layerDataset.currentDisplayedDataset['opendap_url']) {
             changedState[inputName] = '';
           }
         }
@@ -143,14 +143,14 @@ export default class WpsProcessForm extends React.Component {
 
       // TODO Support for thredds catalog url autofill based on dataset selection: string.url update state with catalog_urls
       if (inputName.startsWith(constants.LABEL_SHAPEFILE.split('.')[0]) && inputName.endsWith(constants.LABEL_SHAPEFILE.split('.')[1])) {
-        if (props.layerRegion.selectedShapefile['wmsParams'] && props.layerRegion.selectedShapefile['wmsParams']['LAYERS']) {
-          changedState[inputName] = props.layerRegion.selectedShapefile['wmsParams']['LAYERS'];
+        if (props.layerRegion.selectedFeatureLayer['wmsParams'] && props.layerRegion.selectedFeatureLayer['wmsParams']['LAYERS']) {
+          changedState[inputName] = props.layerRegion.selectedFeatureLayer['wmsParams']['LAYERS'];
         } else {
-          // If shapefile unselected => reset value, else value might be the workflow default value (so do nothing)
-          if (oldProps.visualize && oldProps.layerRegion.selectedShapefile && oldProps.layerRegion.selectedShapefile['wmsParams'] &&
-            oldProps.layerRegion.selectedShapefile['wmsParams']['LAYERS']) {
+          // If feature layer unselected => reset value, else value might be the workflow default value (so do nothing)
+          if (oldProps.layerRegion && oldProps.layerRegion.selectedFeatureLayer && oldProps.layerRegion.selectedFeatureLayer['wmsParams'] &&
+            oldProps.layerRegion.selectedFeatureLayer['wmsParams']['LAYERS']) {
             changedState[inputName] = '';
-            // FIXME: empty selectedRegions array since value won't fit anymore
+            // TODO: empty selectedRegions array since value won't fit anymore
           }
         }
       }
@@ -160,7 +160,7 @@ export default class WpsProcessForm extends React.Component {
           changedState[inputName] = props.layerRegion.selectedRegions;
         } else {
           // If region unselected => reset value, else value might be the workflow default value (so do nothing)
-          if (oldProps.visualize && oldProps.layerRegion.selectedRegions && oldProps.layerRegion.selectedRegions.length) {
+          if (oldProps.layerRegion && oldProps.layerRegion.selectedRegions && oldProps.layerRegion.selectedRegions.length) {
             changedState[inputName] = []
           }
         }

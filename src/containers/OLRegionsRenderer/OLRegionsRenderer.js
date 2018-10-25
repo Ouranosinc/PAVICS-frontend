@@ -11,7 +11,7 @@ import ImageWMS from 'ol/source/ImageWMS';
 
 export class OLRegionsRenderer extends React.Component {
   static propTypes = {
-    layerIndex: PropTypes.number.isRequired,
+    layerZIndex: PropTypes.number.isRequired,
     layerName: PropTypes.string.isRequired,
     map: PropTypes.instanceOf(Map),
     layerRegion: PropTypes.object.isRequired,
@@ -28,8 +28,8 @@ export class OLRegionsRenderer extends React.Component {
     const { map } = nextProps;
     if (map !== this.props.map) {
       this.init(map);
-    } else if (nextProps.layerRegion.selectedShapefile !== this.props.layerRegion.selectedShapefile) {
-      this.resetRegions(nextProps)
+    } else if (nextProps.layerRegion.selectedFeatureLayer !== this.props.layerRegion.selectedFeatureLayer) {
+      this.resetRegions(nextProps);
     }
   }
 
@@ -39,19 +39,22 @@ export class OLRegionsRenderer extends React.Component {
 
   resetRegions (nextProps) {
     const { map } = nextProps;
-    const { selectedShapefile } = nextProps.layerRegion;
+    const { selectedFeatureLayer } = nextProps.layerRegion;
     const params = {
       url: selectedShapefile.wmsUrl,
       params: selectedShapefile.wmsParams,
       ratio: 1,
       serverType: 'geoserver'
+      /*url: selectedFeatureLayer.wmsUrl,
+      params: selectedFeatureLayer.wmsParams*/
     };
 
-    if(this.source) {
+    if (this.source) {
       // Should but does not work
       // this.source.updateParams(params);
       map.removeLayer(this.layer);
     }
+
     // Single Image Tile WMS Prototype
     // https://stackoverflow.com/questions/2883122/openlayers-layers-tiled-vs-single-tile
     // this.source = new TileWMS(params);
@@ -69,8 +72,8 @@ export class OLRegionsRenderer extends React.Component {
       source: this.source
     });
     layer.set('nameId', this.props.layerName);
-    map.getLayers().insertAt(this.props.layerIndex, layer);
-    return layer
+    map.getLayers().insertAt(this.props.layerZIndex, layer);
+    return layer;
   }
 
   render () {
@@ -92,4 +95,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(OLRegionsRenderer)
+)(OLRegionsRenderer);

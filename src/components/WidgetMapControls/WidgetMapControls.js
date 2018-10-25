@@ -10,10 +10,10 @@ import ExitFullScreenIcon from '@material-ui/icons/FullscreenExit';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Typography from '@material-ui/core/Typography';
 
-export default class MapControls extends React.Component {
+export default class WidgetMapControls extends React.Component {
   static propTypes = {
-    visualize: PropTypes.object.isRequired,
-    visualizeActions: PropTypes.object.isRequired
+    mapManipulationMode: PropTypes.string.isRequired,
+    selectMapManipulationMode: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -44,7 +44,7 @@ export default class MapControls extends React.Component {
   };
 
   onSelectedMapManipulationMode = (event, value) => {
-    this.props.visualizeActions.selectMapManipulationMode(value);
+    this.props.selectMapManipulationMode(value);
   };
 
   render () {
@@ -57,7 +57,7 @@ export default class MapControls extends React.Component {
           style={{marginTop: '10px'}}
           onChange={this.onSelectedMapManipulationMode}
           name="map-manipulation-mode"
-          value={this.props.visualize.mapManipulationMode}>
+          value={this.props.mapManipulationMode}>
           <FormControlLabel
             id="cy-grid-point-values-btn"
             label="Grid Point Values"

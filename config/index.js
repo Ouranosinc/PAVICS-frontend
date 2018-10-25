@@ -9,22 +9,16 @@ debug('Creating default configuration.');
 // ========================================================
 // Default Configuration
 // ========================================================
-let serverHost = process.env.PAVICS_FRONTEND_IP || localip;
-let serverProto = process.env.PAVICS_FRONTEND_PROTO || 'http';
-let birdhouseHost = process.env.BIRDHOUSE_HOST || 'outarde.crim.ca';
-let ncwmsHost = process.env.NCWMS_HOST || `https://${birdhouseHost}/twitcher/ows/proxy/ncWMS2/wms`;
-let catalogHost = process.env.CATALOG_HOST || `https://${birdhouseHost}/twitcher/ows/proxy/catalog/pywps`;
-let malleefowlHost = process.env.MALLEEFOWL_HOST || `https://${birdhouseHost}/twitcher/ows/proxy/malleefowl/wps`;
-let twitcherHost = process.env.TWITCHER_HOST || `https://${birdhouseHost}/twitcher`;
-let PAVICS_WORKFLOW_PROVIDER = process.env.PAVICS_WORKFLOW_PROVIDER || 'malleefowl';
-let PAVICS_RUN_WORKFLOW_IDENTIFIER = process.env.PAVICS_RUN_WORKFLOW_IDENTIFIER || 'custom_workflow';
-let PAVICS_RUN_WORKFLOW_INPUT_ID = process.env.PAVICS_RUN_WORKFLOW_INPUT_ID || 'workflow_string';
-let PAVICS_VISUALIZE_IDENTIFIER = process.env.PAVICS_VISUALIZE_IDENTIFIER || 'TODO';
-let PAVICS_PERSIST_IDENTIFIER = process.env.PAVICS_PERSIST_IDENTIFIER || 'TODO';
-let PAVICS_PUBLISH_IDENTIFIER = process.env.PAVICS_PUBLISH_IDENTIFIER || 'TODO';
-let PAVICS_DEFAULT_WORKSPACE_FOLDER = process.env.PAVICS_DEFAULT_WORKSPACE_FOLDER || 'workspaces';
-let serverPort = process.env.PORT || 3000;
-let serverExternalPort = process.env.PAVICS_FRONTEND_PORT || serverPort;
+const serverHost = process.env.PAVICS_FRONTEND_IP || localip;
+const serverProto = process.env.PAVICS_FRONTEND_PROTO || 'https';
+const birdhouseHost = process.env.BIRDHOUSE_HOST || 'pluvier.crim.ca';
+const ncwmsHost = process.env.NCWMS_HOST || `https://${birdhouseHost}/twitcher/ows/proxy/ncWMS2/wms`;
+const catalogHost = process.env.CATALOG_HOST || `https://${birdhouseHost}/twitcher/ows/proxy/catalog/pywps`;
+const malleefowlHost = process.env.MALLEEFOWL_HOST || `https://${birdhouseHost}/twitcher/ows/proxy/malleefowl/wps`;
+const twitcherHost = process.env.TWITCHER_HOST || `https://${birdhouseHost}/twitcher`;
+const serverPort = process.env.PORT || 3000;
+const serverExternalPort = process.env.PAVICS_FRONTEND_PORT || serverPort;
+const URL_BASE = `${serverProto}://${birdhouseHost}`;
 const config = {
   env: process.env.NODE_ENV || 'development',
   // ----------------------------------
@@ -38,22 +32,24 @@ const config = {
   // PAVICS Configs
   // ----------------------------------
   pavics_malleefowl_path: malleefowlHost,
-  pavics_phoenix_path: `https://${birdhouseHost}:8443`,
-  pavics_geoserver_path: `https://${birdhouseHost}/geoserver`,
+  pavics_phoenix_path: `${URL_BASE}:8443`,
+  pavics_geoserver_path: process.env.PAVICS_GEOSERVER_URL || `${URL_BASE}/geoserver`,
+  pavics_geoserver_api_path: process.env.PAVICS_GEOSERVER_API || `${URL_BASE}/twitcher/ows/proxy/geoserver-api`,
+  pavics_geoserver_workspaces_service_name: process.env.PAVICS_GEOSERVER_WORKSPACES_SERVICE_NAME || 'geoserver-api',
   pavics_ncwms_path: ncwmsHost,
-  pavics_catalog_path: catalogHost,
-  pavics_twitcher_path: twitcherHost,
-  pavics_project_api_path: process.env.PAVICS_PROJECT_API_URL || `https://${birdhouseHost}/project-api/api`,
+  pavics_catalog_path: catalogHost, pavics_twitcher_path: twitcherHost,
+  pavics_project_api_path: process.env.PAVICS_PROJECT_API_URL || `${URL_BASE}/project-api/api`,
   // pavics_project_api_internal_url is needed in dev mode since centos vm etc/hosts hasn't its value modified but windows host has (pluvier -­> dev IP)
-  pavics_project_api_internal_url: process.env.PAVICS_PROJECT_API_INTERNAL_URL || `https://${birdhouseHost}/project-api/api`, // DEV
-  pavics_magpie_host: `https://${birdhouseHost}/magpie`,
-  PAVICS_WORKFLOW_PROVIDER: PAVICS_WORKFLOW_PROVIDER,
-  PAVICS_RUN_WORKFLOW_IDENTIFIER: PAVICS_RUN_WORKFLOW_IDENTIFIER,
-  PAVICS_RUN_WORKFLOW_INPUT_ID: PAVICS_RUN_WORKFLOW_INPUT_ID,
-  PAVICS_VISUALIZE_IDENTIFIER: PAVICS_VISUALIZE_IDENTIFIER,
-  PAVICS_PERSIST_IDENTIFIER: PAVICS_PERSIST_IDENTIFIER,
-  PAVICS_PUBLISH_IDENTIFIER: PAVICS_PUBLISH_IDENTIFIER,
-  PAVICS_DEFAULT_WORKSPACE_FOLDER: PAVICS_DEFAULT_WORKSPACE_FOLDER,
+  pavics_project_api_internal_url: process.env.PAVICS_PROJECT_API_INTERNAL_URL || `${URL_BASE}/project-api/api`, // DEV
+  pavics_magpie_host: `${URL_BASE}/magpie`,
+  PAVICS_WORKFLOW_PROVIDER: process.env.PAVICS_WORKFLOW_PROVIDER || 'malleefowl',
+  PAVICS_RUN_WORKFLOW_IDENTIFIER: process.env.PAVICS_RUN_WORKFLOW_IDENTIFIER || 'custom_workflow',
+  PAVICS_VISUALIZE_IDENTIFIER: process.env.PAVICS_VISUALIZE_IDENTIFIER || 'TODO',
+  PAVICS_PERSIST_IDENTIFIER: process.env.PAVICS_PERSIST_IDENTIFIER || 'TODO',
+  PAVICS_PUBLISH_IDENTIFIER: process.env.PAVICS_PUBLISH_IDENTIFIER || 'TODO',
+  PAVICS_DEFAULT_WORKSPACE_FOLDER: process.env.PAVICS_DEFAULT_WORKSPACE_FOLDER || 'workspaces',
+  PAVICS_GEOSERVER_CUSTOM_WORKSPACE: process.env.PAVICS_GEOSERVER_CUSTOM_WORKSPACE || 'User_Custom_Regions',
+  PAVICS_GEOSERVER_CUSTOM_DATASTORE: process.env.PAVICS_GEOSERVER_CUSTOM_DATASTORE || 'User_Custom_Regions',
   // ----------------------------------
   // Project Structure
   // ----------------------------------
@@ -118,7 +114,10 @@ config.globals = {
   '__BASENAME__': JSON.stringify(process.env.BASENAME || ''),
   '__PAVICS_NCWMS_PATH__': JSON.stringify(config.pavics_ncwms_path),
   '__PAVICS_PHOENIX_PATH__': JSON.stringify(config.pavics_phoenix_path),
+  '__PAVICS_MAGPIE_PATH__': JSON.stringify(config.pavics_magpie_host),
   '__PAVICS_GEOSERVER_PATH__': JSON.stringify(config.pavics_geoserver_path),
+  '__PAVICS_GEOSERVER_API_PATH__': JSON.stringify(config.pavics_geoserver_api_path),
+  '__PAVICS_GEOSERVER_WORKSPACES_SERVICE_NAME__': JSON.stringify(config.pavics_geoserver_workspaces_service_name),
   '__PAVICS_PROJECT_API_PATH__': JSON.stringify(config.pavics_project_api_path),
   '__PAVICS_MAGPIE_API_PATH__': JSON.stringify(config.pavics_magpie_host),
   '__PAVICS_TWITCHER_API_PATH__': JSON.stringify(config.  pavics_twitcher_path),
@@ -128,7 +127,9 @@ config.globals = {
   '__PAVICS_VISUALIZE_IDENTIFIER__': JSON.stringify(config.PAVICS_VISUALIZE_IDENTIFIER),
   '__PAVICS_PERSIST_IDENTIFIER__': JSON.stringify(config.PAVICS_PERSIST_IDENTIFIER),
   '__PAVICS_PUBLISH_IDENTIFIER__': JSON.stringify(config.PAVICS_PUBLISH_IDENTIFIER),
-  '__PAVICS_DEFAULT_WORKSPACE_FOLDER__': JSON.stringify(config.PAVICS_DEFAULT_WORKSPACE_FOLDER)
+  '__PAVICS_DEFAULT_WORKSPACE_FOLDER__': JSON.stringify(config.PAVICS_DEFAULT_WORKSPACE_FOLDER),
+  '__PAVICS_GEOSERVER_CUSTOM_WORKSPACE__': JSON.stringify(config.PAVICS_GEOSERVER_CUSTOM_WORKSPACE),
+  '__PAVICS_GEOSERVER_CUSTOM_DATASTORE__': JSON.stringify(config.PAVICS_GEOSERVER_CUSTOM_DATASTORE),
 };
 // ------------------------------------
 // Validate Vendor Dependencies

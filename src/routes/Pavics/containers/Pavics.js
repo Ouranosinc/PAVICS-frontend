@@ -9,6 +9,7 @@ import { actions as researchActions } from '../../../redux/modules/Research';
 import { actions as sectionActions } from '../../../redux/modules/Section';
 import { actions as sessionActions } from '../../../redux/modules/Session';
 import { actions as visualizeActions } from '../../../redux/modules/Visualize';
+import { actions as layerRegionActions } from '../../../redux/modules/LayerRegion';
 import cookie from 'react-cookies';
 import * as constants from './../../../constants';
 import {
@@ -67,10 +68,11 @@ class Pavics extends React.Component {
     session: PropTypes.object.isRequired,
     sessionActions: PropTypes.object.isRequired,
     visualize: PropTypes.object.isRequired,
-    visualizeActions: PropTypes.object.isRequired
+    visualizeActions: PropTypes.object.isRequired,
+    layerRegionActions: PropTypes.object.isRequired
   };
 
-  constructor(props) {
+  constructor (props) {
     super(props);
     const authCookie = cookie.load(constants.AUTH_COOKIE);
     this.shouldSetDefaultProject = false; // Do not autoset until user is logged in
@@ -101,7 +103,7 @@ class Pavics extends React.Component {
         nextProps.session.sessionStatus.user.username && nextProps.session.sessionStatus.user.username.length) {
       // After user logged in fetch user projects and catalogs facets
       this.triggerOnLoginActions();
-    }else if( nextProps.session.sessionStatus &&
+    } else if( nextProps.session.sessionStatus &&
       this.props.session.sessionStatus !== nextProps.session.sessionStatus &&
       this.props.session.sessionStatus.user.authenticated === true &&
       nextProps.session.sessionStatus.user.authenticated === false) {
@@ -124,10 +126,12 @@ class Pavics extends React.Component {
     this.shouldSetDefaultProject = true; // Default project can now be automatically selected
     this.props.projectAPIActions.fetchByMagpieAccessProjects();
     this.props.researchActions.fetchPavicsDatasetsAndFacets('Aggregate', 0);
+    this.props.layerRegionActions.fetchFeatureLayers();
   }
 
   triggerOnLogoutActions() {
     this.props.visualizeActions.resetVisualizeState();
+    this.props.layerRegionActions.reset();
     // TODO: Could reset all redux store modules, but following two functions are fine for now
     this.props.projectAPIActions.fetchByMagpieAccessProjects();
     this.props.projectActions.setCurrentProject({});
@@ -153,7 +157,7 @@ class Pavics extends React.Component {
   triggerOnProjectCreatedActions(props) {
     if (props.projectAPI.items.length) {
       let project = props.projectAPI.items[props.projectAPI.items.length - 1];
-      // FIXME, project-api should return project containing permissions, always
+      // TODO, project-api should return project containing permissions, always
       project.permissions = ["read", "write"];
       this.props.projectActions.setCurrentProject(project);
       NotificationManager.info(`Project '${project.name}' has been selected as the current project.`, 'Information', 10000);
@@ -175,8 +179,10 @@ class Pavics extends React.Component {
         }
         errorObject['stack'] = stack;
       }
-      // Commented because of Cesium viewState() Error on 2018-08-24
-      // FIXME: NotificationManager.error(message, 'Error', 10000);
+      // This specific error is caused by OpenLayes and Cesium integration (ol-cesium) and should be ignored at this point
+      if(message !== "Uncaught TypeError: Cannot read property 'viewState' of undefined") {
+        NotificationManager.error(message, 'Error', 10000);
+      }
       return false;
     }
   }
@@ -229,7 +235,7 @@ class Pavics extends React.Component {
     return (
       <MuiThemeProvider theme={theme}>
         <React.Fragment>
-          <VisualizeContainer {...this.props} />
+          <VisualizeContainer />
           {/* TODO: SectionalPanel SHOULD BE A CONTAINER AS WELL WITH ITS OWN CONNECT... */}
           <SectionalPanel
             section={this.props.section}
@@ -264,6 +270,7 @@ const mapDispatchToProps = (dispatch) => {
     projectAPIActions: bindActionCreators({...projectAPIActions}, dispatch),
     projectActions: bindActionCreators({...projectActions}, dispatch),
     visualizeActions: bindActionCreators({...visualizeActions}, dispatch),
+    layerRegionActions: bindActionCreators({...layerRegionActions}, dispatch),
   };
 };
 

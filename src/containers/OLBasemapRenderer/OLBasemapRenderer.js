@@ -4,25 +4,19 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { actions as layerBasemapActions } from './../../redux/modules/LayerDataset';
 import Map from 'ol/Map';
-import View from 'ol/View';
-import MousePosition from 'ol/control/MousePosition';
-import { defaults as ControlDefaults, ScaleLine, ZoomSlider } from 'ol/control';
 import TileLayer from 'ol/layer/Tile';
 import BingMaps from 'ol/source/BingMaps';
 import OSM from 'ol/source/OSM';
-import { GeoJSON, WMSCapabilities } from 'ol/format';
-import { Fill, Text, Stroke, Style } from 'ol/style';
-import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
-import TileWMS from 'ol/source/TileWMS';
-import { add, createStringXY } from 'ol/coordinate';
-import { transform } from 'ol/proj';
 
-// FIXME: Cesium shouldn't be a basemap option eventually
+// TODO: Cesium shouldn't be a basemap option eventually, should be switch 2d/3d with both same basemaps as options
+// TODO: Couple more basemap options could be interesting and free to implement (OSM Positron, OSM Landscape, OSM B&W, OSM Mapnik)
+// TODO: 3D Cesium visualisation also mean that multiple projection options aren't urgent anymore (https://github.com/Ouranosinc/PAVICS-frontend/issues/110)
 import Cesium from 'cesium/Cesium';
 window['Cesium'] = Cesium; // expose Cesium to the OL-Cesium library
 require('cesium/Widgets/widgets.css');
 import OLCesium from 'ol-cesium';
+Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI4NzJmNzQ5YS1iY2JlLTQwOGYtODlhNS04Yzc2YzRmOWY5YWMiLCJpZCI6Mzc0MCwic2NvcGVzIjpbImFzbCIsImFzciIsImdjIl0sImlhdCI6MTUzODY2NDcwNH0.02vOjG7j1kh75VjgRWn6fUq4ulyPK2IZbFhdyx0SCcE';
+
 
 const G_BING_API_KEY = 'AtXX65CBBfZXBxm6oMyf_5idMAMI7W6a5GuZ5acVcrYi6lCQayiiBz7_aMHB7JR7';
 
@@ -30,8 +24,7 @@ export class OLBasemapRenderer extends React.Component {
   static propTypes = {
     layerBasemap: PropTypes.object.isRequired,
     layerBasemapActions: PropTypes.object.isRequired,
-    layerIndex: PropTypes.number.isRequired,
-    // layerName: PropTypes.string.isRequired, // layerName <= this.props.layerBasemap.selectedBasemap
+    layerZIndex: PropTypes.number.isRequired,
     map: PropTypes.instanceOf(Map)
   };
 
@@ -60,15 +53,17 @@ export class OLBasemapRenderer extends React.Component {
   }
 
   resetBasemap(map, layerBasemap) {
+    if (this.layer) {
+      map.removeLayer(this.layer);
+    }
     if (layerBasemap.selectedBasemap === 'Cesium') {
-      if(this.layer) map.removeLayer(this.layer);
+      // TODO: Cesium shouldn't be a basemap option eventually
       this.layer = this.addCesiumTileLayer(map, layerBasemap.selectedBasemap);
       let scene = this.ol3d.getCesiumScene();
       scene.terrainProvider = Cesium.createWorldTerrain();
       this.ol3d.setEnabled(true);
     } else {
       this.ol3d.setEnabled(false);
-      if(this.layer) map.removeLayer(this.layer);
       this.layer = this.addBingLayer(map, layerBasemap.selectedBasemap, layerBasemap.selectedBasemap);
     }
   }
@@ -77,7 +72,7 @@ export class OLBasemapRenderer extends React.Component {
     let layer = new TileLayer({
       source: this.source
     });
-    map.getLayers().insertAt(this.props.layerIndex, layer);
+    map.getLayers().insertAt(this.props.layerZIndex, layer);
     layer.set('nameId', title);
     return layer;
   }
@@ -96,7 +91,7 @@ export class OLBasemapRenderer extends React.Component {
         }
       )
     });
-    map.getLayers().insertAt(this.props.layerIndex, layer);
+    map.getLayers().insertAt(this.props.layerZIndex, layer);
     layer.set('nameId', title);
     return layer;
   }

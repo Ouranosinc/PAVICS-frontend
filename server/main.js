@@ -21,18 +21,6 @@ router.get('/wps/:identifier', consumer.resolve);
 router.get('/phoenix/:identifier', phoenix.consume);
 router.get('/api/facets', wps.getFacets);
 router.get('/api/climate_indicators', wps.getClimateIndicators);
-router.get('/session', proxy({
-  url: `${config.pavics_magpie_host}/session`,
-  jar: false
-}));
-router.get('/logout', proxy({
-  url: `${config.pavics_magpie_host}/signout`,
-  jar: false
-}));
-router.post('/login', proxy({
-  url: `${config.pavics_magpie_host}/signin`,
-  jar: false
-}));
 app.use(proxy({
   host: `${config.pavics_phoenix_path}`,
   jar: false,

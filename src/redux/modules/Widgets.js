@@ -11,7 +11,6 @@ export const constants = {
 
 // Actions
 
-
 // Action Creators
 export const actions = {
   toggleWidget: function (key) {
@@ -34,10 +33,10 @@ const HANDLERS = {
 // Initial State
 export const initialState = {
   chart: false,
-  customRegions: false,
+  customRegions: true,
   info: false,
   mapControls: true,
-  timeSlider: true,
+  timeSlider: false,
   layerSwitcher: true
 };
 

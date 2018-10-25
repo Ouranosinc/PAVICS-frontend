@@ -16,7 +16,7 @@ export class OLRegionsClickSelector extends React.Component {
     visualize: PropTypes.object.isRequired,
   };
 
-  constructor(props) {
+  constructor (props) {
     super(props);
   }
 
@@ -27,7 +27,8 @@ export class OLRegionsClickSelector extends React.Component {
     }
   }
 
-  init(map) {
+  init (map) {
+    // TODO: Use OL5 Interaction API instead of EventListener
     map.addEventListener('click', this.handleMapClick);
   }
 
@@ -37,24 +38,17 @@ export class OLRegionsClickSelector extends React.Component {
   }
 
   handleMapClick = (event) => {
-    // FIXME: INTERFACTION API?
+    const { selectedFeatureLayer } = this.props.layerRegion;
     if (this.props.visualize.mapManipulationMode === VISUALIZE_MODE_REGION_SELECTION) {
-      if (this.props.layerRegion.selectedShapefile.title) {
-        return this.handleSelectRegionClick(event);
+      if (selectedFeatureLayer.title && selectedFeatureLayer.title.length) {
+        this.handleSelectRegionClick(event);
+      } else {
+        console.log('Choose and load a shapefile before trying to click on the map to select a region.');
       }
-      return;
-    }else {
-      // FIXME: NOT MY RESPONSABILITY
-      /*if (this.props.layerDataset.currentDisplayedDataset['dataset_id']) {
-       console.log('selected dataset:', this.props.layerDataset.currentDisplayedDataset);
-       return this.getScalarValue(event);
-       }
-       console.log('choose a dataset first');
-       return;*/
     }
-  }
+  };
 
-  calculateClickPositionExtent(pixel) {
+  calculateClickPositionExtent (pixel) {
     let coordinates = this.props.map.getCoordinateFromPixel(pixel);
     let tl = add(coordinates, [-10e-6, -10e-6]);
     let br = add(coordinates, [10e-6, 10e-6]);
@@ -100,4 +94,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(OLRegionsClickSelector)
+)(OLRegionsClickSelector);

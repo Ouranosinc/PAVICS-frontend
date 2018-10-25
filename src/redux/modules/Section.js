@@ -1,6 +1,6 @@
 // Constants
 export const constants = {
-  PLATFORM_SET_SECTION: 'SECITON_MANAMGENT.PLATFORM_SET_SECTION'
+  PLATFORM_SET_SECTION: 'SECTION.PLATFORM_SET_SECTION'
 };
 
 // Action Creators

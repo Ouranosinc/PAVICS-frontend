@@ -25,7 +25,7 @@ export class OLDatasetRenderer extends React.Component {
   static propTypes = {
     layerDataset: PropTypes.object.isRequired,
     layerDatasetActions: PropTypes.object.isRequired,
-    layerIndex: PropTypes.number.isRequired,
+    layerZIndex: PropTypes.number.isRequired,
     layerName: PropTypes.string.isRequired,
     map: PropTypes.instanceOf(Map)
   };
@@ -70,7 +70,8 @@ export class OLDatasetRenderer extends React.Component {
        We want to update the selected dataset when
        - there is actually a change of the selected dataset (dataset_id/uniqueLayerSwitcherId
        - the time has changed so much that a new file is needed (currentFileIndex changed)
-       - FIXME: when the min/max has changed
+       - TODO: when the min/max has changed, this.source.updateParams() should be enough, no need to refetch GetCapabilities
+       - since dataset hasn't changed. Explore and mimic the setOpacity function (not sure it works tho)
        */
       if (newDataset.currentFileIndex !== oldDataset.currentFileIndex ||
         newDataset['dataset_id'] !== oldDataset['dataset_id'] ||
@@ -117,7 +118,7 @@ export class OLDatasetRenderer extends React.Component {
       // extent: extent
     });
     this.layer.set('nameId', this.props.layerName);
-    this.props.map.getLayers().insertAt(this.props.layerIndex, this.layer);
+    this.props.map.getLayers().insertAt(this.props.layerZIndex, this.layer);
   }
 
   /*

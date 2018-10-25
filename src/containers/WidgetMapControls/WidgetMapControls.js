@@ -1,21 +1,19 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { actions as layerBasemapActions } from '../../redux/modules/LayerBasemap';
-import { actions as widgetsActions } from '../../redux/modules/Widgets';
-import Visualize from './../../components/Visualize';
+import { actions as visualizeActions } from '../../redux/modules/Visualize';
+import WidgetMapControls from './../../components/WidgetMapControls';
 
 const mapStateToProps = (state) => {
   return {
-    widgets: state.widgets
+    mapManipulationMode: state.visualize.mapManipulationMode
   }
 };
 const mapDispatchToProps = (dispatch) => {
   return {
     ...bindActionCreators(
       {
-        toggleWidget: widgetsActions.toggleWidget,
-        selectBasemap: layerBasemapActions.selectBasemap
+        selectMapManipulationMode: visualizeActions.selectMapManipulationMode
       },
       dispatch,
     )
@@ -25,4 +23,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Visualize)
+)(WidgetMapControls)

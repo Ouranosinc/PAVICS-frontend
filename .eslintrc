@@ -15,10 +15,16 @@
     "__BASENAME__" : false,
     "__PAVICS_NCWMS_PATH__" : false,
     "__PAVICS_PHOENIX_PATH__" : false,
+    "__PAVICS_MAGPIE_PATH__" : false,
     "__PAVICS_GEOSERVER_PATH__" : false,
+    "__PAVICS_GEOSERVER_API_PATH__" : false,
+    "__PAVICS_GEOSERVER_WORKSPACES_SERVICE_NAME__" : false,
     "__PAVICS_PROJECT_API_PATH__" : false,
     "__PAVICS_MAGPIE_API_PATH__" : false,
     "__PAVICS_TWITCHER_API_PATH__" : false
+    "__PAVICS_GEOSERVER_CUSTOM_WORKSPACE__": false,
+    "__PAVICS_GEOSERVER_CUSTOM_DATASTORE__": false,
+    "__MAGPIE_HOST__" : false
   },
   "rules": {
     "semi" : [2, "always"],
