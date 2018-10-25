@@ -80,9 +80,6 @@ class WidgetDrawFeatures extends React.Component {
     this.props.layerCustomFeatureActions.resetGeoJSONDrawnFeatures();
   };
 
-  /*
-    FIXME: Only one geometry by shapefile at the moment
-  */
   onDownloadDrawnLayer = () => {
     this.props.layerCustomFeatureActions.createDownloadZipShapefile(this.state.regionIdentifier);
   };

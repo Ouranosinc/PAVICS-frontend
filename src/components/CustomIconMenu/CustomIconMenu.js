@@ -17,7 +17,7 @@ const styles = theme => ({
  Should be used in most one-level lists containing IconButton actions menu
  Do not use in nested list since calling current methods(mostly onMenuClosed()) from parent with onRef strategy will be a nightmare to manage
  See ProjectSearchCriterias component for a taste
- FIXME: Ideally onMenuClosed() should be called after any children MenuItem.onClick event
+ TODO: Ideally onMenuClosed() should be called after any children MenuItem.onClick event
  */
 export class CustomIconMenu extends React.Component {
   static propTypes = {

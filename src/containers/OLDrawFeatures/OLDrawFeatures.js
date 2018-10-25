@@ -127,7 +127,6 @@ class OLDrawFeatures extends React.Component {
     });
 
     // Activate hand cursor when underlying event
-    // FIXME: Interfer with public regions layer selections
     map.on('pointermove', function(e) {
       if (e.dragging) return;
       let hit = map.hasFeatureAtPixel(map.getEventPixel(e.originalEvent));
@@ -136,7 +135,6 @@ class OLDrawFeatures extends React.Component {
 
     map.addInteraction(this.select);
     this.select.on('select', (e) => {
-      //FIXME: Not the right place to valid current layer is the good one, but it would be possible here
       if (e.selected.length) {
         // If properties.drawn exist it's because feature is part of out layer
         const properties = e.selected[0].getProperties();
@@ -206,7 +204,7 @@ class OLDrawFeatures extends React.Component {
           drawType = 'Circle';
           condition = shiftKeyOnly;
           break;
-        // FIXME: Not working as expected, but should be fixed eventually
+        // TODO: Not working as expected, but should be fixed eventually
         /*case VISUALIZE_DRAW_MODES.POINT.value:
          geometryFunction = null;
          drawType = VISUALIZE_DRAW_MODES.POINT.value;
