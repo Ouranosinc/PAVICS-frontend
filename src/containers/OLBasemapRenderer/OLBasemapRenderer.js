@@ -11,13 +11,12 @@ import OSM from 'ol/source/OSM';
 // TODO: Cesium shouldn't be a basemap option eventually, should be switch 2d/3d with both same basemaps as options
 // TODO: Couple more basemap options could be interesting and free to implement (OSM Positron, OSM Landscape, OSM B&W, OSM Mapnik)
 // TODO: 3D Cesium visualisation also mean that multiple projection options aren't urgent anymore (https://github.com/Ouranosinc/PAVICS-frontend/issues/110)
-// COMMENTED CESIUM
-/*import Cesium from 'cesium/Cesium';
+import Cesium from 'cesium/Cesium';
 window['Cesium'] = Cesium; // expose Cesium to the OL-Cesium library
 require('cesium/Widgets/widgets.css');
 import OLCesium from 'ol-cesium';
 Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI4NzJmNzQ5YS1iY2JlLTQwOGYtODlhNS04Yzc2YzRmOWY5YWMiLCJpZCI6Mzc0MCwic2NvcGVzIjpbImFzbCIsImFzciIsImdjIl0sImlhdCI6MTUzODY2NDcwNH0.02vOjG7j1kh75VjgRWn6fUq4ulyPK2IZbFhdyx0SCcE';
-*/
+
 
 const G_BING_API_KEY = 'AtXX65CBBfZXBxm6oMyf_5idMAMI7W6a5GuZ5acVcrYi6lCQayiiBz7_aMHB7JR7';
 
@@ -33,8 +32,7 @@ export class OLBasemapRenderer extends React.Component {
     super(props);
     this.source = null;
     this.layer = null;
-    // COMMENTED CESIUM
-    /*this.ol3d = null;*/
+    this.ol3d = null;
   }
 
   componentWillReceiveProps (nextProps) {
@@ -50,9 +48,8 @@ export class OLBasemapRenderer extends React.Component {
 
   init(map) {
     this.source = new OSM();
-    // COMMENTED CESIUM
-    /*this.ol3d = new OLCesium({map: map});
-    this.ol3d.setEnabled(false);*/
+    this.ol3d = new OLCesium({map: map});
+    this.ol3d.setEnabled(false);
   }
 
   resetBasemap(map, layerBasemap) {
@@ -61,14 +58,12 @@ export class OLBasemapRenderer extends React.Component {
     }
     if (layerBasemap.selectedBasemap === 'Cesium') {
       // TODO: Cesium shouldn't be a basemap option eventually
-      // COMMENTED CESIUM
-      /*this.layer = this.addCesiumTileLayer(map, layerBasemap.selectedBasemap);
+      this.layer = this.addCesiumTileLayer(map, layerBasemap.selectedBasemap);
       let scene = this.ol3d.getCesiumScene();
       scene.terrainProvider = Cesium.createWorldTerrain();
-      this.ol3d.setEnabled(true);*/
+      this.ol3d.setEnabled(true);
     } else {
-      // COMMENTED CESIUM
-      // this.ol3d.setEnabled(false);
+      this.ol3d.setEnabled(false);
       this.layer = this.addBingLayer(map, layerBasemap.selectedBasemap, layerBasemap.selectedBasemap);
     }
   }
