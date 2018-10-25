@@ -246,12 +246,14 @@ class WidgetDrawFeatures extends React.Component {
                     onClick={this.onUploadDrawnLayer}>
               Upload
             </Button>
+            {/*
+            Download button disabled for now, should be eventually positioned in the the layer-switcher for each geoserver's available layer
             <Button style={{marginLeft: '15px'}}
                     variant="contained"
                     color="secondary"
                     onClick={this.onDownloadDrawnLayer}>
               Download
-            </Button>
+            </Button>*/}
             {
               // Following code helps defining a name and a description to every drawn feature
               // It's deprecated since the library only insert a single MultiPolygon containing all polygons, so end-up with one feature only
