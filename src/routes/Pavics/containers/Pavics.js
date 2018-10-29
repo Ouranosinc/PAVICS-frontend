@@ -157,7 +157,7 @@ class Pavics extends React.Component {
   triggerOnProjectCreatedActions(props) {
     if (props.projectAPI.items.length) {
       let project = props.projectAPI.items[props.projectAPI.items.length - 1];
-      // FIXME, project-api should return project containing permissions, always
+      // TODO, project-api should return project containing permissions, always
       project.permissions = ["read", "write"];
       this.props.projectActions.setCurrentProject(project);
       NotificationManager.info(`Project '${project.name}' has been selected as the current project.`, 'Information', 10000);

@@ -1,21 +1,24 @@
 import myHttp from '../../util/http';
+import { NotificationManager } from 'react-notifications';
 
 // Constants
 export const constants = {
-  RESET_LAYER_REGION_STATE: 'Visualize.RESET_LAYER_REGION_STATE',
-  SET_SELECTED_FEATURE_LAYER: 'Visualize.SET_SELECTED_FEATURE_LAYER',
-  FILTER_FEATURE_LAYERS: 'Visualize.FILTER_FEATURE_LAYERS',
-  SET_TEXT_FILTER: 'Visualize.SET_TEXT_FILTER',
-  SET_FILTERED_FEATURE_LAYERS: 'Visualize.SET_FILTERED_FEATURE_LAYERS',
-  RESET_SELECTED_REGIONS: 'REGION_RESET_SELECTED_REGIONS',
-  ADD_FEATURE_TO_SELECTED_REGIONS: 'REGION_ADD_FEATURE_TO_SELECTED_REGIONS',
-  REMOVE_FEATURE_FROM_SELECTED_REGIONS: 'REGION_REMOVE_FEATURE_FROM_SELECTED_REGIONS',
-  FETCH_WORKSPACES_REQUEST: 'Visualize.FETCH_WORKSPACES_REQUEST',
-  FETCH_WORKSPACES_FAILURE: 'Visualize.FETCH_WORKSPACES_FAILURE',
-  FETCH_WORKSPACES_SUCCESS: 'Visualize.FETCH_WORKSPACES_SUCCESS',
-  FETCH_WORKSPACES_LAYERS_REQUEST: 'Visualize.FETCH_WORKSPACES_LAYERS_REQUEST',
-  FETCH_WORKSPACES_LAYERS_FAILURE: 'Visualize.FETCH_WORKSPACES_LAYERS_FAILURE',
-  FETCH_WORKSPACES_LAYERS_SUCCESS: 'Visualize.FETCH_WORKSPACES_LAYERS_SUCCESS',
+  RESET_LAYER_REGION_STATE: 'LAYER_REGION.RESET_LAYER_REGION_STATE',
+  FILTER_FEATURE_LAYERS: 'LAYER_REGION.FILTER_FEATURE_LAYERS',
+  SET_TEXT_FILTER: 'LAYER_REGION.SET_TEXT_FILTER',
+  SET_FILTERED_FEATURE_LAYERS: 'LAYER_REGION.SET_FILTERED_FEATURE_LAYERS',
+  SET_SELECTED_FEATURE_LAYER: 'LAYER_REGION.SET_SELECTED_FEATURE_LAYER',
+  SELECT_FEATURE_LAYER_BY_WORKSPACE_LAYER: 'LAYER_REGION.SELECT_FEATURE_LAYER_BY_WORKSPACE_LAYER',
+  RESET_SELECTED_REGIONS: 'LAYER_REGION.RESET_SELECTED_REGIONS',
+  ADD_FEATURE_TO_SELECTED_REGIONS: 'LAYER_REGION.ADD_FEATURE_TO_SELECTED_REGIONS',
+  REMOVE_FEATURE_FROM_SELECTED_REGIONS: 'LAYER_REGION.REMOVE_FEATURE_FROM_SELECTED_REGIONS',
+  FETCH_WORKSPACES_REQUEST: 'LAYER_REGION.FETCH_WORKSPACES_REQUEST',
+  FETCH_WORKSPACES_FAILURE: 'LAYER_REGION.FETCH_WORKSPACES_FAILURE',
+  FETCH_WORKSPACES_SUCCESS: 'LAYER_REGION.FETCH_WORKSPACES_SUCCESS',
+  FETCH_WORKSPACES_LAYERS_REQUEST: 'LAYER_REGION.FETCH_WORKSPACES_LAYERS_REQUEST',
+  FETCH_WORKSPACES_LAYERS_FAILURE: 'LAYER_REGION.FETCH_WORKSPACES_LAYERS_FAILURE',
+  FETCH_WORKSPACES_LAYERS_SUCCESS: 'LAYER_REGION.FETCH_WORKSPACES_LAYERS_SUCCESS',
+  SET_NEWLY_CREATED_REGION: 'LAYER_REGION.SET_NEWLY_CREATED_REGION',
 };
 
 // Actions
@@ -81,6 +84,13 @@ function receiveVisibleWorkspacesLayersFailure (error) {
     }
   };
 }
+function selectFeatureLayerByWorkspaceLayer (workspace, layer) {
+  return {
+    type: constants.SELECT_FEATURE_LAYER_BY_WORKSPACE_LAYER,
+    layer: layer,
+    workspace, workspace
+  };
+};
 function setFilteredLayers (data) {
   return {
     type: constants.SET_FILTERED_FEATURE_LAYERS,
@@ -153,7 +163,7 @@ export const actions = {
   },
   aggregateFetchWorkspacesLayersRequests: function (workspaces) {
     const promises = [];
-    workspaces.map(workspace => {
+    workspaces.forEach(workspace => {
       const url = `${__PAVICS_GEOSERVER_API_PATH__}/workspaces/${workspace.resource_name}/layers.json`;
       promises.push(myHttp.get(url));
     });
@@ -167,19 +177,19 @@ export const actions = {
       actions.aggregateFetchWorkspacesLayersRequests(workspaces)
         .then(allResponses => {
           const allTransformToJson = [];
-          allResponses.map(res => {
+          allResponses.forEach(res => {
             allTransformToJson.push(res.json());
           });
           return Promise.all(allTransformToJson);
         })
         .then(allJson => {
           let layers = {};
-          allJson.map((oneRequestLayers, i) => {
+          allJson.forEach((oneRequestLayers, i) => {
             if (!oneRequestLayers.layers || !oneRequestLayers.layers.layer) {
               return;
             }
             const workspaceName = workspaces[i].resource_name;
-            oneRequestLayers.layers.layer.map(layer => {
+            oneRequestLayers.layers.layer.forEach(layer => {
               const layerName = layer.name;
               layers[workspaceName] = layers[workspaceName] || [];
               layers[workspaceName].push({
@@ -193,7 +203,11 @@ export const actions = {
               });
             });
           });
+          const { newlyCreatedRegion } = getState().layerRegion;
           dispatch(receiveVisibleWorkspacesLayersSuccess(layers));
+          if (newlyCreatedRegion.workspace.length && newlyCreatedRegion.layer.length) {
+            dispatch(selectFeatureLayerByWorkspaceLayer(newlyCreatedRegion.workspace, newlyCreatedRegion.layer));
+          }
           dispatch(actions.filterFeatureLayers());
         })
         .catch(err => dispatch(receiveVisibleWorkspacesLayersFailure(err)));
@@ -206,11 +220,11 @@ export const actions = {
         .get(`${__PAVICS_MAGPIE_PATH__}/users/current/services/${__PAVICS_GEOSERVER_WORKSPACES_SERVICE_NAME__}/inherited_resources`)
         .then(response => response.json())
         .then(json => {
-          Object.keys(json.service.resources).map(serviceId => {
+          Object.keys(json.service.resources).forEach(serviceId => {
             const resource = json.service.resources[serviceId];
             if (resource.resource_name === 'workspaces') {
               const workspaces = [];
-              Object.keys(resource.children).map(resourceId => {
+              Object.keys(resource.children).forEach(resourceId => {
                 const workspace = resource.children[resourceId];
                 workspaces.push(workspace);
               });
@@ -222,6 +236,14 @@ export const actions = {
         .catch(err => {
           dispatch(receiveVisibleWorkspacesFailure(err));
         });
+    };
+  },
+  setNewlyCreatedRegion: function (workspace, layer) {
+    NotificationManager.info('Newly uploaded region was automatically selected as current region.', 'Error', 10000);
+    return {
+      type: constants.SET_NEWLY_CREATED_REGION,
+      workspace: workspace,
+      layer: layer
     };
   },
 };
@@ -239,6 +261,10 @@ const HANDLERS = {
   },
   [constants.SET_SELECTED_FEATURE_LAYER]: (state, action) => {
     return {...state, selectedFeatureLayer: action.featureLayer};
+  },
+  [constants.SELECT_FEATURE_LAYER_BY_WORKSPACE_LAYER]: (state, action) => {
+    const layer = Object.assign({}, state.featureLayers.data[action.workspace].find(layer => layer.title === action.layer));
+    return {...state, selectedFeatureLayer: layer, newlyCreatedRegion: { workspace: '', layer: '' },};
   },
   [constants.FETCH_WORKSPACES_REQUEST]: (state, action) => {
     return ({...state, visibleWorkspaces: Object.assign({}, state.visibleWorkspaces, action.visibleWorkspaces)});
@@ -270,6 +296,9 @@ const HANDLERS = {
   [constants.RESET_SELECTED_REGIONS]: (state) => {
     return {...state, selectedRegions: []};
   },
+  [constants.SET_NEWLY_CREATED_REGION]: (state, action) => {
+    return {...state, newlyCreatedRegion: { workspace: action.workspace, layer: action.layer }};
+  },
 };
 
 // Initial State
@@ -282,6 +311,16 @@ export const initialState = {
     receivedAt: null,
     isFetching: false,
     error: null
+  },
+  visibleWorkspaces: {
+    requestedAt: null,
+    isFetching: false,
+    data: {},
+    error: null
+  },
+  newlyCreatedRegion: {
+    workspace: '',
+    layer: ''
   },
   filteredFeatureLayers: {},
   textFilter: ''

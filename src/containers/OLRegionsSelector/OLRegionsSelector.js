@@ -142,7 +142,7 @@ export class OLRegionsSelector extends React.Component {
   queryGeoserverFeatures = (extent, projection = 'EPSG:3857')  => {
     if (this.props.layerRegion.selectedFeatureLayer && this.props.layerRegion.selectedFeatureLayer.wmsParams) {
       const url = `${__PAVICS_GEOSERVER_PATH__}/wfs?service=WFS&version=1.1.0&request=GetFeature&typename=${this.props.layerRegion.selectedFeatureLayer.wmsParams.LAYERS}&outputFormat=application/json&srsname=${projection}&bbox=${extent},${projection}`;
-      // FIXME: Move call to redux region Duck
+      // TODO: Move this call to redux region Duck
       myHttp.get(url)
         .then(
           response => response.json(),

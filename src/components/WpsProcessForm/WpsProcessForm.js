@@ -143,7 +143,7 @@ export default class WpsProcessForm extends React.Component {
           if (oldProps.layerRegion && oldProps.layerRegion.selectedFeatureLayer && oldProps.layerRegion.selectedFeatureLayer['wmsParams'] &&
             oldProps.layerRegion.selectedFeatureLayer['wmsParams']['LAYERS']) {
             changedState[inputName] = '';
-            // FIXME: empty selectedRegions array since value won't fit anymore
+            // TODO: empty selectedRegions array since value won't fit anymore
           }
         }
       }

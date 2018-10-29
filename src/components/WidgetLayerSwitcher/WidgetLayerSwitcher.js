@@ -32,8 +32,19 @@ const AVAILABLE_COLOR_PALETTES = [
   'default'
 ];
 const styles = {
-  list: {
-    height: '300px',
+  container: {
+    // height: '350px'
+  },
+  regionList: {
+    height: '292px',
+    overflowY: 'auto'
+  },
+  datasetList: {
+    height: '256px',
+    overflowY: 'auto'
+  },
+  baseMapList: {
+    height: '350px',
     overflowY: 'auto'
   },
   topBar: {
@@ -44,6 +55,7 @@ const styles = {
     justifyContent: 'space-between'
   },
   subHeader: {
+    cursor: 'pointer',
     backgroundColor: 'white',
     display: 'flex',
     flexDirection: 'row',
@@ -127,7 +139,7 @@ export default class WidgetLayerSwitcher extends React.Component {
 
   makeFeatureLayersList () {
     return (
-      <React.Fragment>
+      <div style={styles.container}>
         <div style={styles.topBar}>
           <Button
             variant="contained"
@@ -141,12 +153,12 @@ export default class WidgetLayerSwitcher extends React.Component {
             onChange={this.props.layerRegionActions.setTextFilter}
             value={this.props.layerRegion.textFilter} />
         </div>
-        <List style={styles.list}>
+        <List style={styles.regionList}>
           {
             Object.keys(this.props.layerRegion.filteredFeatureLayers).map((workspaceName, j) => {
               const workspaceLayers = this.props.layerRegion.filteredFeatureLayers[workspaceName];
               return (
-                <React.Fragment key={j}>
+                <div key={j}>
                   <ListSubheader
                     className="cy-layerswitcher-workspace"
                     id={`cy-layerswitcher-workspace-${workspaceName}`}
@@ -172,51 +184,53 @@ export default class WidgetLayerSwitcher extends React.Component {
                     )
                   }
                   </Collapse>
-                </React.Fragment>
+                </div>
               );
             })
           }
         </List>
-      </React.Fragment>
+      </div>
     );
   }
 
   makeBaseMapsList () {
     return (
-      <List
-        component="nav"
-        style={styles.list}>
-        <ListSubheader disableSticky>2D EPSG:4326</ListSubheader>
-        {
-          this.props.layerBasemap.baseMaps.map((map, i) =>
-            <ListItem
-              className="cy-layerswitcher-basemap-item"
-              key={i}>
-              <RadioGroup
-                name="selectedBaseMap"
-                value={this.props.layerBasemap.selectedBasemap}
-                onChange={this.setSelectedBaseMap}>
-                <FormControlLabel value={map} control={<Radio color="secondary" />} label={map} />
-              </RadioGroup>
-            </ListItem>
-          )
-        }
-        <ListSubheader disableSticky>3D</ListSubheader>
-        <ListItem className="cy-layerswitcher-basemap-item">
-          <RadioGroup
-            name="selectedBaseMap"
-            value={this.props.layerBasemap.selectedBasemap}
-            onChange={this.setSelectedBaseMap}>
-            <FormControlLabel value="Cesium" control={<Radio color="secondary" />} label="Cesium (prototype)" />
-          </RadioGroup>
-        </ListItem>
-      </List>
+      <div style={styles.container}>
+        <List
+          component="nav"
+          style={styles.baseMapList}>
+          <ListSubheader disableSticky>2D EPSG:4326</ListSubheader>
+          {
+            this.props.layerBasemap.baseMaps.map((map, i) =>
+              <ListItem
+                className="cy-layerswitcher-basemap-item"
+                key={i}>
+                <RadioGroup
+                  name="selectedBaseMap"
+                  value={this.props.layerBasemap.selectedBasemap}
+                  onChange={this.setSelectedBaseMap}>
+                  <FormControlLabel value={map} control={<Radio color="secondary" />} label={map} />
+                </RadioGroup>
+              </ListItem>
+            )
+          }
+          <ListSubheader disableSticky>3D</ListSubheader>
+          <ListItem className="cy-layerswitcher-basemap-item">
+            <RadioGroup
+              name="selectedBaseMap"
+              value={this.props.layerBasemap.selectedBasemap}
+              onChange={this.setSelectedBaseMap}>
+              <FormControlLabel value="Cesium" control={<Radio color="secondary" />} label="Cesium (prototype)" />
+            </RadioGroup>
+          </ListItem>
+        </List>
+      </div>
     );
   }
 
   makeDatasetsList () {
     return (
-      <React.Fragment>
+      <div style={styles.container}>
         <ListSubheader disableSticky>
           <Grid container>
             <Grid item sm={12} md={4}>
@@ -234,7 +248,7 @@ export default class WidgetLayerSwitcher extends React.Component {
           </Grid>
           {this.makeSlider()}
         </ListSubheader>
-        <List style={styles.list}>
+        <List style={styles.datasetList}>
           {
             this.props.layerDataset.currentVisualizedDatasets.map((dataset, i) => {
               let secondaryText = '';
@@ -268,7 +282,7 @@ export default class WidgetLayerSwitcher extends React.Component {
             })
           }
         </List>
-      </React.Fragment>
+      </div>
     );
   }
 
@@ -325,7 +339,7 @@ export default class WidgetLayerSwitcher extends React.Component {
 
   render () {
     return (
-      <React.Fragment>
+      <div>
         <AppBar position="static" color="default">
           <Tabs
             centered
@@ -366,7 +380,7 @@ export default class WidgetLayerSwitcher extends React.Component {
           {this.makeBaseMapsList()}
         </Paper>
         }
-      </React.Fragment>
+      </div>
     );
   }
 }

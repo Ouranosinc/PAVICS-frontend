@@ -3,22 +3,22 @@ import myHttp from '../../util/http';
 import {InputDefinition} from '../../components/WpsProcessFormInput/InputDefinition';
 // Constants
 export const constants = {
-  WORKFLOW_CHANGE_STEP: 'WORKFLOW_CHANGE_STEP',
-  WORKFLOW_SET_PROCESSES: 'WORKFLOW_SET_PROCESSES',
-  WORKFLOW_SET_PROVIDERS: 'WORKFLOW_SET_PROVIDERS',
-  WORKFLOW_CHOOSE_PROCESS: 'WORKFLOW_CHOOSE_PROCESS',
-  WORKFLOW_GET_FIRST_STEP: 'WORKFLOW_GET_FIRST_STEP',
-  WORKFLOW_GET_LAST_STEP: 'WORKFLOW_GET_LAST_STEP',
-  WORKFLOW_GET_NEXT_STEP: 'WORKFLOW_GET_NEXT_STEP',
-  WORKFLOW_STEP_PROCESS: 'WORKFLOW_STEP_PROCESS',
-  WORKFLOW_STEP_INPUTS: 'WORKFLOW_STEP_INPUTS',
-  WORKFLOW_STEP_RUN: 'WORKFLOW_STEP_RUN',
-  WORKFLOW_SET_WPS_PROVIDER: 'WORKFLOW_SET_WPS_PROVIDER',
-  WORKFLOW_SET_ACTIVE_PROCESS_INPUTS: 'WORKFLOW_SET_ACTIVE_PROCESS_INPUTS',
-  WORKFLOW_SET_ACTIVE_PROCESS_VALUES: 'WORKFLOW_SET_ACTIVE_PROCESS_VALUES',
-  WORKFLOW_FETCH_WPS_JOBS_REQUEST: 'WORKFLOW_FETCH_WPS_JOBS_REQUEST',
-  WORKFLOW_FETCH_WPS_JOBS_FAILURE: 'WORKFLOW_FETCH_WPS_JOBS_FAILURE',
-  WORKFLOW_FETCH_WPS_JOBS_SUCCESS: 'WORKFLOW_FETCH_WPS_JOBS_SUCCESS'
+  CHANGE_STEP: 'WORKFLOW.CHANGE_STEP',
+  SET_PROCESSES: 'WORKFLOW.SET_PROCESSES',
+  SET_PROVIDERS: 'WORKFLOW.SET_PROVIDERS',
+  CHOOSE_PROCESS: 'WORKFLOW.CHOOSE_PROCESS',
+  GET_FIRST_STEP: 'WORKFLOW.GET_FIRST_STEP',
+  GET_LAST_STEP: 'WORKFLOW.GET_LAST_STEP',
+  GET_NEXT_STEP: 'WORKFLOW.GET_NEXT_STEP',
+  STEP_PROCESS: 'WORKFLOW.STEP_PROCESS',
+  STEP_INPUTS: 'WORKFLOW.STEP_INPUTS',
+  STEP_RUN: 'WORKFLOW.STEP_RUN',
+  SET_WPS_PROVIDER: 'WORKFLOW.SET_WPS_PROVIDER',
+  SET_ACTIVE_PROCESS_INPUTS: 'WORKFLOW.SET_ACTIVE_PROCESS_INPUTS',
+  SET_ACTIVE_PROCESS_VALUES: 'WORKFLOW.SET_ACTIVE_PROCESS_VALUES',
+  FETCH_WPS_JOBS_REQUEST: 'WORKFLOW.FETCH_WPS_JOBS_REQUEST',
+  FETCH_WPS_JOBS_FAILURE: 'WORKFLOW.FETCH_WPS_JOBS_FAILURE',
+  FETCH_WPS_JOBS_SUCCESS: 'WORKFLOW.FETCH_WPS_JOBS_SUCCESS'
 };
 
 // Actions
@@ -37,14 +37,14 @@ function setSelectedProcess (process) {
     identifier: processIdentifier
   });
   return {
-    type: constants.WORKFLOW_CHOOSE_PROCESS,
+    type: constants.CHOOSE_PROCESS,
     process: process
   };
 }
 
 function setProcesses (processes) {
   return {
-    type: constants.WORKFLOW_SET_PROCESSES,
+    type: constants.SET_PROCESSES,
     processes: processes
   };
 }
@@ -54,28 +54,28 @@ function setProviders (providers) {
     provider.identifier = provider.url.replace('/processes/list?wps=', '');
   });
   return {
-    type: constants.WORKFLOW_SET_PROVIDERS,
+    type: constants.SET_PROVIDERS,
     items: providers
   };
 }
 
 function setWpsProvider (provider) {
   return {
-    type: constants.WORKFLOW_SET_WPS_PROVIDER,
+    type: constants.SET_WPS_PROVIDER,
     provider: provider
   };
 }
 
 function setProcessInputs (inputs) {
   return {
-    type: constants.WORKFLOW_SET_ACTIVE_PROCESS_INPUTS,
+    type: constants.SET_ACTIVE_PROCESS_INPUTS,
     inputs: inputs
   };
 }
 
 function setSelectedProcessValues (key, value) {
   return {
-    type: constants.WORKFLOW_SET_ACTIVE_PROCESS_VALUES,
+    type: constants.SET_ACTIVE_PROCESS_VALUES,
     key: key,
     value: value
   };
@@ -83,26 +83,26 @@ function setSelectedProcessValues (key, value) {
 
 function chooseStep (step) {
   return {
-    type: constants.WORKFLOW_CHANGE_STEP,
+    type: constants.CHANGE_STEP,
     step: step
   };
 }
 
 function getFirstStep () {
   return {
-    type: constants.WORKFLOW_GET_FIRST_STEP
+    type: constants.GET_FIRST_STEP
   };
 }
 
 function getLastStep () {
   return {
-    type: constants.WORKFLOW_GET_LAST_STEP
+    type: constants.GET_LAST_STEP
   };
 }
 
 function getNextStep () {
   return {
-    type: constants.WORKFLOW_GET_NEXT_STEP
+    type: constants.GET_NEXT_STEP
   };
 }
 
@@ -216,39 +216,39 @@ export const actions = {
 };
 
 // Handlers
-const WORKFLOW_HANDLERS = {
-  [constants.WORKFLOW_SET_WPS_PROVIDER]: (state, action) => {
+const HANDLERS = {
+  [constants.SET_WPS_PROVIDER]: (state, action) => {
     return {...state, selectedProvider: action.provider};
   },
-  [constants.WORKFLOW_CHOOSE_PROCESS]: (state, action) => {
+  [constants.CHOOSE_PROCESS]: (state, action) => {
     return {...state, selectedProcess: action.process};
   },
-  [constants.WORKFLOW_SET_ACTIVE_PROCESS_INPUTS]: (state, action) => {
+  [constants.SET_ACTIVE_PROCESS_INPUTS]: (state, action) => {
     return {...state, selectedProcessInputs: action.inputs};
   },
-  [constants.WORKFLOW_SET_ACTIVE_PROCESS_VALUES]: (state, action) => {
+  [constants.SET_ACTIVE_PROCESS_VALUES]: (state, action) => {
     return Object.assign({}, state, {
       selectedProcessValues: Object.assign({}, state.selectedProcessValues, {
         [action.key]: action.value
       })
     });
   },
-  [constants.WORKFLOW_CHANGE_STEP]: (state, action) => {
+  [constants.CHANGE_STEP]: (state, action) => {
     return {...state, currentStep: action.step};
   },
-  [constants.WORKFLOW_GET_FIRST_STEP]: (state) => {
+  [constants.GET_FIRST_STEP]: (state) => {
     return {...state, stepIndex: 0};
   },
-  [constants.WORKFLOW_GET_LAST_STEP]: (state) => {
+  [constants.GET_LAST_STEP]: (state) => {
     return {...state, stepIndex: (state.stepIndex - 1)};
   },
-  [constants.WORKFLOW_GET_NEXT_STEP]: (state) => {
+  [constants.GET_NEXT_STEP]: (state) => {
     return {...state, stepIndex: (state.stepIndex + 1)};
   },
-  [constants.WORKFLOW_SET_PROCESSES]: (state, action) => {
+  [constants.SET_PROCESSES]: (state, action) => {
     return {...state, processes: action.processes};
   },
-  [constants.WORKFLOW_SET_PROVIDERS]: (state, action) => {
+  [constants.SET_PROVIDERS]: (state, action) => {
     return Object.assign({}, state, {
       providers: {...state.providers, items: action.items}
     });
@@ -266,7 +266,7 @@ export const initialState = {
   stepIndex: 0,
   selectedProcessInputs: [],
   selectedProcessValues: {},
-  currentStep: constants.WORKFLOW_STEP_PROCESS,
+  currentStep: constants.STEP_PROCESS,
   processes: [],
   providers: {
     items: []
@@ -274,6 +274,6 @@ export const initialState = {
   selectedProvider: ''
 };
 export default function (state = initialState, action) {
-  const handler = WORKFLOW_HANDLERS[action.type];
+  const handler = HANDLERS[action.type];
   return handler ? handler(state, action) : state;
 }

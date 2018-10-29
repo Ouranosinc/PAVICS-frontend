@@ -15,8 +15,10 @@ import Cesium from 'cesium/Cesium';
 window['Cesium'] = Cesium; // expose Cesium to the OL-Cesium library
 require('cesium/Widgets/widgets.css');
 import OLCesium from 'ol-cesium';
-const G_BING_API_KEY = 'AtXX65CBBfZXBxm6oMyf_5idMAMI7W6a5GuZ5acVcrYi6lCQayiiBz7_aMHB7JR7';
 Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI4NzJmNzQ5YS1iY2JlLTQwOGYtODlhNS04Yzc2YzRmOWY5YWMiLCJpZCI6Mzc0MCwic2NvcGVzIjpbImFzbCIsImFzciIsImdjIl0sImlhdCI6MTUzODY2NDcwNH0.02vOjG7j1kh75VjgRWn6fUq4ulyPK2IZbFhdyx0SCcE';
+
+
+const G_BING_API_KEY = 'AtXX65CBBfZXBxm6oMyf_5idMAMI7W6a5GuZ5acVcrYi6lCQayiiBz7_aMHB7JR7';
 
 export class OLBasemapRenderer extends React.Component {
   static propTypes = {

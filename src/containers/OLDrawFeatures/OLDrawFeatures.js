@@ -7,7 +7,7 @@ import { Draw, Modify, Select, Snap } from 'ol/interaction';
 import Map from 'ol/Map';
 import { GeoJSON, WMSCapabilities } from 'ol/format';
 import { createRegularPolygon, createBox } from 'ol/interaction/Draw';
-import { platformModifierKeyOnly, altKeyOnly, shiftKeyOnly, singleClick, doubleClick } from 'ol/events/condition';
+import { platformModifierKeyOnly, altKeyOnly, altShiftKeysOnly, shiftKeyOnly, singleClick, doubleClick } from 'ol/events/condition';
 import { Vector as VectorSource } from 'ol/source';
 import { Vector as VectorLayer } from 'ol/layer';
 import { Circle, Fill, Text, Stroke, Style, RegularShape } from 'ol/style';
@@ -34,6 +34,10 @@ class OLDrawFeatures extends React.Component {
     map: PropTypes.instanceOf(Map)
   };
 
+  state = {
+    drawnCustomFeatures: []
+  };
+
   constructor(props) {
     super(props);
     this.layer = null;
@@ -57,8 +61,8 @@ class OLDrawFeatures extends React.Component {
     if (nextProps.map !== this.props.map) {
       this.init(nextProps); // Once, when map has been initialised
       this.initDraw(nextProps);
-    }else if(layerCustomFeature.drawnCustomFeatures !== this.props.layerCustomFeature.drawnCustomFeatures){
-      if (layerCustomFeature.drawnCustomFeatures.length === 0){
+    }else if(this.props.layerCustomFeature.geoJSONDrawnFeatures !== layerCustomFeature.geoJSONDrawnFeatures){
+      if (layerCustomFeature.geoJSONDrawnFeatures.features.length === 0){
         // Triggered when Reset button is clicked in WidgetDrawFeatures
         this.select.getFeatures().clear();
         this.source.clear();
@@ -102,7 +106,8 @@ class OLDrawFeatures extends React.Component {
     this.source = new VectorSource();
     this.layer = this.createDrawnFeaturesLayer(map);
     this.select = new Select({
-      features: this.source.getFeatures(), // Prevent public regions from being selected and edited
+      features: this.source.getFeatures(),
+      layers: [this.layer], // This limit current layer to be selectable
       /*condition: function(mapBrowserEvent) {
         return singleClick(mapBrowserEvent) && altKeyOnly(mapBrowserEvent);
       },*/
@@ -111,17 +116,17 @@ class OLDrawFeatures extends React.Component {
           new Style({
             stroke: new Stroke({color: [0, 153, 255, 1], width: 3}),
             fill: new Fill({ color: 'rgba(255,255,255,0.3)' }),
-            text: new Text({
+            // DEPRECATED: Name and description, introduces some lag
+            /*text: new Text({
               font: '24px Verdana',
               text: `${feature.get('name')}\n${feature.get('description')}`
-            })
+            })*/
           })
         ];
       }
     });
 
     // Activate hand cursor when underlying event
-    // FIXME: Interfer with public regions layer selections
     map.on('pointermove', function(e) {
       if (e.dragging) return;
       let hit = map.hasFeatureAtPixel(map.getEventPixel(e.originalEvent));
@@ -130,13 +135,14 @@ class OLDrawFeatures extends React.Component {
 
     map.addInteraction(this.select);
     this.select.on('select', (e) => {
-      //TODO: Valide current layer is the good one
       if (e.selected.length) {
-        // If name and description haven't been set it's because feature is being drawn at the moment.
-        // So if feature is being drawn, ignore selection
+        // If properties.drawn exist it's because feature is part of out layer
         const properties = e.selected[0].getProperties();
-        if(properties.name && properties.name.length) {
+        if (properties.drawn) {
           this.props.layerCustomFeatureActions.setCurrentSelectedDrawnFeature(properties);
+        } else {
+          e.stopPropagation();
+          e.selected = [];
         }
       }else {
         // No feature selected mean no properties to be edited in the widget
@@ -160,6 +166,9 @@ class OLDrawFeatures extends React.Component {
     });
   }
 
+  /*
+    At the moment, user can blend multiple region types together (polygon, polyline, points)
+   */
   initDraw(nextProps) {
     const { map, layerCustomFeature } = nextProps;
     if (this.draw || this.snap) {
@@ -175,11 +184,11 @@ class OLDrawFeatures extends React.Component {
           drawType = 'Circle';
           condition = shiftKeyOnly;
           break;
-        case VISUALIZE_DRAW_MODES.CIRCLE.value:
+        /*case VISUALIZE_DRAW_MODES.CIRCLE.value:
           geometryFunction = null;
           drawType = VISUALIZE_DRAW_MODES.CIRCLE.value;
-          condition = shiftKeyOnly;
-          break;
+         condition = shiftKeyOnly;
+          break;*/
         case VISUALIZE_DRAW_MODES.HEXAGON.value:
           geometryFunction = createRegularPolygon(5);
           drawType = 'Circle';
@@ -188,13 +197,14 @@ class OLDrawFeatures extends React.Component {
         case VISUALIZE_DRAW_MODES.LINE_STRING.value:
           geometryFunction = null;
           drawType = VISUALIZE_DRAW_MODES.LINE_STRING.value;
+          condition = altKeyOnly;
           break;
         case VISUALIZE_DRAW_MODES.SQUARE.value:
           geometryFunction = createRegularPolygon(4);
           drawType = 'Circle';
           condition = shiftKeyOnly;
           break;
-        // FIXME: Not working as expected, but should be fixed eventually
+        // TODO: Not working as expected, but should be fixed eventually
         /*case VISUALIZE_DRAW_MODES.POINT.value:
          geometryFunction = null;
          drawType = VISUALIZE_DRAW_MODES.POINT.value;
@@ -203,7 +213,7 @@ class OLDrawFeatures extends React.Component {
         case VISUALIZE_DRAW_MODES.POLYGON.value:
           geometryFunction = null;
           drawType = VISUALIZE_DRAW_MODES.POLYGON.value;
-          // condition = platformModifierKeyOnly;
+          condition = altKeyOnly;
           break;
         default:
           // None(empty) already managed by if
@@ -228,6 +238,7 @@ class OLDrawFeatures extends React.Component {
            }),*/
         }),
         condition: condition,
+        freehandCondition: altShiftKeysOnly,
         geometryFunction: geometryFunction,
         type: drawType
       });
@@ -243,21 +254,35 @@ class OLDrawFeatures extends React.Component {
       // Listener on drawend
       this.draw.on('drawend', (e) => {
         let feature = e.feature;
+        console.log( 'drawended');
+        // Clear features or get a corrupted file and upload won't actually work for now
         feature.setProperties({
-          name: `feature_${layerCustomFeature.drawnCustomFeatures.length + 1}`,
-          description: '',
+          drawn: true, // Flag to make sure feature is part of our layer
+          name: `feature_${this.state.drawnCustomFeatures.length + 1}`, // Could be editable by the user
+          description: '',  // Could be editable by the user
           type: layerCustomFeature.currentDrawingTool
         });
-        map.removeInteraction(this.draw);
-        map.removeInteraction(this.snap);
+        // map.removeInteraction(this.draw);
+        // map.removeInteraction(this.snap);
 
         // Only one selected feature at a time
         this.select.getFeatures().clear();
         this.select.getFeatures().push(feature);
+        // Not useful anymore, can't edit properties in Customize Regions widget
         this.props.layerCustomFeatureActions.setCurrentSelectedDrawnFeature(feature.getProperties());
 
         // The action isn't super useful ATM, essentially used to notify when the array becomes empty
-        this.props.layerCustomFeatureActions.setDrawnCustomFeatures(layerCustomFeature.drawnCustomFeatures.concat([feature]));
+        // Objects are way to large to be in Redux without performance impact
+        // this.props.layerCustomFeatureActions.setDrawnCustomFeatures(this.state.drawnCustomFeatures.concat([feature]));
+        const drawnCustomFeatures = this.state.drawnCustomFeatures.concat([feature]);
+        this.setState({
+          drawnCustomFeatures: drawnCustomFeatures
+        });
+
+        const geoJSONWriter = new GeoJSON();
+        const geoJSONString = geoJSONWriter.writeFeatures(drawnCustomFeatures);
+        this.props.layerCustomFeatureActions.setGeoJSONDrawnFeatures(JSON.parse(geoJSONString));
+        console.log(JSON.parse(geoJSONString))
       });
     }
   }

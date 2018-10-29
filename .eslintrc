@@ -20,6 +20,8 @@
     "__PAVICS_GEOSERVER_API_PATH__" : false,
     "__PAVICS_GEOSERVER_WORKSPACES_SERVICE_NAME__" : false,
     "__PAVICS_PROJECT_API_PATH__" : false,
+    "__PAVICS_GEOSERVER_CUSTOM_WORKSPACE__": false,
+    "__PAVICS_GEOSERVER_CUSTOM_DATASTORE__": false,
     "__MAGPIE_HOST__" : false
   },
   "rules": {
