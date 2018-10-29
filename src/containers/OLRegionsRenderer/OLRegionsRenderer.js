@@ -41,12 +41,10 @@ export class OLRegionsRenderer extends React.Component {
     const { map } = nextProps;
     const { selectedFeatureLayer } = nextProps.layerRegion;
     const params = {
-      url: selectedShapefile.wmsUrl,
-      params: selectedShapefile.wmsParams,
+      url: selectedFeatureLayer.wmsUrl,
+      params: selectedFeatureLayer.wmsParams,
       ratio: 1,
       serverType: 'geoserver'
-      /*url: selectedFeatureLayer.wmsUrl,
-      params: selectedFeatureLayer.wmsParams*/
     };
 
     if (this.source) {

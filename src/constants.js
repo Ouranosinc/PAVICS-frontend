@@ -25,7 +25,7 @@ export const JOB_PLATFORM_TAG = 'platform-pavics';
 export const VISUALIZE_DRAW_MODES = {
   BBOX: {
     value: 'Bbox',
-    label: 'Bounding Box (hold alt-shift key)'
+    label: 'Bounding Box (hold alt-shift keys)'
   },
   // DEPRECATED: Circle feature geometry will be empty when transformed into GeoJSON format
   /*CIRCLE: {
