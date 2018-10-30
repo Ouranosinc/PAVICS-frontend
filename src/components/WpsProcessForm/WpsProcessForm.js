@@ -2,18 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import * as constants from './../../constants';
 import { WpsProcessFormInput } from '../WpsProcessFormInput';
+import { WpsInput } from './../../data-models/WpsInput';
 import Typography from'@material-ui/core/Typography';
 import Paper from'@material-ui/core/Paper';
 import Button from'@material-ui/core/Button';
 import ExecuteIcon from '@material-ui/icons/Done';
-import { COMPLEX_DATA } from './../../constants';
+import { WPS_TYPE_COMPLEXDATA } from './../../constants';
 
 const styles = {
   paper: {
-    'max-height': '450px',
-    'overflowY': 'auto',
-    'margin': '10px 0',
-    'overflowX': 'hidden'
+    maxeight: '450px',
+    overflowY: 'auto',
+    margin: '10px 0',
+    overflowX: 'hidden'
   }
 };
 
@@ -43,7 +44,6 @@ we have to do this dynamically because we don't know beforehand the actual quant
 export default class WpsProcessForm extends React.Component {
   static propTypes = {
     execute: PropTypes.func.isRequired,
-    formId: PropTypes.string.isRequired,
     layerDataset: PropTypes.object.isRequired,
     layerRegion: PropTypes.object.isRequired,
     sectionActions: PropTypes.object.isRequired,
@@ -54,37 +54,22 @@ export default class WpsProcessForm extends React.Component {
   constructor (props) {
     super(props);
     this.state = {
-      formData: {}
+      wpsInputs: []
     };
   }
 
   componentWillMount () {
-    this.buildFormData(this.props);
+    this.buildWpsInputs(this.props);
   }
 
-  /*
-    we have to find a unique identifier for each inputs a form can have,
-    we should be able to expect that  the combination of datatype and name will be unique, except in the case of deform's sequence
-    where there can be more than one input with the name "resource" with the type ComplexData
-    for all intent and purposes however, that should be left for the input renderer to manage
-    at this level, the form data should be a flat array or dataType.name values
-  */
-
-  makeUniqueIdentifier (input) {
-    return `${input.dataType}.${input.id}`;
-  };
-
-  buildFormData (props) {
-    let formData = {};
+  buildWpsInputs (props) {
+    let wpsInputs = [];
     props.workflow.selectedProcessInputs.forEach((input) => {
-      if (input.selectable) {
-        formData[this.makeUniqueIdentifier(input)] = input.defaultValue ? [input.defaultValue] : [];
-      } else {
-        formData[this.makeUniqueIdentifier(input)] = input.defaultValue || '';
-      }
+      // TODO: process id ??
+      wpsInputs.push(new WpsInput(input)); // Filled with default values if any
     });
     this.setState({
-      formData: formData
+      wpsInputs: wpsInputs
     }, this.verifyMeaningfulValues(props));
   }
 
@@ -113,73 +98,62 @@ export default class WpsProcessForm extends React.Component {
   verifyMeaningfulValues (props, oldProps = {}) {
     console.log('verifying meaningful values in %o, current state: %o', props, this.state);
 
-    let changedState = {};
-    // For each input, if any has the right mimetype and name, propagate new information
-    // If not, fields will be loaded with workflow default values if defined
-    for(let inputName in this.state.formData) {
-      let starts = inputName.startsWith(constants.LABEL_NETCDF.split('.')[0]);
-      let ends = inputName.endsWith(constants.LABEL_NETCDF.split('.')[1])
-      if (starts && ends) {
+    let newWpsInputs = this.state.wpsInputs.map(input => {
+
+      if (input.dataType === constants.WPS_TYPE_COMPLEXDATA && input.inputDefinition.label === constants.WPS_LABEL_RESOURCE) {
+        // ComplexData.resource
         if (props.layerDataset.currentDisplayedDataset['url']) {
-          changedState[inputName] = props.layerDataset.currentDisplayedDataset['url'];
+          input.value = props.layerDataset.currentDisplayedDataset['url'];
         } else {
           // If dataset unselected => reset value, else value might be the workflow default value (so do nothing)
           if (oldProps.layerDataset.currentDisplayedDataset && oldProps.layerDataset.currentDisplayedDataset['url']) {
-            changedState[inputName] = '';
+            input.value = '';
           }
         }
-      }
-
-      if (inputName.startsWith(constants.LABEL_OPENDAP.split('.')[0]) && inputName.endsWith(constants.LABEL_OPENDAP.split('.')[1])) {
-        if (props.layerDataset.currentDisplayedDataset['opendap_url']) {
-          changedState[inputName] = props.layerDataset.currentDisplayedDataset['opendap_url'];
+      } else if (input.dataType === constants.WPS_TYPE_STRING && input.inputDefinition.label === constants.WPS_LABEL_RESOURCE) {
+        // string.resource
+        if (props.layerDataset && props.layerDataset.currentDisplayedDataset['opendap_url']) {
+          input.value =  props.layerDataset.currentDisplayedDataset['opendap_url'];
         } else {
           // If dataset unselected => reset value, else value might be the workflow default value (so do nothing)
           if (oldProps.layerDataset && oldProps.layerDataset.currentDisplayedDataset && oldProps.layerDataset.currentDisplayedDataset['opendap_url']) {
-            changedState[inputName] = '';
+            input.value = '';
           }
         }
-      }
-
-      // TODO Support for thredds catalog url autofill based on dataset selection: string.url update state with catalog_urls
-      if (inputName.startsWith(constants.LABEL_SHAPEFILE.split('.')[0]) && inputName.endsWith(constants.LABEL_SHAPEFILE.split('.')[1])) {
+      } else if (input.dataType === constants.WPS_TYPE_STRING && input.inputDefinition.label === constants.WPS_LABEL_TYPENAME) {
+        // string.typename
         if (props.layerRegion.selectedFeatureLayer['wmsParams'] && props.layerRegion.selectedFeatureLayer['wmsParams']['LAYERS']) {
-          changedState[inputName] = props.layerRegion.selectedFeatureLayer['wmsParams']['LAYERS'];
+          input.value = props.layerRegion.selectedFeatureLayer['wmsParams']['LAYERS'];
         } else {
           // If feature layer unselected => reset value, else value might be the workflow default value (so do nothing)
           if (oldProps.layerRegion && oldProps.layerRegion.selectedFeatureLayer && oldProps.layerRegion.selectedFeatureLayer['wmsParams'] &&
             oldProps.layerRegion.selectedFeatureLayer['wmsParams']['LAYERS']) {
-            changedState[inputName] = '';
+            input.value = '';
             // TODO: empty selectedRegions array since value won't fit anymore
           }
         }
-      }
-
-      if (inputName.startsWith(constants.LABEL_FEATURE_IDS.split('.')[0]) && inputName.endsWith(constants.LABEL_FEATURE_IDS.split('.')[1])) {
+      } else if (input.dataType === constants.WPS_TYPE_STRING && input.inputDefinition.label === constants.WPS_LABEL_FEATURE_IDS) {
+        // string.featuresids
         if (props.layerRegion.selectedRegions && props.layerRegion.selectedRegions.length) {
-          changedState[inputName] = props.layerRegion.selectedRegions;
+          input.value =  props.layerRegion.selectedRegions;
         } else {
           // If region unselected => reset value, else value might be the workflow default value (so do nothing)
           if (oldProps.layerRegion && oldProps.layerRegion.selectedRegions && oldProps.layerRegion.selectedRegions.length) {
-            changedState[inputName] = []
+            input.value  = []
           }
         }
       }
-    }
+      return input;
+    });
 
     this.setState({
-      ...this.state,
-      formData: {
-        ...this.state.formData,
-        ...changedState
-      }
+      wpsInputs: newWpsInputs
     });
   }
 
   componentWillReceiveProps (nextProps) {
-    if(nextProps.workflow.selectedProcessInputs &&
-      this.props.workflow.selectedProcessInputs !== nextProps.workflow.selectedProcessInputs) {
-      this.buildFormData(nextProps)
+    if(nextProps.workflow.selectedProcessInputs && this.props.workflow.selectedProcessInputs !== nextProps.workflow.selectedProcessInputs) {
+      this.buildWpsInputs(nextProps)
     } else {
       this.verifyMeaningfulValues(nextProps, this.props);
     }
@@ -193,26 +167,33 @@ export default class WpsProcessForm extends React.Component {
    actually, the data is captured in the workflow wizard stepper, with a FormData built directly from a document.querySelector
    likewise, the handleSelectedProcessValueChange was never fully implemented
    */
-  handleChange  = (value, uniqueIdentifier) => {
+  handleChange  = (value, inputDefinition, process = '') => {
     // TODO eventually this will probably go in the redux store
+    let newWpsInputs = this.state.wpsInputs.slice(0);
+    let input = newWpsInputs.find(input => input.inputDefinition.id === inputDefinition.id && input.process === process);
+    input.value = value;
     this.setState({
-      formData: {
-        ...this.state.formData,
-        [uniqueIdentifier]: value
-      }
+      wpsInputs: newWpsInputs
     });
   };
 
-  handleArrayChange = (value, uniqueIdentifier, index) => {
+  handleArrayChange = (value, inputDefinition, index, process = '') => {
     // TODO eventually this will probably go in the redux store
-    let wholeArray = this.state.formData[uniqueIdentifier];
+    let newWpsInputs = this.state.wpsInputs.slice(0);
+    let input = newWpsInputs.find(input => input.inputDefinition.id === inputDefinition.id && input.process === process);
+    input.value[index] = value;
+    this.setState({
+      wpsInputs: newWpsInputs
+    });
+
+    /*let wholeArray = this.state.formData[uniqueIdentifier];
     wholeArray[index] = value;
     this.setState({
       formData: {
         ...this.state.formData,
         [uniqueIdentifier]: wholeArray
       }
-    });
+    });*/
   };
 
   render () {
@@ -225,22 +206,24 @@ export default class WpsProcessForm extends React.Component {
           </Typography>
           <form id="cy-process-form">
             {
-              this.props.workflow.selectedProcessInputs.map((inputDefinition, i) => {
-                const uniqueIdentifier = this.makeUniqueIdentifier(inputDefinition);
-                let value = this.state.formData[uniqueIdentifier]
-                if (inputDefinition.dataType === COMPLEX_DATA) {
+              this.state.wpsInputs.map((wpsInput, i) => {
+                // FIXME: Srsly not the place to do such thing
+                /*const uniqueIdentifier = this.makeUniqueIdentifier(inputDefinition);
+                let value = this.state.formData[uniqueIdentifier];
+
+                if (inputDefinition.dataType === WPS_TYPE_COMPLEXDATA) {
                   // PAVICS platform support ComplexData inputs as reference only (URL)
                   // Consider adding validation: && inputDefinition.defaultValue.mimeType === 'application/x-netcdf'
                   // Consider validating: typeof value === 'object'
                   // TODO: ComplexData with minOccurs > 1 = Array
                   value = '';
-                }
+                }*/
                 return (
                   <div key={i} className="cy-process-form-field">
                     <WpsProcessFormInput
-                      inputDefinition={inputDefinition}
-                      uniqueIdentifier={uniqueIdentifier}
-                      value={value}
+                      inputDefinition={wpsInput.inputDefinition}
+                      process={wpsInput.process}
+                      value={wpsInput.value}
                       handleArrayChange={this.handleArrayChange}
                       handleChange={this.handleChange} />
                   </div>
@@ -254,7 +237,7 @@ export default class WpsProcessForm extends React.Component {
           color="primary"
           variant="contained"
           id="cy-execute-process-btn"
-          onClick={(event) => this.props.execute(this.state.formData)}>
+          onClick={(event) => this.props.execute(this.state.wpsInputs)}>
           <ExecuteIcon />Execute process
         </Button>
       </React.Fragment>

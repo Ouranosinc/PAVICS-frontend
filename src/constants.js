@@ -77,10 +77,13 @@ export const PAVICS_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 export const PER_PAGE_OPTIONS = [5, 10, 25];
 export const PER_PAGE_INITIAL_INDEX = 0;
 // WPS processes and forms
-export const INPUT_DATETIME = 'dateTime';
-export const BOOLEAN = 'boolean';
-export const STRING = 'string';
-export const COMPLEX_DATA = 'ComplexData';
+export const WPS_TYPE_DATETIME = 'dateTime';
+export const WPS_TYPE_BOOLEAN = 'boolean';
+export const WPS_TYPE_STRING = 'string';
+export const WPS_TYPE_COMPLEXDATA = 'ComplexData';
+export const WPS_LABEL_RESOURCE = 'resource';
+export const WPS_LABEL_TYPENAME = 'typename';
+export const WPS_LABEL_FEATURE_IDS = 'featureids';
 export const LABEL_NETCDF = 'ComplexData.resource';
 export const LABEL_OPENDAP = 'string.resource';
 export const LABEL_SHAPEFILE = 'string.typename';

@@ -8,7 +8,7 @@ import MenuItem from'@material-ui/core/MenuItem';
 import FormControl from'@material-ui/core/FormControl';
 import FormControlLabel from'@material-ui/core/FormControlLabel';
 import FormHelperText from'@material-ui/core/FormHelperText';
-import { BOOLEAN, COMPLEX_DATA, INPUT_DATETIME } from './../../constants';
+import { WPS_TYPE_BOOLEAN, WPS_TYPE_COMPLEXDATA, WPS_TYPE_DATETIME } from './../../constants';
 
 class WpsProcessFormInput extends Component {
   state = {
@@ -21,10 +21,10 @@ class WpsProcessFormInput extends Component {
   // value not marked as required because it can (somewhat) validly be undefined
   static propTypes = {
     inputDefinition: PropTypes.object.isRequired,
-    uniqueIdentifier: PropTypes.string.isRequired,
+    value: PropTypes.any,
+    process: PropTypes.string,
     handleChange: PropTypes.func.isRequired,
     handleArrayChange: PropTypes.func.isRequired,
-    value: PropTypes.any
   };
 
   constructor (props) {
@@ -36,7 +36,7 @@ class WpsProcessFormInput extends Component {
     const time = this.state.dateTimeValues.time || new Date();
     const dateString = date.toISOString().split('T')[0];
     const timeString = time.toISOString().split('T')[1];
-    this.props.handleChange(`${dateString}T${timeString}`, this.props.uniqueIdentifier);
+    this.props.handleChange(`${dateString}T${timeString}`, this.props.inputDefinition);
   };
 
   handleDateChange = (event, date) => {
@@ -58,7 +58,7 @@ class WpsProcessFormInput extends Component {
   };
 
   handleCheckboxChange = (event) => {
-    this.props.handleChange(event.target.checked, this.props.uniqueIdentifier);
+    this.props.handleChange(event.target.checked, this.props.inputDefinition);
   };
 
   createHandleTextFieldArrayChangeCallback = (event, index) => {
@@ -66,21 +66,21 @@ class WpsProcessFormInput extends Component {
   };
 
   handleTextFieldArrayChange = (value, index) => {
-    this.props.handleArrayChange(value, this.props.uniqueIdentifier, index);
+    this.props.handleArrayChange(value, this.props.inputDefinition, index);
   };
 
   handleTextFieldChange = (event) => {
-    this.props.handleChange(event.target.value, this.props.uniqueIdentifier);
+    this.props.handleChange(event.target.value, this.props.inputDefinition);
   };
 
   handleSelectChange = (event) => {
-    this.props.handleChange(event.target.value, this.props.uniqueIdentifier);
+    this.props.handleChange(event.target.value, this.props.inputDefinition);
   };
 
   createMarkup () {
     // it seems the dataType property of the inputs might change unpredictably (we have seen three forms to date) but they all seem to end with the type
     // hence, for string and boolean, implement a type of "endsWith" check instead of pure equivalence
-    if (this.props.inputDefinition.dataType.endsWith(BOOLEAN)) {
+    if (this.props.inputDefinition.dataType.endsWith(WPS_TYPE_BOOLEAN)) {
       let value = false;
       if (typeof (this.props.value) === 'boolean') {
         value = this.props.value;
@@ -90,7 +90,7 @@ class WpsProcessFormInput extends Component {
         }
       }
       return (
-        <FormControl required={this.props.inputDefinition.isRequired}>
+        <FormControl required={this.props.inputDefinition.required}>
           <FormControlLabel
             label={this.props.inputDefinition.title}
             control={
@@ -106,7 +106,7 @@ class WpsProcessFormInput extends Component {
         </FormControl >
       );
     }
-    if (this.props.inputDefinition.dataType === INPUT_DATETIME) {
+    if (this.props.inputDefinition.dataType === WPS_TYPE_DATETIME) {
       return (
         <div style={{ padding: '15px 0 0' }} className="container">
           <div className="row">
@@ -187,7 +187,7 @@ class WpsProcessFormInput extends Component {
 
     return (
       <TextField
-        required={this.props.inputDefinition.isRequired}
+        required={this.props.inputDefinition.required}
         name={this.props.inputDefinition.id}
         fullWidth
         value={this.props.value}

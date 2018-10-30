@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+import { NotificationManager } from 'react-notifications';
 import Step from'@material-ui/core/Step';
 import Stepper from'@material-ui/core/Stepper';
 import StepContent from'@material-ui/core/StepContent';
@@ -49,40 +50,32 @@ class WpsProcessStepper extends React.Component {
     })
   }
 
-  wrapInputsArray(formData){
+  cleanWpsInputs(wpsInputs) {
+    // Remove all fields but value/type/id
     let inputs = [];
-    for (let inputName in formData) {
-      if (formData.hasOwnProperty(inputName)) {
-        let splitted = inputName.split('.');
-        // We need to change arrays into independent inputs
-        if(Array.isArray(formData[inputName])) {
-          formData[inputName].forEach(value => {
-            inputs.push({
-              id: splitted[splitted.length - 1], // last element will always be input id
-              type: splitted[0],
-              value: value
-            })
-          })
-        } else {
-          inputs.push({
-            id: splitted[splitted.length - 1], // last element will always be input id
-            type: splitted[0],
-            value: formData[inputName]
-          })
-        }
-      }
-    }
-    return {
-      "inputs": inputs
-    };
+    wpsInputs.forEach(input => {
+      inputs = inputs.concat(input.cleaned());
+    });
+    // Remove inputs with empty string
+    inputs = inputs.filter(input => input.value !== '');
+    return { inputs: inputs };
   }
 
-  executeProcess = (formData) => {
-    this.props.workflowActions.executeProcess(
-      this.props.workflow.selectedProvider,
-      this.props.workflow.selectedProcess.id,
-      this.wrapInputsArray(formData)
-    );
+  missingRequiredWpsInputs(wpsInputs) {
+    return wpsInputs.filter(input => !input.isValueDefined());
+  }
+
+  executeProcess = (wpsInputs) => {
+    let missingInputs = this.missingRequiredWpsInputs(wpsInputs);
+    if (!missingInputs.length) {
+      this.props.workflowActions.executeProcess(
+        this.props.workflow.selectedProvider,
+        this.props.workflow.selectedProcess.id,
+        this.cleanWpsInputs(wpsInputs)
+      );
+    } else {
+      NotificationManager.warning(`Required inputs are missing: ${missingInputs.map(input => input.inputDefinition.title).join(', ')}`, 'Warning', 10000);
+    }
   };
 
   render () {

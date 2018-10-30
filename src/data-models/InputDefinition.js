@@ -14,7 +14,7 @@ export class InputDefinition {
 
   constructor (
     id = '',
-    dataType = constants.STRING,
+    dataType = constants.WPS_TYPE_STRING,
     title = '',
     abstract = '',
     minOccurs = 1,
@@ -38,7 +38,7 @@ export class InputDefinition {
     return this.allowedValues.length > 0;
   }
 
-  get isRequired () {
+  get required () {
     return this.minOccurs > 0;
   }
 }
