@@ -11,6 +11,7 @@ export class InputDefinition {
   defaultValue;
   allowedValues;
   supportedValues;
+  task;
 
   constructor (
     id = '',
@@ -21,7 +22,8 @@ export class InputDefinition {
     maxOccurs = 1,
     defaultValue = '',
     allowedValues = [],
-    supportedValues = []
+    supportedValues = [],
+    task = ''
   ) {
     this.id = id;
     this.dataType = dataType;
@@ -32,6 +34,7 @@ export class InputDefinition {
     this.defaultValue = defaultValue;
     this.allowedValues = allowedValues;
     this.supportedValues = supportedValues;
+    this.task = task;
   }
 
   get selectable () {

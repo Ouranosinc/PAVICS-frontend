@@ -5,9 +5,8 @@ export class WpsInput {
 
   inputDefinition;
   value;
-  process; // TODO
 
-  constructor (inputDefinition = new InputDefinition(), process = '') {
+  constructor (inputDefinition = new InputDefinition()) {
     this.inputDefinition = inputDefinition;
     if (inputDefinition.selectable) {
       this.value = inputDefinition.defaultValue ? [inputDefinition.defaultValue] : [];
@@ -16,7 +15,6 @@ export class WpsInput {
     } else {
       this.value = inputDefinition.defaultValue || '';
     }
-    this.process = process;
   }
 
   cleaned() {

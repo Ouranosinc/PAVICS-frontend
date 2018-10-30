@@ -11,7 +11,7 @@ import { WPS_TYPE_COMPLEXDATA } from './../../constants';
 
 const styles = {
   paper: {
-    maxeight: '450px',
+    maxHeight: '450px',
     overflowY: 'auto',
     margin: '10px 0',
     overflowX: 'hidden'
@@ -167,20 +167,20 @@ export default class WpsProcessForm extends React.Component {
    actually, the data is captured in the workflow wizard stepper, with a FormData built directly from a document.querySelector
    likewise, the handleSelectedProcessValueChange was never fully implemented
    */
-  handleChange  = (value, inputDefinition, process = '') => {
+  handleChange  = (value, inputDefinition) => {
     // TODO eventually this will probably go in the redux store
     let newWpsInputs = this.state.wpsInputs.slice(0);
-    let input = newWpsInputs.find(input => input.inputDefinition.id === inputDefinition.id && input.process === process);
+    let input = newWpsInputs.find(input => input.inputDefinition.id === inputDefinition.id && input.inputDefinition.task === inputDefinition.task);
     input.value = value;
     this.setState({
       wpsInputs: newWpsInputs
     });
   };
 
-  handleArrayChange = (value, inputDefinition, index, process = '') => {
+  handleArrayChange = (value, inputDefinition, index) => {
     // TODO eventually this will probably go in the redux store
     let newWpsInputs = this.state.wpsInputs.slice(0);
-    let input = newWpsInputs.find(input => input.inputDefinition.id === inputDefinition.id && input.process === process);
+    let input = newWpsInputs.find(input => input.inputDefinition.id === inputDefinition.id && input.inputDefinition.task === inputDefinition.task);
     input.value[index] = value;
     this.setState({
       wpsInputs: newWpsInputs
