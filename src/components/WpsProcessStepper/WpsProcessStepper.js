@@ -70,7 +70,7 @@ class WpsProcessStepper extends React.Component {
     if (!missingInputs.length) {
       this.props.workflowActions.executeProcess(
         this.props.workflow.selectedProvider,
-        this.props.workflow.selectedProcess.id,
+        this.props.workflow.selectedProcess,
         this.cleanWpsInputs(wpsInputs)
       );
     } else {

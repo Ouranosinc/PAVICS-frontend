@@ -37,7 +37,8 @@ const config = {
   pavics_geoserver_api_path: process.env.PAVICS_GEOSERVER_API || `${URL_BASE}/twitcher/ows/proxy/geoserver-api`,
   pavics_geoserver_workspaces_service_name: process.env.PAVICS_GEOSERVER_WORKSPACES_SERVICE_NAME || 'geoserver-api',
   pavics_ncwms_path: ncwmsHost,
-  pavics_catalog_path: catalogHost, pavics_twitcher_path: twitcherHost,
+  pavics_catalog_path: catalogHost,
+  pavics_twitcher_path: twitcherHost,
   pavics_project_api_path: process.env.PAVICS_PROJECT_API_URL || `${URL_BASE}/project-api/api`,
   // pavics_project_api_internal_url is needed in dev mode since centos vm etc/hosts hasn't its value modified but windows host has (pluvier -­> dev IP)
   pavics_project_api_internal_url: process.env.PAVICS_PROJECT_API_INTERNAL_URL || `${URL_BASE}/project-api/api`, // DEV
@@ -118,7 +119,7 @@ config.globals = {
   '__PAVICS_GEOSERVER_WORKSPACES_SERVICE_NAME__': JSON.stringify(config.pavics_geoserver_workspaces_service_name),
   '__PAVICS_PROJECT_API_PATH__': JSON.stringify(config.pavics_project_api_path),
   '__PAVICS_MAGPIE_API_PATH__': JSON.stringify(config.pavics_magpie_host),
-  '__PAVICS_TWITCHER_API_PATH__': JSON.stringify(config.  pavics_twitcher_path),
+  '__PAVICS_TWITCHER_API_PATH__': JSON.stringify(config.pavics_twitcher_path),
   '__PAVICS_WORKFLOW_PROVIDER__': JSON.stringify(config.PAVICS_WORKFLOW_PROVIDER),
   '__PAVICS_RUN_WORKFLOW_IDENTIFIER__': JSON.stringify(config.PAVICS_RUN_WORKFLOW_IDENTIFIER),
   '__PAVICS_RUN_WORKFLOW_INPUT_ID__': JSON.stringify(config.PAVICS_RUN_WORKFLOW_INPUT_ID),

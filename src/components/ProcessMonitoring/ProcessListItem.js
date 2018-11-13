@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import myHttp from '../../util/http';
+import { NotificationManager } from 'react-notifications';
 import * as constants from '../../constants';
 import StatusElement from './StatusElement';
 import ListItem from'@material-ui/core/ListItem';
@@ -35,9 +37,20 @@ export class ProcessListItem extends React.Component {
   };
 
   customIconMenu = {};
+  state = {
+    outputs: []
+  };
 
   constructor (props) {
     super(props);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.job !== prevProps.job) {
+      if (this.props.job.outputs) {
+        this.setState({ outputs: this.props.job.outputs})
+      }
+    }
   }
 
   extractFileId (reference = '') {
@@ -63,12 +76,71 @@ export class ProcessListItem extends React.Component {
 
   onShowLogs = () => {
     this.customIconMenu.onMenuClosed();
-    this.props.onShowLogDialog(this.props.job.log);
+    if (open && this.props.job && this.props.job.logs && this.props.job.logs.length) {
+      fetch(this.props.job.logs)
+      .then(response => {
+          if (response.ok) {
+            return response.json()
+          } else {
+            NotificationManager.error(`Results at URL ${this.props.job.logs} failed at being fetched: ${error}`, 'Error', 10000);
+          }
+        })
+        .then(json => {
+          this.props.onShowLogDialog(json);
+        })
+        .catch(error => {
+          NotificationManager.error(`Results at URL ${this.props.job.logs} failed at being fetched: ${error}`, 'Error', 10000);
+        });
+    }
   };
 
   onVisualizeOutput = (visualizableReferences, aggregate = false) => {
     this.customIconMenu.onMenuClosed();
     this.props.onVisualiseDatasets(visualizableReferences, aggregate)
+  };
+
+  handleListItemClicked = (open) => {
+    if (open && this.props.job && this.props.job.results && this.props.job.results.length && !this.props.isWorkflowTask) {
+      // workflowTask normally already provide outputs
+      fetch(this.props.job.results)
+        .then(response => {
+          if (response.ok) {
+            return response.json()
+          } else {
+            NotificationManager.error(`Results at URL ${this.props.job.results} failed at being fetched: ${error}`, 'Error', 10000);
+          }
+        })
+        .then(json => {
+          let newOutputs = [];
+          // Consider JSON outputs containing array of NetCDF as a new set of outputs (flat)
+          json.forEach(output => {
+            if (output.data && Array.isArray(output.data)) {
+              const firstValue = output.data[0];
+              if (typeof firstValue === 'string' && (firstValue.startsWith('http://') || firstValue.startsWith('https://')) && firstValue.endsWith('.nc')) {
+                output.data.forEach((netCDFReference, index) => {
+                  newOutputs.push({
+                    mimeType: 'application/x-netcdf',
+                    reference: netCDFReference,
+                    title:  `${output.title} (${index + 1}/${output.data.length})`,
+                    dataType: "ComplexData",
+                    url: output.url
+                  });
+                });
+              }
+            }else {
+              newOutputs.push(output);
+            }
+          });
+
+          this.setState({ outputs : newOutputs});
+
+        })
+        .catch(error => {
+          NotificationManager.error(`Results at URL ${this.props.job.results} failed at being fetched: ${error}`, 'Error', 10000);
+        });
+    } else if(open && this.props.job && this.props.job.outputs && Array.isArray(this.props.job.outputs) && this.props.isWorkflowTask) {
+      this.setState({ outputs : this.props.job.outputs});
+    }
   };
 
   buildMinimalSecondaryActions() {
@@ -79,7 +151,8 @@ export class ProcessListItem extends React.Component {
     }
     return (
         <ListItemSecondaryAction
-          className={`cy-monitoring-sec-actions cy-monitoring-level-${this.props.indentationLevel}`}>
+          className={`cy-monitoring-sec-actions cy-monitoring-level-${this.props.indentationLevel}`} // `
+        >
           <CustomIconMenu
             key={visualizableReferences}
             onRef={ref => (this.customIconMenu = ref)}
@@ -137,8 +210,8 @@ export class ProcessListItem extends React.Component {
   render () {
     let secondaryText =
       <span>
-        <span>Launched on <strong>{moment(this.props.job.created).format(constants.PAVICS_DATE_FORMAT)}</strong> using provider <strong>{this.props.job.service}</strong>.</span><br/>
-        <StatusElement job={this.props.job} />, <strong>Duration: </strong>{this.props.job.duration}
+        <span>Launched on <strong>{moment(this.props.job.createdOn).format(constants.PAVICS_DATE_FORMAT)}</strong> using provider <strong>{this.props.job.providerId}</strong></span><br/>
+        <StatusElement job={this.props.job} />
       </span>;
     if (this.props.isWorkflowTask) {
       secondaryText =
@@ -146,21 +219,22 @@ export class ProcessListItem extends React.Component {
           <StatusElement job={this.props.job} />
         </span>;
     }
-    if(this.props.job.status === constants.JOB_SUCCESS_STATUS){
+    if(this.props.job.status === constants.JOB_SUCCESS_STATUS || this.props.job.status === constants.JOB_FINISHED_STATUS){
       return (
         <CollapseNestedList
-          rootListItemClass={`cy-monitoring-list-item cy-monitoring-level-${this.props.indentationLevel}`}
+          rootListItemClass={`cy-monitoring-list-item cy-monitoring-level-${this.props.indentationLevel}`}// `
           rootListItemStyle={{marginLeft: (this.props.indentationLevel * 18) + "px"}}
           rootListItemText={ <ListItemText inset
-                                           primary={(this.props.job.name && this.props.job.name.length)? this.props.job.name: `${this.props.job.title}: ${this.props.job.abstract}`}
+                                           primary={(this.props.job.name && this.props.job.name.length)? this.props.job.name: `${this.props.job.title}: ${this.props.job.abstract}`} // `
                                            secondary={secondaryText} />}
+          onClicked={this.handleListItemClicked}
           rootListItemSecondaryActions={this.buildMinimalSecondaryActions()}>
           {
-            this.props.job.outputs.map((output, k) => {
+            this.state.outputs.map((output, k) => {
               return <ProcessOutputListItem
                 key={k}
                 indentationLevel={this.props.indentationLevel + 1}
-                job={this.props.job}
+                jobStatus={this.props.job.status}
                 output={output}
                 extractFileId={this.extractFileId}
                 onShowPersistDialog={this.props.onShowPersistDialog}
@@ -174,13 +248,13 @@ export class ProcessListItem extends React.Component {
       if(this.props.job.status === constants.JOB_ACCEPTED_STATUS){
         secondaryText =
           <span>
-            <span>Will be launched soon using provider <strong>{this.props.job.service}</strong>.</span><br/>
+            <span>Will be launched soon using provider <strong>{this.props.job.providerId}</strong></span><br/>
             <StatusElement job={this.props.job} />
           </span>;
       }
 
       return <ListItem
-        className={`cy-monitoring-list-item cy-monitoring-level-${this.props.indentationLevel}`}
+        className={`cy-monitoring-list-item cy-monitoring-level-${this.props.indentationLevel}`}// `
         style={{marginLeft: (this.props.indentationLevel * 18) + "px"}}>
           <ListItemIcon>
             <NotExpandableIcon />

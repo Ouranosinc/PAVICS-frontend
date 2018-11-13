@@ -46,7 +46,7 @@ class ProcessMonitoring extends React.Component {
     logDialogOpened: false,
     persistDialogOutput: {},
     persistDialogOpened: false,
-    pageNumber: 1,
+    pageNumber: 0,
     numberPerPage: constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX],
     loadingScreen: null
   };
@@ -54,22 +54,22 @@ class ProcessMonitoring extends React.Component {
   constructor (props) {
     super(props);
     this.loop = null;
-    this.props.monitorActions.fetchWPSJobs(this.props.project.currentProject.id, constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX], 1);
+    this.props.monitorActions.fetchTwitcherJobs(this.props.project.currentProject.id, constants.PER_PAGE_OPTIONS[constants.PER_PAGE_INITIAL_INDEX], 0);
   }
 
   componentWillReceiveProps (nextProps) {
     const { jobs, visualizedTempDatasets } = nextProps.monitor;
 
-    if (jobs && jobs.items.length) {
+    if (jobs && jobs.length) {
       // Removed previous launched timeout if any
       clearTimeout(this.loop);
 
       // Launch polling only if any job is UNKNOWN, ACCEPTED or IN_PROGRESS
-      if(jobs.items.find(job =>
+      if(jobs.find(job =>
           !job.status || job.status === constants.JOB_PAUSED_STATUS ||
           job.status === constants.JOB_ACCEPTED_STATUS || job.status === constants.JOB_STARTED_STATUS
         )){
-        this.pollWPSJobs();
+        this.pollTwitcherJobs();
       }
     }
     if(visualizedTempDatasets &&
@@ -86,15 +86,15 @@ class ProcessMonitoring extends React.Component {
     }
   }
 
-  pollWPSJobs () {
+  pollTwitcherJobs () {
     this.loop = setTimeout( () => {
       // console.log(moment());
-      this.props.monitorActions.pollWPSJobs(this.props.project.currentProject.id, this.state.numberPerPage, this.state.pageNumber);
+      this.props.monitorActions.pollTwitcherJobs(this.props.project.currentProject.id, this.state.numberPerPage, this.state.pageNumber);
     }, 3000);
   }
 
   onRefreshResults = () => {
-    this.props.monitorActions.fetchWPSJobs(this.props.project.currentProject.id, this.state.numberPerPage, this.state.pageNumber);
+    this.props.monitorActions.fetchTwitcherJobs(this.props.project.currentProject.id, this.state.numberPerPage, this.state.pageNumber);
   };
 
   onPageChanged = (pageNumber, numberPerPage) => {
@@ -102,7 +102,7 @@ class ProcessMonitoring extends React.Component {
       pageNumber: pageNumber,
       numberPerPage: numberPerPage
     });
-    this.props.monitorActions.fetchWPSJobs(this.props.project.currentProject.id, numberPerPage, pageNumber);
+    this.props.monitorActions.fetchTwitcherJobs(this.props.project.currentProject.id, numberPerPage, pageNumber);
   };
 
   onVisualiseDatasets = (httpURLArray, aggregate = false) => {
@@ -172,11 +172,11 @@ class ProcessMonitoring extends React.Component {
       mainComponent =
         <Loader name="wps jobs" />;
     } else {
-      if (this.props.monitor.jobs.items.length && this.props.monitor.jobs.count) {
+      if (this.props.monitor.jobs.length && this.props.monitor.jobs.count) {
         mainComponent =
           <List>
             <ListSubheader>Launched Jobs</ListSubheader>
-            {this.props.monitor.jobs.items.map((x, i) => {
+            {this.props.monitor.jobs.map((x, i) => {
 
               if(x.status === null ||
                 x.status === constants.JOB_PAUSED_STATUS ||
@@ -281,8 +281,8 @@ class ProcessMonitoring extends React.Component {
                           primary={(x.name && x.name.length)? x.name: `${x.title}: ${x.abstract}`}
                           secondary={
                             <span>
-                              <span>Launched on <strong>{moment(x.created).format(constants.PAVICS_DATE_FORMAT)}</strong> using provider <strong>{x.service}</strong>.</span><br/>
-                              <StatusElement job={x} />, <strong>Duration: </strong>{x.duration}
+                              <span>Launched on <strong>{moment(x.createdOn).format(constants.PAVICS_DATE_FORMAT)}</strong> using provider <strong>{x.service}</strong>.</span><br/>
+                              <StatusElement job={x} />
                             </span>
                           }/>
                       }

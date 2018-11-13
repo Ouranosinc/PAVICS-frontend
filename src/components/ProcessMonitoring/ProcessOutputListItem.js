@@ -15,27 +15,31 @@ import CustomIconMenu from '../CustomIconMenu';
 
 export class ProcessOutputListItem extends React.Component {
   static propTypes = {
+    extractFileId: PropTypes.func.isRequired,
     indentationLevel:  PropTypes.number,
-    job: PropTypes.object.isRequired,
+    jobStatus: PropTypes.string.isRequired,
     output: PropTypes.object.isRequired,
     onShowPersistDialog: PropTypes.func.isRequired,
     onVisualizeOutput: PropTypes.func.isRequired,
   };
 
   isDownloadAvailable = () => {
-    return this.props.job.status === constants.JOB_SUCCESS_STATUS && this.props.output.reference && this.props.output.reference.length;
+    return (this.props.jobStatus === constants.JOB_SUCCESS_STATUS || this.props.jobStatus === constants.JOB_FINISHED_STATUS)
+      && this.props.output.reference && this.props.output.reference.length;
   };
 
   isPersistAvailable = () => {
-    return (this.props.job.status === constants.JOB_SUCCESS_STATUS && this.props.output.mimeType === 'application/x-netcdf');
+    return (this.props.jobStatus === constants.JOB_SUCCESS_STATUS || this.props.jobStatus === constants.JOB_FINISHED_STATUS)
+    && this.props.output.mimeType === 'application/x-netcdf';
   };
 
   isPublishAvailable = () => {
-    return this.props.job.status === constants.JOB_SUCCESS_STATUS
+    return this.props.jobStatus === constants.JOB_SUCCESS_STATUS || this.props.jobStatus === constants.JOB_FINISHED_STATUS
   };
 
   isVisualizeAvailable = () => {
-    return (this.props.job.status === constants.JOB_SUCCESS_STATUS && this.props.output.mimeType === 'application/x-netcdf');
+    return (this.props.jobStatus === constants.JOB_SUCCESS_STATUS || this.props.jobStatus === constants.JOB_FINISHED_STATUS)
+    && this.props.output.mimeType === 'application/x-netcdf';
   };
 
   onDownloadClicked = () => {
@@ -75,7 +79,7 @@ export class ProcessOutputListItem extends React.Component {
           <FileIcon />
         </ListItemIcon>
         <ListItemText inset
-                      primary={(this.props.output.name && this.props.output.name.length) ? this.props.output.name : `${this.props.output.title}: ${this.props.output.abstract}`}
+                      primary={this.props.output.title}
                       secondary={<span>File: {this.props.extractFileId(this.props.output.reference)} <br/>Type:<strong>{this.props.output.mimeType}</strong></span>} />
         <ListItemSecondaryAction
           className={`cy-monitoring-sec-actions cy-monitoring-level-${this.props.indentationLevel}`}>

@@ -67,11 +67,20 @@ export const VISUALIZE_DRAW_MODES = {
 };
 
 // monitor
-export const JOB_ACCEPTED_STATUS = 'ProcessAccepted';
-export const JOB_FAILED_STATUS = 'ProcessFailed';
-export const JOB_SUCCESS_STATUS = 'ProcessSucceeded';
-export const JOB_STARTED_STATUS = 'ProcessStarted';
-export const JOB_PAUSED_STATUS = 'ProcessPaused';
+// succeeded, started, finished, dismissed, paused, failed, running, accepted
+export const JOB_ACCEPTED_STATUS = 'accepted';
+export const JOB_FAILED_STATUS = 'failed';
+export const JOB_SUCCESS_STATUS = 'succeeded';
+export const JOB_STARTED_STATUS = 'started';
+export const JOB_PAUSED_STATUS = 'paused';
+export const JOB_FINISHED_STATUS = 'finished';
+export const JOB_DISMISSED_STATUS = 'dismissed';
+export const JOB_RUNNING_STATUS = 'running';
+export const WPS_ACCEPTED_STATUS = 'ProcessAccepted';
+export const WPS_FAILED_STATUS = 'ProcessFailed';
+export const WPS_SUCCESS_STATUS = 'ProcessSucceeded';
+export const WPS_STARTED_STATUS = 'ProcessStarted';
+export const WPS_PAUSED_STATUS = 'ProcessPaused';
 export const PAVICS_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 // Pagination
 export const PER_PAGE_OPTIONS = [5, 10, 25];

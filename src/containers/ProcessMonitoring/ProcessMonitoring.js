@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import ProcessMonitoring from './../../components/ProcessMonitoring';
+import MonitoringJobsList from './../../components/MonitoringJobsList';
 import { bindActionCreators } from 'redux';
 import { actions as layerDatasetActions } from './../../redux/modules/LayerDataset';
 import { actions as monitorActions } from './../../redux/modules/Monitor';
@@ -22,4 +22,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ProcessMonitoring)
+)(MonitoringJobsList)

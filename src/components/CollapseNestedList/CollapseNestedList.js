@@ -21,7 +21,8 @@ export class CollapseNestedList extends React.Component {
     rootListItemSecondaryActions: PropTypes.object,
     rootListItemText: PropTypes.object.isRequired,
     rootListItemStyle: PropTypes.object,
-    children: PropTypes.array.isRequired // Array of MaterialUI ListItems
+    children: PropTypes.array.isRequired, // Array of MaterialUI ListItems
+    onClicked: PropTypes.func
   };
 
   constructor(props) {
@@ -29,8 +30,11 @@ export class CollapseNestedList extends React.Component {
     this.state = { open: false };
   }
 
-  handleClick = () => {
+  handleClick = (event) => {
     this.setState(state => ({ open: !state.open }));
+    if (this.props.onClicked) {
+      this.props.onClicked(!this.state.open);
+    }
   };
 
   render () {

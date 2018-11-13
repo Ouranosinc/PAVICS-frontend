@@ -209,13 +209,13 @@ function receiveExecuteJobSuccess (data) {
 
 function executeWorkflow (workflowName, inputs) {
   return (dispatch, getState) => {
-    const provider = __PAVICS_WORKFLOW_PROVIDER__;
-    const process = __PAVICS_RUN_WORKFLOW_IDENTIFIER__;
+    const providerId = __PAVICS_WORKFLOW_PROVIDER__;
+    const processId = __PAVICS_RUN_WORKFLOW_IDENTIFIER__;
     const projectId = getState().project.currentProject.id;
     const tags = `${JOB_PROJECT_PREFIX}${projectId}`;
 
     dispatch(requestExecuteJob());
-    return myHttp.postJson(`${__PAVICS_TWITCHER_API_PATH__}/providers/${provider}/processes/${process}/jobs?tags=${tags}`, inputs)
+    return myHttp.postJson(`${__PAVICS_TWITCHER_API_PATH__}/providers/${providerId}/processes/${processId}/jobs?tags=${tags}`, inputs)
       .then(response => {
         if (!response.ok) {
           NotificationManager.error(`Failed at executing the workflow at address ${response.url}. Returned Status ${response.status}: ${response.statusText}`, 'Error', 10000);
@@ -234,8 +234,10 @@ function executeWorkflow (workflowName, inputs) {
           dispatch(receiveExecuteJobSuccess(json));
           dispatch(jobAPIActions.createJob({
             projectId: projectId,
-            phoenixTaskId: json.jobID,
-            name: workflowName
+            name: workflowName,
+            twitcherJobId: json.jobID,
+            twitcherProcessId: processId,
+            twitcherProviderId: providerId
           }));
         }
       }, err => {
@@ -251,13 +253,13 @@ function executeWorkflow (workflowName, inputs) {
 
 }
 
-function executeProcess (provider, process, inputs) {
+function executeProcess (providerId, process, inputs) {
   return (dispatch, getState) => {
     const projectId = getState().project.currentProject.id;
     const tags = `project-${projectId}`;
 
     dispatch(requestExecuteJob());
-    return myHttp.postJson(`${__PAVICS_TWITCHER_API_PATH__}/providers/${provider}/processes/${process}/jobs?tags=${tags}`, inputs)
+    return myHttp.postJson(`${__PAVICS_TWITCHER_API_PATH__}/providers/${providerId}/processes/${process.id}/jobs?tags=${tags}`, inputs)
       .then(response => {
         if (!response.ok) {
           NotificationManager.error(`Failed at executing the process at address ${response.url}. Returned Status ${response.status}: ${response.statusText}`, 'Error', 10000);
@@ -276,7 +278,10 @@ function executeProcess (provider, process, inputs) {
           dispatch(receiveExecuteJobSuccess(json));
           dispatch(jobAPIActions.createJob({
             projectId: projectId,
-            phoenixTaskId: json.jobID
+            name: process.title,
+            twitcherJobId: json.jobID,
+            twitcherProcessId: process.id,
+            twitcherProviderId: providerId
           }));
         }
       }, err => {
