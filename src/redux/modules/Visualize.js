@@ -1,5 +1,6 @@
 import myHttp from '../../util/http';
 import { VISUALIZE_SET_MAP_MANIPULATION_MODE, VISUALIZE_MODE_GRID_VALUES } from './../../constants';
+import { actions as processActions } from './Process';
 
 // Constants
 export const constants = {
@@ -90,8 +91,44 @@ function receiveScalarValue (data) {
 export const actions = {
   resetVisualizeState: resetVisualizeState,
   fetchScalarValue: function (opendapUrl, lat, lon, time, variable) {
+    let inputs = {
+      inputs: [
+        {
+          id: 'opendap_url',
+          value: opendapUrl
+        },
+        {
+          id: 'nearest_to',
+          value: `lat:${lat}`
+        },
+        {
+          id: 'nearest_to',
+          value: `lon:${lon}`
+        },
+        {
+          id: 'nearest_to',
+          value: `time:${time}`
+        },
+        {
+          id: 'variable',
+          value: variable
+        }
+      ]
+    };
     return function (dispatch) {
-      dispatch(requestScalarValue());
+      // Prototype using Process duck that request the twitcher API endpoints
+      dispatch(processActions.executeProcess('catalog', 'getpoint', inputs,
+        requestScalarValue,
+        json => {
+          // Removing black magic from application
+          json['variable'] = json[variable];
+          delete json[variable];
+          return receiveScalarValue(json)
+        },
+        receiveScalarValue,
+        receiveScalarValueFailure));
+
+      /*dispatch(requestScalarValue());
       return myHttp.get(`/wps/getpoint?opendapUrl=${opendapUrl}&lat=${lat}&lon=${lon}&time=${time}&variable=${variable}`)
         .then(response => response.json())
         .then(json => {
@@ -100,7 +137,7 @@ export const actions = {
           delete json[variable];
           dispatch(receiveScalarValue(json));
         })
-        .catch(error => dispatch(receiveScalarValueFailure(error)));
+        .catch(error => dispatch(receiveScalarValueFailure(error)));*/
     };
   },
   fetchPlotlyData: function (

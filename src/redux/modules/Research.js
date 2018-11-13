@@ -1,4 +1,5 @@
 import myHttp from '../../util/http';
+import { actions as processActions } from './Process';
 
 // Constants
 export const constants = {
@@ -37,6 +38,7 @@ function requestPavicsDatasetsAndFacets () {
   };
 }
 export function receivePavicsDatasetsAndFacetsFailure (error) {
+  // NotificationManager.error(JSON.stringify(error));
   return {
     type: constants.FETCH_PAVICS_DATASETS_FACETS_FAILURE,
     pavicsDatasets: {
@@ -48,6 +50,8 @@ export function receivePavicsDatasetsAndFacetsFailure (error) {
   };
 }
 export function receivepavicsDatasetsAndFacets (datasets, facets) {
+  // PROROTYPE TODO get facets and datasets from json
+  // alert(JSON.stringify(json));
   return {
     type: constants.FETCH_PAVICS_DATASETS_FACETS_SUCCESS,
     facets: facets,
@@ -63,7 +67,6 @@ export function receivepavicsDatasetsAndFacets (datasets, facets) {
 // Returns dataset results AND facet counts
 export function fetchPavicsDatasetsAndFacets (type = 'Aggregate', limit = 10000) {
   return function (dispatch, getState) {
-    dispatch(requestPavicsDatasetsAndFacets());
     // Get current added facets by querying store
     let facets = getState().research.selectedFacets;
     let constraints = '';
@@ -72,6 +75,39 @@ export function fetchPavicsDatasetsAndFacets (type = 'Aggregate', limit = 10000)
     });
     if(!constraints.length) limit = 0; // If no facets selected, we attend to have no dataset result
 
+    // PROTOTYPE: Calling twitcher API instead of pywps web interface
+    // Using duck middleware Process.js
+    /*let inputs = {
+      inputs: [
+        {
+          id: 'constraints',
+          type: 'string',
+          value: constraints
+        },
+        {
+          id: 'type',
+          type: 'string',
+          value: type
+        },
+        {
+          id: 'limit',
+          type: 'integer',
+          value: limit
+        },
+        {
+          id: 'distrib',
+          type: 'boolean',
+          value: true
+        }
+      ]
+    };
+    // TODO: From environment variables
+    dispatch(processActions.executeProcess('catalog', 'pavicsearch', inputs,
+      requestPavicsDatasetsAndFacets, receivepavicsDatasetsAndFacets, receivePavicsDatasetsAndFacetsFailure));*/
+
+    dispatch(requestPavicsDatasetsAndFacets());
+
+    //https://hirondelle.crim.ca/twitcher/ows/proxy/catalog/pywps?service=WPS&request=execute&version=1.0.0&identifier=pavicsearch&DataInputs=limit=0;facets=*;type=Aggregate;distrib=true
     return myHttp.get(`/wps/pavicsearch?limit=${limit}&type=${type}&constraints=${constraints}`)
       .then(response => response.json())
       .then(json => {
